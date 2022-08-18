@@ -83,7 +83,7 @@ const ConnectorCard: FC<{ children: React.ReactNode }> = ({ children }) => {
     if (approved == null) return;
 
     const failureRedirect = () => {
-      const returnUrl = new URL(params.failure_url);
+      const returnUrl = new URL(params.failure_url || params.callbackUrl);
       window.location.href = returnUrl.toString();
     };
 
@@ -92,7 +92,7 @@ const ConnectorCard: FC<{ children: React.ReactNode }> = ({ children }) => {
       const data = await result.json();
       const keys = data.result.keys.map((key: any) => key.public_key);
 
-      const returnUrl = new URL(params.success_url);
+      const returnUrl = new URL(params.success_url || params.callbackUrl);
       returnUrl.searchParams.set("public_key", params.public_key);
       returnUrl.searchParams.set("all_keys", keys.join(","));
 
