@@ -1,5 +1,5 @@
-import { ReactComponent as BackIcon } from "../assets/icons/back.svg";
-import { Button, H3 } from "../uikit";
+import { ReactComponent as BackIcon } from "../../assets/icons/back.svg";
+import { Button, H3 } from "../../uikit";
 import * as S from "./styled";
 
 const InformationView = ({ onBack = () => {} }) => {

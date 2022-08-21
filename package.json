@@ -10,6 +10,9 @@
     "@types/node": "^16.11.48",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "bn.js": "^5.2.1",
+    "buffer": "^6.0.3",
+    "near-api-js": "^0.45.1",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -23,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "deploy": "npm run build && npm run push",
+    "push": "scp  -P  222 -r ./build/* herewa@www21.your-server.de:~/public_html/web"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@types/bn.js": "^5.1.0",
     "@types/styled-components": "^5.1.26",
     "@types/uuid4": "^2.0.0"
   }

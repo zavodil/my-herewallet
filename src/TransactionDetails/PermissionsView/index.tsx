@@ -1,9 +1,8 @@
-import { ReactComponent as WarningIcon } from "../assets/icons/warning.svg";
-import { ReactComponent as CloseIcon } from "../assets/icons/close.svg";
-import { ReactComponent as DoneIcon } from "../assets/icons/done.svg";
-import { ReactComponent as BackIcon } from "../assets/icons/back.svg";
-
-import { Button, H3 } from "../uikit";
+import { ReactComponent as WarningIcon } from "../../assets/icons/warning.svg";
+import { ReactComponent as CloseIcon } from "../../assets/icons/close.svg";
+import { ReactComponent as DoneIcon } from "../../assets/icons/done.svg";
+import { ReactComponent as BackIcon } from "../../assets/icons/back.svg";
+import { Button, H3 } from "../../uikit/elements";
 import * as S from "./styled";
 
 const PermissionsView = ({ fullAccess = false, onBack = () => {} }) => {

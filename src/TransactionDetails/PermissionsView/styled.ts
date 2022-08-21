@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Button } from "../uikit";
+import { Button } from "../../uikit";
 
 export const Header = styled.div`
   position: relative;

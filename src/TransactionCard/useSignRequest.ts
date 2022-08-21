@@ -100,7 +100,7 @@ export const useSignRequest = () => {
       try {
         const data = JSON.parse(e.data);
         processApprove(data);
-      } catch {}
+      } catch { }
     };
 
     return () => socket.close();
@@ -108,6 +108,6 @@ export const useSignRequest = () => {
 
   return {
     deeplink: `herewallet://hereapp.com/sign_request?${requested}`,
-    isLoading,
+    isLoading
   };
 };
