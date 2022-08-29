@@ -26,10 +26,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "deploy": "npm run build && npm run push",
-    "push": "scp -P  222 -r ./build/* herewa@www21.your-server.de:~/public_html/web && npm run push:sign && npm run push:login",
-    "push:sign": "scp -P  222 -r ./build/index.html herewa@www21.your-server.de:~/public_html/web/sign/index.html",
-    "push:login": "scp -P  222 -r ./build/index.html herewa@www21.your-server.de:~/public_html/web/login/index.html"
+    "deploy": "sh ./deploy.sh"
   },
   "eslintConfig": {
     "extends": [

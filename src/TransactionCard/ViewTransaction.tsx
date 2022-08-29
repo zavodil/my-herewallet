@@ -7,7 +7,7 @@ import AddPublicKey from "../TransactionDetails/AddPublicKey";
 import FunctionCall from "../TransactionDetails/FunctionCall";
 import TransferCall from "../TransactionDetails/TranserCall";
 import AnyTransaction from "../TransactionDetails/AnyTransaction";
-import InvalidTransaction from "./InvalidTransaction";
+import SimpleLogin from "../TransactionDetails/SimpleLogin";
 
 const parseArguments = () => {
   const params = new URLSearchParams(window.location.search);
@@ -71,5 +71,5 @@ export const ViewTransaction: FC<{ children: ReactNode }> = ({ children }) => {
     return <FullPermissions sidebar={children} />;
   }
 
-  return <InvalidTransaction />;
+  return <SimpleLogin sidebar={children} />;
 };

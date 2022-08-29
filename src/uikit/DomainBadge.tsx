@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { ReactComponent as GlobalIcon } from "../assets/icons/global.svg";
+import constants from "../constants";
 
 export const SDomainBadge = styled.div`
   margin-bottom: 18px;
@@ -28,7 +29,11 @@ export const SDomainBadge = styled.div`
 `;
 
 export const DomainBadge = () => {
-  const from = document.referrer ? new URL(document.referrer).hostname : "Unknown";
+  let from = document.referrer ? new URL(document.referrer).hostname : "Unknown";
+
+  if (constants.network !== "mainnet") {
+    from += ` (${constants.network})`;
+  }
 
   return (
     <SDomainBadge>

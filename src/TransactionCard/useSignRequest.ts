@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import uuid4 from "uuid4";
+import constants from "../constants";
 
 export interface RequestData {
   account_id: string;
@@ -8,7 +9,7 @@ export interface RequestData {
 }
 
 export const getPublicKeys = (accountId: string) =>
-  fetch("https://rpc.mainnet.near.org", {
+  fetch(constants.rpc, {
     method: "POST",
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -29,10 +30,10 @@ const topicId = window.localStorage.getItem("topic") || uuid4();
 window.localStorage.setItem("topic", topicId);
 
 export const createRequest = (request: string) =>
-  fetch("https://api.herewallet.app/api/v1/web/request_transaction_sign", {
+  fetch(`https://${constants.api}/api/v1/web/request_transaction_sign`, {
     method: "POST",
     body: JSON.stringify({
-      transaction: `herewallet://hereapp.com/sign_request${window.location.search}&request_id=${request}`,
+      transaction: `${constants.walletSchema}://hereapp.com/sign_request${window.location.search}&request_id=${request}&referrer=${document.referrer}`,
       request_id: request,
       topic: topicId,
     }),
@@ -91,7 +92,7 @@ export const useSignRequest = () => {
   useEffect(() => {
     void createRequest(requested);
 
-    const endpoint = `wss://api.herewallet.app/api/v1/web/ws/transaction_approved/${requested}`;
+    const endpoint = `wss://${constants.api}/api/v1/web/ws/transaction_approved/${requested}`;
     const socket = new WebSocket(endpoint);
     socket.onerror = (e) => console.log(e); // TODO
     socket.onclose = (e) => console.log(e); // TODO
@@ -100,14 +101,14 @@ export const useSignRequest = () => {
       try {
         const data = JSON.parse(e.data);
         processApprove(data);
-      } catch { }
+      } catch {}
     };
 
     return () => socket.close();
   }, [requested, processApprove]);
 
   return {
-    deeplink: `herewallet://hereapp.com/sign_request?${requested}`,
-    isLoading
+    deeplink: `${constants.walletSchema}://hereapp.com/sign_request?${requested}`,
+    isLoading,
   };
 };
