@@ -29,11 +29,19 @@ export const getPublicKeys = (accountId: string) =>
 const topicId = window.localStorage.getItem("topic") || uuid4();
 window.localStorage.setItem("topic", topicId);
 
-export const createRequest = (request: string) =>
-  fetch(`https://${constants.api}/api/v1/web/request_transaction_sign`, {
+export const createRequest = (request: string) => {
+  const query = new URLSearchParams(window.location.search);
+  query.append("request_id", request);
+
+  try {
+    const host = new URL(document.referrer).hostname ?? "";
+    query.append("referrer", host);
+  } catch {}
+
+  return fetch(`https://${constants.api}/api/v1/web/request_transaction_sign`, {
     method: "POST",
     body: JSON.stringify({
-      transaction: `${constants.walletSchema}://hereapp.com/sign_request${window.location.search}&request_id=${request}&referrer=${document.referrer}`,
+      transaction: `${constants.walletSchema}://hereapp.com/sign_request?${query}`,
       request_id: request,
       topic: topicId,
     }),
@@ -41,6 +49,7 @@ export const createRequest = (request: string) =>
       "content-type": "application/json",
     },
   });
+};
 
 export const useSignRequest = () => {
   const [requested] = useState(() => uuid4());
@@ -62,12 +71,21 @@ export const useSignRequest = () => {
         const keys = data.result.keys.map((key: any) => key.public_key);
 
         const returnUrl = new URL(params.success_url || params.callbackUrl);
-        returnUrl.searchParams.set("public_key", params.public_key);
-        returnUrl.searchParams.set("all_keys", keys.join(","));
-
-        returnUrl.searchParams.set("transactionHashes", approved.hash);
         returnUrl.searchParams.set("account_id", approved.account_id);
         returnUrl.searchParams.set("meta", params.meta);
+
+        if (params.public_key) {
+          returnUrl.searchParams.set("public_key", params.public_key);
+        }
+
+        if (keys.length) {
+          returnUrl.searchParams.set("all_keys", keys.join(","));
+        }
+
+        if (approved.hash) {
+          returnUrl.searchParams.set("transactionHashes", approved.hash);
+        }
+
         window.location.href = returnUrl.toString();
       };
 
