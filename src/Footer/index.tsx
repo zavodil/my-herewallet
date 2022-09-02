@@ -6,7 +6,7 @@ const Footer = () => {
       <img src="/assets/nearhere.png" alt="nearhere" />
 
       <S.Appstore>
-        <a href="appstore.com">
+        <a href={process.env.REACT_APP_APPSTORE}>
           <img src="/assets/appstore.svg" alt="appstore" />
         </a>
 

@@ -14,10 +14,7 @@ const TransactionCard = () => {
         <S.ScanCode>
           <QRCodeSVG value={deeplink} bgColor="transparent" size={200} />
           <H2>Approve with QR</H2>
-          <Text>
-            Scan the code with <br />
-            <b>HERE Wallet mobile app</b> to sign
-          </Text>
+          <Text>Scan this code with your phone's camera to sign</Text>
         </S.ScanCode>
       </ViewTransaction>
     </S.Card>
