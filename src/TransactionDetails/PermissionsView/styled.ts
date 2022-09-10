@@ -18,6 +18,10 @@ export const PermissionsList = styled.ul`
   padding: 0;
   margin-top: 54px;
   list-style-type: none;
+
+  @media (max-width: 800px) {
+    margin-top: 32px;
+  }
 `;
 
 export const PermissionItem = styled.li`
@@ -32,4 +36,8 @@ export const PermissionItem = styled.li`
   display: flex;
   align-items: center;
   gap: 8px;
+
+  svg {
+    flex-shrink: 0;
+  }
 `;

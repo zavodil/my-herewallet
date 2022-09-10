@@ -15,6 +15,25 @@ export const Footer = styled.footer`
     width: 138px;
     height: 198px;
   }
+
+  @media (max-width: 800px) {
+    padding: 0 16px;
+    > img:first-child {
+      display: none;
+    }
+
+    > img:last-child {
+      display: none;
+    }
+  }
+`;
+
+export const Flex = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
 `;
 
 export const Appstore = styled.div`
@@ -34,4 +53,23 @@ export const Appstore = styled.div`
     margin: 0;
     margin-top: 26px;
   }
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+`;
+
+export const Button = styled.button`
+  color: #fff;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  background: #2c3034;
+  display: flex;
+  height: 46px;
+  flex-shrink: 0;
+
+  font-weight: bolder;
+  border-radius: 8px;
+  width: 160px;
 `;

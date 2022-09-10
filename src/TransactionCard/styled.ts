@@ -40,6 +40,16 @@ export const Card = styled.div<{ isLoading?: boolean }>`
     left: 50%;
     margin: -40px;
   }
+
+  @media (max-width: 800px) {
+    margin-top: 32px;
+    width: calc(100vw - 32px);
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: fit-content;
+  }
 `;
 
 export const ScanCode = styled.div`
@@ -56,5 +66,23 @@ export const ScanCode = styled.div`
   ${Text} {
     width: 250px;
     text-align: center;
+  }
+
+  @media (max-width: 800px) {
+    width: 100%;
+
+    svg {
+      width: 150px;
+      height: 150px;
+    }
+
+    ${H2} {
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+
+    ${Text} {
+      width: 100%;
+    }
   }
 `;

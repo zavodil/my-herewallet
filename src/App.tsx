@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import TransactionCard from "./TransactionCard";
-import Footer from "./Footer";
 
 export const Page = styled.div`
   display: flex;
@@ -14,7 +13,6 @@ function App() {
   return (
     <Page>
       <TransactionCard />
-      <Footer />
     </Page>
   );
 }

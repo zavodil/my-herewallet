@@ -51,6 +51,8 @@ export const createRequest = (request: string) => {
   });
 };
 
+const defaultReturnUrl = "https://herewallet.app";
+
 export const useSignRequest = () => {
   const [requested] = useState(() => uuid4());
   const [isLoading, setLoading] = useState(false);
@@ -61,7 +63,7 @@ export const useSignRequest = () => {
       const params = Object.fromEntries(query.entries());
 
       const failureRedirect = () => {
-        const returnUrl = new URL(params.failure_url || params.callbackUrl);
+        const returnUrl = new URL(params.failure_url || params.callbackUrl || defaultReturnUrl);
         window.location.href = returnUrl.toString();
       };
 
@@ -70,7 +72,7 @@ export const useSignRequest = () => {
         const data = await result.json();
         const keys = data.result.keys.map((key: any) => key.public_key);
 
-        const returnUrl = new URL(params.success_url || params.callbackUrl);
+        const returnUrl = new URL(params.success_url || params.callbackUrl || defaultReturnUrl);
         returnUrl.searchParams.set("account_id", approved.account_id);
         returnUrl.searchParams.set("meta", params.meta);
 

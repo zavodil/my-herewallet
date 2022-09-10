@@ -21,10 +21,18 @@ export const SDomainBadge = styled.div`
   font-size: 14px;
   line-height: 19px;
   color: #2c3034;
+  max-width: 100%;
 
   img {
     width: 24px;
     height: 24px;
+  }
+
+  span {
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    flex: 1;
   }
 `;
 

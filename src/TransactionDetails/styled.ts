@@ -5,6 +5,7 @@ export const Details = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-width: 100%;
 `;
 
 export const MoreInformation = styled.div`
@@ -23,6 +24,7 @@ export const PermissionsBadge = styled.div`
   margin-top: 40px;
 
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
   padding: 8px 12px;
@@ -31,6 +33,10 @@ export const PermissionsBadge = styled.div`
   width: fit-content;
   background: #359c2c;
   border-radius: 12px;
+
+  @media (max-width: 800px) {
+    margin-top: 16px;
+  }
 
   span,
   button {

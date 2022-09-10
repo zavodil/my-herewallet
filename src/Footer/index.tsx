@@ -1,14 +1,22 @@
 import * as S from "./styled";
 
-const Footer = () => {
+const Footer = ({ deeplink }: { deeplink: string | null }) => {
   return (
     <S.Footer>
       <img src="/assets/nearhere.png" alt="nearhere" />
 
       <S.Appstore>
-        <a href={process.env.REACT_APP_APPSTORE}>
-          <img src="/assets/appstore.svg" alt="appstore" />
-        </a>
+        <S.Flex>
+          {deeplink && (
+            <S.Button as="a" href={deeplink}>
+              Open in Here
+            </S.Button>
+          )}
+
+          <a href={process.env.REACT_APP_APPSTORE}>
+            <img src="/assets/appstore.svg" alt="appstore" />
+          </a>
+        </S.Flex>
 
         <p>
           Don’t have an account yet? Visit&nbsp;

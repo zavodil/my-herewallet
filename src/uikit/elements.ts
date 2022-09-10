@@ -16,6 +16,11 @@ export const H2 = styled.h2`
   line-height: 40px;
   color: #2c3034;
   margin: 0;
+
+  @media (max-width: 800px) {
+    font-size: 28px;
+    line-height: 30px;
+  }
 `;
 
 export const H3 = styled.h3`
@@ -46,6 +51,10 @@ export const Text = styled.p`
   line-height: 22px;
   color: #6b6661;
   margin: 0;
+
+  @media (max-width: 800px) {
+    line-height: 20px;
+  }
 `;
 
 export const H1 = styled.h1`
@@ -56,6 +65,11 @@ export const H1 = styled.h1`
   line-height: 50px;
   color: #2c3034;
   margin: 0;
+
+  @media (max-width: 800px) {
+    font-size: 32px;
+    line-height: 32px;
+  }
 `;
 
 export const H0 = styled.h1`
@@ -66,4 +80,9 @@ export const H0 = styled.h1`
   line-height: 79px;
   color: #2c3034;
   margin: 0;
+
+  @media (max-width: 800px) {
+    font-size: 48px;
+    line-height: 62px;
+  }
 `;
