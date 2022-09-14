@@ -4,7 +4,7 @@ import constants from "../constants";
 
 export interface RequestData {
   account_id: string;
-  hash: string;
+  transaction_hash: string;
   status: number;
 }
 
@@ -24,7 +24,7 @@ export const getPublicKeys = (accountId: string) =>
     headers: {
       "content-type": "application/json",
     },
-  });
+  }).then((r) => r.json());
 
 const topicId = window.localStorage.getItem("topic") || uuid4();
 window.localStorage.setItem("topic", topicId);
@@ -69,14 +69,16 @@ export const useSignRequest = () => {
 
       const successRedirect = async () => {
         const returnUrl = new URL(params.success_url || params.callbackUrl || defaultReturnUrl);
-        returnUrl.searchParams.set("meta", params.meta);
+
+        if (params.meta) {
+          returnUrl.searchParams.set("meta", params.meta);
+        }
 
         if (params.public_key) {
           returnUrl.searchParams.set("public_key", params.public_key);
           returnUrl.searchParams.set("account_id", approved.account_id);
 
-          const result = await getPublicKeys(approved.account_id);
-          const data = await result.json();
+          const data = await getPublicKeys(approved.account_id).catch(() => []);
           const keys = data.result.keys.map((key: any) => key.public_key);
 
           if (keys.length) {
@@ -84,8 +86,8 @@ export const useSignRequest = () => {
           }
         }
 
-        if (approved.hash) {
-          returnUrl.searchParams.set("transactionHashes", approved.hash);
+        if (approved.transaction_hash) {
+          returnUrl.searchParams.set("transactionHashes", approved.transaction_hash);
         }
 
         window.location.href = returnUrl.toString();
