@@ -8,11 +8,11 @@ const fetchCurrencies = async () => {
 };
 
 export const useUsdNear = () => {
-    const [list, setList] = useState<any>(null)
+  const [list, setList] = useState<any>(null);
 
-    useEffect(() => {
-        fetchCurrencies().then(setList)
-    }, [])
+  useEffect(() => {
+    fetchCurrencies().then(setList);
+  }, []);
 
-    return list?.rates.find((v: any) => v.currency === 1)?.rate ?? 1;
-}
+  return list?.rates.find((v: any) => v.currency === 1)?.rate ?? 1;
+};

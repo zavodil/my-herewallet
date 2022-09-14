@@ -68,20 +68,20 @@ export const useSignRequest = () => {
       };
 
       const successRedirect = async () => {
-        const result = await getPublicKeys(approved.account_id);
-        const data = await result.json();
-        const keys = data.result.keys.map((key: any) => key.public_key);
-
         const returnUrl = new URL(params.success_url || params.callbackUrl || defaultReturnUrl);
-        returnUrl.searchParams.set("account_id", approved.account_id);
         returnUrl.searchParams.set("meta", params.meta);
 
         if (params.public_key) {
           returnUrl.searchParams.set("public_key", params.public_key);
-        }
+          returnUrl.searchParams.set("account_id", approved.account_id);
 
-        if (keys.length) {
-          returnUrl.searchParams.set("all_keys", keys.join(","));
+          const result = await getPublicKeys(approved.account_id);
+          const data = await result.json();
+          const keys = data.result.keys.map((key: any) => key.public_key);
+
+          if (keys.length) {
+            returnUrl.searchParams.set("all_keys", keys.join(","));
+          }
         }
 
         if (approved.hash) {
