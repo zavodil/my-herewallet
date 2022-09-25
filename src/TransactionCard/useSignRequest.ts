@@ -29,6 +29,17 @@ export const getPublicKeys = (accountId: string) =>
 const topicId = window.localStorage.getItem("topic") || uuid4();
 window.localStorage.setItem("topic", topicId);
 
+export const getTransactionStatus = async (request: string): Promise<RequestData> => {
+  const res = await fetch(`https://${constants.api}/api/v1/web/web_request?request_id=${request}`, {
+    method: "GET",
+    headers: {
+      "content-type": "application/json",
+    },
+  });
+
+  return await res.json();
+};
+
 export const createRequest = (request: string) => {
   const query = new URLSearchParams(window.location.search);
   query.append("request_id", request);
@@ -53,8 +64,14 @@ export const createRequest = (request: string) => {
 
 const defaultReturnUrl = "https://herewallet.app";
 
+const getCachedRequestId = () => {
+  const query = new URLSearchParams(window.location.search);
+  const id = query.get("request_id");
+  return id || null;
+};
+
 export const useSignRequest = () => {
-  const [requested] = useState(() => uuid4());
+  const [requested] = useState(() => getCachedRequestId() || uuid4());
   const [isLoading, setLoading] = useState(false);
 
   const processApprove = useCallback(
@@ -112,25 +129,57 @@ export const useSignRequest = () => {
   );
 
   useEffect(() => {
-    void createRequest(requested);
+    let socket: WebSocket;
+    let timer: NodeJS.Timeout | undefined | -1;
 
-    const endpoint = `wss://${constants.api}/api/v1/web/ws/transaction_approved/${requested}`;
-    const socket = new WebSocket(endpoint);
-    socket.onerror = (e) => console.log(e); // TODO
-    socket.onclose = (e) => console.log(e); // TODO
-    socket.onmessage = (e) => {
-      if (e.data == null) return;
-      try {
-        const data = JSON.parse(e.data);
-        processApprove(data);
-      } catch {}
+    const init = async () => {
+      if (getCachedRequestId() == null) {
+        await createRequest(requested);
+        changeSearch({ request_id: requested });
+      }
+
+      const endpoint = `wss://${constants.api}/api/v1/web/ws/transaction_approved/${requested}`;
+      socket = new WebSocket(endpoint);
+      socket.onerror = (e) => console.log(e); // TODO
+      socket.onclose = (e) => console.log(e); // TODO
+      socket.onmessage = (e) => {
+        if (e.data == null) return;
+        try {
+          const data = JSON.parse(e.data);
+          processApprove(data);
+        } catch {}
+      };
+
+      const setupTimer = () => {
+        if (timer === -1) return;
+        timer = setTimeout(async () => {
+          const data: any = await getTransactionStatus(requested).catch(() => {});
+          processApprove(data);
+          setupTimer();
+        }, 3000);
+      };
+
+      const data: any = await getTransactionStatus(requested).catch(() => {});
+      processApprove(data);
+      setupTimer();
     };
 
-    return () => socket.close();
+    init();
+    return () => {
+      socket?.close();
+      clearTimeout(timer);
+      timer = -1;
+    };
   }, [requested, processApprove]);
 
   return {
     deeplink: `${constants.walletSchema}://hereapp.com/sign_request?${requested}`,
     isLoading,
   };
+};
+
+export const changeSearch = (data: Record<string, string>) => {
+  const search = new URLSearchParams(data);
+  const base = window.location.origin + window.location.pathname + "?" + search;
+  window.history.replaceState({}, document.title, base);
 };
