@@ -3,6 +3,7 @@ import uuid4 from "uuid4";
 import constants from "../constants";
 
 export interface RequestData {
+  transaction: string;
   account_id: string;
   transaction_hash: string;
   status: number;
@@ -76,7 +77,7 @@ export const useSignRequest = () => {
 
   const processApprove = useCallback(
     (approved: RequestData) => {
-      const query = new URLSearchParams(window.location.search);
+      const query = new URLSearchParams(new URL(approved.transaction).search);
       const params = Object.fromEntries(query.entries());
 
       const failureRedirect = () => {
@@ -96,10 +97,16 @@ export const useSignRequest = () => {
           returnUrl.searchParams.set("account_id", approved.account_id);
 
           const data = await getPublicKeys(approved.account_id).catch(() => []);
-          const keys = data.result.keys.map((key: any) => key.public_key);
+          const contractId = params.contract_id;
+
+          const keys = data.result.keys.filter((key: any) => {
+            const id = key.access_key?.permission?.FunctionCall?.receiver_id;
+            return id != null && id === contractId;
+          });
 
           if (keys.length) {
-            returnUrl.searchParams.set("all_keys", keys.join(","));
+            const literals = keys.map((key: any) => key.public_key);
+            returnUrl.searchParams.set("all_keys", literals.join(","));
           }
         }
 
@@ -138,18 +145,6 @@ export const useSignRequest = () => {
         changeSearch({ request_id: requested });
       }
 
-      const endpoint = `wss://${constants.api}/api/v1/web/ws/transaction_approved/${requested}`;
-      socket = new WebSocket(endpoint);
-      socket.onerror = (e) => console.log(e); // TODO
-      socket.onclose = (e) => console.log(e); // TODO
-      socket.onmessage = (e) => {
-        if (e.data == null) return;
-        try {
-          const data = JSON.parse(e.data);
-          processApprove(data);
-        } catch {}
-      };
-
       const setupTimer = () => {
         if (timer === -1) return;
         timer = setTimeout(async () => {
@@ -162,6 +157,19 @@ export const useSignRequest = () => {
       const data: any = await getTransactionStatus(requested).catch(() => {});
       processApprove(data);
       setupTimer();
+
+      const transaction = data.transaction;
+      const endpoint = `wss://${constants.api}/api/v1/web/ws/transaction_approved/${requested}`;
+      socket = new WebSocket(endpoint);
+      socket.onerror = (e) => console.log(e); // TODO
+      socket.onclose = (e) => console.log(e); // TODO
+      socket.onmessage = (e) => {
+        if (e.data == null) return;
+        try {
+          const data = JSON.parse(e.data);
+          processApprove({ ...data, transaction });
+        } catch {}
+      };
     };
 
     init();
