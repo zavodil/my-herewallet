@@ -8,10 +8,12 @@ import FunctionCall from "../TransactionDetails/FunctionCall";
 import TransferCall from "../TransactionDetails/TranserCall";
 import AnyTransaction from "../TransactionDetails/AnyTransaction";
 import SimpleLogin from "../TransactionDetails/SimpleLogin";
+import VerifyOwner from "../TransactionDetails/VerifyOwner";
 
 const parseArguments = (params: any) => {
   const contractId = params["contract_id"];
   const publicKey = params["public_key"];
+  const message = params["message"];
   const methodNames = params["methodNames"]?.split(",") ?? [];
 
   const messages: string[] = params["transactions"]?.split(",") ?? [];
@@ -27,6 +29,7 @@ const parseArguments = (params: any) => {
     .filter((v): v is Transaction => v != null);
 
   return {
+    message,
     transactions,
     contractId,
     publicKey,
@@ -36,7 +39,11 @@ const parseArguments = (params: any) => {
 
 export const ViewTransaction: FC<{ children: ReactNode; params: Object }> = ({ children, params }) => {
   const [args] = useState(() => parseArguments(params));
-  const { transactions, methodNames, publicKey, contractId } = args;
+  const { message, transactions, methodNames, publicKey, contractId } = args;
+
+  if (message != null) {
+    return <VerifyOwner sidebar={children} message={message} />;
+  }
 
   if (transactions.length) {
     const trx = transactions[0];
