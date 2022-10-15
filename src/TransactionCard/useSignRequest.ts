@@ -73,6 +73,7 @@ const getCachedRequestId = () => {
 
 export const useSignRequest = () => {
   const [requested] = useState(() => getCachedRequestId() || uuid4());
+  const [params, setParams] = useState<null | Object>(null);
   const [isLoading, setLoading] = useState(false);
 
   const processApprove = useCallback(
@@ -97,16 +98,11 @@ export const useSignRequest = () => {
           returnUrl.searchParams.set("account_id", approved.account_id);
 
           const data = await getPublicKeys(approved.account_id).catch(() => []);
-          const contractId = params.contract_id;
+          const keys = data.result.keys.filter((key: any) => key.access_key?.permission === "FullAccess");
+          const publicKey = keys.pop();
 
-          const keys = data.result.keys.filter((key: any) => {
-            const id = key.access_key?.permission?.FunctionCall?.receiver_id;
-            return id != null && id === contractId;
-          });
-
-          if (keys.length) {
-            const literals = keys.map((key: any) => key.public_key);
-            returnUrl.searchParams.set("all_keys", literals.join(","));
+          if (publicKey.public_key) {
+            returnUrl.searchParams.set("all_keys", publicKey.public_key);
           }
         }
 
@@ -155,6 +151,10 @@ export const useSignRequest = () => {
       };
 
       const data: any = await getTransactionStatus(requested).catch(() => {});
+      const query = new URLSearchParams(new URL(data.transaction).search);
+      const params = Object.fromEntries(query.entries());
+      setParams(params);
+
       processApprove(data);
       setupTimer();
 
@@ -182,6 +182,7 @@ export const useSignRequest = () => {
 
   return {
     deeplink: `${constants.walletSchema}://hereapp.com/sign_request?${requested}`,
+    params,
     isLoading,
   };
 };

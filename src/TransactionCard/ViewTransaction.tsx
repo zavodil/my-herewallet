@@ -9,13 +9,12 @@ import TransferCall from "../TransactionDetails/TranserCall";
 import AnyTransaction from "../TransactionDetails/AnyTransaction";
 import SimpleLogin from "../TransactionDetails/SimpleLogin";
 
-const parseArguments = () => {
-  const params = new URLSearchParams(window.location.search);
-  const contractId = params.get("contract_id");
-  const publicKey = params.get("public_key");
-  const methodNames = params.get("methodNames")?.split(",") ?? [];
+const parseArguments = (params: any) => {
+  const contractId = params["contract_id"];
+  const publicKey = params["public_key"];
+  const methodNames = params["methodNames"]?.split(",") ?? [];
 
-  const messages = params.get("transactions")?.split(",") ?? [];
+  const messages: string[] = params["transactions"]?.split(",") ?? [];
   const transactions = messages
     .map((msg) => {
       try {
@@ -35,8 +34,8 @@ const parseArguments = () => {
   };
 };
 
-export const ViewTransaction: FC<{ children: ReactNode }> = ({ children }) => {
-  const [args] = useState(() => parseArguments());
+export const ViewTransaction: FC<{ children: ReactNode; params: Object }> = ({ children, params }) => {
+  const [args] = useState(() => parseArguments(params));
   const { transactions, methodNames, publicKey, contractId } = args;
 
   if (transactions.length) {

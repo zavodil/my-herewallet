@@ -18,6 +18,11 @@ export const MoreInformation = styled.div`
     text-decoration-line: underline;
     color: #fd84e3;
   }
+
+  p {
+    line-break: anywhere;
+    padding-right: 64px;
+  }
 `;
 
 export const PermissionsBadge = styled.div`

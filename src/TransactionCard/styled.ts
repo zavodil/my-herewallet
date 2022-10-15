@@ -57,10 +57,12 @@ export const ScanCode = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 
   ${H2} {
     margin-top: auto;
     margin-bottom: 16px;
+    text-align: center;
   }
 
   ${Text} {

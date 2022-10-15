@@ -8,7 +8,7 @@ import { isIOS } from "./utilts";
 import * as S from "./styled";
 
 const TransactionCard = () => {
-  const { isLoading, deeplink } = useSignRequest();
+  const { isLoading, deeplink, params } = useSignRequest();
   const [isMobile, setMobile] = useState(false);
 
   useEffect(() => {
@@ -22,11 +22,15 @@ const TransactionCard = () => {
     window.location.href = deeplink;
   }, [deeplink]);
 
+  if (params == null) {
+    return null;
+  }
+
   return (
     <>
       <S.Card isLoading={isLoading}>
         {isLoading && <Loading />}
-        <ViewTransaction>
+        <ViewTransaction params={params}>
           {isMobile === false && (
             <S.ScanCode>
               <QRCodeSVG value={deeplink} bgColor="transparent" size={200} />
