@@ -80,7 +80,7 @@ export const useSignRequest = () => {
   }, [requested, processApprove]);
 
   return {
-    deeplink: `${constants.walletSchema}://hereapp.com/sign_request?${requested}`,
+    deeplink: `${constants.walletSchema}://${window.location.host}/sign_request?${requested}`,
     params,
     isLoading,
   };
