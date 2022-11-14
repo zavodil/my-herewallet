@@ -16,6 +16,7 @@ export const useSignRequest = () => {
   const [requested] = useState(() => getCachedRequestId() || uuid4());
   const [params, setParams] = useState<null | Object>(null);
   const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const processApprove = useCallback(
     (approved: RequestData) => {
@@ -49,7 +50,7 @@ export const useSignRequest = () => {
         }, 3000);
       };
 
-      const data: any = await getTransactionStatus(requested).catch(() => {});
+      const data: any = await getTransactionStatus(requested).catch(() => setError(true));
       const query = new URLSearchParams(new URL(data.transaction).search);
       const params = Object.fromEntries(query.entries());
       setParams(params);
@@ -80,8 +81,9 @@ export const useSignRequest = () => {
   }, [requested, processApprove]);
 
   return {
-    deeplink: `${constants.walletSchema}://${window.location.host}/sign_request?${requested}`,
+    deeplink: `https://${window.location.host}/sign_request?${requested}`,
     params,
+    error,
     isLoading,
   };
 };

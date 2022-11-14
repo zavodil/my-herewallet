@@ -1,5 +1,5 @@
 import { QRCodeSVG } from "qrcode.react";
-import { H2, Loading, Text } from "../uikit";
+import { H2, H3, Loading, Text } from "../uikit";
 import { ViewTransaction } from "./ViewTransaction";
 import { useSignRequest } from "./useSignRequest";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import { isIOS } from "./utilts";
 import * as S from "./styled";
 
 const TransactionCard = () => {
-  const { isLoading, deeplink, params } = useSignRequest();
+  const { isLoading, deeplink, error, params } = useSignRequest();
   const [isMobile, setMobile] = useState(false);
 
   useEffect(() => {
@@ -18,12 +18,27 @@ const TransactionCard = () => {
     return () => window.removeEventListener("resize", handler);
   });
 
-  useEffect(() => {
-    window.location.href = deeplink;
-  }, [deeplink]);
-
   if (params == null) {
-    return null;
+    return (
+      <div
+        style={{
+          height: "100vh",
+          flexDirection: "column",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {error ? (
+          <>
+            <H2 style={{ textAlign: "center" }}>Request not found</H2>
+            <H3>Go back to the web3 app and retry the transaction</H3>
+          </>
+        ) : (
+          <Loading />
+        )}
+      </div>
+    );
   }
 
   return (

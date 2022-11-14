@@ -3,7 +3,7 @@ import { FC } from "react";
 import { format } from "near-api-js/lib/utils";
 
 import { useUsdNear } from "../TransactionCard/useCurrency";
-import { DomainBadge, H1, H2, H3, Text } from "../uikit";
+import { DomainBadge, H1, H3, Text } from "../uikit";
 import * as S from "./styled";
 
 interface Props {

@@ -1,3 +1,4 @@
+import constants from "../constants";
 import * as S from "./styled";
 
 const Footer = ({ deeplink }: { deeplink: string | null }) => {
@@ -8,7 +9,7 @@ const Footer = ({ deeplink }: { deeplink: string | null }) => {
       <S.Appstore>
         <S.Flex>
           {deeplink && (
-            <S.Button as="a" href={deeplink}>
+            <S.Button as="a" href={deeplink.replace("https://", `${constants.walletSchema}://`)}>
               Open in Here
             </S.Button>
           )}

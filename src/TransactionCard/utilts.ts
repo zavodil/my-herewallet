@@ -38,6 +38,10 @@ export const getTransactionStatus = async (request: string): Promise<RequestData
     },
   });
 
+  if (res.ok === false) {
+    throw Error();
+  }
+
   return await res.json();
 };
 
