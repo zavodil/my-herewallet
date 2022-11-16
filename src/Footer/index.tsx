@@ -9,7 +9,7 @@ const Footer = ({ deeplink }: { deeplink: string | null }) => {
       <S.Appstore>
         <S.Flex>
           {deeplink && (
-            <S.Button as="a" href={deeplink.replace("https://", `${constants.walletSchema}://`)}>
+            <S.Button as="a" href={deeplink.replace("https://", `${constants.schema}://`)}>
               Open in Here
             </S.Button>
           )}

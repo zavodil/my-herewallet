@@ -81,7 +81,7 @@ export const useSignRequest = () => {
   }, [requested, processApprove]);
 
   return {
-    deeplink: `https://${window.location.host}/sign_request?${requested}`,
+    deeplink: `${constants.host}/sign_request?${requested}`,
     params,
     error,
     isLoading,
