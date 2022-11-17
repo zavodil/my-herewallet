@@ -81,7 +81,7 @@ export const useSignRequest = () => {
   }, [requested, processApprove]);
 
   return {
-    deeplink: `${constants.host}/sign_request?${requested}`,
+    deeplink: `${constants.walletConnect}?request_id=${requested}`,
     params,
     error,
     isLoading,

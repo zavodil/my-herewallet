@@ -57,7 +57,7 @@ export const createRequest = (request: string) => {
   return fetch(`https://${constants.api}/api/v1/web/request_transaction_sign`, {
     method: "POST",
     body: JSON.stringify({
-      transaction: `${constants.host}/sign_request?${query}`,
+      transaction: `${constants.walletConnect}?${query}`,
       request_id: request,
       topic: topicId,
     }),
