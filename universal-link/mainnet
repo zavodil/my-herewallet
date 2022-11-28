@@ -1,15 +1,27 @@
 {
   "applinks": {
-    "apps": ["4ZZ7T7CRTL.app.here.wallet"],
-    "details": [{
-      "appID": "4ZZ7T7CRTL.app.here.wallet",
-      "paths": ["/approve"]
-    }]
+    "details": [
+      {
+        "appIDs": [
+          "4ZZ7T7CRTL.app.here.wallet"
+        ],
+        "components": [
+          {
+            "/approve": "/approve*",
+            "comment": "Matches any URL whose path starts with /"
+          }
+        ]
+      }
+    ]
   },
   "appclips": {
-    "apps": ["4ZZ7T7CRTL.app.here.wallet.Clip"]
+    "apps": [
+      "4ZZ7T7CRTL.app.here.wallet.Clip"
+    ]
   },
   "webcredentials": {
-    "apps": ["4ZZ7T7CRTL.app.here.wallet"]
+    "apps": [
+      "4ZZ7T7CRTL.app.here.wallet"
+    ]
   }
 }
