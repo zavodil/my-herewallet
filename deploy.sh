@@ -14,6 +14,6 @@ cp .env.testnet .env
 npm run build
 
 echo "Testnet: Repote deploying..."
-scp ./universal-link/testnet root@web.herewallet.app:/var/www/here-web/.well-known/apple-app-site-association
+scp ./universal-link/testnet root@web.herewallet.app:/var/www/here-web-testnet/.well-known/apple-app-site-association
 scp -r ./build/* root@web.herewallet.app:/var/www/here-web-testnet
 echo "Testnet: Complete!"
