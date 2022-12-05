@@ -1,95 +1,66 @@
-import { useCallback, useEffect, useState } from "react";
-import uuid4 from "uuid4";
-
-import constants from "../constants";
+import { useEffect, useState } from "react";
+import { proxyProvider } from "@here-wallet/near-selector/here-provider";
+import { legacyProvider } from "@here-wallet/near-selector/legacy-provider";
+import { HereProviderOptions, HereProviderResult, HereProviderStatus } from "@here-wallet/near-selector";
+import { HereArguments, parseArguments } from "./utilts";
 import { failureRedirect, successRedirect } from "./redirects";
-import { createRequest, getTransactionStatus } from "./utilts";
-import { RequestData } from "./types";
+import constants from "../constants";
 
-const getCachedRequestId = () => {
-  const query = new URLSearchParams(window.location.search);
-  const id = query.get("request_id");
-  return id || null;
+const getRequest = () => {
+  const search = window.location.search;
+  const args = Object.fromEntries(new URLSearchParams(search).entries());
+
+  if (args.new != null) {
+    const id = window.location.pathname.split("/").pop();
+    return { isNew: true, id, args };
+  }
+
+  return { isNew: false, id: args.request_id, args };
 };
 
 export const useSignRequest = () => {
-  const [requested] = useState(() => getCachedRequestId() || uuid4());
-  const [params, setParams] = useState<null | Object>(null);
-  const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const processApprove = useCallback(
-    (approved: RequestData) => {
-      const statues: Record<number, () => void> = {
-        1: () => setLoading(true),
-        2: () => failureRedirect(approved),
-        3: () => successRedirect(approved),
-      };
-
-      statues[approved.status]?.();
-    },
-    [setLoading]
-  );
+  const [request] = useState(() => getRequest());
+  const [link, setLink] = useState("");
+  const [args, setArgs] = useState<HereArguments | null>(null);
+  const [result, setResult] = useState<HereProviderResult | null>(null);
 
   useEffect(() => {
-    let socket: WebSocket;
-    let timer: NodeJS.Timeout | undefined | -1;
+    const config: HereProviderOptions = {
+      id: request.id,
+      args: request.args,
+      network: constants.network as any,
 
-    const init = async () => {
-      if (getCachedRequestId() == null) {
-        await createRequest(requested);
-        changeSearch({ request_id: requested });
-      }
+      onFailed: (r) => {
+        setResult(r);
+        failureRedirect(request.args, r);
+      },
 
-      const setupTimer = () => {
-        if (timer === -1) return;
-        timer = setTimeout(async () => {
-          const data: any = await getTransactionStatus(requested).catch(() => {});
-          processApprove(data);
-          setupTimer();
-        }, 3000);
-      };
+      onSuccess: (r) => {
+        setResult(r);
+        successRedirect(request.args, r);
+      },
 
-      const data: any = await getTransactionStatus(requested).catch(() => setError(true));
-      const query = new URLSearchParams(new URL(data.transaction).search);
-      const params = Object.fromEntries(query.entries());
-      setParams(params);
-
-      processApprove(data);
-      setupTimer();
-
-      const transaction = data.transaction;
-      const endpoint = `wss://${constants.api}/api/v1/web/ws/transaction_approved/${requested}`;
-      socket = new WebSocket(endpoint);
-      socket.onerror = (e) => console.log(e); // TODO
-      socket.onclose = (e) => console.log(e); // TODO
-      socket.onmessage = (e) => {
-        if (e.data == null) return;
-        try {
-          const data = JSON.parse(e.data);
-          processApprove({ ...data, transaction });
-        } catch {}
-      };
+      onApproving: (r) => setResult(r),
+      onRequested: (link, args) => {
+        const url = new URL(link);
+        url.host = window.location.host;
+        url.protocol = window.location.protocol;
+        window.history.replaceState({}, document.title, url);
+        setArgs(parseArguments(args));
+        setLink(link);
+      },
     };
 
-    init();
-    return () => {
-      socket?.close();
-      clearTimeout(timer);
-      timer = -1;
-    };
-  }, [requested, processApprove]);
+    const useProxy = request.isNew && constants.network === "mainnet";
+    const reject = () => setResult({ account_id: "", status: HereProviderStatus.FAILED });
+    const task = useProxy ? proxyProvider(config) : legacyProvider(config);
+    task.catch(reject);
+  }, [request]);
 
   return {
-    deeplink: `${constants.walletConnect}?request_id=${requested}`,
-    params,
-    error,
-    isLoading,
+    isNew: request.isNew,
+    link,
+    result,
+    args,
   };
-};
-
-export const changeSearch = (data: Record<string, string>) => {
-  const search = new URLSearchParams(data);
-  const base = window.location.origin + window.location.pathname + "?" + search;
-  window.history.replaceState({}, document.title, base);
 };

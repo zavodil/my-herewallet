@@ -1,49 +1,14 @@
-import { Transaction } from "near-api-js/lib/transaction";
-import { FC, ReactNode, useState } from "react";
-import { Buffer } from "buffer";
-
+import { FC, ReactNode } from "react";
 import FullPermissions from "../TransactionDetails/FullPermissions";
 import AddPublicKey from "../TransactionDetails/AddPublicKey";
 import FunctionCall from "../TransactionDetails/FunctionCall";
 import TransferCall from "../TransactionDetails/TranserCall";
 import AnyTransaction from "../TransactionDetails/AnyTransaction";
 import SimpleLogin from "../TransactionDetails/SimpleLogin";
-import VerifyOwner from "../TransactionDetails/VerifyOwner";
+import { HereArguments } from "./utilts";
 
-const parseArguments = (params: any) => {
-  const contractId = params["contract_id"];
-  const publicKey = params["public_key"];
-  const message = params["message"];
-  const methodNames = params["methodNames"]?.split(",") ?? [];
-
-  const messages: string[] = params["transactions"]?.split(",") ?? [];
-  const transactions = messages
-    .map((msg) => {
-      try {
-        return Transaction.decode(Buffer.from(msg, "base64"));
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
-    })
-    .filter((v): v is Transaction => v != null);
-
-  return {
-    message,
-    transactions,
-    contractId,
-    publicKey,
-    methodNames,
-  };
-};
-
-export const ViewTransaction: FC<{ children: ReactNode; params: Object }> = ({ children, params }) => {
-  const [args] = useState(() => parseArguments(params));
-  const { message, transactions, methodNames, publicKey, contractId } = args;
-
-  if (message != null) {
-    return <VerifyOwner sidebar={children} message={message} />;
-  }
+export const ViewTransaction: FC<{ children: ReactNode; args: HereArguments }> = ({ children, args }) => {
+  const { transactions, methodNames, publicKey, contractId } = args;
 
   if (transactions.length) {
     const trx = transactions[0];

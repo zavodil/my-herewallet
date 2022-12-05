@@ -2,6 +2,14 @@ import styled, { css } from "styled-components";
 import { Loading } from "../uikit/Loading";
 import { H2, Text } from "../uikit/elements";
 
+export const Container = styled.div`
+  height: 100vh;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const Card = styled.div<{ isLoading?: boolean }>`
   position: relative;
   background: #ebdedc;
@@ -43,7 +51,7 @@ export const Card = styled.div<{ isLoading?: boolean }>`
 
   @media (max-width: 800px) {
     margin-top: 32px;
-    width: calc(100vw - 32px);
+    width: 100%;
     padding: 16px;
     flex-direction: column;
     align-items: flex-start;

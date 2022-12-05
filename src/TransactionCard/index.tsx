@@ -1,14 +1,17 @@
-import { QRCodeSVG } from "qrcode.react";
+import { useEffect, useState } from "react";
+import { HereProviderStatus } from "@here-wallet/near-selector";
+
 import { H2, H3, Loading, Text } from "../uikit";
+import Footer from "../Footer";
+
+import HereQRCode from "./HereQRCode";
 import { ViewTransaction } from "./ViewTransaction";
 import { useSignRequest } from "./useSignRequest";
-import { useEffect, useState } from "react";
-import Footer from "../Footer";
 import { isIOS } from "./utilts";
 import * as S from "./styled";
 
 const TransactionCard = () => {
-  const { isLoading, deeplink, error, params } = useSignRequest();
+  const { result, isNew, link, args } = useSignRequest();
   const [isMobile, setMobile] = useState(false);
 
   useEffect(() => {
@@ -18,37 +21,40 @@ const TransactionCard = () => {
     return () => window.removeEventListener("resize", handler);
   });
 
-  if (params == null) {
+  if (result?.status === HereProviderStatus.FAILED) {
     return (
-      <div
-        style={{
-          height: "100vh",
-          flexDirection: "column",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {error ? (
-          <>
-            <H2 style={{ textAlign: "center" }}>Request not found</H2>
-            <H3>Go back to the web3 app and retry the transaction</H3>
-          </>
-        ) : (
-          <Loading />
-        )}
-      </div>
+      <S.Container>
+        <H2 style={{ textAlign: "center" }}>Something went wrong</H2>
+        <H3>Go back to the web3 app and retry the transaction</H3>
+      </S.Container>
+    );
+  }
+
+  if (result?.status === HereProviderStatus.SUCCESS) {
+    return (
+      <S.Container>
+        <H2 style={{ textAlign: "center" }}>Success</H2>
+        <H3>Go back to the web3 app</H3>
+      </S.Container>
+    );
+  }
+
+  if (args == null) {
+    return (
+      <S.Container>
+        <Loading />
+      </S.Container>
     );
   }
 
   return (
     <>
-      <S.Card isLoading={isLoading}>
-        {isLoading && <Loading />}
-        <ViewTransaction params={params}>
+      <S.Card isLoading={result?.status === HereProviderStatus.APPROVING}>
+        {result?.status === HereProviderStatus.APPROVING && <Loading />}
+        <ViewTransaction args={args}>
           {isMobile === false && (
             <S.ScanCode>
-              <QRCodeSVG value={deeplink} bgColor="transparent" size={200} />
+              <HereQRCode isNew={isNew} value={link} />
               <H2>Approve with QR</H2>
               <Text>Scan this code with your phone's camera to sign</Text>
             </S.ScanCode>
@@ -59,7 +65,7 @@ const TransactionCard = () => {
       {isMobile && (
         <S.Card>
           <S.ScanCode>
-            <QRCodeSVG value={deeplink} bgColor="transparent" size={200} />
+            <HereQRCode isNew={isNew} value={link} />
             <H2>Approve with QR</H2>
             <Text>
               Scan this code with your phone's
@@ -70,7 +76,7 @@ const TransactionCard = () => {
         </S.Card>
       )}
 
-      <Footer deeplink={isMobile && isIOS() ? deeplink : null} />
+      <Footer deeplink={isMobile && isIOS() ? link : null} />
     </>
   );
 };
