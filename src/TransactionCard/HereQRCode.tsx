@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { lightQR, QRCode } from "@here-wallet/near-selector/qrcode-strategy";
+import { darkQR, QRCode } from "@here-wallet/near-selector/qrcode-strategy";
 
 const HereQRCode = ({ value, isNew }: { value: string; isNew: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -8,7 +8,7 @@ const HereQRCode = ({ value, isNew }: { value: string; isNew: boolean }) => {
     if (ref.current == null) return;
 
     const qrcode = new QRCode({
-      ...lightQR,
+      ...darkQR,
       withLogo: isNew,
       ecLevel: isNew ? "H" : "L",
       value,
