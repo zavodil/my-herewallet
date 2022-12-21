@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { proxyProvider } from "@here-wallet/core/here-provider";
 import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
+import { base_decode } from "near-api-js/lib/utils/serialize";
 
 export const useSignRequest = () => {
   const [request, setRequest] = useState<HereProviderRequest | null>(null);
@@ -9,9 +10,18 @@ export const useSignRequest = () => {
 
   const makeRequest = async () => {
     const query = parseQuery();
+    let request = null;
+
+    try {
+      const body = base_decode(query.id!).toString("utf8");
+      request = JSON.parse(body);
+    } catch {}
+
     await proxyProvider({
-      id: query.id,
-      disableCleanupRequest: true,
+      id: request == null ? query.id : undefined,
+      disableCleanupRequest: request == null,
+      transactions: request != null ? request.transactions : undefined,
+      network: request != null ? request.network : undefined,
 
       onFailed: (r) => {
         setResult(r);
