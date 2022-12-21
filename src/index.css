@@ -9,6 +9,10 @@ body {
   background: #f3ebea;
 }
 
+html {
+  background: #f3ebea;
+}
+
 * {
   box-sizing: border-box;
 }

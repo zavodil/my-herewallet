@@ -21,6 +21,7 @@ export const Card = styled.div<{ isLoading?: boolean }>`
   margin: 100px auto 0;
   padding: 40px 50px;
   min-height: 428px;
+  gap: 48px;
 
   display: flex;
   justify-content: space-between;
@@ -52,7 +53,7 @@ export const Card = styled.div<{ isLoading?: boolean }>`
   @media (max-width: 800px) {
     margin-top: 32px;
     width: 100%;
-    padding: 16px;
+    padding: 16px 0;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -64,11 +65,10 @@ export const ScanCode = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-shrink: 0;
 
   ${H2} {
-    margin-top: auto;
     margin-bottom: 16px;
     text-align: center;
   }

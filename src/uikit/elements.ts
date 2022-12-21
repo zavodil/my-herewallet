@@ -49,6 +49,20 @@ export const Text = styled.p`
   font-weight: 500;
   font-size: 16px;
   line-height: 22px;
+  color: #2c3034;
+  margin: 0;
+
+  @media (max-width: 800px) {
+    line-height: 20px;
+  }
+`;
+
+export const SmallText = styled.p`
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
   color: #6b6661;
   margin: 0;
 

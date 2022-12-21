@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HereProviderStatus } from "@here-wallet/core";
 
 import { H2, H3, Loading, Text } from "../uikit";
+import { Connector } from "../Connector";
+import { isIOS } from "../utilts";
 import Footer from "../Footer";
 
-import HereQRCode from "./HereQRCode";
-import { ViewTransaction } from "./ViewTransaction";
 import { useSignRequest } from "./useSignRequest";
-import { isIOS } from "./utilts";
+import HereQRCode from "./HereQRCode";
 import * as S from "./styled";
 
 const TransactionCard = () => {
@@ -51,18 +51,18 @@ const TransactionCard = () => {
     <>
       <S.Card isLoading={result?.status === HereProviderStatus.APPROVING}>
         {result?.status === HereProviderStatus.APPROVING && <Loading />}
-        <ViewTransaction request={request}>
-          {isMobile === false && (
-            <S.ScanCode>
-              <HereQRCode value={link} />
-              <H2>Approve with QR</H2>
-              <Text>Scan this code with your phone's camera to sign</Text>
-            </S.ScanCode>
-          )}
-        </ViewTransaction>
+        <Connector request={request} />
+
+        {isMobile === false && (
+          <S.ScanCode>
+            <HereQRCode value={link} />
+            <H2>Approve with QR</H2>
+            <Text>Scan this code with your phone's camera to sign</Text>
+          </S.ScanCode>
+        )}
       </S.Card>
 
-      {isMobile && (
+      {isIOS() === false && isMobile && (
         <S.Card>
           <S.ScanCode>
             <HereQRCode value={link} />

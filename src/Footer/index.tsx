@@ -1,12 +1,18 @@
+import React from "react";
 import * as S from "./styled";
+
+// @ts-ignore
+import AppStore from "../assets/appstore.svg";
 
 const Footer = ({ deeplink, network }: { deeplink: string | null; network: string }) => {
   const appStore =
-    network === "mainnet" ? "https://appstore.herewallet.app/web" : "https://testflight.apple.com/join/LwvGXAK8";
+    network === "mainnet"
+      ? "https://appstore.herewallet.app/web"
+      : "https://testflight.apple.com/join/LwvGXAK8";
 
   return (
     <S.Footer>
-      <img src="/assets/nearhere.png" alt="nearhere" />
+      <img src={require("../assets/nearhere.png")} alt="nearhere" />
 
       <S.Appstore>
         <S.Flex>
@@ -17,7 +23,7 @@ const Footer = ({ deeplink, network }: { deeplink: string | null; network: strin
           )}
 
           <a href={appStore}>
-            <img src="/assets/appstore.svg" alt="appstore" />
+            <AppStore />
           </a>
         </S.Flex>
 
@@ -27,7 +33,7 @@ const Footer = ({ deeplink, network }: { deeplink: string | null; network: strin
         </p>
       </S.Appstore>
 
-      <img src="/assets/rock.png" alt="rock" />
+      <img src={require("../assets/rock.png")} alt="rock" />
     </S.Footer>
   );
 };

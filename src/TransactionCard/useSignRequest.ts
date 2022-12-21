@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { proxyProvider } from "@here-wallet/core/here-provider";
 import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
+import { proxyProvider } from "@here-wallet/core/build/here-provider";
 import { base_decode } from "near-api-js/lib/utils/serialize";
 
 export const useSignRequest = () => {
