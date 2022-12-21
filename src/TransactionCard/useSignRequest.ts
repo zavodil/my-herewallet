@@ -1,66 +1,69 @@
 import { useEffect, useState } from "react";
-import { proxyProvider } from "@here-wallet/near-selector/here-provider";
-import { legacyProvider } from "@here-wallet/near-selector/legacy-provider";
-import { HereProviderOptions, HereProviderResult, HereProviderStatus } from "@here-wallet/near-selector";
-import { HereArguments, parseArguments } from "./utilts";
-import { failureRedirect, successRedirect } from "./redirects";
-import constants from "../constants";
-
-const getRequest = () => {
-  const search = window.location.search;
-  const args = Object.fromEntries(new URLSearchParams(search).entries());
-
-  if (args.new != null) {
-    const id = window.location.pathname.split("/").pop();
-    return { isNew: true, id, args };
-  }
-
-  return { isNew: false, id: args.request_id, args };
-};
+import { proxyProvider } from "@here-wallet/core/here-provider";
+import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
 
 export const useSignRequest = () => {
-  const [request] = useState(() => getRequest());
-  const [link, setLink] = useState("");
-  const [args, setArgs] = useState<HereArguments | null>(null);
+  const [request, setRequest] = useState<HereProviderRequest | null>(null);
   const [result, setResult] = useState<HereProviderResult | null>(null);
+  const [link, setLink] = useState("");
 
-  useEffect(() => {
-    const config: HereProviderOptions = {
-      id: request.id,
-      args: request.args,
-      network: constants.network as any,
+  const makeRequest = async () => {
+    const query = parseQuery();
+    await proxyProvider({
+      id: query.id,
+      disableCleanupRequest: true,
 
       onFailed: (r) => {
         setResult(r);
-        failureRedirect(request.args, r);
+        query.returnUrl && callRedirect(query.returnUrl, r);
       },
 
       onSuccess: (r) => {
         setResult(r);
-        successRedirect(request.args, r);
+        query.returnUrl && callRedirect(query.returnUrl, r);
       },
 
       onApproving: (r) => setResult(r),
-      onRequested: (link, args) => {
-        const url = new URL(link);
-        url.host = window.location.host;
-        url.protocol = window.location.protocol;
-        window.history.replaceState({}, document.title, url);
-        setArgs(parseArguments(args));
-        setLink(link);
+      onRequested: (request) => {
+        setRequest(request);
+        if (request.network === "testnet") {
+          setLink(`testnet.herewallet://h4n.app/${request.id}`);
+        } else {
+          setLink(`https://h4n.app/${request.id}`);
+        }
       },
-    };
+    });
+  };
 
-    const useProxy = request.isNew && constants.network === "mainnet";
-    const reject = () => setResult({ account_id: "", status: HereProviderStatus.FAILED });
-    const task = useProxy ? proxyProvider(config) : legacyProvider(config);
-    task.catch(reject);
-  }, [request]);
+  useEffect(() => {
+    makeRequest().catch(() => setResult({ account_id: "", status: HereProviderStatus.FAILED }));
+  }, []);
 
   return {
-    isNew: request.isNew,
     link,
     result,
-    args,
+    request,
   };
+};
+
+export const parseQuery = () => {
+  const id = window.location.pathname.split("/").pop();
+  try {
+    const url = new URL(window.location.href).searchParams.get("returnUrl");
+    return { returnUrl: new URL(url!), id };
+  } catch {
+    return { id };
+  }
+};
+
+export const callRedirect = (returnUrl: URL, result: HereProviderResult) => {
+  if (result.account_id) {
+    returnUrl.searchParams.set("account_id", result.account_id);
+  }
+
+  if (result.payload) {
+    returnUrl.searchParams.set("payload", encodeURI(result.payload));
+  }
+
+  window.location.assign(returnUrl);
 };

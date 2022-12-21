@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HereProviderStatus } from "@here-wallet/near-selector";
+import { HereProviderStatus } from "@here-wallet/core";
 
 import { H2, H3, Loading, Text } from "../uikit";
 import Footer from "../Footer";
@@ -11,7 +11,7 @@ import { isIOS } from "./utilts";
 import * as S from "./styled";
 
 const TransactionCard = () => {
-  const { result, isNew, link, args } = useSignRequest();
+  const { result, link, request } = useSignRequest();
   const [isMobile, setMobile] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const TransactionCard = () => {
     );
   }
 
-  if (args == null) {
+  if (request == null) {
     return (
       <S.Container>
         <Loading />
@@ -51,10 +51,10 @@ const TransactionCard = () => {
     <>
       <S.Card isLoading={result?.status === HereProviderStatus.APPROVING}>
         {result?.status === HereProviderStatus.APPROVING && <Loading />}
-        <ViewTransaction args={args}>
+        <ViewTransaction request={request}>
           {isMobile === false && (
             <S.ScanCode>
-              <HereQRCode isNew={isNew} value={link} />
+              <HereQRCode value={link} />
               <H2>Approve with QR</H2>
               <Text>Scan this code with your phone's camera to sign</Text>
             </S.ScanCode>
@@ -65,7 +65,7 @@ const TransactionCard = () => {
       {isMobile && (
         <S.Card>
           <S.ScanCode>
-            <HereQRCode isNew={isNew} value={link} />
+            <HereQRCode value={link} />
             <H2>Approve with QR</H2>
             <Text>
               Scan this code with your phone's
@@ -76,7 +76,7 @@ const TransactionCard = () => {
         </S.Card>
       )}
 
-      <Footer deeplink={isMobile && isIOS() ? link : null} />
+      <Footer deeplink={isMobile && isIOS() ? link : null} network={request.network ?? "mainnet"} />
     </>
   );
 };

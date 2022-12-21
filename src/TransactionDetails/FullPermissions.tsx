@@ -5,7 +5,7 @@ import { ReactComponent as WarningIcon } from "../assets/icons/warning.svg";
 import PermissionsView from "./PermissionsView";
 import * as S from "./styled";
 
-const FullPermissions: FC<{ sidebar: React.ReactNode }> = ({ sidebar }) => {
+const FullPermissions: FC<{ sidebar: React.ReactNode; network: string }> = ({ sidebar, network }) => {
   const [isOpen, setOpen] = useState(false);
 
   if (isOpen) {
@@ -16,7 +16,7 @@ const FullPermissions: FC<{ sidebar: React.ReactNode }> = ({ sidebar }) => {
     <>
       <S.Details>
         <div>
-          <DomainBadge />
+          <DomainBadge network={network} />
           <H1>Add access key</H1>
           <S.PermissionsBadge style={{ background: "#D63E3E" }}>
             <WarningIcon />

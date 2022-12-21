@@ -12,9 +12,10 @@ interface Props {
   method: string;
   receiver: string;
   sidebar: React.ReactNode;
+  network: string;
 }
 
-const ContractCall: FC<Props> = ({ amount, method, receiver, gas, sidebar }) => {
+const ContractCall: FC<Props> = ({ network, amount, method, receiver, gas, sidebar }) => {
   const feeNear = format.formatNearAmount(gas.toString());
   const formatFee = +feeNear < 0.00001 ? "< 0.00001" : feeNear;
 
@@ -26,7 +27,7 @@ const ContractCall: FC<Props> = ({ amount, method, receiver, gas, sidebar }) => 
     <>
       <S.Details>
         <div>
-          <DomainBadge />
+          <DomainBadge network={network} />
           <H1>Call smart contract</H1>
 
           <S.Flexbox style={{ marginTop: 8 }}>

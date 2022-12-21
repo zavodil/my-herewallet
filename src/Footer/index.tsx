@@ -1,7 +1,9 @@
-import constants from "../constants";
 import * as S from "./styled";
 
-const Footer = ({ deeplink }: { deeplink: string | null }) => {
+const Footer = ({ deeplink, network }: { deeplink: string | null; network: string }) => {
+  const appStore =
+    network === "mainnet" ? "https://appstore.herewallet.app/web" : "https://testflight.apple.com/join/LwvGXAK8";
+
   return (
     <S.Footer>
       <img src="/assets/nearhere.png" alt="nearhere" />
@@ -9,12 +11,12 @@ const Footer = ({ deeplink }: { deeplink: string | null }) => {
       <S.Appstore>
         <S.Flex>
           {deeplink && (
-            <S.Button as="a" href={deeplink.replace("https://", `${constants.schema}://`)}>
+            <S.Button as="a" href={deeplink}>
               Open in Here
             </S.Button>
           )}
 
-          <a href={process.env.REACT_APP_APPSTORE}>
+          <a href={appStore}>
             <img src="/assets/appstore.svg" alt="appstore" />
           </a>
         </S.Flex>

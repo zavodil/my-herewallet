@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import TransactionCard from "./TransactionCard";
+import { Loading } from "./uikit";
 
 export const Page = styled.div`
   display: flex;
@@ -12,6 +13,19 @@ export const Page = styled.div`
 `;
 
 function App() {
+  if (window.location.pathname === "/loading") {
+    return (
+      <Page style={{ justifyContent: "center", alignItems: "center", padding: "16px" }}>
+        <Loading />
+        <p style={{ fontSize: "22px", textAlign: "center" }}>
+          Transaction in progress,
+          <br />
+          please do not close this page
+        </p>
+      </Page>
+    );
+  }
+
   return (
     <Page>
       <TransactionCard />

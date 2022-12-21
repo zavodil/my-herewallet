@@ -5,15 +5,16 @@ import * as S from "./styled";
 interface Props {
   actions: string[];
   receiver: string;
+  network: string;
   sidebar: React.ReactNode;
 }
 
-const AnyTransaction: FC<Props> = ({ actions, receiver, sidebar }) => {
+const AnyTransaction: FC<Props> = ({ actions, network, receiver, sidebar }) => {
   return (
     <>
       <S.Details>
         <div>
-          <DomainBadge />
+          <DomainBadge network={network} />
           <H3>Approve Transaction</H3>
 
           <H4 style={{ marginTop: 32 }}>Actions:</H4>

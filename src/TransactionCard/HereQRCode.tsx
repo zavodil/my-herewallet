@@ -1,16 +1,23 @@
 import { useEffect, useRef } from "react";
-import { darkQR, QRCode } from "@here-wallet/near-selector/qrcode-strategy";
+import { darkQR, QRCode } from "@here-wallet/core/qrcode-strategy";
 
-const HereQRCode = ({ value, isNew }: { value: string; isNew: boolean }) => {
+const HereQRCode = ({ value }: { value: string }) => {
   const ref = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (ref.current == null) return;
 
     const qrcode = new QRCode({
       ...darkQR,
-      withLogo: isNew,
-      ecLevel: isNew ? "H" : "L",
+      ecLevel: "H",
+      fill: {
+        type: "linear-gradient",
+        position: [0, 0, 1, 1],
+        colorStops: [
+          [0, "#2C3034"],
+          [0.34, "#4F5256"],
+          [1, "#2C3034"],
+        ],
+      },
       value,
     });
 

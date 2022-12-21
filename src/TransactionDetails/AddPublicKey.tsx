@@ -8,10 +8,11 @@ import * as S from "./styled";
 interface Props {
   contract: string;
   methods: string[];
+  network: string;
   sidebar: React.ReactNode;
 }
 
-const AddPublicKey: FC<Props> = ({ contract, methods, sidebar }) => {
+const AddPublicKey: FC<Props> = ({ contract, methods, network, sidebar }) => {
   const [isOpen, setOpen] = useState(false);
 
   if (isOpen) {
@@ -22,7 +23,7 @@ const AddPublicKey: FC<Props> = ({ contract, methods, sidebar }) => {
     <>
       <S.Details>
         <div>
-          <DomainBadge />
+          <DomainBadge network={network} />
           <H1>Add access key</H1>
           <H2>{contract}</H2>
 

@@ -8,11 +8,12 @@ import * as S from "./styled";
 
 interface Props {
   amount: BN;
+  network: string;
   receiver: string;
   sidebar: React.ReactNode;
 }
 
-const TransferCall: FC<Props> = ({ amount, receiver, sidebar }) => {
+const TransferCall: FC<Props> = ({ amount, receiver, network, sidebar }) => {
   const usd2near = useUsdNear();
   const near = format.formatNearAmount(amount.toString(), 6);
   const usd = (+near * usd2near).toFixed(2);
@@ -21,7 +22,7 @@ const TransferCall: FC<Props> = ({ amount, receiver, sidebar }) => {
     <>
       <S.Details>
         <div>
-          <DomainBadge />
+          <DomainBadge network={network} />
           <H4>Approve Transaction</H4>
           <H0 style={{ marginTop: 12 }}>
             {near} <H2 as="span">NEAR</H2>

@@ -7,9 +7,10 @@ import * as S from "./styled";
 
 interface Props {
   sidebar: React.ReactNode;
+  network: string;
 }
 
-const SimpleLogin: FC<Props> = ({ sidebar }) => {
+const SimpleLogin: FC<Props> = ({ sidebar, network }) => {
   const [isOpen, setOpen] = useState(false);
 
   if (isOpen) {
@@ -20,7 +21,7 @@ const SimpleLogin: FC<Props> = ({ sidebar }) => {
     <>
       <S.Details>
         <div>
-          <DomainBadge />
+          <DomainBadge network={network} />
           <H1>
             Login to
             <br />

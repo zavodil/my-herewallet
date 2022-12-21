@@ -1,4 +1,8 @@
-import React from 'react';
+/* eslint-disable import/first */
+import { Buffer } from "buffer";
+// @ts-ignore
+global.Buffer = Buffer;
+
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";

@@ -5,42 +5,52 @@ import FunctionCall from "../TransactionDetails/FunctionCall";
 import TransferCall from "../TransactionDetails/TranserCall";
 import AnyTransaction from "../TransactionDetails/AnyTransaction";
 import SimpleLogin from "../TransactionDetails/SimpleLogin";
-import { HereArguments } from "./utilts";
+import { HereProviderRequest } from "@here-wallet/core";
+import { BN } from "bn.js";
 
-export const ViewTransaction: FC<{ children: ReactNode; args: HereArguments }> = ({ children, args }) => {
-  const { transactions, methodNames, publicKey, contractId } = args;
-
-  if (transactions.length) {
-    const trx = transactions[0];
+export const ViewTransaction: FC<{ children: ReactNode; request: HereProviderRequest }> = ({ children, request }) => {
+  if (request.transactions.length) {
+    const network = request.network ?? "mainnet";
+    const trx = request.transactions[0];
     const action = trx.actions[0];
+    const receiver = trx.receiverId ?? "Your wallet";
 
-    if (action.enum === "functionCall") {
+    if (action.type === "FunctionCall") {
       return (
         <FunctionCall
-          receiver={trx.receiverId}
-          amount={action.functionCall.deposit}
-          gas={action.functionCall.gas}
-          method={action.functionCall.methodName}
+          network={network}
+          receiver={receiver}
+          amount={new BN(action.params.deposit)}
+          gas={new BN(action.params.gas)}
+          method={action.params.methodName}
           sidebar={children}
         />
       );
     }
 
-    if (action.enum === "transfer") {
-      return <TransferCall receiver={trx.receiverId} amount={action.transfer.deposit} sidebar={children} />;
+    if (action.type === "AddKey") {
+      if (action.params.accessKey.permission === "FullAccess") {
+        return <FullPermissions network={network} sidebar={children} />;
+      }
+      return (
+        <AddPublicKey
+          network={network}
+          contract={action.params.accessKey.permission.receiverId}
+          methods={action.params.accessKey.permission.methodNames ?? []}
+          sidebar={children}
+        />
+      );
     }
 
-    const actions = trx.actions.map((act) => act.enum);
-    return <AnyTransaction receiver={trx.receiverId} actions={actions} sidebar={children} />;
+    if (action.type === "Transfer") {
+      return (
+        <TransferCall network={network} receiver={receiver} amount={new BN(action.params.deposit)} sidebar={children} />
+      );
+    }
+
+    const actions = trx.actions.map((act) => act.type);
+    return <AnyTransaction network={network} receiver={receiver} actions={actions} sidebar={children} />;
   }
 
-  if (contractId != null && publicKey != null) {
-    return <AddPublicKey contract={contractId} methods={methodNames} sidebar={children} />;
-  }
-
-  if (publicKey != null) {
-    return <FullPermissions sidebar={children} />;
-  }
-
-  return <SimpleLogin sidebar={children} />;
+  return <SimpleLogin network="mainnet" sidebar={children} />;
 };
