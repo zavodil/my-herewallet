@@ -31,7 +31,7 @@ export const nearToken = {
 };
 
 export const fetchTokens = async () => {
-  const res = await fetch(`https://api.herewallet.app/api/v1/user/fts?near_account_id=mydev.near`);
+  const res = await fetch(`https://api.herewallet.app/api/v1/rate/fts`);
   const { fts } = await res.json();
   return fts;
 };

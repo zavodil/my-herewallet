@@ -9,10 +9,17 @@ import Footer from "../Footer";
 import { useSignRequest } from "./useSignRequest";
 import HereQRCode from "./HereQRCode";
 import * as S from "./styled";
+import { colors } from "../uikit/theme";
 
 const TransactionCard = () => {
   const { result, link, request } = useSignRequest();
   const [isMobile, setMobile] = useState(false);
+  const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
+
+  useEffect(() => {
+    if (useAppclip) localStorage.removeItem("disableAppClip");
+    else localStorage.setItem("disableAppClip", "1");
+  }, [useAppclip]);
 
   useEffect(() => {
     const handler = () => setMobile(window.innerWidth <= 800);
@@ -55,9 +62,17 @@ const TransactionCard = () => {
 
         {isMobile === false && (
           <S.ScanCode>
-            <HereQRCode value={link} />
+            <HereQRCode useAppclip={useAppclip} value={link} />
             <H2>Approve with QR</H2>
-            <Text>Scan this code with your phone's camera to sign</Text>
+            <Text>
+              Scan this code with your phone's camera to sign.{" "}
+              <span
+                onClick={() => setAppclip((v) => !v)}
+                style={{ color: colors.pink, cursor: "pointer" }}
+              >
+                {useAppclip ? "Does't work?" : "Use AppClip"}
+              </span>
+            </Text>
           </S.ScanCode>
         )}
       </S.Card>
@@ -65,12 +80,18 @@ const TransactionCard = () => {
       {isIOS() === false && isMobile && (
         <S.Card>
           <S.ScanCode>
-            <HereQRCode value={link} />
+            <HereQRCode useAppclip={useAppclip} value={link} />
             <H2>Approve with QR</H2>
             <Text>
               Scan this code with your phone's
               <br />
-              camera to sign
+              camera to sign.{" "}
+              <span
+                onClick={() => setAppclip((v) => !v)}
+                style={{ color: colors.pink, cursor: "pointer" }}
+              >
+                {useAppclip ? "Does't work?" : "Use AppClip"}
+              </span>
             </Text>
           </S.ScanCode>
         </S.Card>

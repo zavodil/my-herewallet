@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@here-wallet/core": "^1.1.1",
+    "@here-wallet/core": "^1.2.0",
     "bn.js": "^5.2.1",
     "near-api-js": "^0.44.2",
     "react": "^18.2.0",

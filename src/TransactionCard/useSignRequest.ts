@@ -10,18 +10,12 @@ export const useSignRequest = () => {
 
   const makeRequest = async () => {
     const query = parseQuery();
-    let request = null;
-
-    try {
-      const body = base_decode(query.id!).toString("utf8");
-      request = JSON.parse(body);
-    } catch {}
+    if (query.request == null && query.id == null) throw Error();
 
     await proxyProvider({
-      id: request == null ? query.id : undefined,
+      id: query.id,
+      request: query.request,
       disableCleanupRequest: request == null,
-      transactions: request != null ? request.transactions : undefined,
-      network: request != null ? request.network : undefined,
 
       onFailed: (r) => {
         setResult(r);
@@ -34,12 +28,17 @@ export const useSignRequest = () => {
       },
 
       onApproving: (r) => setResult(r),
-      onRequested: (request) => {
+      onRequested: (id, request) => {
+        if (request.type == null) request.type = "call";
         setRequest(request);
+
+        const url = new URL(`${window.location.origin}/${request.type}/${id}`);
+        window.history.replaceState(null, "", url);
+
         if (request.network === "testnet") {
-          setLink(`testnet.herewallet://h4n.app/${request.id}`);
+          setLink(`testnet.herewallet://h4n.app/${id}`);
         } else {
-          setLink(`https://h4n.app/${request.id}`);
+          setLink(`https://h4n.app/${id}`);
         }
       },
     });
@@ -56,13 +55,50 @@ export const useSignRequest = () => {
   };
 };
 
-export const parseQuery = () => {
-  const id = window.location.pathname.split("/").pop();
+interface HereRoute {
+  id?: string;
+  request?: HereProviderRequest;
+  returnUrl?: URL;
+}
+
+export const parseRequest = (data: string, type?: "call" | "sign"): HereRoute => {
+  try {
+    const request = JSON.parse(base_decode(data).toString("utf8"));
+    if (type != null) request.type = type;
+    return { request };
+  } catch {
+    return { id: data };
+  }
+};
+
+/**
+ * 1) h4n.app/ID
+ * 2) h4n.app/call/ID
+ * 3) h4n.app/sign/ID
+ * 4) h4n.app/call/{ transactions, network }
+ * 5) h4n.app/sign/{ receiver, network, message, nonce }
+ */
+export const parseQuery = (): HereRoute => {
+  const [, route, id] = window.location.pathname.split("/");
+
+  let returnUrl: URL;
   try {
     const url = new URL(window.location.href).searchParams.get("returnUrl");
-    return { returnUrl: new URL(url!), id };
-  } catch {
-    return { id };
+    returnUrl = new URL(url!);
+  } catch {}
+
+  // Lagacy
+  if (id == null) {
+    const root = parseRequest(route);
+    if (root.id != null) return { returnUrl, id: root.id };
+  }
+
+  if (route === "approve" || route === "call") {
+    return { returnUrl, ...parseRequest(id, "call") };
+  }
+
+  if (route === "sign") {
+    return { returnUrl, ...parseRequest(id, "sign") };
   }
 };
 
@@ -71,8 +107,12 @@ export const callRedirect = (returnUrl: URL, result: HereProviderResult) => {
     returnUrl.searchParams.set("account_id", result.account_id);
   }
 
-  if (result.payload) {
-    returnUrl.searchParams.set("payload", encodeURI(result.payload));
+  if (result.status === HereProviderStatus.SUCCESS) {
+    returnUrl.searchParams.set("success", encodeURI(result.payload ?? ""));
+  }
+
+  if (result.status === HereProviderStatus.FAILED) {
+    returnUrl.searchParams.set("failed", encodeURI(result.payload ?? ""));
   }
 
   window.location.assign(returnUrl);
