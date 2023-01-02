@@ -4,7 +4,11 @@ export const Footer = styled.footer`
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  padding: 0 16px;
   padding-bottom: 56px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 
   > img:first-child {
     width: 146px;

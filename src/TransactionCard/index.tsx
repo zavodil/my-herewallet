@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { HereProviderStatus } from "@here-wallet/core";
+import { View } from "react-native";
 
+import { colors } from "../uikit/theme";
 import { H2, H3, Loading, Text } from "../uikit";
 import { Connector } from "../Connector";
 import { isIOS } from "../utilts";
@@ -9,7 +11,8 @@ import Footer from "../Footer";
 import { useSignRequest } from "./useSignRequest";
 import HereQRCode from "./HereQRCode";
 import * as S from "./styled";
-import { colors } from "../uikit/theme";
+
+const Nobr = (p: any) => <span {...p} style={{ whiteSpace: "nowrap" }} />;
 
 const TransactionCard = () => {
   const { result, link, request } = useSignRequest();
@@ -32,7 +35,7 @@ const TransactionCard = () => {
     return (
       <S.Container>
         <H2 style={{ textAlign: "center" }}>Something went wrong</H2>
-        <H3>Go back to the web3 app and retry the transaction</H3>
+        <H3 style={{ textAlign: "center" }}>Go back to the web3 app and retry the transaction</H3>
       </S.Container>
     );
   }
@@ -56,47 +59,64 @@ const TransactionCard = () => {
 
   return (
     <>
-      <S.Card isLoading={result?.status === HereProviderStatus.APPROVING}>
-        {result?.status === HereProviderStatus.APPROVING && <Loading />}
-        <Connector request={request} />
+      <S.Wrap>
+        <View
+          style={{
+            width: "fit-content",
+            backgroundColor: colors.orange,
+            paddingHorizontal: 12,
+            borderRadius: 16,
+            marginBottom: 16,
+            marginTop: 32,
+            padding: 6,
+          }}
+        >
+          <Text style={{ fontWeight: 700 }}>
+            If something doesn't work, <Nobr>update the app to the latest version</Nobr>
+          </Text>
+        </View>
 
-        {isMobile === false && (
-          <S.ScanCode>
-            <HereQRCode useAppclip={useAppclip} value={link} />
-            <H2>Approve with QR</H2>
-            <Text>
-              Scan this code with your phone's camera to sign.{" "}
-              <span
-                onClick={() => setAppclip((v) => !v)}
-                style={{ color: colors.pink, cursor: "pointer" }}
-              >
-                {useAppclip ? "Does't work?" : "Use AppClip"}
-              </span>
-            </Text>
-          </S.ScanCode>
-        )}
-      </S.Card>
+        <S.Card isLoading={result?.status === HereProviderStatus.APPROVING}>
+          {result?.status === HereProviderStatus.APPROVING && <Loading />}
+          <Connector request={request} />
 
-      {isIOS() === false && isMobile && (
-        <S.Card>
-          <S.ScanCode>
-            <HereQRCode useAppclip={useAppclip} value={link} />
-            <H2>Approve with QR</H2>
-            <Text>
-              Scan this code with your phone's
-              <br />
-              camera to sign.{" "}
-              <span
-                onClick={() => setAppclip((v) => !v)}
-                style={{ color: colors.pink, cursor: "pointer" }}
-              >
-                {useAppclip ? "Does't work?" : "Use AppClip"}
-              </span>
-            </Text>
-          </S.ScanCode>
+          {isMobile === false && (
+            <S.ScanCode>
+              <HereQRCode useAppclip={useAppclip} value={link} />
+              <H2>Approve with QR</H2>
+              <Text>
+                Scan this code with your phone's camera to sign.{" "}
+                <span
+                  onClick={() => setAppclip((v) => !v)}
+                  style={{ color: colors.pink, cursor: "pointer" }}
+                >
+                  {useAppclip ? "Does't work?" : "Use AppClip"}
+                </span>
+              </Text>
+            </S.ScanCode>
+          )}
         </S.Card>
-      )}
 
+        {isIOS() === false && isMobile && (
+          <S.Card>
+            <S.ScanCode>
+              <HereQRCode useAppclip={useAppclip} value={link} />
+              <H2>Approve with QR</H2>
+              <Text>
+                Scan this code with your phone's
+                <br />
+                camera to sign.{" "}
+                <span
+                  onClick={() => setAppclip((v) => !v)}
+                  style={{ color: colors.pink, cursor: "pointer" }}
+                >
+                  {useAppclip ? "Does't work?" : "Use AppClip"}
+                </span>
+              </Text>
+            </S.ScanCode>
+          </S.Card>
+        )}
+      </S.Wrap>
       <Footer deeplink={isMobile && isIOS() ? link : null} network={request.network ?? "mainnet"} />
     </>
   );

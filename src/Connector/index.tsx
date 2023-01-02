@@ -39,14 +39,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
 
   if (request.type === "sign") {
     return (
-      <View
-        style={{
-          alignSelf: "stretch",
-          paddingHorizontal: 16,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <View style={[styles.container, { alignItems: "center", justifyContent: "center" }]}>
         <H2>Sign message</H2>
         <Text style={{ marginTop: 16, textAlign: "center" }}>
           The app <span style={{ color: colors.pink }}>{request.receiver}</span>
