@@ -8,7 +8,7 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 // @ts-ignore
 import ArrowLeftIcon from "../assets/icons/arrow-left.svg";
 import { fetchTokens, FtToken, nearToken } from "./TokensStorage";
-import { H1, H2, Text } from "../uikit";
+import { H2, Text } from "../uikit";
 import { colors } from "../uikit/theme";
 
 export const Connector = ({ request }: { request: HereProviderRequest }) => {
@@ -99,7 +99,14 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
         >
           {request.transactions.flatMap((trx, i) =>
             trx.actions.map((action, j) => (
-              <View key={`${i}_${j}`} style={{ width, paddingHorizontal: 16 }}>
+              <View
+                key={`${i}_${j}`}
+                style={{
+                  width: width - 32,
+                  marginHorizontal: 16,
+                  overflow: "hidden",
+                }}
+              >
                 <ActionView receiver={trx.receiverId ?? "Your wallet"} action={action} tokens={tokens} />
               </View>
             ))
@@ -113,7 +120,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "space-between",
-    alignSelf: "stretch",
+    width: "100%",
     flex: 1,
   },
 });

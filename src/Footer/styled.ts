@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const Footer = styled.footer`
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  flex-direction: column;
   justify-content: center;
   padding: 0 16px;
   padding-bottom: 56px;
@@ -39,7 +40,7 @@ export const Footer = styled.footer`
 
 export const Flex = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 68px;
@@ -70,26 +71,17 @@ export const Appstore = styled.div`
     color: #6b6661;
 
     margin: 0;
-    margin-top: 16px;
+    margin-top: 8px;
+  }
+
+  a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   @media (max-width: 800px) {
     width: 100%;
   }
-`;
-
-export const Button = styled.button`
-  color: #fff;
-  text-decoration: none;
-  align-items: center;
-  justify-content: center;
-  background: #2c3034;
-  display: flex;
-  height: 46px;
-  flex-shrink: 0;
-  flex: 1;
-
-  font-weight: bolder;
-  border-radius: 8px;
-  width: 160px;
 `;

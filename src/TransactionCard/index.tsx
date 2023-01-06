@@ -3,7 +3,7 @@ import { HereProviderStatus } from "@here-wallet/core";
 import { View } from "react-native";
 
 import { colors } from "../uikit/theme";
-import { H2, H3, Loading, Text } from "../uikit";
+import { ActionButton, H2, H3, Loading, Text } from "../uikit";
 import { Connector } from "../Connector";
 import { isIOS } from "../utilts";
 import Footer from "../Footer";
@@ -18,6 +18,10 @@ const TransactionCard = () => {
   const { result, link, request } = useSignRequest();
   const [isMobile, setMobile] = useState(false);
   const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
+
+  const handleOpen = () => {
+    window.location.assign(link);
+  };
 
   useEffect(() => {
     if (useAppclip) localStorage.removeItem("disableAppClip");
@@ -90,7 +94,7 @@ const TransactionCard = () => {
                   onClick={() => setAppclip((v) => !v)}
                   style={{ color: colors.pink, cursor: "pointer" }}
                 >
-                  {useAppclip ? "Does't work?" : "Use AppClip"}
+                  {useAppclip ? "Doesn't work?" : "Use AppClip"}
                 </span>
               </Text>
             </S.ScanCode>
@@ -110,14 +114,16 @@ const TransactionCard = () => {
                   onClick={() => setAppclip((v) => !v)}
                   style={{ color: colors.pink, cursor: "pointer" }}
                 >
-                  {useAppclip ? "Does't work?" : "Use AppClip"}
+                  {useAppclip ? "Doesn't work?" : "Use AppClip"}
                 </span>
               </Text>
             </S.ScanCode>
           </S.Card>
         )}
+
+        {isMobile && isIOS() && <ActionButton onClick={handleOpen}>Tap to approve in HERE</ActionButton>}
       </S.Wrap>
-      <Footer deeplink={isMobile && isIOS() ? link : null} network={request.network ?? "mainnet"} />
+      <Footer network={request.network ?? "mainnet"} />
     </>
   );
 };

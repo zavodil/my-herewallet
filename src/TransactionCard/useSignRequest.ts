@@ -9,7 +9,8 @@ export const useSignRequest = () => {
   const [link, setLink] = useState("");
 
   const makeRequest = async () => {
-    const query = parseQuery();
+    const query = await parseQuery();
+    if (query == null) throw Error();
     if (query.request == null && query.id == null) throw Error();
 
     await proxyProvider({
@@ -38,7 +39,7 @@ export const useSignRequest = () => {
         if (request.network === "testnet") {
           setLink(`testnet.herewallet://h4n.app/${id}`);
         } else {
-          setLink(`https://h4n.app/${id}`);
+          setLink(`herewallet://h4n.app/${id}`);
         }
       },
     });
@@ -72,13 +73,14 @@ export const parseRequest = (data: string, type?: "call" | "sign"): HereRoute =>
 };
 
 /**
- * 1) h4n.app/ID
- * 2) h4n.app/call/ID
- * 3) h4n.app/sign/ID
- * 4) h4n.app/call/{ transactions, network }
- * 5) h4n.app/sign/{ receiver, network, message, nonce }
+ * 1) my.herewallet/ID
+ * 2) my.herewallet/call/ID
+ * 3) my.herewallet/sign/ID
+ * 4) my.herewallet/g/TEMPLATE
+ * 5) my.herewallet/call/base58({ transactions, network })
+ * 6) my.herewallet/sign/base58({ receiver, network, message, nonce })
  */
-export const parseQuery = (): HereRoute => {
+export const parseQuery = async (): Promise<HereRoute | null> => {
   const [, route, id] = window.location.pathname.split("/");
 
   let returnUrl: URL;
@@ -93,6 +95,13 @@ export const parseQuery = (): HereRoute => {
     if (root.id != null) return { returnUrl, id: root.id };
   }
 
+  if (route === "g") {
+    const res = await fetch(`https://api.herewallet.app/api/v1/dapp/generate_transaction/${id}`);
+    const { data } = await res.json();
+    if (data == null) return null;
+    return { returnUrl, ...parseRequest(data, "call") };
+  }
+
   if (route === "approve" || route === "call") {
     return { returnUrl, ...parseRequest(id, "call") };
   }
@@ -100,6 +109,8 @@ export const parseQuery = (): HereRoute => {
   if (route === "sign") {
     return { returnUrl, ...parseRequest(id, "sign") };
   }
+
+  return null;
 };
 
 export const callRedirect = (returnUrl: URL, result: HereProviderResult) => {

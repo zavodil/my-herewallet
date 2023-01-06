@@ -1,5 +1,31 @@
 import styled from "styled-components";
 
+
+export const ActionButton = styled.button`
+  color: #fff;
+  border: none;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  background: #2c3034;
+  flex-shrink: 0;
+  width: 100%;
+  height: 56px;
+  cursor: pointer;
+
+  font-family: "Manrope";
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  width: calc(100% + 8px);
+
+  display: flex;
+  font-weight: bolder;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  margin-top: -8px;
+`;
+
 export const Button = styled.button`
   border: none;
   background: transparent;

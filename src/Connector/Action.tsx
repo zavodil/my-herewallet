@@ -91,8 +91,8 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
             </H2>
 
             <View style={styles.row}>
-              <Text>Contract</Text>
-              <Text style={{ color: colors.pink }}>{receiver}</Text>
+              <Text style={{ marginRight: 8 }}>Contract</Text>
+              <Text style={{ ...styles.trim, color: colors.pink } as any}>{receiver}</Text>
             </View>
 
             <View style={styles.row}>
@@ -217,12 +217,16 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
           </SmallText>
           <View style={[styles.row]}>
             <Text>From</Text>
-            <View style={{ alignItems: "flex-end" }}>
-              <Text>NEAR Balance</Text>
-              <SmallText style={{ color: colors.blackSecondary }}>
-                ${(nearToken.amount * nearToken.usd_rate).toFixed(6)}
-              </SmallText>
-            </View>
+            {nearToken.amount ? (
+              <View style={{ alignItems: "flex-end" }}>
+                <Text>NEAR Balance</Text>
+                <SmallText style={{ color: colors.blackSecondary }}>
+                  ${(nearToken.amount * nearToken.usd_rate).toFixed(6)}
+                </SmallText>
+              </View>
+            ) : (
+              <Text>Your wallet</Text>
+            )}
           </View>
         </View>
       );
@@ -241,12 +245,16 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
 
           <View style={[styles.row]}>
             <Text>From</Text>
-            <View style={{ alignItems: "flex-end" }}>
-              <Text>NEAR Balance</Text>
-              <SmallText style={{ color: colors.blackSecondary }}>
-                ${(nearToken.amount * nearToken.usd_rate).toFixed(6)}
-              </SmallText>
-            </View>
+            {nearToken.amount ? (
+              <View style={{ alignItems: "flex-end" }}>
+                <Text>NEAR Balance</Text>
+                <SmallText style={{ color: colors.blackSecondary }}>
+                  ${(nearToken.amount * nearToken.usd_rate).toFixed(6)}
+                </SmallText>
+              </View>
+            ) : (
+              <Text>Your wallet</Text>
+            )}
           </View>
           <View style={styles.row}>
             <Text>To</Text>
@@ -276,5 +284,10 @@ const styles = StyleSheet.create({
     height: 142,
     backgroundColor: colors.blackPrimary,
     padding: 8,
+  },
+  trim: {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
 });

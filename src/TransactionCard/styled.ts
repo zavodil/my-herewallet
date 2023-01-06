@@ -8,6 +8,7 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 `;
 
 export const Wrap = styled.div`
@@ -16,6 +17,7 @@ export const Wrap = styled.div`
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
+  padding-right: 20px;
 `;
 
 export const Card = styled.div<{ isLoading?: boolean }>`
@@ -26,7 +28,7 @@ export const Card = styled.div<{ isLoading?: boolean }>`
   border-radius: 16px;
 
   width: 794px;
-  margin: 0 auto 32px;
+  margin: 0 0 28px 0;
   padding: 40px 50px;
   min-height: 428px;
   gap: 48px;
@@ -59,8 +61,8 @@ export const Card = styled.div<{ isLoading?: boolean }>`
   }
 
   @media (max-width: 800px) {
-    width: 100%;
-    padding: 16px;
+    width: calc(100vw - 32px);
+    padding: 16px 0;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;

@@ -9,7 +9,7 @@ export const Page = styled.div`
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
   width: 100%;
 `;
 

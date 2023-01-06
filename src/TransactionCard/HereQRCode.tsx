@@ -6,6 +6,11 @@ const HereQRCode = ({ value, useAppclip }: { value: string; useAppclip: boolean 
   useEffect(() => {
     if (ref.current == null) return;
 
+    const url = new URL(value);
+    if (useAppclip) {
+      url.protocol = "https";
+    }
+
     const qrcode = new QRCode({
       ...darkQR,
       ecLevel: "H",
@@ -18,7 +23,7 @@ const HereQRCode = ({ value, useAppclip }: { value: string; useAppclip: boolean 
           [1, "#2C3034"],
         ],
       },
-      value: useAppclip ? value : value.replace("https://", "herewallet://"),
+      value: url.toString(),
     });
 
     const root = ref.current;
