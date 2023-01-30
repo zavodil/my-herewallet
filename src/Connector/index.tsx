@@ -8,10 +8,11 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 // @ts-ignore
 import ArrowLeftIcon from "../assets/icons/arrow-left.svg";
 import { fetchTokens, FtToken, nearToken } from "./TokensStorage";
-import { H2, Text } from "../uikit";
+import { HereImportAccounts } from "../TransactionCard/useSignRequest";
 import { colors } from "../uikit/theme";
+import { H2, Text } from "../uikit";
 
-export const Connector = ({ request }: { request: HereProviderRequest }) => {
+export const Connector = ({ request }: { request: HereProviderRequest | HereImportAccounts }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [tokens, setTokens] = useState<FtToken[]>([nearToken]);
   const [width, setWidth] = useState(0);
@@ -36,6 +37,20 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
       animated: true,
     });
   };
+
+  // @ts-ignore
+  if (request.type === "import") {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <H2>Import accounts</H2>
+        <Text style={{ marginTop: 16, textAlign: "center" }}>
+          You are trying to import accounts
+          <br />
+          from another wallet to HERE Wallet
+        </Text>
+      </View>
+    );
+  }
 
   if (request.type === "sign") {
     return (

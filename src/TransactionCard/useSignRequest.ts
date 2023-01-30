@@ -4,7 +4,7 @@ import { proxyProvider } from "@here-wallet/core/build/here-provider";
 import { base_decode } from "near-api-js/lib/utils/serialize";
 
 export const useSignRequest = () => {
-  const [request, setRequest] = useState<HereProviderRequest | null>(null);
+  const [request, setRequest] = useState<HereProviderRequest | HereImportAccounts | null>(null);
   const [result, setResult] = useState<HereProviderResult | null>(null);
   const [link, setLink] = useState("");
 
@@ -15,6 +15,7 @@ export const useSignRequest = () => {
 
     await proxyProvider({
       id: query.id,
+      // @ts-ignore
       request: query.request,
       disableCleanupRequest: request == null,
 
@@ -56,10 +57,16 @@ export const useSignRequest = () => {
   };
 };
 
+export declare type HereImportAccounts = {
+  network?: string;
+  keystore: string;
+  type: "import";
+};
+
 interface HereRoute {
   id?: string;
-  request?: HereProviderRequest;
   returnUrl?: URL;
+  request?: HereProviderRequest | HereImportAccounts;
 }
 
 export const parseRequest = (data: string, type?: "call" | "sign"): HereRoute => {
@@ -82,12 +89,23 @@ export const parseRequest = (data: string, type?: "call" | "sign"): HereRoute =>
  */
 export const parseQuery = async (): Promise<HereRoute | null> => {
   const [, route, id] = window.location.pathname.split("/");
+  const query = new URL(window.location.href).searchParams;
 
   let returnUrl: URL;
   try {
-    const url = new URL(window.location.href).searchParams.get("returnUrl");
-    returnUrl = new URL(url!);
+    returnUrl = new URL(query.get("returnUrl")!);
   } catch {}
+
+  if (route === "import") {
+    return {
+      returnUrl,
+      request: {
+        type: "import",
+        keystore: query.get("keystore"),
+        network: query.get("network"),
+      },
+    };
+  }
 
   // Lagacy
   if (id == null) {

@@ -3,7 +3,7 @@ import { HereProviderStatus } from "@here-wallet/core";
 import { View } from "react-native";
 
 import { colors } from "../uikit/theme";
-import { ActionButton, H2, H3, Loading, Text } from "../uikit";
+import { ActionButton, H1, H2, H3, Loading, Text } from "../uikit";
 import { Connector } from "../Connector";
 import { isIOS } from "../utilts";
 import Footer from "../Footer";
@@ -61,6 +61,12 @@ const TransactionCard = () => {
     );
   }
 
+  const toggleAppClipWidget = (
+    <span onClick={() => setAppclip((v) => !v)} style={{ color: colors.pink, cursor: "pointer" }}>
+      {useAppclip ? "Doesn't work?" : "Use AppClip"}
+    </span>
+  );
+
   return (
     <>
       <S.Wrap>
@@ -86,16 +92,15 @@ const TransactionCard = () => {
 
           {isMobile === false && (
             <S.ScanCode>
-              <HereQRCode useAppclip={useAppclip} value={link} />
+              <HereQRCode
+                useAppclip={useAppclip && request.type !== "import"}
+                network={request.network}
+                value={link}
+              />
               <H2>Approve with QR</H2>
               <Text>
                 Scan this code with your phone's camera to sign.{" "}
-                <span
-                  onClick={() => setAppclip((v) => !v)}
-                  style={{ color: colors.pink, cursor: "pointer" }}
-                >
-                  {useAppclip ? "Doesn't work?" : "Use AppClip"}
-                </span>
+                {request.type !== "import" && toggleAppClipWidget}
               </Text>
             </S.ScanCode>
           )}
@@ -104,18 +109,16 @@ const TransactionCard = () => {
         {isIOS() === false && isMobile && (
           <S.Card>
             <S.ScanCode>
-              <HereQRCode useAppclip={useAppclip} value={link} />
+              <HereQRCode
+                useAppclip={useAppclip && request.type !== "import"}
+                network={request.network}
+                value={link}
+              />
               <H2>Approve with QR</H2>
               <Text>
                 Scan this code with your phone's
                 <br />
-                camera to sign.{" "}
-                <span
-                  onClick={() => setAppclip((v) => !v)}
-                  style={{ color: colors.pink, cursor: "pointer" }}
-                >
-                  {useAppclip ? "Doesn't work?" : "Use AppClip"}
-                </span>
+                camera to sign. {request.type !== "import" && toggleAppClipWidget}
               </Text>
             </S.ScanCode>
           </S.Card>

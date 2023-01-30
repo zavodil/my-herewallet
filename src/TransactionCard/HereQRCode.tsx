@@ -1,13 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import { darkQR, QRCode } from "@here-wallet/core/build/qrcode-strategy";
 
-const HereQRCode = ({ value, useAppclip }: { value: string; useAppclip: boolean }) => {
+const HereQRCode = ({
+  value,
+  useAppclip,
+  network,
+}: {
+  value: string;
+  network: string;
+  useAppclip: boolean;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (ref.current == null) return;
 
     const url = new URL(value);
-    if (useAppclip) {
+    if (useAppclip && network !== "testnet") {
       url.protocol = "https";
     }
 
