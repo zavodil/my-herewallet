@@ -26,7 +26,8 @@ export const useSignRequest = () => {
 
       onSuccess: (r) => {
         setResult(r);
-        query.returnUrl && callRedirect(query.returnUrl, r);
+        if (query.returnUrl) callRedirect(query.returnUrl, r);
+        if (query.request.type === "import") window.close();
       },
 
       onApproving: (r) => setResult(r),
@@ -98,6 +99,7 @@ export const parseQuery = async (): Promise<HereRoute | null> => {
   } catch {}
 
   if (route === "import") {
+    if (id) return { returnUrl, id };
     return {
       returnUrl,
       request: {
