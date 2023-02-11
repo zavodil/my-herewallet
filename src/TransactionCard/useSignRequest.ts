@@ -89,7 +89,8 @@ export const parseRequest = (data: string, type?: "call" | "sign"): HereRoute =>
  */
 export const parseQuery = async (): Promise<HereRoute | null> => {
   const [, route, id] = window.location.pathname.split("/");
-  const query = new URL(window.location.href).searchParams;
+  const url = new URL(window.location.href);
+  const query = url.searchParams;
 
   let returnUrl: URL;
   try {
@@ -101,7 +102,7 @@ export const parseQuery = async (): Promise<HereRoute | null> => {
       returnUrl,
       request: {
         type: "import",
-        keystore: query.get("keystore"),
+        keystore: url.hash.slice(1),
         network: query.get("network"),
       },
     };
