@@ -3,22 +3,27 @@ import * as S from "./styled";
 
 // @ts-ignore
 import AppStore from "../assets/appstore.svg";
+// @ts-ignore
+import GooglePlay from "../assets/googleplay.svg";
+import { isAndroid, isIOS } from "../utilts";
 
-export const appStore = (network: string) => {
-  return network === "mainnet"
-    ? "https://appstore.herewallet.app/web"
-    : "https://testflight.apple.com/join/LwvGXAK8";
-};
-
-const Footer = ({ network }: { network: string }) => {
+const Footer = () => {
   return (
     <S.Footer>
       <img src={require("../assets/nearhere.png")} alt="nearhere" />
 
       <S.Appstore>
-        <a href={appStore(network)}>
-          <AppStore />
-        </a>
+        {isAndroid() && (
+          <a href="https://play.google.com/store/apps/details?id=com.herewallet">
+            <GooglePlay style={{ height: 48, marginBottom: 8 }} />
+          </a>
+        )}
+
+        {isIOS() && (
+          <a href="https://appstore.herewallet.app/web">
+            <AppStore />
+          </a>
+        )}
 
         <p>
           Don’t have an account yet? Visit&nbsp;

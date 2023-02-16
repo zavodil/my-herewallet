@@ -31,6 +31,7 @@ export const Card = styled.div<{ isLoading?: boolean }>`
   margin: 0 0 28px 0;
   padding: 40px 50px;
   min-height: 428px;
+  margin-top: 48px;
   gap: 48px;
 
   display: flex;
@@ -63,6 +64,7 @@ export const Card = styled.div<{ isLoading?: boolean }>`
   @media (max-width: 800px) {
     width: calc(100vw - 32px);
     padding: 16px 0;
+    margin-top: 16px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;

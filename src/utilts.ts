@@ -36,6 +36,8 @@ export function formatAmount(balance: string, nominal = 24, fracDigits = 6) {
   return trimTrailingZeroes(`${formatWithCommas(wholeStr)}.${fractionStr}`);
 }
 
+export const isAndroid = () => navigator.userAgent.toLowerCase().indexOf("android") > -1; 
+
 export const isIOS = () => {
   return (
     ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) ||

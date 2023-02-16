@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { HereProviderStatus } from "@here-wallet/core";
-import { View } from "react-native";
 
 import { colors } from "../uikit/theme";
-import { ActionButton, H1, H2, H3, Loading, Text } from "../uikit";
+import { isAndroid, isIOS } from "../utilts";
+import { ActionButton, H2, H3, Loading, Text } from "../uikit";
 import { Connector } from "../Connector";
-import { isIOS } from "../utilts";
 import Footer from "../Footer";
 
 import { useSignRequest } from "./useSignRequest";
 import HereQRCode from "./HereQRCode";
 import * as S from "./styled";
 
-const Nobr = (p: any) => <span {...p} style={{ whiteSpace: "nowrap" }} />;
-
 const TransactionCard = () => {
   const { result, link, request } = useSignRequest();
-  const [isMobile, setMobile] = useState(false);
   const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
 
+  const isMobile = isAndroid() || isIOS();
   const handleOpen = () => {
     window.location.assign(link);
   };
@@ -27,13 +24,6 @@ const TransactionCard = () => {
     if (useAppclip) localStorage.removeItem("disableAppClip");
     else localStorage.setItem("disableAppClip", "1");
   }, [useAppclip]);
-
-  useEffect(() => {
-    const handler = () => setMobile(window.innerWidth <= 800);
-    window.addEventListener("resize", handler);
-    handler();
-    return () => window.removeEventListener("resize", handler);
-  });
 
   if (result?.status === HereProviderStatus.FAILED) {
     return (
@@ -70,7 +60,7 @@ const TransactionCard = () => {
   return (
     <>
       <S.Wrap>
-        <View
+        {/* <View
           style={{
             width: "fit-content",
             backgroundColor: colors.orange,
@@ -84,7 +74,7 @@ const TransactionCard = () => {
           <Text style={{ fontWeight: 700 }}>
             If something doesn't work, <Nobr>update the app to the latest version</Nobr>
           </Text>
-        </View>
+        </View> */}
 
         <S.Card isLoading={result?.status === HereProviderStatus.APPROVING}>
           {result?.status === HereProviderStatus.APPROVING && <Loading />}
@@ -106,27 +96,9 @@ const TransactionCard = () => {
           )}
         </S.Card>
 
-        {isIOS() === false && isMobile && (
-          <S.Card>
-            <S.ScanCode>
-              <HereQRCode
-                useAppclip={useAppclip && request.type !== "import"}
-                network={request.network}
-                value={link}
-              />
-              <H2>Approve with QR</H2>
-              <Text>
-                Scan this code with your phone's
-                <br />
-                camera to sign. {request.type !== "import" && toggleAppClipWidget}
-              </Text>
-            </S.ScanCode>
-          </S.Card>
-        )}
-
-        {isMobile && isIOS() && <ActionButton onClick={handleOpen}>Tap to approve in HERE</ActionButton>}
+        {isMobile && <ActionButton onClick={handleOpen}>Tap to approve in HERE</ActionButton>}
       </S.Wrap>
-      <Footer network={request.network ?? "mainnet"} />
+      <Footer />
     </>
   );
 };
