@@ -1,0 +1,107 @@
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import LogoutIcon from "jsx:../assets/logout.svg";
+import HereLogo from "jsx:../assets/here-logo.svg";
+import TwitterIcon from "jsx:../assets/twitter.svg";
+import DiscordIcon from "jsx:../assets/discord.svg";
+
+import { StrokeButton } from "../uikit/button";
+import { useWallet } from "../core/useWallet";
+import { useAnalyticsTrack } from "../core/analytics";
+
+const Header = () => {
+  const { user, selectorModal } = useWallet();
+  const track = useAnalyticsTrack("app");
+
+  useEffect(() => {
+    track("open", { from: document.referrer });
+  }, []);
+
+  useEffect(() => {
+    if (user?.wallet.wallet == null) return;
+    track("connect_wallet", { walletId: user.wallet.wallet.id });
+  }, [user?.wallet.wallet]);
+
+  const handleLogin = () => {
+    if (user == null) return selectorModal?.show();
+    user.wallet.wallet.signOut();
+    track("logout");
+  };
+
+  return (
+    <Wrap>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://herewallet.app"
+        style={{ display: "flex" }}
+      >
+        <HereLogo />
+      </a>
+
+      <Flex>
+        <LinkButton href="https://twitter.com/here_wallet">
+          <TwitterIcon style={{ width: 40, height: 40 }} />
+        </LinkButton>
+        <LinkButton href="https://discord.gg/8Q3gw3gsD2">
+          <DiscordIcon style={{ width: 40, height: 40 }} />
+        </LinkButton>
+
+        <LogoutButton onClick={handleLogin}>
+          <span style={{ textOverflow: "ellipsis", overflow: "hidden" }}>
+            {user?.wallet.accountId ?? "Connect wallet"}
+          </span>
+          {user?.wallet.accountId && <LogoutIcon style={{ flexShrink: 0, marginLeft: 8 }} />}
+        </LogoutButton>
+      </Flex>
+    </Wrap>
+  );
+};
+
+const LinkButton = styled.a`
+  transition: 0.2s opacity;
+  display: flex;
+  &:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 576px) {
+    display: none;
+  }
+`;
+
+const LogoutButton = styled(StrokeButton)`
+  height: 40px;
+  width: 220px;
+  overflow: hidden;
+
+  @media (max-width: 576px) {
+    padding: 0;
+    border: none;
+    width: 160px;
+    border-radius: 0;
+    justify-content: flex-end;
+  }
+`;
+
+const Flex = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 16px;
+`;
+
+const Wrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 10%;
+  width: 100%;
+
+  @media (max-width: 576px) {
+    padding: 0 24px;
+    height: 56px;
+  }
+`;
+
+export default Header;
