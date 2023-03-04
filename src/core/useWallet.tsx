@@ -20,10 +20,10 @@ import { setupOptoWallet } from "@near-wallet-selector/opto-wallet";
 import { setupFinerWallet } from "@near-wallet-selector/finer-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
-import { WidgetStrategy } from "@here-wallet/core";
 
 import { WalletAccount } from "./WalletAccount";
 import UserAccount from "./UserAccount";
+import { WidgetStrategy } from "@here-wallet/core";
 
 type AppServices = {
   selector?: WalletSelector;
@@ -41,7 +41,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
       const selector = await setupWalletSelector({
         network: "mainnet",
         modules: [
-          setupHereWallet({ defaultStrategy: () => new WidgetStrategy() }),
+          setupHereWallet(),
           setupNearWallet(),
           setupMyNearWallet(),
           setupSender(),

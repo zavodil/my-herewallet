@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
     <title>HERE Connector</title>
 </head>
@@ -16,6 +16,9 @@
     <div class="here-connector">
         <div class="here-connector-overlay"></div>
         <div class="here-connector-content">
+            <div class="here-connector-wrap"></div>
+            
+            <button class="here-connector-text">I don't have wallet.</button>
             <button class="here-connector-close-button">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="rgb(44 48 52)">
                     <path
@@ -24,16 +27,13 @@
                 </svg>
             </button>
 
-            <div class="here-connector-wrap">
-            </div>
-
             <footer class="here-connector-footer">
-                <img src="https://my.herewallet.app/nearhere.0b666ec9.png" alt="nearhere">
-                <img src="https://my.herewallet.app/rock.c5e2a96f.png" alt="rock">
+                <img src="https://my.herewallet.app/nearhere.0b666ec9.png" alt="nearhere" />
+                <img src="https://my.herewallet.app/rock.c5e2a96f.png" alt="rock" />
 
-                <button class="here-connector-approve">
+                <a style="display: none" class="here-connector-approve" target="_parent" rel="noopener noreferrer">
                     Tap to approve HERE
-                </button>
+                </a>
 
                 <div class="here-connector-links">
                     <a target="_parent" rel="noopener noreferrer" class="here-connector-ios"
