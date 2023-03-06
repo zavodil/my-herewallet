@@ -32,7 +32,7 @@ export const Staking = () => {
               <Route path="success" element={<PageStaking children={<FirstSuccess />} />} />
             </SlideRoutes>
           </Card>
-          <OtterSecText as="a" href="https://osec.io/" target="_blank" rel="noopener noreferrer">
+          <OtterSecText as="a" href="https://osec.io/" target="_blank">
             Secure. Audited by <OtterSecLogo />
           </OtterSecText>
         </Container>
@@ -56,9 +56,9 @@ const BootPage = () => {
 };
 
 const PageStaking = observer<{ children: React.ReactElement }>(({ children }) => {
-  const { user, selector } = useWallet();
+  const { user } = useWallet();
 
-  if (selector == null || user?.isInitialized === false) {
+  if (user?.isInitialized === false) {
     return (
       <CardView>
         <ActivityIndicator />

@@ -1,6 +1,7 @@
 import uuid4 from "uuid4";
 import { FtToken, TransactionModel } from "./types";
 import { AnalyticEvent } from "./analytics";
+import { Storage } from "./UserAccount";
 
 export class HereError extends Error {
   constructor(readonly title: string, readonly body: string) {
@@ -10,10 +11,11 @@ export class HereError extends Error {
 
 export class HereApi {
   public readonly endpoint = "https://api.herewallet.app";
+  public readonly storage = new Storage("");
 
   get deviceId() {
-    const id = window.localStorage.getItem("_deviceid") ?? uuid4();
-    window.localStorage.setItem("_deviceid", id);
+    const id = this.storage.get("_deviceid") ?? uuid4();
+    this.storage.set("_deviceid", id);
     return id;
   }
 

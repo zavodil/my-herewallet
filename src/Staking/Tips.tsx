@@ -18,7 +18,6 @@ export const TipClaim = ({ user }: { user: UserAccount }) => {
       <Button
         as="a"
         target="_blank"
-        rel="noopener noreferrer"
         href={HERE_STORAGE_DOCS}
         style={{ marginTop: 8, marginLeft: 16 }}
         onClick={() => track("learn_more")}
@@ -40,7 +39,6 @@ export const TipInstallApp = ({ user }: { user: UserAccount }) => {
       <Button
         as="a"
         target="_blank"
-        rel="noopener noreferrer"
         style={{ marginTop: 8 }}
         href={APP_STORE}
         onClick={() => track("app_store")}
@@ -50,7 +48,6 @@ export const TipInstallApp = ({ user }: { user: UserAccount }) => {
       <Button
         as="a"
         target="_blank"
-        rel="noopener noreferrer"
         style={{ marginTop: 8, marginLeft: 16 }}
         onClick={() => track("google_play")}
         href={GOOGLE_PLAY}
@@ -75,7 +72,6 @@ export const TipUnstake = ({ user }: { user: UserAccount }) => {
       <Button
         as="a"
         target="_blank"
-        rel="noopener noreferrer"
         style={{ marginTop: 8 }}
         href={APP_STORE}
         onClick={() => track("app_store")}
@@ -85,7 +81,6 @@ export const TipUnstake = ({ user }: { user: UserAccount }) => {
       <Button
         as="a"
         target="_blank"
-        rel="noopener noreferrer"
         style={{ marginTop: 8, marginLeft: 16 }}
         onClick={() => track("google_play")}
         href={GOOGLE_PLAY}
@@ -110,7 +105,6 @@ export const TipBuyNFT = ({ user, onClose }: { user: UserAccount; onClose?: () =
       <Button
         as="a"
         target="_blank"
-        rel="noopener noreferrer"
         href="https://paras.id/collection/nft.herewallet.near/"
         style={{ marginTop: 8 }}
         onClick={() => track("buy_nft")}

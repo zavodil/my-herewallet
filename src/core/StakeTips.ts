@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, observe } from "mobx";
+import { action, computed, makeObservable, observable, observe, toJS } from "mobx";
 import UserAccount from "./UserAccount";
 
 class StakeTips {

@@ -51,7 +51,9 @@ const Header = () => {
           <span style={{ textOverflow: "ellipsis", overflow: "hidden" }}>
             {user?.wallet.accountId ?? "Connect wallet"}
           </span>
-          {user?.wallet.accountId && <LogoutIcon style={{ flexShrink: 0, marginLeft: 8 }} />}
+          {user?.wallet.accountId && selectorModal && (
+            <LogoutIcon style={{ flexShrink: 0, marginLeft: 8 }} />
+          )}
         </LogoutButton>
       </Flex>
     </Wrap>

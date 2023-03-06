@@ -4,15 +4,25 @@ import { WalletAccount } from "./WalletAccount";
 import { HereApi } from "./api";
 import StakeTips from "./StakeTips";
 
-class Storage {
+export class Storage {
+  static memoryData: Record<string, any> = {};
   constructor(readonly id: string) {}
 
   set(key: string, value: any) {
-    localStorage.setItem(this.id + ":" + key, value);
+    try {
+      localStorage.setItem(this.id + ":" + key, value);
+    } catch {
+      Storage.memoryData[this.id + ":" + key] = value;
+      parent.postMessage({ action: "saveLocalStorage", data: Storage.memoryData }, "*");
+    }
   }
 
   get(key: string): string | null {
-    return localStorage.getItem(this.id + ":" + key) || null;
+    try {
+      return localStorage.getItem(this.id + ":" + key) || null;
+    } catch {
+      return Storage.memoryData[this.id + ":" + key] || null;
+    }
   }
 }
 

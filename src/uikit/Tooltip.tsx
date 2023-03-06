@@ -51,17 +51,27 @@ export const STooltip = styled(Popup)`
 
 export const Tooltip = (props: PopupProps) => {
   const ref = useRef<PopupActions>(null);
+
   return (
     <STooltip
       {...props}
       ref={ref}
       children={
-        React.isValidElement(props.children)
-          ? React.cloneElement(props.children, {
-              ...props.children.props,
-              onClose: () => ref.current?.close(),
-            })
-          : props.children
+        <div
+          onClick={(e: any) => {
+            let target = e.target?.closest("a");
+            if (target instanceof HTMLAnchorElement) {
+              parent.postMessage({ action: "openLink", data: { link: target.href } }, "*");
+            }
+          }}
+        >
+          {React.isValidElement(props.children)
+            ? React.cloneElement(props.children, {
+                ...props.children.props,
+                onClose: () => ref.current?.close(),
+              })
+            : props.children}
+        </div>
       }
     />
   );

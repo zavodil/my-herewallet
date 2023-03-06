@@ -30,7 +30,7 @@ export const StartStaking = () => {
       >
         Open wallet selector
       </ActionButton>
-      <S.OnboardSecText as="a" href="https://osec.io/" target="_blank" rel="noopener noreferrer">
+      <S.OnboardSecText as="a" href="https://osec.io/" target="_blank">
         Secure. Audited by <OtterSecLogo />
       </S.OnboardSecText>
     </S.CardView>

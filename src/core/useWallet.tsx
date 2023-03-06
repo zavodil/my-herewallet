@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import "@near-wallet-selector/modal-ui/styles.css";
 
-import { WalletSelector, Wallet } from "@near-wallet-selector/core";
+import { WalletSelector, Wallet, BrowserWallet } from "@near-wallet-selector/core";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupModal, WalletSelectorModal } from "@near-wallet-selector/modal-ui";
 import { setupNearWallet } from "@near-wallet-selector/near-wallet";
@@ -10,7 +10,6 @@ import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMathWallet } from "@near-wallet-selector/math-wallet";
 import { setupNightly } from "@near-wallet-selector/nightly";
-import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNarwallets } from "@near-wallet-selector/narwallets";
 import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
 import { setupLedger } from "@near-wallet-selector/ledger";
@@ -20,10 +19,8 @@ import { setupOptoWallet } from "@near-wallet-selector/opto-wallet";
 import { setupFinerWallet } from "@near-wallet-selector/finer-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupXDEFI } from "@near-wallet-selector/xdefi";
-
 import { WalletAccount } from "./WalletAccount";
-import UserAccount from "./UserAccount";
-import { WidgetStrategy } from "@here-wallet/core";
+import UserAccount, { Storage } from "./UserAccount";
 
 type AppServices = {
   selector?: WalletSelector;
@@ -33,10 +30,30 @@ type AppServices = {
 
 const AppContext = React.createContext<AppServices>({});
 
+// @ts-ignore
+class InjectedWallet implements BrowserWallet {
+  async signAndSendTransaction(data: any) {
+    parent.postMessage({ action: "signAndSendTransaction", data }, "*");
+  }
+}
+
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
   const [context, setContext] = useState<AppServices>({});
+  const lastId = useRef();
 
   useEffect(() => {
+    window.addEventListener("message", (e) => {
+      if (e.data.accountId && lastId.current !== e.data.accountId) {
+        lastId.current = e.data.accountId;
+        Storage.memoryData = { ...(e.data.localStorage || {}) };
+
+        // @ts-ignore
+        const account = new WalletAccount(e.data.accountId, new InjectedWallet());
+        const user = new UserAccount(account);
+        setContext({ user });
+      }
+    });
+
     const init = async () => {
       const selector = await setupWalletSelector({
         network: "mainnet",
@@ -47,7 +64,6 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
           setupSender(),
           setupMathWallet(),
           setupNightly(),
-          setupMeteorWallet(),
           setupNarwallets(),
           setupWelldoneWallet(),
           setupLedger(),
