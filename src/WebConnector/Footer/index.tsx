@@ -1,8 +1,10 @@
 import React from "react";
-import AppStore from "jsx:../../assets/appstore.svg";
-import GooglePlay from "jsx:../../assets/googleplay.svg";
+import AppStore from "../../assets/appstore.svg";
+import GooglePlay from "../../assets/googleplay.svg";
 import { isAndroid, isIOS } from "../../core/helpers";
 import { APP_STORE, GOOGLE_PLAY } from "../../core/constants";
+import nearhereImage from "../../assets/nearhere.png";
+import rockImage from "../../assets/rock.png";
 import * as S from "./styled";
 
 const Buttons = () => {
@@ -36,7 +38,7 @@ const Buttons = () => {
 const Footer = () => {
   return (
     <S.Footer>
-      <img src={require("../../assets/nearhere.png")} alt="nearhere" />
+      <img src={nearhereImage} alt="nearhere" />
 
       <S.Appstore>
         <Buttons />
@@ -47,7 +49,7 @@ const Footer = () => {
         </p>
       </S.Appstore>
 
-      <img src={require("../../assets/rock.png")} alt="rock" />
+      <img src={rockImage} alt="rock" />
     </S.Footer>
   );
 };

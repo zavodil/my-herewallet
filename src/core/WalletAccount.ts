@@ -3,7 +3,7 @@ import { Wallet } from "@near-wallet-selector/core";
 import { FinalExecutionOutcome, JsonRpcProvider } from "near-api-js/lib/providers";
 import { Account, Connection, InMemorySigner } from "near-api-js";
 import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
-import { SAFE_NEAR, HERE_STORAGE, TGAS } from "./constants";
+import { SAFE_NEAR, HERE_STORAGE, TGAS, DEFAULT_APY } from "./constants";
 import { formatAmount, parseAmount } from "./helpers";
 
 export class WalletAccount {
@@ -114,7 +114,7 @@ export class WalletAccount {
     });
 
     if (contract == null) {
-      return { apy: 0.08, accrued: 0, unstaked, staked };
+      return { apy: DEFAULT_APY, accrued: 0, unstaked, staked };
     }
 
     const apy = contract.apy_value / 10000;

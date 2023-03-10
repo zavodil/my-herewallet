@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { darkQR, QRCode } from "@here-wallet/core/build/qrcode-strategy";
+import { darkQR, QRCode } from "@here-wallet/core";
 
 const HereQRCode = ({
   value,

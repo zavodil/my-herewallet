@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import LogoutIcon from "jsx:../assets/logout.svg";
-import HereLogo from "jsx:../assets/here-logo.svg";
-import TwitterIcon from "jsx:../assets/twitter.svg";
-import DiscordIcon from "jsx:../assets/discord.svg";
+import LogoutIcon from "../assets/logout.svg";
+import HereLogo from "../assets/here-logo.svg";
+import TwitterIcon from "../assets/twitter.svg";
+import DiscordIcon from "../assets/discord.svg";
 
 import { StrokeButton } from "../uikit/button";
 import { useWallet } from "../core/useWallet";

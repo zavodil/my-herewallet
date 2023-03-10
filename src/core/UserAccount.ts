@@ -3,6 +3,7 @@ import { TransactionModel, TransactionType } from "./types";
 import { WalletAccount } from "./WalletAccount";
 import { HereApi } from "./api";
 import StakeTips from "./StakeTips";
+import { DEFAULT_APY } from "./constants";
 
 export class Storage {
   static memoryData: Record<string, any> = {};
@@ -37,12 +38,12 @@ class UserAccount {
     accrued: 0,
     unstaked: 0,
     staked: 0,
-    apy: 0.08,
+    apy: DEFAULT_APY,
   };
 
   readonly api = new HereApi();
-  readonly storage = new Storage(this.wallet.accountId);
-  readonly tips = new StakeTips(this);
+  readonly storage: Storage;
+  readonly tips: StakeTips;
 
   constructor(readonly wallet: WalletAccount) {
     makeObservable(this, {
@@ -56,6 +57,9 @@ class UserAccount {
       near2usd: observable,
       state: observable,
     });
+
+    this.storage = new Storage(this.wallet.accountId);
+    this.tips = new StakeTips(this);
 
     this.fetchState();
     this.fetchTransactions();

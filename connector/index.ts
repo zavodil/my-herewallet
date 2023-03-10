@@ -1,4 +1,4 @@
-import QRCode from "@here-wallet/core/build/qrcode-strategy/qrcode";
+import { QRCode } from "@here-wallet/core";
 import appclip from "./appclip";
 
 const mobileCheck = () => {

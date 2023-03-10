@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Route } from "react-router-dom";
 import SlideRoutes from "react-slide-routes";
 
-import OtterSecLogo from "jsx:../assets/otter-logo.svg";
+import OtterSecLogo from "../assets/otter-logo.svg";
 import { AppContextProvider, useWallet } from "../core/useWallet";
 import { ActivityIndicator } from "../uikit";
 
@@ -56,9 +56,9 @@ const BootPage = () => {
 };
 
 const PageStaking = observer<{ children: React.ReactElement }>(({ children }) => {
-  const { user } = useWallet();
+  const { user, selector } = useWallet();
 
-  if (user?.isInitialized === false) {
+  if (selector == null && !user?.isInitialized) {
     return (
       <CardView>
         <ActivityIndicator />

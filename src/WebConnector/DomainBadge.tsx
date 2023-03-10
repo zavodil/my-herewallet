@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import GlobalIcon from "jsx:../assets/icons/global.svg";
+import GlobalIcon from "../assets/icons/global.svg";
 
 export const SDomainBadge = styled.div`
   margin-bottom: 18px;

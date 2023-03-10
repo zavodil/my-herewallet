@@ -17,7 +17,7 @@ export const Page = styled.div`
     width: 100%;
     height: 100%;
     position: fixed;
-    background-image: url(${require("../assets/stake-bg.svg")});
+    background-image: url(${new URL("../assets/stake-bg.svg", import.meta.url).href});
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import path from "path";
 
-import SwitchIcon from "jsx:../../assets/switch.svg";
-import ArrowLeft from "jsx:../../assets/arrow-left.svg";
+import SwitchIcon from "../../assets/switch.svg";
+import ArrowLeft from "../../assets/arrow-left.svg";
 
 import { colors } from "../../uikit/theme";
 import { useAnalytics } from "../../core/analytics";

@@ -3,10 +3,10 @@ import UserAccount from "./UserAccount";
 
 class StakeTips {
   public statistics = {
-    stakeCount: +(this.user.storage.get("stake_count") ?? 0),
-    unstakeCount: +(this.user.storage.get("unstake_count") ?? 0),
-    launchCount: +(this.user.storage.get("launch_count") ?? 0),
-    closedInstallDate: +(this.user.storage.get("closed_install_tip_date") ?? 0),
+    stakeCount: 0,
+    unstakeCount: 0,
+    launchCount: 0,
+    closedInstallDate: 0,
     closedInstallTip: false,
     closedClaimTip: false,
     closedUnstakeTip: false,
@@ -28,6 +28,11 @@ class StakeTips {
       tipInstallApp: computed,
       statistics: observable,
     });
+
+    this.statistics.stakeCount = +(this.user.storage.get("stake_count") ?? 0);
+    this.statistics.unstakeCount = +(this.user.storage.get("unstake_count") ?? 0);
+    this.statistics.launchCount = +(this.user.storage.get("launch_count") ?? 0);
+    this.statistics.closedInstallDate = +(this.user.storage.get("closed_install_tip_date") ?? 0);
 
     observe(this.statistics, () => {
       this.user.storage.set("launch_count", this.statistics.launchCount);

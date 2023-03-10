@@ -7,6 +7,8 @@ export const HERE_STORAGE = "storage.herewallet.near";
 export const TGAS = Math.pow(10, 12);
 export const SAFE_NEAR = 0.1;
 
+export const DEFAULT_APY = 0.096;
+
 export const defaultToken: FtToken = {
   actions: "",
   contract_id: "near",

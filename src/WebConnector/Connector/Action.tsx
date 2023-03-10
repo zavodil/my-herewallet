@@ -3,7 +3,7 @@ import { format } from "near-api-js/lib/utils";
 import { Action } from "@here-wallet/core";
 import styled from "styled-components";
 
-import DoneIcon from "jsx:../../assets/icons/done.svg";
+import DoneIcon from "../../assets/icons/done.svg";
 import { H2, H3, Text, SmallText } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
 import { FtToken } from "../../core/types";

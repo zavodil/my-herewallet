@@ -9,8 +9,8 @@ import {
 } from "react-snaplist-carousel";
 import styled from "styled-components";
 
-import ArrowRightIcon from "jsx:../../assets/icons/arrow-right.svg";
-import ArrowLeftIcon from "jsx:../../assets/icons/arrow-left.svg";
+import ArrowRightIcon from "../../assets/icons/arrow-right.svg";
+import ArrowLeftIcon from "../../assets/icons/arrow-left.svg";
 import { HereImportAccounts } from "../useSignRequest";
 import { defaultToken } from "../../core/constants";
 import { FtToken } from "../../core/types";

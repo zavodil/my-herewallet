@@ -2,6 +2,7 @@
     "compilerOptions": {
         "rootDir": "./",
         "outDir": "./dist",
+        "module": "ES2020",
         "target": "ES2022",
         "allowJs": true,
         "lib": ["DOM", "ES2022"],

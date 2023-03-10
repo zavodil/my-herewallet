@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
+import rockImage from "../../assets/rock.png";
 import { ActionButton, ActivityIndicator, Button, H0, H2, Text, Tooltip } from "../../uikit";
 import * as S from "../styled";
 import { useWallet } from "../../core/useWallet";
@@ -71,10 +72,7 @@ const SuccessStaking = ({
 
   return (
     <S.CardView style={style}>
-      <img
-        style={{ width: 164, height: 235, marginTop: "auto" }}
-        src={require("../../assets/rock.png")}
-      />
+      <img style={{ width: 164, height: 235, marginTop: "auto" }} src={rockImage} />
 
       <Tooltip
         on={[]}

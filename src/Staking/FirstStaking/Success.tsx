@@ -5,6 +5,8 @@ import { Formatter } from "../../core/helpers";
 import { useWallet } from "../../core/useWallet";
 import { FullCardView } from "../styled";
 import { useAnalyticsTrack } from "../../core/analytics";
+import { DEFAULT_APY } from "../../core/constants";
+import cloudImage from "../../assets/cloud.png";
 
 const SuccessStaking = () => {
   const { user } = useWallet();
@@ -17,15 +19,12 @@ const SuccessStaking = () => {
 
   return (
     <FullCardView>
-      <img
-        style={{ width: 164, height: 203, marginTop: "auto" }}
-        src={require("../../assets/cloud.png")}
-      />
+      <img style={{ width: 164, height: 203, marginTop: "auto" }} src={cloudImage} />
       <H2 style={{ textAlign: "center", marginTop: 40 }}>All set</H2>
       <Text style={{ textAlign: "center", marginTop: 16, marginBottom: 54 }}>
         Congratulations! Now you will receive a passive income at a rate of{" "}
-        {Formatter.round((user?.state.apy ?? 0.08) * 100)}% APY. Income is accrued every day on the
-        current balance.
+        {Formatter.round((user?.state.apy ?? DEFAULT_APY) * 100)}% APY. Income is accrued every day on
+        the current balance.
       </Text>
       <ActionButton style={{ marginTop: "auto" }} onClick={() => navigate("/stake", { replace: true })}>
         Open dashboard

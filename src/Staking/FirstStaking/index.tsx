@@ -14,6 +14,7 @@ import * as S from "../styled";
 
 import { AmountInput, Divider, EditButton, Flex, InputCard } from "./styled";
 import { useAnalytics } from "../../core/analytics";
+import { DEFAULT_APY } from "../../core/constants";
 
 const FirstStaking = () => {
   const { user } = useWallet();
@@ -91,12 +92,12 @@ const FirstStaking = () => {
             Expected income
           </Text>
           <SmallText style={{ color: "#fff", marginLeft: "auto" }}>
-            {Formatter.usd(+value * 0.08 * 2.5, 3)}
+            {Formatter.usd(+value * DEFAULT_APY * 2.5, 3)}
           </SmallText>
         </Flex>
 
         <Flex>
-          <H2 style={{ color: "#fff", fontSize: fontSize }}>~{(+value * 0.08).toFixed(2)}</H2>
+          <H2 style={{ color: "#fff", fontSize: fontSize }}>~{(+value * DEFAULT_APY).toFixed(2)}</H2>
           <H3 style={{ marginBottom: 3, marginLeft: 8, color: "#fff", fontSize: fontSize * 0.8 }}>
             NEAR/year
           </H3>

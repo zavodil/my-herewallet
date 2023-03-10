@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import OtterSecLogo from "jsx:../assets/otter-logo.svg";
+import OtterSecLogo from "../assets/otter-logo.svg";
 import { ActionButton, H2, Text } from "../uikit";
 import { useWallet } from "../core/useWallet";
 import * as S from "./styled";
@@ -11,7 +11,10 @@ export const StartStaking = () => {
 
   return (
     <S.CardView>
-      <img style={{ width: 164, height: 235, marginTop: -48 }} src={require("../assets/staking.png")} />
+      <img
+        style={{ width: 164, height: 235, marginTop: -48 }}
+        src={new URL(`../assets/staking.png`, import.meta.url).href}
+      />
       <H2 style={{ textAlign: "center" }}>
         Earn up to 10% APY
         <br />

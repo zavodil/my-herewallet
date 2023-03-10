@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { useNavigate, Navigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
-import WarningIcon from "jsx:../assets/alarm.svg";
-import DividentsIcon from "jsx:../assets/dividents.svg";
-import StakeIcon from "jsx:../assets/stake.svg";
-import UnstakeIcon from "jsx:../assets/unstake.svg";
+import WarningIcon from "../assets/alarm.svg";
+import DividentsIcon from "../assets/dividents.svg";
+import StakeIcon from "../assets/stake.svg";
+import UnstakeIcon from "../assets/unstake.svg";
 
 import { ActionButton, ActivityIndicator, Tooltip } from "../uikit";
 import { H3, H4, SmallText, Text } from "../uikit/typographic";
