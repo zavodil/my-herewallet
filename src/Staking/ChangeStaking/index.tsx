@@ -89,7 +89,8 @@ const ChangeStaking = () => {
       setLoading(false);
       setSuccess(true);
       isStake ? track("stake_success") : track("unstake_success");
-    } catch {
+    } catch (e) {
+      console.log(e);
       setLoading(false);
       isStake ? track("stake_failed") : track("unstake_failed");
     }

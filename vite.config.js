@@ -29,6 +29,7 @@ export default defineConfig({
       buffer: "buffer/",
       crypto: "crypto-browserify",
       stream: "stream-browserify",
+      path: "path-browserify",
       assert: "assert",
       http: "stream-http",
       https: "https-browserify",

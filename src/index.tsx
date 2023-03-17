@@ -17,7 +17,6 @@ root.render(<App />);
 
 parent.postMessage({ action: "parentDomain", data: document.referrer }, "*");
 document.addEventListener("click", (e) => {
-  console.log(e);
   let target = (e.target as HTMLElement)?.closest("a");
   if (target instanceof HTMLAnchorElement) {
     parent.postMessage({ action: "openLink", data: { link: target.href } }, "*");

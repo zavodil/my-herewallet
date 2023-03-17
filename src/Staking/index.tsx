@@ -58,7 +58,11 @@ const BootPage = () => {
 const PageStaking = observer<{ children: React.ReactElement }>(({ children }) => {
   const { user, selector } = useWallet();
 
-  if (selector == null && !user?.isInitialized) {
+  if (selector != null && user == null) {
+    return children;
+  }
+
+  if ((selector == null && user == null) || user?.isInitialized !== true) {
     return (
       <CardView>
         <ActivityIndicator />
