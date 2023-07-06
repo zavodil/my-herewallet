@@ -3,4 +3,4 @@
 rm -rf ./parcel-cache
 rm -rf ./dist
 npm run build
-scp -r ./dist/* root@web.herewallet.app:/var/www/here-connect
+scp -r ./dist/* root@web.herewallet.app:/var/www/my
