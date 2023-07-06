@@ -27,6 +27,7 @@ const initSelector = async () => {
       setupMyNearWallet(),
       setupWalletConnect({
         projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
+        chainId: "near:mainnet",
         metadata: {
           name: "HERE Stake",
           description: "Liquid Staking for Near Protocol",

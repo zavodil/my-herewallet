@@ -50,7 +50,7 @@ export class WalletAccount {
           params: {
             methodName: "deposit",
             deposit: amount.toString(),
-            gas: (10 * TGAS).toString(),
+            gas: (50 * TGAS).toString(),
             args: {},
           },
         },
@@ -66,7 +66,7 @@ export class WalletAccount {
           type: "FunctionCall",
           params: {
             methodName: "receive_dividends",
-            gas: (10 * TGAS).toString(),
+            gas: (50 * TGAS).toString(),
             deposit: "0",
             args: {},
           },
@@ -93,7 +93,7 @@ export class WalletAccount {
           params: {
             args: { amount: amount.toString() },
             methodName: "withdraw",
-            gas: (10 * TGAS).toString(),
+            gas: (50 * TGAS).toString(),
             deposit: "1",
           },
         },
