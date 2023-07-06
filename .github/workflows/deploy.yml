@@ -32,4 +32,6 @@ jobs:
 
     - name: SCP files
       run: |
+        mkdir ./dist/.well-known/
+        cp apple-app-site-association ./dist/.well-known/
         scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/my
