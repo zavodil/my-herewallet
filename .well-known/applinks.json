@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.herewallet",
+      "sha256_cert_fingerprints": [
+        "93:AA:9A:2C:E2:5D:65:6C:E6:2A:F3:A3:4A:72:D5:89:3F:42:D9:CD:C4:4C:EE:6F:CC:84:7D:4E:95:58:25:48"
+      ]
+    }
+  }
+]
