@@ -17,6 +17,7 @@ import { setupFinerWallet } from "@near-wallet-selector/finer-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { setupModal } from "@near-wallet-selector/modal-ui";
+import { setupMetamaskSnap } from "./metamask";
 
 const initSelector = async () => {
   const selector = await setupWalletSelector({
@@ -24,6 +25,7 @@ const initSelector = async () => {
     modules: [
       setupHereWallet(),
       setupNearWallet(),
+      setupMetamaskSnap({}),
       setupMyNearWallet(),
       setupWalletConnect({
         projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
