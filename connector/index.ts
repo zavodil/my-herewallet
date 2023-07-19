@@ -27,6 +27,11 @@ const loadingIndicator = () => `
 </div>
 `;
 
+const isAndroid = () => {
+  var ua = navigator.userAgent.toLowerCase();
+  return ua.indexOf("android") > -1;
+}
+
 const appclipLogo = new Image();
 appclipLogo.src = appclip;
 
@@ -43,13 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const useAppClip = localStorage.getItem("useAppClip") === "true";
     dontWallet.innerText = useAppClip ? "Disable AppClip" : "I don't have a wallet";
 
-    const link = useAppClip ? `https://h4n.app/${requestId}` : `herewallet://h4n.app/${requestId}`;
+    const link = useAppClip ? `https://h4n.app/${requestId}` : isAndroid() ? `https://my.herewallet.app/call/${requestId}` : `herewallet://h4n.app/${requestId}`;
     const qrcode = new QRCode({ ...darkQR, value: link, logo: useAppClip ? appclipLogo : undefined });
     qrcode.canvas.classList.add("here-connector-card");
     qrcode.render();
 
     connectorWrap.innerHTML = "";
     connectorWrap.appendChild(qrcode.canvas);
+    connectorApprove.style.display = mobileCheck() ? "flex" : "none";
+    connectorApprove.classList.remove("disabled");
     connectorApprove.href = link;
   };
 
@@ -64,14 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("message", (event) => {
     try {
       const { type, payload } = JSON.parse(event.data);
-
       if (type === "request") {
         requestId = payload.id;
         isApproving = false;
         tooggleAppClip();
-
-        connectorApprove.style.display = mobileCheck() ? "flex" : "none";
-        connectorApprove.classList.remove("disabled");
 
         closeButton.onclick = () => parent?.postMessage(JSON.stringify({ type: "reject" }), "*");
         closeButton.style.visibility = "";
