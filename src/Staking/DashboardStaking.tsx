@@ -13,13 +13,13 @@ import { H3, H4, SmallText, Text } from "../uikit/typographic";
 import { Button, HereButton } from "../uikit/button";
 import { colors } from "../uikit/theme";
 
-import { APP_STORE, GOOGLE_PLAY, HERE_STORAGE_DOCS } from "../core/constants";
-import { TransactionModel, TransactionType } from "../core/types";
-import { useWallet } from "../core/useWallet";
-import { Formatter } from "../core/helpers";
+import { APP_STORE, GOOGLE_PLAY, HERE_STORAGE_DOCS } from "./core/constants";
+import { TransactionModel, TransactionType } from "./core/types";
+import { useWallet } from "./core/useWallet";
+import { Formatter } from "../helpers";
 import * as S from "./styled";
-import { useAnalytics } from "../core/analytics";
-import UserAccount from "../core/UserAccount";
+import { useAnalytics } from "./core/analytics";
+import UserAccount from "./core/UserAccount";
 import { TipBuyNFT, TipClaim, TipInstallApp } from "./Tips";
 
 const trxIcon = (trx: TransactionModel) => {

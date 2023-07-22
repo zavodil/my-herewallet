@@ -11,15 +11,14 @@ import styled from "styled-components";
 
 import ArrowRightIcon from "../../assets/icons/arrow-right.svg";
 import ArrowLeftIcon from "../../assets/icons/arrow-left.svg";
-import { HereImportAccounts } from "../useSignRequest";
-import { defaultToken } from "../../core/constants";
-import { FtToken } from "../../core/types";
+import { defaultToken } from "../../Staking/core/constants";
+import { FtToken } from "../../Staking/core/types";
+import { HereApi } from "../../Staking/core/api";
 import { colors } from "../../uikit/theme";
 import { Button, H2, Text } from "../../uikit";
 import { ActionView } from "./Action";
-import { HereApi } from "../../core/api";
 
-export const Connector = ({ request }: { request: HereProviderRequest | HereImportAccounts }) => {
+export const Connector = ({ request }: { request: HereProviderRequest }) => {
   const [tokens, setTokens] = useState<FtToken[]>([defaultToken]);
 
   const snapList = useRef(null);
@@ -35,7 +34,6 @@ export const Connector = ({ request }: { request: HereProviderRequest | HereImpo
     goToSnapItem(selected + diff - 1, { animationEnabled: true });
   };
 
-  // @ts-ignore
   if (request.type === "import") {
     return (
       <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -45,6 +43,16 @@ export const Connector = ({ request }: { request: HereProviderRequest | HereImpo
           <br />
           from another wallet to HERE Wallet
         </Text>
+      </View>
+    );
+  }
+
+  // @ts-ignore
+  if (request.type === "keypom") {
+    return (
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <H2>Keypom linkdrop</H2>
+        <Text style={{ marginTop: 16, textAlign: "center" }}>Scan QR code to claim</Text>
       </View>
     );
   }

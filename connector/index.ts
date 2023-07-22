@@ -1,4 +1,4 @@
-import { QRCode } from "@here-wallet/core";
+import { QRCode } from "@here-wallet/core/qrcode-strategy";
 import appclip from "./appclip";
 
 const mobileCheck = () => {
@@ -27,11 +27,6 @@ const loadingIndicator = () => `
 </div>
 `;
 
-const isAndroid = () => {
-  var ua = navigator.userAgent.toLowerCase();
-  return ua.indexOf("android") > -1;
-}
-
 const appclipLogo = new Image();
 appclipLogo.src = appclip;
 
@@ -48,8 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const useAppClip = localStorage.getItem("useAppClip") === "true";
     dontWallet.innerText = useAppClip ? "Disable AppClip" : "I don't have a wallet";
 
-    const link = useAppClip ? `https://h4n.app/${requestId}` : isAndroid() ? `https://my.herewallet.app/call/${requestId}` : `herewallet://h4n.app/${requestId}`;
-    const qrcode = new QRCode({ ...darkQR, value: link, logo: useAppClip ? appclipLogo : undefined });
+    const link = useAppClip
+      ? `https://h4n.app/${requestId}`
+      : `https://my.herewallet.app/request/${requestId}`;
+
+    const qrcode = new QRCode({
+      ...darkQR,
+      value: link,
+      logo: useAppClip ? appclipLogo : undefined,
+    });
+
     qrcode.canvas.classList.add("here-connector-card");
     qrcode.render();
 
@@ -71,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("message", (event) => {
     try {
       const { type, payload } = JSON.parse(event.data);
+      console.log(type, payload);
+
       if (type === "request") {
         requestId = payload.id;
         isApproving = false;
@@ -78,6 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         closeButton.onclick = () => parent?.postMessage(JSON.stringify({ type: "reject" }), "*");
         closeButton.style.visibility = "";
+
+        if (window.localStorage.getItem("topic")) {
+          fetch("https://api.herewallet.app/api/v1/transactions/topic/sign", {
+            method: "POST",
+            body: JSON.stringify({
+              topic: window.localStorage.getItem("topic"),
+              request_id: payload.id,
+            }),
+          });
+        }
       }
 
       if (type === "approving" && isApproving === false) {
@@ -87,6 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
         connectorWrap.innerHTML = loadingIndicator();
         isApproving = true;
         requestId = "";
+      }
+
+      if (payload.request.topic) {
+        window.localStorage.setItem("topic", payload.request.topic || "");
       }
     } catch {}
   });

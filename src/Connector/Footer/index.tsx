@@ -1,8 +1,8 @@
 import React from "react";
 import AppStore from "../../assets/appstore.svg";
 import GooglePlay from "../../assets/googleplay.svg";
-import { isAndroid, isIOS } from "../../core/helpers";
-import { APP_STORE, GOOGLE_PLAY } from "../../core/constants";
+import { isAndroid, isIOS } from "../../helpers";
+import { APP_STORE, GOOGLE_PLAY } from "../../Staking/core/constants";
 import nearhereImage from "../../assets/nearhere.png";
 import rockImage from "../../assets/rock.png";
 import * as S from "./styled";

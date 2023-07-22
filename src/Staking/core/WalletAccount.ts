@@ -4,7 +4,7 @@ import { FinalExecutionOutcome, JsonRpcProvider } from "near-api-js/lib/provider
 import { Account, Connection, InMemorySigner } from "near-api-js";
 import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
 import { SAFE_NEAR, HERE_STORAGE, TGAS, DEFAULT_APY } from "./constants";
-import { formatAmount, parseAmount } from "./helpers";
+import { formatAmount, parseAmount } from "../../helpers";
 
 export class WalletAccount {
   private account: Account;

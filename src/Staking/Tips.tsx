@@ -1,7 +1,7 @@
 import React from "react";
-import UserAccount from "../core/UserAccount";
-import { useAnalytics } from "../core/analytics";
-import { APP_STORE, GOOGLE_PLAY, HERE_STORAGE_DOCS } from "../core/constants";
+import UserAccount from "./core/UserAccount";
+import { useAnalytics } from "./core/analytics";
+import { APP_STORE, GOOGLE_PLAY, HERE_STORAGE_DOCS } from "./core/constants";
 import { Button, Text } from "../uikit";
 
 export const TipClaim = ({ user }: { user: UserAccount }) => {

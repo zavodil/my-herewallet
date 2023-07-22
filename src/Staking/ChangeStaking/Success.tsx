@@ -4,13 +4,13 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import rockImage from "../../assets/rock.png";
 import { ActionButton, ActivityIndicator, Button, H0, H2, Text, Tooltip } from "../../uikit";
 import * as S from "../styled";
-import { useWallet } from "../../core/useWallet";
-import { formatAmount } from "../../core/helpers";
-import { Formatter } from "../../core/helpers";
+import { useWallet } from "../core/useWallet";
+import { formatAmount } from "../../helpers";
+import { Formatter } from "../../helpers";
 import { observer } from "mobx-react-lite";
-import { APP_STORE, GOOGLE_PLAY } from "../../core/constants";
+import { APP_STORE, GOOGLE_PLAY } from "../core/constants";
 import { TipUnstake } from "../Tips";
-import { useAnalytics, useAnalyticsTrack } from "../../core/analytics";
+import { useAnalytics, useAnalyticsTrack } from "../core/analytics";
 
 const SuccessStaking = ({
   defaultState,

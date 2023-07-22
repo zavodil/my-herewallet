@@ -6,15 +6,15 @@ import path from "path";
 import { ActionButton, ActivityIndicator, Button, H2, H3, Text, Tooltip } from "../../uikit";
 import { SmallText } from "../../uikit/typographic";
 import { useAmountInput } from "../useAmountInput";
-import { useWallet } from "../../core/useWallet";
-import { Formatter } from "../../core/helpers";
+import { useWallet } from "../core/useWallet";
+import { Formatter } from "../../helpers";
 import { colors } from "../../uikit/theme";
 import { Modal } from "../../uikit/Modal";
 import * as S from "../styled";
 
 import { AmountInput, Divider, EditButton, Flex, InputCard } from "./styled";
-import { useAnalytics } from "../../core/analytics";
-import { DEFAULT_APY } from "../../core/constants";
+import { useAnalytics } from "../core/analytics";
+import { DEFAULT_APY } from "../core/constants";
 
 const FirstStaking = () => {
   const { user } = useWallet();

@@ -7,7 +7,7 @@ import { DEFAULT_APY } from "./constants";
 
 export class Storage {
   static memoryData: Record<string, any> = {};
-  constructor(readonly id: string) {}
+  constructor(readonly id: string) { }
 
   set(key: string, value: any) {
     try {
@@ -76,7 +76,7 @@ class UserAccount {
   async unstake(amount: number | "max", callback: string) {
     this.tips.unstake();
     const value = amount === "max" ? this.state.staked : amount;
-        console.log(value);
+    console.log(value);
 
     const trx = await this.wallet.unstakeHere(amount, callback);
     void this.fetchState();

@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
-import { LoadingPage } from "./WebConnector/Loading";
-import WebConnector from "./WebConnector";
 import { Staking } from "./Staking";
+import Home from "./Home";
+
+import {
+  CustomRequestResolver,
+  ImportAccountsResolver,
+  KeypomResolver,
+} from "./Connector/RequstResolver";
+import { LoadingPage } from "./Connector/Loading";
+import WebConnector from "./Connector";
 
 function App() {
-  const [useHash] = useState(() => window.location.search === "?stake");
+  const [onlyStake] = useState(() => window.location.search === "?stake");
 
-  if (useHash) {
+  if (onlyStake) {
     return (
       <HashRouter>
         <Routes>
-          <Route path="/stake/*" element={<Staking />} />
           <Route path="*" element={<Staking />} />
         </Routes>
       </HashRouter>
@@ -21,9 +27,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/stake/*" element={<Staking />} />
-        <Route path="*" element={<WebConnector />} />
+
+        <Route path="/import/*" element={<ImportAccountsResolver />} />
+        <Route path="/g/:id?" element={<CustomRequestResolver />} />
+        <Route path="/linkdrop/:id" element={<KeypomResolver />} />
+        <Route path="/request/:id" element={<WebConnector />} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,7 +9,7 @@ export const LoadingPage = () => {
       <p style={{ fontSize: "22px", textAlign: "center" }}>
         Transaction in progress,
         <br />
-        please do not close this page
+        https://www.coingecko.com/en/api/documentation please do not close this page
       </p>
     </Page>
   );

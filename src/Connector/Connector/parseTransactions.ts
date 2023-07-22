@@ -1,8 +1,8 @@
 import { BN } from "bn.js";
 import { FunctionCallAction, Transaction } from "@here-wallet/core";
-import { formatAmount } from "../../core/helpers";
-import { defaultToken } from "../../core/constants";
-import { FtToken } from "../../core/types";
+import { formatAmount } from "../../helpers";
+import { defaultToken } from "../../Staking/core/constants";
+import { FtToken } from "../../Staking/core/types";
 
 export const parseArgs = (data: string | Object) => {
   if (typeof data !== "string") return data;

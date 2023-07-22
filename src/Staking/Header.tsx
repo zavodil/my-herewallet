@@ -6,8 +6,8 @@ import TwitterIcon from "../assets/twitter.svg";
 import DiscordIcon from "../assets/discord.svg";
 
 import { StrokeButton } from "../uikit/button";
-import { useWallet } from "../core/useWallet";
-import { useAnalyticsTrack } from "../core/analytics";
+import { useWallet } from "./core/useWallet";
+import { useAnalyticsTrack } from "./core/analytics";
 
 const Header = () => {
   const { user, selectorModal } = useWallet();

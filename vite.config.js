@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import pluginRewriteAll from "vite-plugin-rewrite-all";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import svgrPlugin from "vite-plugin-svgr";
 import { resolve } from "path";
@@ -38,5 +39,5 @@ export default defineConfig({
       util: "util",
     },
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin({ exportAsDefault: true })],
+  plugins: [pluginRewriteAll(), react(), viteTsconfigPaths(), svgrPlugin({ exportAsDefault: true })],
 });

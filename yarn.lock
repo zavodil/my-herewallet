@@ -788,10 +788,18 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
-"@here-wallet/core@^1.4.0", "@here-wallet/core@^1.4.1":
+"@here-wallet/core@^1.4.0":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@here-wallet/core/-/core-1.4.1.tgz#78c344c4aea5f0b263d5a5d9ce73fee95b51625f"
   integrity sha512-wWw//xTSoswepkKljmIfjTxhJSyvzOhQKZk79HmfHIwNNXzAez0g/sSe5dh99j+qdUFXFTg1HzuhjGZ+QymFNg==
+  dependencies:
+    sha1 "^1.1.1"
+    uuid4 "2.0.3"
+
+"@here-wallet/core@^1.4.4":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@here-wallet/core/-/core-1.4.4.tgz#c4ca1bc46d62d46034a1d2993ef5268c469d0dbc"
+  integrity sha512-4enquOl9w5BpA9WscLv/eDWaW8LgSWu5Y/o43YFlbeylaoyTKZW7CiJLhwED3aKcqHflqAAf7ubHBOsYpCMWEg==
   dependencies:
     sha1 "^1.1.1"
     uuid4 "2.0.3"
@@ -2238,6 +2246,11 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
+
+connect-history-api-fallback@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/connect-history-api-fallback/-/connect-history-api-fallback-1.6.0.tgz#8b32089359308d111115d81cad3fceab888f97bc"
+  integrity sha512-e54B99q/OUoH64zYYRf3HBP5z24G38h5D3qXu23JGRoigpX5Ss4r9ZnDk3g0Z8uQC2x2lPaJ+UlWBc1ZWBWdLg==
 
 convert-source-map@^1.5.0, convert-source-map@^1.7.0:
   version "1.9.0"
@@ -4021,6 +4034,13 @@ v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
+
+vite-plugin-rewrite-all@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vite-plugin-rewrite-all/-/vite-plugin-rewrite-all-1.0.1.tgz#ee711a3d114634abb922a0e50e56736d7e9a324a"
+  integrity sha512-W0DAchC8ynuQH0lYLIu5/5+JGfYlUTRD8GGNtHFXRJX4FzzB9MajtqHBp26zq/ly9sDt5BqrfdT08rv3RbB0LQ==
+  dependencies:
+    connect-history-api-fallback "^1.6.0"
 
 vite-plugin-svgr@^2.4.0:
   version "2.4.0"

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import OtterSecLogo from "../assets/otter-logo.svg";
 import { ActionButton, H2, Text } from "../uikit";
-import { useWallet } from "../core/useWallet";
+import { useWallet } from "./core/useWallet";
 import * as S from "./styled";
-import { useAnalytics } from "../core/analytics";
+import { useAnalytics } from "./core/analytics";
 
 export const StartStaking = () => {
   const { selectorModal } = useWallet();

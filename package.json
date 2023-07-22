@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@here-wallet/core": "^1.4.1",
+    "@here-wallet/core": "^1.4.4",
     "@near-js/transactions": "^0.2.1",
     "@near-snap/sdk": "^0.4.0",
     "@near-wallet-selector/coin98-wallet": "^7.9.0",
@@ -72,6 +72,7 @@
     "@vitejs/plugin-react": "^3.1.0",
     "typescript": "^4.9.4",
     "vite": "^4.1.4",
+    "vite-plugin-rewrite-all": "^1.0.1",
     "vite-plugin-svgr": "^2.4.0",
     "vite-tsconfig-paths": "^4.0.5"
   }

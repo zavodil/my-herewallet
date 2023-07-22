@@ -6,11 +6,11 @@ import SwitchIcon from "../../assets/switch.svg";
 import ArrowLeft from "../../assets/arrow-left.svg";
 
 import { colors } from "../../uikit/theme";
-import { useAnalytics } from "../../core/analytics";
+import { useAnalytics } from "../core/analytics";
 import { ActionButton, ActivityIndicator, Button } from "../../uikit";
 import { H3, SmallText, Text } from "../../uikit/typographic";
-import { useWallet } from "../../core/useWallet";
-import { Formatter, isIOS } from "../../core/helpers";
+import { useWallet } from "../core/useWallet";
+import { Formatter, isIOS } from "../../helpers";
 import { useAmountInput } from "../useAmountInput";
 import { Modal } from "../../uikit/Modal";
 import { FullCardView } from "../styled";
