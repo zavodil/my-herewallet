@@ -16,11 +16,7 @@ const TransactionCard = () => {
   const { id } = useParams();
   const { result, link, request } = useSignRequest(id);
   const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
-
   const isMobile = isAndroid() || isIOS();
-  const handleOpen = () => {
-    window.location.assign(link);
-  };
 
   useEffect(() => {
     if (useAppclip) localStorage.removeItem("disableAppClip");
@@ -88,10 +84,7 @@ const TransactionCard = () => {
         )}
 
         {isMobile && (
-          <ActionButton
-            style={{ marginBottom: 32, marginTop: -8, borderRadius: 16 }}
-            onClick={handleOpen}
-          >
+          <ActionButton as="a" href={link} style={{ marginBottom: 32, marginTop: -8, borderRadius: 16 }}>
             Tap to approve in HERE
           </ActionButton>
         )}
