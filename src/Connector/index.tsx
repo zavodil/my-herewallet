@@ -18,6 +18,10 @@ const TransactionCard = () => {
   const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
   const isMobile = isAndroid() || isIOS();
 
+  const open = () => {
+    window.open(link, "_top");
+  };
+
   useEffect(() => {
     if (useAppclip) localStorage.removeItem("disableAppClip");
     else localStorage.setItem("disableAppClip", "1");
@@ -84,7 +88,7 @@ const TransactionCard = () => {
         )}
 
         {isMobile && (
-          <ActionButton as="a" href={link} style={{ marginBottom: 32, marginTop: -8, borderRadius: 16 }}>
+          <ActionButton onClick={open} style={{ marginBottom: 32, marginTop: -8, borderRadius: 16 }}>
             Tap to approve in HERE
           </ActionButton>
         )}

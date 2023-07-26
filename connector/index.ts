@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     connectorWrap.appendChild(qrcode.canvas);
     connectorApprove.style.display = mobileCheck() ? "flex" : "none";
     connectorApprove.classList.remove("disabled");
-    connectorApprove.href = link;
+    connectorApprove.onclick = () => window.open(link, "_top");
   };
 
   dontWallet.addEventListener("click", () => {
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (type === "approving" && isApproving === false) {
         closeButton.style.visibility = "hidden";
-        connectorApprove.href = "";
+        connectorApprove.onclick = () => {};
         connectorApprove.classList.add("disabled");
         connectorWrap.innerHTML = loadingIndicator();
         isApproving = true;
