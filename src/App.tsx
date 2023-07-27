@@ -33,7 +33,7 @@ function App() {
 
         <Route path="/import/*" element={<ImportAccountsResolver />} />
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
-        <Route path="/linkdrop/:id" element={<KeypomResolver />} />
+        <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
         <Route path="/request/:id" element={<WebConnector />} />
       </Routes>
     </BrowserRouter>
