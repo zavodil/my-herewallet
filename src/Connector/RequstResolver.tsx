@@ -46,7 +46,7 @@ export const KeypomResolver = () => {
   useEffect(() => {
     const load = async () => {
       const query = new URLSearchParams(window.location.search);
-      const secret = params.sectet || location.hash.slice(1);
+      const secret = params.secret || location.hash.slice(1);
       const request = JSON.stringify({
         contract: params.id,
         type: "keypom",
