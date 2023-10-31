@@ -11,9 +11,9 @@ import styled from "styled-components";
 
 import ArrowRightIcon from "../../assets/icons/arrow-right.svg";
 import ArrowLeftIcon from "../../assets/icons/arrow-left.svg";
-import { defaultToken } from "../../Staking/core/constants";
-import { FtToken } from "../../Staking/core/types";
-import { HereApi } from "../../Staking/core/api";
+import { defaultToken } from "../../core/constants";
+import { FtToken } from "../../core/types";
+import { HereApi } from "../../core/api";
 import { colors } from "../../uikit/theme";
 import { Button, H2, Text } from "../../uikit";
 import { ActionView } from "./Action";
@@ -111,11 +111,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
               trx.actions.map((action, j) => (
                 <SnapItem key={`${i}_${j}`} width="100%" snapAlign="center">
                   <View style={{ padding: "0 16px" }}>
-                    <ActionView
-                      receiver={trx.receiverId ?? "Your wallet"}
-                      action={action}
-                      tokens={tokens}
-                    />
+                    <ActionView receiver={trx.receiverId ?? "Your wallet"} action={action} tokens={[]} />
                   </View>
                 </SnapItem>
               ))

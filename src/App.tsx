@@ -10,6 +10,7 @@ import {
 } from "./Connector/RequstResolver";
 import { LoadingPage } from "./Connector/Loading";
 import WebConnector from "./Connector";
+import { AppContextProvider } from "./core/useWallet";
 
 function App() {
   const [onlyStake] = useState(() => window.location.search === "?stake");
@@ -25,18 +26,20 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/loading" element={<LoadingPage />} />
-        <Route path="/stake/*" element={<Staking />} />
+    <AppContextProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/stake/*" element={<Staking />} />
 
-        <Route path="/import/*" element={<ImportAccountsResolver />} />
-        <Route path="/g/:id?" element={<CustomRequestResolver />} />
-        <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
-        <Route path="/request/:id" element={<WebConnector />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/import/*" element={<ImportAccountsResolver />} />
+          <Route path="/g/:id?" element={<CustomRequestResolver />} />
+          <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
+          <Route path="/request/:id" element={<WebConnector />} />
+        </Routes>
+      </BrowserRouter>
+    </AppContextProvider>
   );
 }
 

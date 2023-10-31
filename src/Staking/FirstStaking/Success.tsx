@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import cloudImage from "../../assets/cloud.png";
+import { useWallet } from "../../core/useWallet";
+import { useAnalyticsTrack } from "../../core/analytics";
+import { DEFAULT_APY } from "../../core/constants";
 import { ActionButton, H2, Text } from "../../uikit";
 import { Formatter } from "../../helpers";
-import { useWallet } from "../core/useWallet";
 import { FullCardView } from "../styled";
-import { useAnalyticsTrack } from "../core/analytics";
-import { DEFAULT_APY } from "../core/constants";
-import cloudImage from "../../assets/cloud.png";
 
 const SuccessStaking = () => {
   const { user } = useWallet();

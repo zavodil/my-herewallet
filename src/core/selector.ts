@@ -17,15 +17,15 @@ import { setupFinerWallet } from "@near-wallet-selector/finer-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { setupModal } from "@near-wallet-selector/modal-ui";
-import { setupMetamaskSnap } from "./metamask";
+import { setupNearSnap } from "./near-snap";
 
 const initSelector = async () => {
   const selector = await setupWalletSelector({
     network: "mainnet",
     modules: [
+      setupNearSnap(),
       setupHereWallet(),
       setupNearWallet(),
-      setupMetamaskSnap({}),
       setupMyNearWallet(),
       setupWalletConnect({
         projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
@@ -53,7 +53,6 @@ const initSelector = async () => {
   });
 
   const selectorModal = setupModal(selector, { contractId: "storage.herewallet.near" });
-
   return { selector, selectorModal };
 };
 

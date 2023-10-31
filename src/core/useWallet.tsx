@@ -45,7 +45,8 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
         const wallet: Wallet | null = await selector.wallet().catch(() => null);
         if (wallet == null) return setContext({ selector, selectorModal });
         const accounts = await wallet.getAccounts();
-        const account = new WalletAccount(accounts[0].accountId, wallet);
+        const acc = accounts.find((t) => t.accountId.includes(".near")) || accounts[0];
+        const account = new WalletAccount(acc.accountId, wallet);
         const user = new UserAccount(account);
         setContext({ user, selectorModal, selector });
       });

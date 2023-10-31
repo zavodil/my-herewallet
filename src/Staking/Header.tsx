@@ -4,10 +4,12 @@ import LogoutIcon from "../assets/logout.svg";
 import HereLogo from "../assets/here-logo.svg";
 import TwitterIcon from "../assets/twitter.svg";
 import DiscordIcon from "../assets/discord.svg";
+import hereWebLogo from "../assets/here-web.svg?url";
 
 import { StrokeButton } from "../uikit/button";
-import { useWallet } from "./core/useWallet";
-import { useAnalyticsTrack } from "./core/analytics";
+import { useWallet } from "../core/useWallet";
+import { useAnalyticsTrack } from "../core/analytics";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const { user, selectorModal } = useWallet();
@@ -30,14 +32,9 @@ const Header = () => {
 
   return (
     <Wrap>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://herewallet.app"
-        style={{ display: "flex" }}
-      >
-        <HereLogo />
-      </a>
+      <Link to="/" style={{ display: "flex" }}>
+        <img style={{ height: 22, objectFit: "contain" }} src={hereWebLogo} />
+      </Link>
 
       <Flex>
         <LinkButton href="https://twitter.com/here_wallet">

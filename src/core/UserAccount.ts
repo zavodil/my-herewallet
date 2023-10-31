@@ -1,13 +1,13 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { TransactionModel, TransactionType } from "./types";
 import { WalletAccount } from "./WalletAccount";
-import { HereApi } from "./api";
-import StakeTips from "./StakeTips";
 import { DEFAULT_APY } from "./constants";
+import StakeTips from "./StakeTips";
+import { HereApi } from "./api";
 
 export class Storage {
   static memoryData: Record<string, any> = {};
-  constructor(readonly id: string) { }
+  constructor(readonly id: string) {}
 
   set(key: string, value: any) {
     try {
@@ -52,8 +52,8 @@ class UserAccount {
       stake: action,
 
       isClaiming: observable,
-      transactions: observable,
       isInitialized: observable,
+      transactions: observable,
       near2usd: observable,
       state: observable,
     });

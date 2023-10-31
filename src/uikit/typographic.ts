@@ -40,6 +40,10 @@ export const Text = styled.p`
   margin: 0;
 `;
 
+export const BoldP = styled(Text)`
+  font-weight: bold;
+`;
+
 export const SmallText = styled.p`
   font-family: "Manrope";
   font-style: normal;

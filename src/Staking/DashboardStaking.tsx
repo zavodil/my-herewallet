@@ -10,17 +10,16 @@ import UnstakeIcon from "../assets/unstake.svg";
 
 import { ActionButton, ActivityIndicator, Tooltip } from "../uikit";
 import { H3, H4, SmallText, Text } from "../uikit/typographic";
-import { Button, HereButton } from "../uikit/button";
+import { HereButton } from "../uikit/button";
 import { colors } from "../uikit/theme";
 
-import { APP_STORE, GOOGLE_PLAY, HERE_STORAGE_DOCS } from "./core/constants";
-import { TransactionModel, TransactionType } from "./core/types";
-import { useWallet } from "./core/useWallet";
+import UserAccount from "../core/UserAccount";
+import { useWallet } from "../core/useWallet";
+import { useAnalytics } from "../core/analytics";
+import { TransactionModel, TransactionType } from "../core/types";
+import { TipBuyNFT, TipClaim, TipInstallApp } from "./Tips";
 import { Formatter } from "../helpers";
 import * as S from "./styled";
-import { useAnalytics } from "./core/analytics";
-import UserAccount from "./core/UserAccount";
-import { TipBuyNFT, TipClaim, TipInstallApp } from "./Tips";
 
 const trxIcon = (trx: TransactionModel) => {
   if (trx.type === TransactionType.DIVIDEND_PAYMENT) {
@@ -44,175 +43,182 @@ const trxName = (trx: TransactionModel) => {
 
 export const DashboardStaking = observer(() => {
   const { user } = useWallet();
-  const track = useAnalytics("dashboard");
   const navigate = useNavigate();
 
   if (user == null) {
     return <Navigate to="/stake" replace />;
   }
 
-  const claimButton = (
-    <div style={{ margin: "auto 0" }}>
-      <HereButton
-        style={{ width: 105 }}
-        disabled={!Formatter.round(user.state.accrued, 4)}
-        onClick={() => {
-          track("claim");
-          user
-            .claimDividents()
-            .then(() => track("claim_success"))
-            .catch(() => track("claim_failed"));
-        }}
-      >
-        {user?.isClaiming ? (
-          <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} />
-        ) : (
-          "Claim"
-        )}
-      </HereButton>
-    </div>
-  );
+  return <DashboardStakingScreen user={user} onStake={() => navigate("/stake/change")} />;
+});
 
-  return (
-    <S.FullCardView style={{ padding: 0 }}>
-      <Flex style={{ justifyContent: "center", height: 56, flexShrink: 0 }}>
-        <Text style={{ fontWeight: "bolder" }}>Dashboard</Text>
-      </Flex>
+export const DashboardStakingScreen = observer(
+  ({ user, onStake }: { user: UserAccount; onStake: () => void }) => {
+    const track = useAnalytics("dashboard");
 
-      <S.DashboardScroll>
-        <Row style={{ borderTop: 0 }}>
-          <Flex>
-            <Text>Interest paid</Text>
-            <H4>{Formatter.usd(user.state.totalIncome * user.near2usd)}</H4>
-          </Flex>
+    const claimButton = (
+      <div style={{ margin: "auto 0" }}>
+        <HereButton
+          style={{ width: 105 }}
+          disabled={!Formatter.round(user.state.accrued, 4)}
+          onClick={() => {
+            track("claim");
+            user
+              .claimDividents()
+              .then(() => track("claim_success"))
+              .catch(() => track("claim_failed"));
+          }}
+        >
+          {user?.isClaiming ? (
+            <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} />
+          ) : (
+            "Claim"
+          )}
+        </HereButton>
+      </div>
+    );
 
-          <Flex style={{ textAlign: "right" }}>
-            <Tooltip
-              on={["click"]}
-              children={<TipBuyNFT user={user} />}
-              position={["right center", "bottom left"]}
-              open={user.tips.tipNFT}
-              lockScroll
-              trigger={
-                <Text style={{ cursor: "pointer", textDecoration: "underline" }}>
-                  APY: {Formatter.round(user.state.apy * 100)}%
+    return (
+      <S.FullCardView style={{ padding: 0 }}>
+        <Flex style={{ justifyContent: "center", height: 56, flexShrink: 0 }}>
+          <Text style={{ fontWeight: "bolder" }}>Dashboard</Text>
+        </Flex>
+
+        <S.DashboardScroll>
+          <Row style={{ borderTop: 0 }}>
+            <Flex>
+              <Text>Interest paid</Text>
+              <H4>{Formatter.usd(user.state.totalIncome * user.near2usd)}</H4>
+            </Flex>
+
+            <Flex style={{ textAlign: "right" }}>
+              <Tooltip
+                on={["click"]}
+                children={<TipBuyNFT user={user} />}
+                position={["right center", "bottom left"]}
+                open={user.tips.tipNFT}
+                lockScroll
+                trigger={
+                  <Text style={{ cursor: "pointer", textDecoration: "underline" }}>
+                    APY: {Formatter.round(user.state.apy * 100)}%
+                  </Text>
+                }
+              />
+              <Text style={{ color: colors.blackSecondary }}>
+                {Formatter.round(user.state.totalIncome, 4)} NEAR
+              </Text>
+            </Flex>
+          </Row>
+
+          <Row>
+            <Flex>
+              <Text>Interest accrued</Text>
+              <div style={{ display: "flex", gap: 8 }}>
+                <H4>{Formatter.usd(user.state.accrued * user.near2usd)}</H4>{" "}
+                <Text style={{ color: colors.blackSecondary, marginTop: 1 }}>
+                  {Formatter.round(user.state.accrued, 4)} NEAR
                 </Text>
+              </div>
+            </Flex>
+
+            <Tooltip
+              on={[]}
+              open={user.tips.tipClaim}
+              children={<TipClaim user={user} />}
+              position={["right center", "top center"]}
+              closeOnDocumentClick={false}
+              closeOnEscape={false}
+              trigger={claimButton}
+              offsetX={10}
+            />
+          </Row>
+          <Row>
+            <Tooltip
+              on={[]}
+              children={<TipInstallApp user={user} />}
+              position={["left center", "bottom left"]}
+              open={user.tips.tipInstallApp}
+              closeOnDocumentClick={false}
+              closeOnEscape={false}
+              trigger={
+                <Flex>
+                  <Text>Staked NEAR</Text>
+                  <H4>{Formatter.usd(user?.state.staked * user?.near2usd)}</H4>
+                </Flex>
               }
             />
             <Text style={{ color: colors.blackSecondary }}>
-              {Formatter.round(user.state.totalIncome, 4)} NEAR
+              {Formatter.round(user?.state.staked, 4)} NEAR
             </Text>
-          </Flex>
-        </Row>
+          </Row>
 
-        <Row>
-          <Flex>
-            <Text>Interest accrued</Text>
-            <div style={{ display: "flex", gap: 8 }}>
-              <H4>{Formatter.usd(user.state.accrued * user.near2usd)}</H4>{" "}
-              <Text style={{ color: colors.blackSecondary, marginTop: 1 }}>
-                {Formatter.round(user.state.accrued, 4)} NEAR
-              </Text>
-            </div>
-          </Flex>
+          <Row>
+            <Flex>
+              <Text>Unstaked NEAR</Text>
+              <H4>{Formatter.usd(user.state.unstaked * user.near2usd)}</H4>
+            </Flex>
+            <Text style={{ color: colors.blackSecondary }}>
+              {Formatter.round(user.state.unstaked, 4)} NEAR
+            </Text>
+          </Row>
 
-          <Tooltip
-            on={[]}
-            open={user.tips.tipClaim}
-            children={<TipClaim user={user} />}
-            position={["right center", "top center"]}
-            closeOnDocumentClick={false}
-            closeOnEscape={false}
-            trigger={claimButton}
-            offsetX={10}
-          />
-        </Row>
-        <Row>
-          <Tooltip
-            on={[]}
-            children={<TipInstallApp user={user} />}
-            position={["left center", "bottom left"]}
-            open={user.tips.tipInstallApp}
-            closeOnDocumentClick={false}
-            closeOnEscape={false}
-            trigger={
-              <Flex>
-                <Text>Staked NEAR</Text>
-                <H4>{Formatter.usd(user?.state.staked * user?.near2usd)}</H4>
-              </Flex>
-            }
-          />
-          <Text style={{ color: colors.blackSecondary }}>
-            {Formatter.round(user?.state.staked, 4)} NEAR
-          </Text>
-        </Row>
+          {Formatter.round(user.state.unstaked, 4) > 0 && (
+            <Badge>
+              <WarningIcon />
+              <Text style={{ color: "#DB8520" }}>You don’t get staking interest on unstaked near</Text>
+            </Badge>
+          )}
 
-        <Row>
-          <Flex>
-            <Text>Unstaked NEAR</Text>
-            <H4>{Formatter.usd(user.state.unstaked * user.near2usd)}</H4>
-          </Flex>
-          <Text style={{ color: colors.blackSecondary }}>
-            {Formatter.round(user.state.unstaked, 4)} NEAR
-          </Text>
-        </Row>
+          {user.transactions.length > 0 && (
+            <>
+              <H3 style={{ margin: "24px 24px 8px" }}>Transactions</H3>
+              {user.transactions.slice(0, 10).map((trx) => (
+                <TransactionItem
+                  key={trx.transaction_hash}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://explorer.near.org/transactions/${trx.transaction_hash}`}
+                  onClick={() => track("open_trx")}
+                >
+                  <TransactionIcon>{trxIcon(trx)}</TransactionIcon>
+                  <Flex style={{ gap: 0, flexShrink: 0 }}>
+                    <Text style={{ fontWeight: "bolder" }}>{trxName(trx)}</Text>
+                    <SmallText>
+                      {new Date(trx.timestamp * 1000).toLocaleString("en-US", {
+                        hour: "numeric",
+                        minute: "numeric",
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </SmallText>
+                  </Flex>
+                  <Flex style={{ gap: 0, flex: 1, alignItems: "flex-end" }}>
+                    <Text style={{ color: colors.green }}>
+                      +{Formatter.usd(trx.data.amount * trx.data.usd_rate)}
+                    </Text>
+                    <SmallText>{Formatter.round(trx.data.amount)} NEAR</SmallText>
+                  </Flex>
+                </TransactionItem>
+              ))}
+              <SmallText style={{ margin: "8px 24px" }}>We only show the last 10 transactions</SmallText>
+            </>
+          )}
+        </S.DashboardScroll>
 
-        {Formatter.round(user.state.unstaked, 4) > 0 && (
-          <Badge>
-            <WarningIcon />
-            <Text style={{ color: "#DB8520" }}>You don’t get staking interest on unstaked near</Text>
-          </Badge>
-        )}
-
-        {user.transactions.length > 0 && (
-          <>
-            <H3 style={{ margin: "24px 24px 8px" }}>Transactions</H3>
-            {user.transactions.slice(0, 10).map((trx) => (
-              <TransactionItem
-                key={trx.transaction_hash}
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://explorer.near.org/transactions/${trx.transaction_hash}`}
-                onClick={() => track("open_trx")}
-              >
-                <TransactionIcon>{trxIcon(trx)}</TransactionIcon>
-                <Flex style={{ gap: 0, flexShrink: 0 }}>
-                  <Text style={{ fontWeight: "bolder" }}>{trxName(trx)}</Text>
-                  <SmallText>
-                    {new Date(trx.timestamp * 1000).toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </SmallText>
-                </Flex>
-                <Flex style={{ gap: 0, flex: 1, alignItems: "flex-end" }}>
-                  <Text style={{ color: colors.green }}>
-                    +{Formatter.usd(trx.data.amount * trx.data.usd_rate)}
-                  </Text>
-                  <SmallText>{Formatter.round(trx.data.amount)} NEAR</SmallText>
-                </Flex>
-              </TransactionItem>
-            ))}
-            <SmallText style={{ margin: "8px 24px" }}>We only show the last 10 transactions</SmallText>
-          </>
-        )}
-      </S.DashboardScroll>
-
-      <Footer>
-        <ActionButton
-          onClick={() => {
-            track("open_edit");
-            navigate("/stake/change");
-          }}
-        >
-          Stake/Unstake
-        </ActionButton>
-      </Footer>
-    </S.FullCardView>
-  );
-});
+        <Footer>
+          <ActionButton
+            onClick={() => {
+              track("open_edit");
+              onStake();
+            }}
+          >
+            Stake/Unstake
+          </ActionButton>
+        </Footer>
+      </S.FullCardView>
+    );
+  }
+);
 
 const TransactionIcon = styled.div`
   width: 40px;

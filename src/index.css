@@ -15,6 +15,10 @@ html {
 
 * {
   box-sizing: border-box;
+  --Stroke: #c7bab8;
+  --Elevation-0: #f3ebea;
+  --Elevation-1: #ebdedc;
+  --Black-Primary: #2c3034;
 }
 
 a {
@@ -33,6 +37,6 @@ a {
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0; 
+  -webkit-appearance: none;
+  margin: 0;
 }

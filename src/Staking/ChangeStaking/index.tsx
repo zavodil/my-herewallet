@@ -6,13 +6,14 @@ import SwitchIcon from "../../assets/switch.svg";
 import ArrowLeft from "../../assets/arrow-left.svg";
 
 import { colors } from "../../uikit/theme";
-import { useAnalytics } from "../core/analytics";
-import { ActionButton, ActivityIndicator, Button } from "../../uikit";
 import { H3, SmallText, Text } from "../../uikit/typographic";
-import { useWallet } from "../core/useWallet";
+import { ActionButton, ActivityIndicator, Button } from "../../uikit";
 import { Formatter, isIOS } from "../../helpers";
-import { useAmountInput } from "../useAmountInput";
 import { Modal } from "../../uikit/Modal";
+
+import { useAnalytics } from "../../core/analytics";
+import { useWallet } from "../../core/useWallet";
+import { useAmountInput } from "../useAmountInput";
 import { FullCardView } from "../styled";
 
 import { AmountField, AmountInput, AmountInputWrap, StakeButton, SwitchButton } from "./styled";
@@ -22,8 +23,8 @@ const ChangeStaking = () => {
   const { user } = useWallet();
   const track = useAnalytics("edit");
 
-  const [isStake, toggleStake] = useState(true);
   const [isFiat, toggleFiat] = useState(false);
+  const [isStake, toggleStake] = useState(true);
   const [isSuccess, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const prefixer = (v: string) => (isFiat ? `$${v}` : v);

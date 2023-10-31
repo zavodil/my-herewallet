@@ -4,12 +4,12 @@ import { Action } from "@here-wallet/core";
 import styled from "styled-components";
 
 import DoneIcon from "../../assets/icons/done.svg";
-import { H2, H3, Text, SmallText } from "../../uikit/typographic";
-import { colors } from "../../uikit/theme";
-import { FtToken } from "../../Staking/core/types";
-import { parseArgs, parseFunctionCall } from "./parseTransactions";
-import { defaultToken } from "../../Staking/core/constants";
 import { Button } from "../../uikit";
+import { colors } from "../../uikit/theme";
+import { H2, H3, Text, SmallText } from "../../uikit/typographic";
+import { defaultToken } from "../../core/constants";
+import { FtToken } from "../../core/types";
+import { parseArgs, parseFunctionCall } from "./parseTransactions";
 
 interface Props {
   action: Action;

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
 import rockImage from "../../assets/rock.png";
-import { ActionButton, ActivityIndicator, Button, H0, H2, Text, Tooltip } from "../../uikit";
-import * as S from "../styled";
-import { useWallet } from "../core/useWallet";
+import { ActionButton, ActivityIndicator, H0, Text, Tooltip } from "../../uikit";
+import { useAnalyticsTrack } from "../../core/analytics";
+import { useWallet } from "../../core/useWallet";
 import { formatAmount } from "../../helpers";
 import { Formatter } from "../../helpers";
-import { observer } from "mobx-react-lite";
-import { APP_STORE, GOOGLE_PLAY } from "../core/constants";
 import { TipUnstake } from "../Tips";
-import { useAnalytics, useAnalyticsTrack } from "../core/analytics";
+import * as S from "../styled";
 
 const SuccessStaking = ({
   defaultState,
