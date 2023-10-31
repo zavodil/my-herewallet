@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import SlideRoutes from "react-slide-routes";
 
 import OtterSecLogo from "../assets/otter-logo.svg";
-import { AppContextProvider, useWallet } from "../core/useWallet";
+import { useWallet } from "../core/useWallet";
 import { ActivityIndicator } from "../uikit";
 
 import { Card, CardView, Container, OtterSecText, Page } from "./styled";

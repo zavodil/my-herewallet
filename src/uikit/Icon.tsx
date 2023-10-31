@@ -1,75 +1,142 @@
 import React, { Component } from "react";
 
+import add_circle from "../icons/add-circle.svg?url";
+import arrow_down from "../icons/arrow-down.svg?url";
+import arrow_right from "../icons/arrow-right.svg?url";
+import cross_circle from "../icons/cross-circle.svg?url";
+import cursor_down from "../icons/cursor-down.svg?url";
+import cursor_left from "../icons/cursor-left.svg?url";
+import cursor_right from "../icons/cursor-right.svg?url";
+import earn_stroke from "../icons/earn-stroke.svg?url";
+import switch_horizontal from "../icons/switch-horizontal.svg?url";
+import switch_vertical from "../icons/switch-vertical.svg?url";
+import warning_green from "../icons/warning-green.svg?url";
+import gas_green from "../icons/gas-green.svg?url";
+import stroke_favorite from "../icons/stroke-favorite.svg?url";
+import social_sent from "../icons/social-sent.svg?url";
+import tick_circle from "../icons/tick-circle.svg?url";
+import play_player from "../icons/play-player.svg?url";
+import lost_wifi from "../icons/lost-wifi.svg?url";
+import nft_in from "../icons/nft-in.svg?url";
+import nft_out from "../icons/nft-out.svg?url";
+import refresh from "../icons/refresh.svg?url";
+import copy from "../icons/copy.svg?url";
+import add from "../icons/add.svg?url";
+import bell from "../icons/bell.svg?url";
+import book from "../icons/book.svg?url";
+import cross from "../icons/cross.svg?url";
+import crypto from "../icons/crypto.svg?url";
+import del from "../icons/del.svg?url";
+import earn from "../icons/earn.svg?url";
+import technical from "../icons/technical.svg?url";
+import tick from "../icons/tick.svg?url";
+import tourch from "../icons/tourch.svg?url";
+import unstake from "../icons/unstake.svg?url";
+import web from "../icons/web.svg?url";
+import binance from "../icons/binance.svg?url";
+import touchid from "../icons/touchid.svg?url";
+import lock from "../icons/lock.svg?url";
+import card from "../icons/card.svg?url";
+import question from "../icons/question.svg?url";
+import near from "../icons/near.svg?url";
+import download from "../icons/download.svg?url";
+import keys from "../icons/keys.svg?url";
+import clock from "../icons/clock.svg?url";
+import score from "../icons/score.svg?url";
+import warning from "../icons/warning.svg?url";
+import edit from "../icons/edit.svg?url";
+import link from "../icons/link.svg?url";
+import social from "../icons/social.svg?url";
+import options from "../icons/options.svg?url";
+import plus from "../icons/plus.svg?url";
+import orderly from "../icons/orderly.svg?url";
+import search from "../icons/search.svg?url";
+import verified from "../icons/verified.svg?url";
+import star from "../icons/star.svg?url";
+import trash from "../icons/trash.svg?url";
+import idea from "../icons/idea.svg?url";
+import gas from "../icons/gas.svg?url";
+import percent from "../icons/percent.svg?url";
+import phone from "../icons/phone.svg?url";
+import faceid from "../icons/faceid.svg?url";
+import key from "../icons/key.svg?url";
+import logout from "../icons/logout.svg?url";
+import support from "../icons/support.svg?url";
+import user from "../icons/user.svg?url";
+import document from "../icons/document.svg?url";
+import settings from "../icons/settings.svg?url";
+import favorite from "../icons/favorite.svg?url";
+import qr from "../icons/qr.svg?url";
+
 export const icons = {
-  "add-circle": "../../public/icons/add-circle.svg",
-  "arrow-down": "../../public/icons/arrow-down.svg",
-  "arrow-right": "../../public/icons/arrow-right.svg",
-  "cross-circle": "../../public/icons/cross-circle.svg",
-  "cursor-down": "../../public/icons/cursor-down.svg",
-  "cursor-left": "../../public/icons/cursor-left.svg",
-  "cursor-right": "../../public/icons/cursor-right.svg",
-  "earn-stroke": "../../public/icons/earn-stroke.svg",
-  "switch-horizontal": "../../public/icons/switch-horizontal.svg",
-  "switch-vertical": "../../public/icons/switch-vertical.svg",
-  "warning-green": "../../public/icons/warning-green.svg",
-  "gas-green": "../../public/icons/gas-green.svg",
-  "stroke-favorite": "../../public/icons/stroke-favorite.svg",
-  "social-sent": "../../public/icons/social-sent.svg",
-  "tick-circle": "../../public/icons/tick-circle.svg",
-  "play-player": "../../public/icons/play-player.svg",
-  "lost-wifi": "../../public/icons/lost-wifi.svg",
-  "nft-in": "../../public/icons/nft-in.svg",
-  "nft-out": "../../public/icons/nft-out.svg",
-  refresh: "../../public/icons/refresh.svg",
-  copy: "../../public/icons/copy.svg",
-  add: "../../public/icons/add.svg",
-  bell: "../../public/icons/bell.svg",
-  book: "../../public/icons/book.svg",
-  cross: "../../public/icons/cross.svg",
-  crypto: "../../public/icons/crypto.svg",
-  del: "../../public/icons/del.svg",
-  earn: "../../public/icons/earn.svg",
-  technical: "../../public/icons/technical.svg",
-  tick: "../../public/icons/tick.svg",
-  tourch: "../../public/icons/tourch.svg",
-  unstake: "../../public/icons/unstake.svg",
-  web: "../../public/icons/web.svg",
-  binance: "../../public/icons/binance.svg",
-  touchid: "../../public/icons/touchid.svg",
-  lock: "../../public/icons/lock.svg",
-  card: "../../public/icons/card.svg",
-  question: "../../public/icons/question.svg",
-  near: "../../public/icons/near.svg",
-  download: "../../public/icons/download.svg",
-  keys: "../../public/icons/keys.svg",
-  back: "../../public/icons/back.svg",
-  clock: "../../public/icons/clock.svg",
-  score: "../../public/icons/score.svg",
-  warning: "../../public/icons/warning.svg",
-  edit: "../../public/icons/edit.svg",
-  link: "../../public/icons/link.svg",
-  social: "../../public/icons/social.svg",
-  options: "../../public/icons/options.svg",
-  plus: "../../public/icons/plus.svg",
-  orderly: "../../public/icons/orderly.svg",
-  search: "../../public/icons/search.svg",
-  verified: "../../public/icons/verified.svg",
-  star: "../../public/icons/star.svg",
-  trash: "../../public/icons/trash.svg",
-  idea: "../../public/icons/idea.svg",
-  gas: "../../public/icons/gas.svg",
-  percent: "../../public/icons/percent.svg",
-  phone: "../../public/icons/phone.svg",
-  faceid: "../../public/icons/faceid.svg",
-  key: "../../public/icons/key.svg",
-  logout: "../../public/icons/logout.svg",
-  support: "../../public/icons/support.svg",
-  user: "../../public/icons/user.svg",
-  document: "../../public/icons/document.svg",
-  settings: "../../public/icons/settings.svg",
-  favorite: "../../public/icons/favorite.svg",
-  qr: "../../public/icons/qr.svg",
-} as const;
+  add_circle,
+  arrow_down,
+  arrow_right,
+  cross_circle,
+  cursor_down,
+  cursor_left,
+  cursor_right,
+  earn_stroke,
+  switch_horizontal,
+  switch_vertical,
+  warning_green,
+  gas_green,
+  stroke_favorite,
+  social_sent,
+  tick_circle,
+  play_player,
+  lost_wifi,
+  nft_in,
+  nft_out,
+  refresh,
+  copy,
+  add,
+  bell,
+  book,
+  cross,
+  crypto,
+  del,
+  earn,
+  technical,
+  tick,
+  tourch,
+  unstake,
+  web,
+  binance,
+  touchid,
+  lock,
+  card,
+  question,
+  near,
+  download,
+  keys,
+  clock,
+  score,
+  warning,
+  edit,
+  link,
+  social,
+  options,
+  plus,
+  orderly,
+  search,
+  verified,
+  star,
+  trash,
+  idea,
+  gas,
+  percent,
+  phone,
+  faceid,
+  key,
+  logout,
+  support,
+  user,
+  document,
+  settings,
+  favorite,
+  qr,
+} as Record<string, string>;
 
 interface Props {
   name: keyof typeof icons;
@@ -90,8 +157,9 @@ class Icon extends Component<Props> {
 
   render() {
     const { name, style, ...props } = this.props;
-    if (icons[name] == null) return null;
-    return <img {...props} style={style} src={new URL(icons[name], import.meta.url).href} />;
+    const icon = icons[name.replaceAll("-", "_")];
+    if (icon == null) return null;
+    return <img {...props} style={style} src={icon} />;
   }
 }
 
