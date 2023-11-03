@@ -9,6 +9,7 @@
     "@near-wallet-selector/core": "^7.4.0",
     "@near-wallet-selector/here-wallet": "^8.7.0",
     "@near-wallet-selector/ledger": "^8.7.0",
+    "@near-wallet-selector/meteor-wallet": "^8.7.0",
     "@near-wallet-selector/modal-ui": "^7.4.0",
     "@near-wallet-selector/my-near-wallet": "^8.7.0",
     "@near-wallet-selector/near-snap": "^8.7.0",

@@ -2,6 +2,8 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupNearWallet } from "@near-wallet-selector/near-wallet";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import { setupNearSnap } from "./near-snap";
@@ -12,6 +14,8 @@ const initSelector = async () => {
     modules: [
       setupNearSnap(),
       setupHereWallet(),
+      setupNearWallet(),
+      setupMeteorWallet(),
       setupMyNearWallet(),
       setupWalletConnect({
         projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
