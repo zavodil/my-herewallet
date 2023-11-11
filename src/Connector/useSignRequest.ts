@@ -3,6 +3,7 @@ import { base_decode } from "near-api-js/lib/utils/serialize";
 import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
 import { proxyProvider } from "@here-wallet/core";
 
+// 
 export const useSignRequest = (data?: string) => {
   const [topic, setTopic] = useState(() => window.localStorage.getItem("topic") || undefined);
   const [request, setRequest] = useState<HereProviderRequest | null>(null);
@@ -44,7 +45,7 @@ export const useSignRequest = (data?: string) => {
 
         const url = new URL(`${window.location.origin}/request/${id}`);
         window.history.replaceState(null, "", url);
-        setLink(`https://my.herewallet.app/request/${id}`);
+        setLink(`herewallet://request/${id}`);
 
         if (topic) {
           fetch("https://api.herewallet.app/api/v1/transactions/topic/sign", {
