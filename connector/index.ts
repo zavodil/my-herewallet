@@ -43,10 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const useAppClip = localStorage.getItem("useAppClip") === "true";
     dontWallet.innerText = useAppClip ? "Disable AppClip" : "I don't have a wallet";
 
-    const link = useAppClip
-      ? `https://h4n.app/${requestId}`
-      : `https://my.herewallet.app/request/${requestId}`;
-
+    const link = useAppClip ? `https://h4n.app/${requestId}` : `herewallet://request/${requestId}`;
     const qrcode = new QRCode({
       ...darkQR,
       value: link,
