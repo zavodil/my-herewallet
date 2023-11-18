@@ -11,6 +11,7 @@ import {
 import { LoadingPage } from "./Connector/Loading";
 import WebConnector from "./Connector";
 import { AppContextProvider } from "./core/useWallet";
+import OpenInApp from "./Connector/OpenInApp";
 
 function App() {
   const [onlyStake] = useState(() => window.location.search === "?stake");
@@ -37,6 +38,7 @@ function App() {
           <Route path="/g/:id?" element={<CustomRequestResolver />} />
           <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
           <Route path="/request/:id" element={<WebConnector />} />
+          <Route path="*" element={<OpenInApp />} />
         </Routes>
       </BrowserRouter>
     </AppContextProvider>
