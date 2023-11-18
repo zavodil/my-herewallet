@@ -62,7 +62,10 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <H2>Sign message</H2>
         <Text style={{ marginTop: 16, textAlign: "center" }}>
-          The app <span style={{ color: colors.pink }}>{request.receiver}</span>
+          The app{" "}
+          <span style={{ color: colors.pink }}>
+            {"receiver" in request ? request.receiver : request.recipient}
+          </span>
           {"\n"}asks to sign this message for authorization:
         </Text>
 
