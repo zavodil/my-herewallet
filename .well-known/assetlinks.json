@@ -5,8 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.herewallet",
       "sha256_cert_fingerprints": [
-        "8D:35:C3:DB:24:97:EE:06:D6:56:B7:48:44:91:3F:ED:D6:D8:EB:BF:E5:38:1C:00:3D:D0:F6:CF:4F:46:CD:E4",
-        "93:AA:9A:2C:E2:5D:65:6C:E6:2A:F3:A3:4A:72:D5:89:3F:42:D9:CD:C4:4C:EE:6F:CC:84:7D:4E:95:58:25:48"
+        "93:AA:9A:2C:E2:5D:65:6C:E6:2A:F3:A3:4A:72:D5:89:3F:42:D9:CD:C4:4C:EE:6F:CC:84:7D:4E:95:58:25:48",
+        "89:56:FD:E5:E3:5C:50:E0:B1:D7:04:9F:4B:84:DB:55:9F:10:4D:39:02:6A:5B:33:B6:B6:35:2B:FF:9D:F2:2B"
       ]
     }
   }

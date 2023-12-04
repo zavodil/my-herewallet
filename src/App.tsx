@@ -33,7 +33,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/stake/*" element={<Staking />} />
-
           <Route path="/import/*" element={<ImportAccountsResolver />} />
           <Route path="/g/:id?" element={<CustomRequestResolver />} />
           <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
