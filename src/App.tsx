@@ -12,11 +12,10 @@ import { LoadingPage } from "./Connector/Loading";
 import WebConnector from "./Connector";
 import { AppContextProvider } from "./core/useWallet";
 import OpenInApp from "./Connector/OpenInApp";
+import ExportAccount from "./ExportAccount";
 
 function App() {
-  const [onlyStake] = useState(() => window.location.search === "?stake");
-
-  if (onlyStake) {
+  if (window.location.search === "?stake") {
     return (
       <HashRouter>
         <Routes>
@@ -24,6 +23,10 @@ function App() {
         </Routes>
       </HashRouter>
     );
+  }
+
+  if (window.location.search === "?export") {
+    return <ExportAccount />;
   }
 
   return (
