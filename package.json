@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "build:export-widget": "BUILD_ID='export' vite build",
     "start": "vite --host"
   },
   "browserslist": {
@@ -62,6 +63,7 @@
     "vite": "^4.1.4",
     "vite-plugin-rewrite-all": "^1.0.1",
     "vite-plugin-svgr": "^2.4.0",
-    "vite-tsconfig-paths": "^4.0.5"
+    "vite-tsconfig-paths": "^4.0.5",
+    "vite-plugin-singlefile": "^0.13.5"
   }
 }

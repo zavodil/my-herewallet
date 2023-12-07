@@ -41,11 +41,3 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-
-#near-wallet-selector-modal .close-button {
-  display: none;
-}
-
-#near-wallet-selector-modal .nws-modal-overlay {
-  display: none;
-}

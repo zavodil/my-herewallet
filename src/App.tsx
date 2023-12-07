@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 import { Staking } from "./Staking";
 import Home from "./Home";
@@ -9,10 +9,9 @@ import {
   KeypomResolver,
 } from "./Connector/RequstResolver";
 import { LoadingPage } from "./Connector/Loading";
-import WebConnector from "./Connector";
 import { AppContextProvider } from "./core/useWallet";
 import OpenInApp from "./Connector/OpenInApp";
-import ExportAccount from "./ExportAccount";
+import WebConnector from "./Connector";
 
 function App() {
   if (window.location.search === "?stake") {
@@ -23,10 +22,6 @@ function App() {
         </Routes>
       </HashRouter>
     );
-  }
-
-  if (window.location.search === "?export") {
-    return <ExportAccount />;
   }
 
   return (
