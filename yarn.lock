@@ -800,6 +800,14 @@
     "@near-wallet-selector/core" "8.9.1"
     "@near-wallet-selector/my-near-wallet" "8.9.1"
 
+"@near-wallet-selector/sender@^8.9.1":
+  version "8.9.1"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/sender/-/sender-8.9.1.tgz#14a5f3dc0c97151a723274c7d120fbf6de6a9eba"
+  integrity sha512-j9OK8E2bO3UjpiQfhWPcICUZcJDjfOfeGzlB/mQiiNwRalMd2+nMw6JFsNIv2Oe9g4GO97k/7ipL3KNkBnv0sQ==
+  dependencies:
+    "@near-wallet-selector/core" "8.9.1"
+    is-mobile "4.0.0"
+
 "@near-wallet-selector/wallet-connect@^8.9.1":
   version "8.9.1"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/wallet-connect/-/wallet-connect-8.9.1.tgz#879833c0d3fa23063cf4e5f5a6a871e544827926"
