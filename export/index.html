@@ -17,6 +17,9 @@
   </head>
   <body>
     <script type="module">
+      import { Buffer } from "buffer";
+      window.Buffer = Buffer;
+
       import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
       import { setupExportSelectorModal } from "@near-wallet-selector/account-export";
       import { setupWalletSelector } from "@near-wallet-selector/core";
@@ -36,7 +39,7 @@
 
         const search = new URL(window.location.href).searchParams;
         const modal = setupExportSelectorModal(selector, {
-          accounts: [{ accountId: search.get("accountId"), privateKey: search.get("key") }],
+          accounts: [{ accountId: window.accountId, privateKey: window.privateKey }],
         });
 
         modal.show();
