@@ -3,24 +3,22 @@ import { observer } from "mobx-react-lite";
 import { Route } from "react-router-dom";
 import SlideRoutes from "react-slide-routes";
 
-import OtterSecLogo from "../assets/otter-logo.svg";
-import { useWallet } from "../core/useWallet";
-import { ActivityIndicator } from "../uikit";
-
-import { Card, CardView, Container, OtterSecText, Page } from "./styled";
-import { DashboardStaking } from "./DashboardStaking";
-import { StartStaking } from "./EnterStaking";
-import Header from "./Header";
+import OtterSecLogo from "../assets/otter-logo.svg?url";
+import { Root } from "../Home/styled";
+import Header from "../Home/Header";
+import { useWallet } from "../core/Accounts";
 
 import FirstStaking from "./FirstStaking";
 import FirstSuccess from "./FirstStaking/Success";
 
 import ChangeStaking from "./ChangeStaking";
 import ChangeSuccess from "./ChangeStaking/Success";
+import { DashboardStaking } from "./DashboardStaking";
+import { Card, Container, OtterSecText } from "./styled";
 
 export const Staking = () => {
   return (
-    <Page>
+    <Root>
       <Header />
       <Container>
         <Card>
@@ -32,41 +30,24 @@ export const Staking = () => {
           </SlideRoutes>
         </Card>
         <OtterSecText as="a" href="https://osec.io/" target="_blank">
-          Secure. Audited by <OtterSecLogo />
+          Secure. Audited by <img src={OtterSecLogo} />
         </OtterSecText>
       </Container>
-    </Page>
+    </Root>
   );
 };
 
-const BootPage = () => {
-  const { user } = useWallet();
+const BootPage = observer(() => {
+  const user = useWallet()!;
 
-  if (user == null) {
-    return <PageStaking children={<StartStaking />} />;
-  }
-
-  if (!user.state.staked && !user.state.totalIncome) {
+  console.log(user.near.hnear.totalDividends, user.tokens.hnear.amountFloat);
+  if (!user.tokens.hnear.amountFloat && !user.near.hnear.totalDividends) {
     return <PageStaking children={<FirstStaking />} />;
   }
 
   return <PageStaking children={<DashboardStaking />} />;
-};
+});
 
 const PageStaking = observer<{ children: React.ReactElement }>(({ children }) => {
-  const { user, selector } = useWallet();
-
-  if (selector != null && user == null) {
-    return children;
-  }
-
-  if ((selector == null && user == null) || user?.isInitialized !== true) {
-    return (
-      <CardView>
-        <ActivityIndicator />
-      </CardView>
-    );
-  }
-
   return children;
 });

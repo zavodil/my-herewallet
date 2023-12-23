@@ -39,14 +39,14 @@ export const Container = styled.div`
 `;
 
 export const CardView = styled.div`
-  height: 560px;
+  height: 570px;
   width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 32px 24px;
-  background: #ebdedc;
+  background: #f3ebea;
 
   @media (max-width: 576px) {
     width: 100vw;
@@ -88,7 +88,7 @@ export const Card = styled.div`
   justify-content: center;
   flex-direction: column;
   display: flex;
-  height: 560px;
+  height: 570px;
   width: 400px;
 
   @media (max-width: 576px) {

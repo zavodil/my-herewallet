@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { darkQR, QRCode } from "@here-wallet/core/qrcode-strategy";
+import { darkQR, QRCode } from "@here-wallet/core/build/qrcode-strategy";
 
 const HereQRCode = ({ value }: { value: string }) => {
   const ref = useRef<HTMLDivElement>(null);

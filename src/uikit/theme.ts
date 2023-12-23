@@ -3,7 +3,7 @@ export const colors = {
   elevation1: "rgb(235, 222, 220)",
   blackPrimary: "#2c3034",
   blackSecondary: "#6B6661",
-  green: "rgba(53, 156, 44, 1)",
+  green: "#087164",
   red: "#D63E3E",
   orange: "#FDBF1E",
   pink: "rgba(253, 132, 227, 1)",

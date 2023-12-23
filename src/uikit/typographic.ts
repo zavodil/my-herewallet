@@ -33,11 +33,16 @@ export const H4 = styled.h4`
 export const Text = styled.p`
   font-family: "Manrope";
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   line-height: 22px;
   color: #2c3034;
   margin: 0;
+  text-decoration: none;
+`;
+
+export const LargeP = styled(Text)`
+  font-size: 18px;
 `;
 
 export const BoldP = styled(Text)`
@@ -52,6 +57,11 @@ export const SmallText = styled.p`
   line-height: 22px;
   color: #6b6661;
   margin: 0;
+`;
+
+export const TinyText = styled(SmallText)`
+  font-size: 12px;
+  line-height: 12px;
 `;
 
 export const H1 = styled.h1`

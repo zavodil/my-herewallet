@@ -4,17 +4,19 @@ import { Action } from "@here-wallet/core";
 import styled from "styled-components";
 
 import DoneIcon from "../../assets/icons/done.svg";
-import { Button } from "../../uikit";
-import { colors } from "../../uikit/theme";
 import { H2, H3, Text, SmallText } from "../../uikit/typographic";
-import { defaultToken } from "../../core/constants";
-import { FtToken } from "../../core/types";
+import { colors } from "../../uikit/theme";
+import { Button } from "../../uikit";
+
 import { parseArgs, parseFunctionCall } from "./parseTransactions";
+import { near } from "../../core/token/defaults";
+import { formatAmount } from "../../core/helpers";
+import { FtModel } from "../../core/token/types";
 
 interface Props {
   action: Action;
   receiver: string;
-  tokens: FtToken[];
+  tokens: FtModel[];
 }
 
 export const ActionView = ({ action, receiver, tokens }: Props) => {
@@ -41,8 +43,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <H2 style={{ marginBottom: 8 }}>Add access key</H2>
           <Text style={{ textAlign: "center", marginBottom: 8 }}>
-            <Text style={{ color: colors.pink }}>{permission.receiverId}</Text> will have limited
-            permissions
+            <Text style={{ color: colors.pink }}>{permission.receiverId}</Text> will have limited permissions
           </Text>
 
           <View
@@ -208,22 +209,20 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
 
     case "Stake": {
       const stake = +format.formatNearAmount(action.params.stake, 6);
-      const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? defaultToken;
+      const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? near;
 
       return (
         <View style={{ alignItems: "center" }}>
           <H2 style={{ marginBottom: 8 }}>Stake</H2>
           <H3>{stake} NEAR</H3>
-          <SmallText style={{ color: colors.blackSecondary }}>
-            ${(stake * nearToken.usd_rate).toFixed(6)}
-          </SmallText>
+          <SmallText style={{ color: colors.blackSecondary }}>${(stake * nearToken.usd_rate).toFixed(6)}</SmallText>
           <View style={styles.row}>
             <Text>From</Text>
             {nearToken.amount ? (
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${(nearToken.amount * nearToken.usd_rate).toFixed(6)}
+                  ${(formatAmount(nearToken.amount) * nearToken.usd_rate).toFixed(6)}
                 </SmallText>
               </View>
             ) : (
@@ -236,14 +235,12 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
 
     case "Transfer": {
       const deposit = +format.formatNearAmount(action.params.deposit, 6);
-      const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? defaultToken;
+      const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? near;
 
       return (
         <View style={{ alignItems: "center" }}>
           <H2 style={{ marginBottom: 8 }}>{deposit} NEAR</H2>
-          <SmallText style={{ color: colors.blackSecondary }}>
-            ${(deposit * nearToken.usd_rate).toFixed(6)}
-          </SmallText>
+          <SmallText style={{ color: colors.blackSecondary }}>${(deposit * nearToken.usd_rate).toFixed(6)}</SmallText>
 
           <View style={styles.row}>
             <Text>From</Text>
@@ -251,7 +248,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${(nearToken.amount * nearToken.usd_rate).toFixed(6)}
+                  ${(formatAmount(nearToken.amount) * nearToken.usd_rate).toFixed(6)}
                 </SmallText>
               </View>
             ) : (

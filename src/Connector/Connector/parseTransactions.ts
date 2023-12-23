@@ -1,8 +1,8 @@
 import { BN } from "bn.js";
 import { FunctionCallAction, Transaction } from "@here-wallet/core";
-import { formatAmount } from "../../helpers";
-import { defaultToken } from "../../core/constants";
-import { FtToken } from "../../core/types";
+import { formatAmount } from "../../core/helpers";
+import { near } from "../../core/token/defaults";
+import { FtModel } from "../../core/token/types";
 
 export const parseArgs = (data: string | Object) => {
   if (typeof data !== "string") return data;
@@ -15,9 +15,9 @@ export const parseArgs = (data: string | Object) => {
   }
 };
 
-export const parseFunctionCall = (contract: string, action: FunctionCallAction, tokens: FtToken[]) => {
+export const parseFunctionCall = (contract: string, action: FunctionCallAction, tokens: FtModel[]) => {
   const Tgas = +formatAmount(action.params.gas.toString(), 12);
-  const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? defaultToken;
+  const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? near;
   const nearAmount = +formatAmount(action.params.deposit, nearToken.decimal);
   const nearGas = +formatAmount(action.params.gas.toString(), nearToken.decimal);
 
@@ -31,8 +31,8 @@ export const parseFunctionCall = (contract: string, action: FunctionCallAction, 
   return { nearToken, nearAmount, Tgas, nearGas };
 };
 
-export function parseTotalAmountOfTransactions(transactions: Transaction[], tokens: FtToken[]) {
-  const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? defaultToken;
+export function parseTotalAmountOfTransactions(transactions: Transaction[], tokens: FtModel[]) {
+  const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? near;
   const total = transactions.reduce((acc, trx) => {
     return trx.actions.reduce((bn, action) => {
       switch (action.type) {

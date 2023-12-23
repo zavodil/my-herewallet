@@ -1,7 +1,5 @@
 import React from "react";
-import AppStore from "../../assets/appstore.svg";
-import GooglePlay from "../../assets/googleplay.svg";
-import { isAndroid, isIOS } from "../../helpers";
+import { isAndroid, isIOS } from "../../core/helpers";
 import { APP_STORE, GOOGLE_PLAY } from "../../core/constants";
 import nearhereImage from "../../assets/nearhere.png";
 import rockImage from "../../assets/rock.png";
@@ -11,25 +9,25 @@ const Buttons = () => {
   if (isAndroid())
     return (
       <a href={GOOGLE_PLAY}>
-        <GooglePlay />
+        <img src={require("../../assets/googleplay.svg")} />
       </a>
     );
 
   if (isIOS())
     return (
       <a href={APP_STORE}>
-        <AppStore />
+        <img src={require("../../assets/appstore.svg")} />
       </a>
     );
 
   return (
     <S.Flexbox>
       <a href={APP_STORE}>
-        <AppStore />
+        <img src={require("../../assets/appstore.svg")} />
       </a>
 
       <a href={GOOGLE_PLAY}>
-        <GooglePlay />
+        <img src={require("../../assets/googleplay.svg")} />
       </a>
     </S.Flexbox>
   );

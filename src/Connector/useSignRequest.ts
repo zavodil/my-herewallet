@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { base_decode } from "near-api-js/lib/utils/serialize";
-import {
-  proxyProvider,
-  HereProviderRequest,
-  HereProviderResult,
-  HereProviderStatus,
-} from "@here-wallet/core";
+import { proxyProvider, HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
 
 export const useSignRequest = (data?: string) => {
   const [topic, setTopic] = useState(() => window.localStorage.getItem("topic") || undefined);

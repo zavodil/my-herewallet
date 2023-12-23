@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import path from "path";
+import { observer } from "mobx-react-lite";
 
-import SwitchIcon from "../../assets/switch.svg";
-import ArrowLeft from "../../assets/arrow-left.svg";
-
+import { Modal } from "../../uikit/Modal";
 import { colors } from "../../uikit/theme";
 import { H3, SmallText, Text } from "../../uikit/typographic";
 import { ActionButton, ActivityIndicator, Button } from "../../uikit";
-import { Formatter, isIOS } from "../../helpers";
-import { Modal } from "../../uikit/Modal";
-
-import { useAnalytics } from "../../core/analytics";
-import { useWallet } from "../../core/useWallet";
 import { useAmountInput } from "../useAmountInput";
+import Icon from "../../uikit/Icon";
+
+import { Formatter, isIOS, parseAmount } from "../../core/helpers";
+import { useAnalytics } from "../../core/analytics";
+import { useWallet } from "../../core/Accounts";
 import { FullCardView } from "../styled";
 
 import { AmountField, AmountInput, AmountInputWrap, StakeButton, SwitchButton } from "./styled";
 import SuccessStaking from "./Success";
 
 const ChangeStaking = () => {
-  const { user } = useWallet();
+  const user = useWallet()!;
   const track = useAnalytics("edit");
 
   const [isFiat, toggleFiat] = useState(false);
   const [isStake, toggleStake] = useState(true);
   const [isSuccess, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(false);
+
+  const usd2near = user.tokens.usd(user.tokens.near);
   const prefixer = (v: string) => (isFiat ? `$${v}` : v);
 
   const navigate = useNavigate();
@@ -44,12 +44,12 @@ const ChangeStaking = () => {
     return <Navigate to="/stake" replace />;
   }
 
-  const available = (isStake ? user?.state.unstaked : user?.state.staked) ?? 0;
-  const amount = isFiat ? numValue / user.near2usd : numValue;
+  const available = (isStake ? user.tokens.stakableNear : user.tokens.hnear.safeFloat) ?? 0;
+  const amount = isFiat ? numValue / usd2near : numValue;
   const isDisabled = !amount || amount > available;
 
   const isMax = isFiat
-    ? Formatter.round(numValue, 4) === Formatter.round(available * user.near2usd, 4)
+    ? Formatter.round(numValue, 4) === Formatter.round(available * usd2near, 4)
     : Formatter.round(numValue, 4) === Formatter.round(available, 4);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const ChangeStaking = () => {
 
   const handleMax = () => {
     track("select_max");
-    const max = Formatter.round(available * (isFiat ? user.near2usd : 1), 4);
+    const max = Formatter.round(available * (isFiat ? usd2near : 1), 4);
     handleChange(max, prefixer);
   };
 
@@ -69,8 +69,8 @@ const ChangeStaking = () => {
       const prefixer = (v: string) => (is ? `$${v}` : v);
 
       let newValue;
-      if (isMax) newValue = is ? available * user.near2usd : available;
-      else newValue = is ? numValue * user.near2usd : numValue / user.near2usd;
+      if (isMax) newValue = is ? available * usd2near : available;
+      else newValue = is ? numValue * usd2near : numValue / usd2near;
       handleChange(Formatter.round(newValue, 4), prefixer);
       return is;
     });
@@ -78,13 +78,12 @@ const ChangeStaking = () => {
   const handleApprove = async () => {
     try {
       setLoading(true);
-      const success = path.join(location.origin, location.pathname, "success");
       if (isStake) {
         track("stake");
-        await user.stake(isMax ? "max" : amount, success);
+        await user.near.hnear.stake(parseAmount(amount));
       } else {
         track("unstake");
-        await user.unstake(isMax ? "max" : amount, success);
+        await user.near.hnear.unstake(parseAmount(amount));
       }
 
       setLoading(false);
@@ -99,22 +98,17 @@ const ChangeStaking = () => {
 
   const view = (
     <>
-      <Button
-        style={{ position: "absolute", left: 32, top: 28 }}
-        onClick={() => navigate("/stake", { replace: true })}
-      >
-        <ArrowLeft />
+      <Button style={{ position: "absolute", left: 32, top: 28 }} onClick={() => navigate("/stake", { replace: true })}>
+        <Icon name="arrow-left" />
       </Button>
 
       <StakeButton onClick={() => toggleStake((v) => !v)}>
         <SmallText>
-          From:{" "}
-          <span style={{ color: colors.blackPrimary }}>{isStake ? "unstaked NEAR" : "staked NEAR"}</span>
+          From: <span style={{ color: colors.blackPrimary }}>{isStake ? "unstaked NEAR" : "staked NEAR"}</span>
         </SmallText>
-        <SwitchIcon style={{ transform: "rotateZ(90deg)" }} />
+        <Icon name="switch-vertical" />
         <SmallText>
-          To:{" "}
-          <span style={{ color: colors.blackPrimary }}>{isStake ? "staked NEAR" : "unstaked NEAR"}</span>
+          To: <span style={{ color: colors.blackPrimary }}>{isStake ? "staked NEAR" : "unstaked NEAR"}</span>
         </SmallText>
       </StakeButton>
 
@@ -144,7 +138,7 @@ const ChangeStaking = () => {
             </H3>
           )}
           <SwitchButton onClick={handleSwitch}>
-            <SwitchIcon />
+            <Icon name="switch-horizontal" />
           </SwitchButton>
         </AmountInputWrap>
 
@@ -154,8 +148,7 @@ const ChangeStaking = () => {
       </AmountField>
 
       <SmallText style={{ marginBottom: 16 }}>
-        Available balance:{" "}
-        {isFiat ? Formatter.usd(available * user.near2usd, 4) : Formatter.round(available, 4) + " NEAR"}
+        Available balance: {isFiat ? Formatter.usd(available * usd2near, 4) : Formatter.round(available, 4) + " NEAR"}
       </SmallText>
 
       <ActionButton disabled={isDisabled} onClick={handleApprove}>
@@ -179,4 +172,4 @@ const ChangeStaking = () => {
   );
 };
 
-export default ChangeStaking;
+export default observer(ChangeStaking);

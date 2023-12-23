@@ -1,161 +1,101 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
-import { TransactionModel, TransactionType } from "./types";
-import { WalletAccount } from "./WalletAccount";
-import { DEFAULT_APY } from "./constants";
-import StakeTips from "./StakeTips";
-import { HereApi } from "./api";
+import { makeObservable, observable, runInAction } from "mobx";
+import BN from "bn.js";
 
-export class Storage {
-  static memoryData: Record<string, any> = {};
-  constructor(readonly id: string) {}
+import { Storage } from "./Storage";
+import { HereApi } from "./network/api";
+import { NearAccount } from "./near-chain/NearAccount";
+import { TokensStorage } from "./token/TokensStorage";
+import { TransactionsStorage } from "./transactions";
+import { NFTModel, UserContact, UserData } from "./network/types";
+import { Chain } from "./token/types";
 
-  set(key: string, value: any) {
-    try {
-      localStorage.setItem(this.id + ":" + key, value);
-    } catch {
-      Storage.memoryData[this.id + ":" + key] = value;
-      parent.postMessage({ action: "saveLocalStorage", data: Storage.memoryData }, "*");
-    }
-  }
+export enum ConnectType {
+  Ledger = "ledger",
+  Here = "here",
+  Snap = "snap",
+}
 
-  get(key: string): string | null {
-    try {
-      return localStorage.getItem(this.id + ":" + key) || null;
-    } catch {
-      return Storage.memoryData[this.id + ":" + key] || null;
-    }
-  }
+interface TransferParams {
+  receiver: string;
+  amount: string | BN;
+  type: "address";
+  token: string;
+  comment?: string;
 }
 
 class UserAccount {
-  public isInitialized = false;
-  public isClaiming = false;
+  readonly api: HereApi;
+  readonly tokens: TokensStorage;
+  readonly near: NearAccount;
+  readonly transactions: TransactionsStorage;
+  readonly localStorage: Storage;
 
-  public transactions: TransactionModel[] = [];
-  public near2usd = 0;
-  public state = {
-    totalIncome: 0,
-    accrued: 0,
-    unstaked: 0,
-    staked: 0,
-    apy: DEFAULT_APY,
+  public nfts: NFTModel[] = [];
+  public contacts: UserContact[] = [];
+  public user: UserData = {
+    can_bind_referral: false,
+    phone_linked: false,
+    abtests: [],
+    id: "0",
   };
 
-  readonly api = new HereApi();
-  readonly storage: Storage;
-  readonly tips: StakeTips;
-
-  constructor(readonly wallet: WalletAccount) {
+  constructor(readonly credential: { type: ConnectType; accountId: string; publicKey: string; jwt: string }) {
     makeObservable(this, {
-      claimDividents: action,
-      unstake: action,
-      stake: action,
-
-      isClaiming: observable,
-      isInitialized: observable,
-      transactions: observable,
-      near2usd: observable,
-      state: observable,
+      user: observable,
+      nfts: observable,
+      contacts: observable,
     });
 
-    this.storage = new Storage(this.wallet.accountId);
-    this.tips = new StakeTips(this);
+    this.api = new HereApi(credential.jwt);
+    this.localStorage = new Storage(credential.accountId);
 
-    this.fetchState();
-    this.fetchTransactions();
-    setTimeout(() => this._fetchRate(), 5000);
-    setTimeout(() => this.fetchTransactions(), 5000);
+    this.tokens = new TokensStorage(this);
+    this.transactions = new TransactionsStorage(this);
+    this.near = new NearAccount(this, credential.accountId, credential.type);
+
+    this.transactions.refresh().catch(() => {});
+    this.tokens.refreshTokens().catch(() => {});
+    this.fetchUser().catch(() => {});
   }
 
-  async _fetchRate() {
-    const rate = await this.api.getRate("NEAR");
-    runInAction(() => (this.near2usd = rate));
-    setTimeout(() => this._fetchRate(), 5000);
+  async fetchUser() {
+    const user = await this.api.getUser();
+    runInAction(() => (this.user = user));
   }
 
-  async unstake(amount: number | "max", callback: string) {
-    this.tips.unstake();
-    const value = amount === "max" ? this.state.staked : amount;
-    console.log(value);
-
-    const trx = await this.wallet.unstakeHere(amount, callback);
-    void this.fetchState();
-
-    runInAction(() => {
-      this.transactions.unshift({
-        type: TransactionType.STAKE_UNSTAKE,
-        timestamp: Math.floor(Date.now() / 1000),
-        data: { amount: value, usd_rate: this.near2usd },
-        transaction_hash: trx.transaction_outcome.id,
-        from_account_id: "storage.herewallet.app",
-        to_account_id: this.wallet.accountId,
-      });
-    });
-  }
-
-  async stake(amount: number | "max", callback: string) {
-    this.tips.stake();
-    const value = amount === "max" ? this.state.unstaked : amount;
-    const trx = await this.wallet.stakeHere(amount, callback);
-    void this.fetchState();
-
-    runInAction(() => {
-      this.transactions.unshift({
-        type: TransactionType.STAKE_UNSTAKE,
-        timestamp: Math.floor(Date.now() / 1000),
-        data: { amount: value, usd_rate: this.near2usd },
-        transaction_hash: trx.transaction_outcome.id,
-        from_account_id: this.wallet.accountId,
-        to_account_id: "storage.herewallet.app",
-      });
-    });
-  }
-
-  async fetchTransactions() {
-    const trxs = await this.api.getStakingTransaction(this.wallet.accountId);
-    runInAction(() => (this.transactions = trxs));
-  }
-
-  async fetchState() {
-    const [rate, totalIncome, state] = await Promise.all([
-      this.api.getRate("NEAR").catch(() => 0),
-      this.api.getTotalDividents(this.wallet.accountId).catch(() => 0),
-      this.wallet.getState().catch(() => ({})),
-    ]);
-
-    runInAction(() => {
-      this.state = Object.assign({}, this.state, state, { totalIncome });
-      this.isInitialized = true;
-      this.near2usd = rate;
-    });
-  }
-
-  async claimDividents() {
+  async fetchNfts() {
     try {
-      if (this.isClaiming) return;
-      this.isClaiming = true;
-      const trx = await this.wallet.receiveDividends();
+      runInAction(() => (this.nfts = JSON.parse(this.localStorage.get("nfts")!)));
+    } catch {}
 
-      runInAction(() => {
-        this.isClaiming = false;
-        this.transactions.unshift({
-          type: TransactionType.DIVIDEND_PAYMENT,
-          timestamp: Math.floor(Date.now() / 1000),
-          data: { amount: this.state.accrued, usd_rate: this.near2usd },
-          transaction_hash: trx.transaction_outcome.id,
-          from_account_id: "storage.herewallet.app",
-          to_account_id: this.wallet.accountId,
-          deposit: "0",
-        });
+    const nfts = await this.api.getNfts();
+    this.localStorage.set("nfts", JSON.stringify(nfts));
+    runInAction(() => (this.nfts = nfts));
+  }
 
-        this.state.staked += this.state.accrued;
-        this.state.totalIncome += this.state.accrued;
-        this.state.accrued = 0;
-      });
-    } catch (e: any) {
-      runInAction(() => (this.isClaiming = false));
-      throw e;
+  async loadContacts() {
+    const contacts = await this.api.getContacts();
+    runInAction(() => (this.contacts = contacts));
+  }
+
+  bindComment(tx: string, comment?: string) {
+    if (!comment) return;
+    void this.transactions.bindComment(tx, comment);
+  }
+
+  async transfer({ receiver, amount, token, comment }: TransferParams) {
+    const ft = this.tokens.tokens[token];
+    if (ft == null) throw Error("Unknown token for transfer");
+
+    if (ft.chain === Chain.NEAR || ft.chain === Chain.NEAR_TESTNET) {
+      const hash = await this.near.transfer(ft, amount, receiver);
+      this.bindComment(hash, comment);
+      return hash;
     }
+  }
+
+  get isProduction() {
+    return true;
   }
 }
 

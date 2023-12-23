@@ -5,9 +5,9 @@ import { observer } from "mobx-react-lite";
 import rockImage from "../../assets/rock.png";
 import { ActionButton, ActivityIndicator, H0, Text, Tooltip } from "../../uikit";
 import { useAnalyticsTrack } from "../../core/analytics";
-import { useWallet } from "../../core/useWallet";
-import { formatAmount } from "../../helpers";
-import { Formatter } from "../../helpers";
+import { useWallet } from "../../core/Accounts";
+import { formatAmount } from "../../core/helpers";
+import { Formatter } from "../../core/helpers";
 import { TipUnstake } from "../Tips";
 import * as S from "../styled";
 
@@ -18,15 +18,14 @@ const SuccessStaking = ({
   style?: any;
   defaultState?: { isStake: boolean; amount: number };
 }) => {
+  const account = useWallet()!;
   const navigate = useNavigate();
-  const { user } = useWallet();
   const track = useAnalyticsTrack("edit");
 
   const [state, setState] = useState({ isStake: false, amount: 0 });
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user == null) return;
     if (defaultState != null) {
       setState(defaultState);
       setLoading(false);
@@ -35,8 +34,8 @@ const SuccessStaking = ({
     const hash = new URL(window.location.href).searchParams.get("transactionHashes");
     if (hash == null) return;
 
-    user.wallet.provider.txStatus(hash, user.wallet.accountId).then(({ transaction }) => {
-      if (transaction.signer_id !== user.wallet.accountId) return;
+    account.near.connection.provider.txStatus(hash, account.near.accountId).then(({ transaction }) => {
+      if (transaction.signer_id !== account.near.accountId) return;
       const call = transaction.actions[0]?.FunctionCall;
       if (call == null) return;
 
@@ -55,11 +54,7 @@ const SuccessStaking = ({
         return;
       }
     });
-  }, [user]);
-
-  if (user == null) {
-    return <Navigate to="/stake" replace />;
-  }
+  }, [account]);
 
   if (isLoading) {
     return (
@@ -75,8 +70,8 @@ const SuccessStaking = ({
 
       <Tooltip
         on={[]}
-        children={<TipUnstake user={user} />}
-        open={user.tips.tipUnstake && state.isStake === false}
+        children={<TipUnstake user={account} />}
+        open={account.near.hnear.tips.tipUnstake && state.isStake === false}
         position={["right center", "bottom left"]}
         closeOnDocumentClick={false}
         closeOnEscape={false}
@@ -84,7 +79,7 @@ const SuccessStaking = ({
         offsetX={10}
         trigger={
           <H0 style={{ textAlign: "center", marginTop: 24, width: "100%" }}>
-            {Formatter.usd(state.amount * user?.near2usd)}
+            {Formatter.usd(state.amount * account.tokens.usd(account.tokens.near))}
           </H0>
         }
       />
@@ -99,7 +94,7 @@ const SuccessStaking = ({
         <Text style={{ textAlign: "center", marginTop: 16 }}>
           You have successfully
           <br />
-          staked NEAR at {Formatter.round(user.state.apy * 100)}% APY
+          staked NEAR at {Formatter.round(account.near.hnear.apy)}% APY
         </Text>
       )}
 

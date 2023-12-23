@@ -1,115 +1,166 @@
 import styled, { createGlobalStyle } from "styled-components";
 
-export const Page = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 24px;
-  box-sizing: border-box;
-  min-height: calc(var(--vh, 1vh) * 100);
+export const Root = styled.div`
   width: 100%;
-  grid-gap: 24px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const Box = styled.div`
-  justify-content: center;
-  align-items: center;
+  margin: auto;
+  min-height: calc(var(--vh, 1vh) * 100);
   display: flex;
+  flex-direction: column;
 `;
 
 export const Container = styled.div`
-  height: 100vh;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
   display: flex;
   width: 100%;
+  padding: 24px 120px;
+  gap: 20px;
+
+  @media (max-width: 1200px) {
+    padding: 24px 32px;
+  }
+
+  @media (max-width: 960px) {
+    flex-direction: column;
+  }
+`;
+
+export const RightContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  gap: 20px;
+
+  @media (max-width: 960px) {
+    flex-direction: row;
+    width: 100%;
+  }
 `;
 
 export const Card = styled.div`
   background: var(--Elevation-0, #ebdedc);
   border: 1px solid var(--Stroke, #c7bab8);
+  flex-direction: column;
   border-radius: 24px;
-  padding: 24px;
-`;
-
-export const CardIntro = styled(Card)`
-  background: var(--Elevation-1, #ebdedc);
-  border: 1px solid var(--Stroke, #c7bab8);
-`;
-
-export const Header = styled.header`
-  width: 100%;
-  grid-area: header;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   display: flex;
+  gap: 16;
+  padding: 24px;
 `;
 
-export const Root = styled.div`
-  display: grid;
-  grid-gap: 24px;
-  grid-template-areas: "header header" "balance transactions" "tokens transactions";
-  grid-template-rows: min-content min-content 1fr;
-  grid-template-columns: min-content;
+export const Tabs = styled.div`
+  display: flex;
+  border-radius: 12px;
+  border: 1px solid var(--Stroke);
+  padding: 4px;
+  height: 40px;
+  width: 100%;
+  gap: 4px;
+`;
 
-  background: var(--Elevation-1, #ebdedc);
-  height: calc(var(--vh, 1vh) * 100);
-  box-sizing: border-box;
-  max-width: 1024px;
-  padding: 24px;
-  margin: auto;
+export const Tab = styled.button<{ $active?: boolean }>`
+  border-radius: 10px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  text-align: center;
   flex: 1;
 
-  @media (max-width: 900px) {
-    grid-template-areas: "header" "balance" "tokens" "transactions";
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    height: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 22px;
+  color: #2c3034;
+  transition: 0.2s all;
+
+  color: ${(p) => (p.$active ? "var(--Black-Primary)" : "var(--Black-Secondary)")};
+  background: ${(p) => (p.$active ? "var(--Elevation-1)" : "var(--Elevation-0)")};
+
+  &:hover {
+    opacity: 0.7;
+    background: var(--Elevation-1);
+    color: var(--Black-Primary);
   }
 `;
 
-export const TokensCard = styled(Card)`
-  grid-area: tokens;
-  overflow-y: auto;
-  width: 420px;
-  height: 100%;
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
-`;
-
-export const BalanceCard = styled(Card)`
-  grid-area: balance;
-  display: flex;
-  height: 108px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12;
-  margin-top: 12;
-  gap: 16;
+export const TokensRow = styled.div`
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr;
+  border-bottom: 1px solid var(--Stroke);
+  padding-bottom: 12px;
+  padding-top: 24px;
 `;
 
 export const TokenCard = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-top: 20px;
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr;
   padding-bottom: 20px;
+  padding-top: 20px;
 
   & + & {
     border-top: 1px solid var(--Stroke);
   }
 `;
 
-export const HomeGlobalStyle = createGlobalStyle`
-  html, body {
-    background: var(--Elevation-1, #ebdedc);
+export const TokenAction = styled.button`
+  border-radius: 8px;
+  border: 1px solid var(--Stroke, #c7bab8);
+  background: var(--Elevation-1, #ebdedc);
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  outline: none;
+  cursor: pointer;
+`;
+
+export const TokenIcon = styled.img`
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 12px;
+`;
+
+export const ButtonCard = styled.button`
+  outline: none;
+  border: 1px solid var(--Stroke);
+  border-radius: 12px;
+  background-color: var(--Elevation-0);
+  display: flex;
+  align-items: center;
+  height: 80px;
+  padding: 0 24px;
+  width: 100%;
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.5s box-shadow;
+
+  &:hover {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   }
+`;
+
+export const NftCard = styled.img`
+  width: 100%;
+  aspect-ratio: 1/ 1;
+  border: 1px solid #2c3034;
+  border-radius: 12px;
+  object-fit: cover;
+  background-color: #2c3034;
+
+  cursor: pointer;
+  transition: 0.2s box-shadow;
+
+  &:hover {
+    box-shadow: 4px 4px 0px 0px #2c3034;
+  }
+`;
+
+export const NftsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 24px;
 `;

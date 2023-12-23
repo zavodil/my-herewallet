@@ -16,7 +16,7 @@ export const Flex = styled.div`
 `;
 
 export const InputCard = styled.div`
-  background: #d9cdcb;
+  background: var(--Elevation-1);
   border: 1px solid #2c3034;
   border-radius: 16px;
   width: 100%;

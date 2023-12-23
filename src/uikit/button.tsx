@@ -1,5 +1,4 @@
-import styled from "styled-components";
-import { colors } from "./theme";
+import styled, { css } from "styled-components";
 
 export const Button = styled.button`
   border: none;
@@ -9,7 +8,9 @@ export const Button = styled.button`
   cursor: pointer;
   outline: none;
   text-decoration: none;
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 
   transition: 0.2s opacity;
   &:hover {
@@ -17,7 +18,7 @@ export const Button = styled.button`
   }
 `;
 
-export const ActionButton = styled.button`
+export const ActionButton = styled.button<{ big?: boolean }>`
   color: #fff;
   border: none;
   text-decoration: none;
@@ -52,6 +53,13 @@ export const ActionButton = styled.button`
     background: #cbc6c5;
     color: #6b6661;
   }
+
+  ${(p) =>
+    p.big &&
+    css`
+      border-radius: 32px;
+      height: 80px;
+    `}
 `;
 
 export const StrokeButton = styled(ActionButton)`
@@ -107,6 +115,7 @@ export const HereButton = styled.button`
   line-height: 22px;
   text-align: center;
   color: #2c3034;
+  text-decoration: none;
 
   &:hover {
     box-shadow: 0 0 0 #2c3034;

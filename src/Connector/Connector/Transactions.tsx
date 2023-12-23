@@ -1,34 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { HereProviderRequest } from "@here-wallet/core";
-import {
-  SnapList,
-  SnapItem,
-  useScroll,
-  useDragToScroll,
-  useVisibleElements,
-} from "react-snaplist-carousel";
+import { SnapList, SnapItem, useScroll, useDragToScroll, useVisibleElements } from "react-snaplist-carousel";
 import styled from "styled-components";
 
 import ArrowRightIcon from "../../assets/icons/arrow-right.svg";
 import ArrowLeftIcon from "../../assets/icons/arrow-left.svg";
-import { defaultToken } from "../../core/constants";
-import { FtToken } from "../../core/types";
-import { HereApi } from "../../core/api";
 import { colors } from "../../uikit/theme";
 import { Button, H2, Text } from "../../uikit";
 import { ActionView } from "./Action";
 
 export const Connector = ({ request }: { request: HereProviderRequest }) => {
-  const [tokens, setTokens] = useState<FtToken[]>([defaultToken]);
-
   const snapList = useRef(null);
   const goToSnapItem = useScroll({ ref: snapList });
   const selected = useVisibleElements({ ref: snapList, debounce: 10 }, (elements) => elements[0] + 1);
   useDragToScroll({ ref: snapList, disabled: false });
-
-  useEffect(() => {
-    new HereApi().getTokens().then(setTokens);
-  }, []);
 
   const nextPage = (diff: number) => {
     goToSnapItem(selected + diff - 1, { animationEnabled: true });
@@ -63,9 +48,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
         <H2>Sign message</H2>
         <Text style={{ marginTop: 16, textAlign: "center" }}>
           The app{" "}
-          <span style={{ color: colors.pink }}>
-            {"receiver" in request ? request.receiver : request.recipient}
-          </span>
+          <span style={{ color: colors.pink }}>{"receiver" in request ? request.receiver : request.recipient}</span>
           {"\n"}asks to sign this message for authorization:
         </Text>
 
@@ -89,11 +72,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
     return (
       <View>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-          <Button
-            onClick={() => nextPage(-1)}
-            disabled={selected === 1}
-            style={{ opacity: selected === 1 ? 0.3 : 1 }}
-          >
+          <Button onClick={() => nextPage(-1)} disabled={selected === 1} style={{ opacity: selected === 1 ? 0.3 : 1 }}>
             <ArrowLeftIcon />
           </Button>
           <Text style={{ marginLeft: 8, marginRight: 8, marginTop: -4 }}>

@@ -4,42 +4,43 @@
   "private": true,
   "dependencies": {
     "@here-wallet/core": "^1.5.1",
-    "@near-js/transactions": "^0.2.1",
+    "@ledgerhq/devices": "^8.2.0",
+    "@ledgerhq/hw-app-near": "^6.28.1",
+    "@ledgerhq/hw-transport-webusb": "^6.28.1",
     "@near-snap/sdk": "^0.6.0",
     "@near-wallet-selector/account-export": "^8.9.1",
-    "@near-wallet-selector/core": "^8.9.1",
     "@near-wallet-selector/here-wallet": "^8.9.1",
-    "@near-wallet-selector/ledger": "^8.9.1",
     "@near-wallet-selector/meteor-wallet": "^8.9.1",
-    "@near-wallet-selector/modal-ui": "^8.9.1",
     "@near-wallet-selector/my-near-wallet": "^8.9.1",
-    "@near-wallet-selector/near-snap": "^8.9.1",
-    "@near-wallet-selector/near-wallet": "^8.9.1",
     "@near-wallet-selector/sender": "^8.9.1",
-    "@near-wallet-selector/wallet-connect": "^8.9.1",
+    "@ref-finance/ref-sdk": "^1.2.2",
     "bn.js": "^5.2.1",
     "buffer": "^5.7.1",
     "crypto-browserify": "^3.12.0",
+    "generate-avatar": "^1.4.10",
+    "lodash": "^4.17.21",
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.0",
-    "near-api-js": "^1.1.0",
+    "near-api-js": "^2.1.4",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
+    "react-select": "^5.8.0",
     "react-slide-routes": "^3.0.3",
     "react-snaplist-carousel": "^4.4.2",
     "reactjs-popup": "^2.0.5",
     "stream-browserify": "^3.0.0",
     "styled-components": "^5.3.6",
+    "toastify-js": "^1.12.0",
     "util": "^0.12.5",
     "uuid4": "^2.0.3"
   },
   "scripts": {
-    "build": "vite build",
-    "build:export-widget": "BUILD_ID='export' vite build",
-    "start": "vite --host"
+    "clean": "rm -rf .parcel-cache",
+    "build": "yarn clean && parcel build index.html && cp ./dist/index.html ./dist/200.html",
+    "start": "yarn clean && parcel index.html"
   },
   "browserslist": {
     "production": [
@@ -53,18 +54,27 @@
       "last 1 safari version"
     ]
   },
+  "alias": {
+    "@ledgerhq/devices": "@ledgerhq/devices/lib-es"
+  },
   "devDependencies": {
+    "@parcel/optimizer-data-url": "2.10.3",
+    "@parcel/packager-raw-url": "2.10.3",
+    "@parcel/transformer-inline-string": "2.10.3",
+    "@parcel/transformer-svg-react": "^2.10.3",
+    "@parcel/transformer-webmanifest": "2.10.3",
     "@types/bn.js": "^5.1.1",
+    "@types/lodash": "^4.14.202",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.11",
     "@types/styled-components": "^5.1.26",
+    "@types/toastify-js": "^1.12.3",
     "@types/uuid4": "^2.0.0",
     "@vitejs/plugin-react": "^3.1.0",
+    "https-browserify": "^1.0.0",
+    "parcel": "^2.10.3",
+    "stream-http": "^3.1.0",
     "typescript": "^4.9.4",
-    "vite": "^4.1.4",
-    "vite-plugin-rewrite-all": "^1.0.1",
-    "vite-plugin-singlefile": "^0.13.5",
-    "vite-plugin-svgr": "^2.4.0",
-    "vite-tsconfig-paths": "^4.0.5"
+    "url": "^0.11.0"
   }
 }

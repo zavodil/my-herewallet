@@ -14,9 +14,7 @@ const OpenInApp = () => {
     return (
       <S.Page>
         <S.Wrap style={{ padding: 32 }}>
-          <H1 style={{ textAlign: "center", lineHeight: 0.9, marginBottom: 16 }}>
-            Delete HERE account?
-          </H1>
+          <H1 style={{ textAlign: "center", lineHeight: 0.9, marginBottom: 16 }}>Delete HERE account?</H1>
 
           {isMobile() ? (
             <>
@@ -38,12 +36,10 @@ const OpenInApp = () => {
 
           <div style={{ maxWidth: 500, marginTop: 16, textAlign: "center" }}>
             <Text style={{}}>
-              1. HERE account will be deleted - score, achievements, friends, contacts and other personal
-              data will be deleted immediately
+              1. HERE account will be deleted - score, achievements, friends, contacts and other personal data will be
+              deleted immediately
             </Text>
-            <Text style={{ marginTop: 8 }}>
-              2. You will retain access to your tokens and NFTs via a seed phrase
-            </Text>
+            <Text style={{ marginTop: 8 }}>2. You will retain access to your tokens and NFTs via a seed phrase</Text>
           </div>
         </S.Wrap>
         <Footer />

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import add_circle from "../icons/add-circle.svg?url";
+import arrow_left from "../icons/arrow-left.svg?url";
 import arrow_down from "../icons/arrow-down.svg?url";
 import arrow_right from "../icons/arrow-right.svg?url";
 import cross_circle from "../icons/cross-circle.svg?url";
@@ -69,6 +70,7 @@ import favorite from "../icons/favorite.svg?url";
 import qr from "../icons/qr.svg?url";
 
 export const icons = {
+  arrow_left,
   add_circle,
   arrow_down,
   arrow_right,

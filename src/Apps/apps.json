@@ -1,0 +1,138 @@
+[
+  {
+    "site": "https://app.ref.finance/",
+    "name": "REF Finance",
+    "text": "The leading  AMM DEX on the NEAR Protocol. Also has spot and futures modes built on the Orderly Network and lending mode built on the Burrow Finance",
+    "twitter": "https://twitter.com/finance_ref",
+    "image": "https://pbs.twimg.com/profile_images/1481004943452655618/rvJtgIsU_400x400.jpg",
+    "type": "DeFi"
+  },
+  {
+    "text": "Spot and futures DEX from the centralized BTSE exchange, built on Orderly Network",
+    "site": "https://dex.btse.com/",
+    "twitter": "https://twitter.com/BTSEDEX",
+    "image": "https://pbs.twimg.com/profile_images/1696824331605839872/3cmoH8-2_400x400.jpg",
+    "name": "BTSE",
+    "type": "DeFi"
+  },
+  {
+    "text": "Veax is an advanced single-sided liquidity DEX built on NEAR Protoco",
+    "site": "https://app.veax.com/swap",
+    "twitter": "https://twitter.com/veaxlabs",
+    "image": "https://pbs.twimg.com/profile_images/1656278112093478913/q6LPSQt2_400x400.jpg",
+    "name": "VEAX",
+    "type": "DeFi"
+  },
+  {
+    "text": "The first money market on NEAR. Supply and borrow interest-bearing assets",
+    "site": "https://burrow.finance/",
+    "twitter": "https://twitter.com/burrow_finance",
+    "image": "https://pbs.twimg.com/profile_images/1734188905950216192/5Iyp-BNB_400x400.png",
+    "name": "Burrow Finance",
+    "type": "DeFi"
+  },
+  {
+    "text": "Liquid Staking on NEAR Protocol without unstaking comissions",
+    "site": "https://my.herewallet.app/stake",
+    "twitter": "https://twitter.com/here_wallet",
+    "image": "https://pbs.twimg.com/profile_images/1545154799699640321/4GoTucoZ_400x400.jpg",
+    "name": "HERE wallet staking",
+    "type": "DeFi"
+  },
+  {
+    "text": "Liquid Staking on NEAR Protocol",
+    "site": "https://www.metapool.app/",
+    "twitter": "https://twitter.com/meta_pool",
+    "image": "https://pbs.twimg.com/profile_images/1732166094704488449/q-pM9w0i_400x400.jpg",
+    "name": "Metapool",
+    "type": "DeFi"
+  },
+  {
+    "text": "Liquid Staking on NEAR Protocol",
+    "site": "https://linearprotocol.org/",
+    "twitter": "https://twitter.com/LinearProtocol",
+    "image": "https://pbs.twimg.com/profile_images/1633344453065977856/Tz6Zbq_W_400x400.jpg",
+    "name": "Linear",
+    "type": "DeFi"
+  },
+  {
+    "text": "The permissionless liquidity layer for Web3 trading",
+    "site": "https://orderly.network/",
+    "twitter": "https://twitter.com/OrderlyNetwork",
+    "image": "https://pbs.twimg.com/profile_images/1610066785025523713/2iij3ydV_400x400.jpg",
+    "name": "Orderly Network",
+    "type": "DeFi"
+  },
+  {
+    "text": "NFT Marketplace & Aggregator",
+    "site": "https://www.tradeport.xyz/",
+    "twitter": "https://twitter.com/tradeportxyz",
+    "image": "https://pbs.twimg.com/profile_images/1565351982268760064/ihFcIVqC_400x400.png",
+    "name": "Tradeport",
+    "type": "NFT"
+  },
+  {
+    "text": "NFT Marketplace",
+    "site": "https://paras.id/",
+    "twitter": "https://twitter.com/ParasHQ",
+    "image": "https://pbs.twimg.com/profile_images/1622813258800578560/z0g_O0oc_400x400.jpg",
+    "name": "Paras",
+    "type": "NFT"
+  },
+  {
+    "text": "Bodega is a dynamic, composable NFT infrastructure, digital traits marketplace & launchpad",
+    "site": "https://www.bodega-nft.io/",
+    "twitter": "https://twitter.com/Bodega_Web3",
+    "image": "https://pbs.twimg.com/profile_images/1696922404700798977/HIZVkad3_400x400.jpg",
+    "name": "Bogeda",
+    "type": "NFT"
+  },
+  {
+    "text": "All inclusive hands-on onboarding platform to NEAR Protocol connecting NEAR Ecosystem projects to pro-active community members",
+    "site": "https://learnnear.club/",
+    "twitter": "https://twitter.com/LearnNear",
+    "image": "https://pbs.twimg.com/profile_images/1441054604716875787/CMsEe0BI_400x400.jpg",
+    "name": "Learn Near Club",
+    "type": "Social"
+  },
+  {
+    "text": "On-chain tools empowering communities to OWN, CONTROL and MONETISE their social data.",
+    "site": "https://popula.io/",
+    "twitter": "https://twitter.com/beepopula",
+    "image": "https://pbs.twimg.com/profile_images/1724934299441336320/Kkvr4Ryo_400x400.jpg",
+    "name": "Popula",
+    "type": "Social"
+  },
+  {
+    "text": "Decentralized Customizable Social Network on NEAR Protocol",
+    "site": "https://near.social",
+    "twitter": "https://twitter.com/NearSocial_",
+    "image": "https://pbs.twimg.com/profile_images/1587521388751060992/Gmm9Tqpa_400x400.jpg",
+    "name": "Near Social",
+    "type": "Social"
+  },
+  {
+    "text": "Data & Analytics on NEARProtocol",
+    "site": "https://pikespeak.ai/",
+    "twitter": "https://twitter.com/pikespeak_ai",
+    "image": "https://pbs.twimg.com/profile_images/1716821282095050752/PoebykJN_400x400.jpg",
+    "name": "Pikespeak",
+    "type": "Explorer"
+  },
+  {
+    "text": "Near Explorer",
+    "site": "https://nearblocks.io",
+    "twitter": "https://twitter.com/nearblocks",
+    "image": "https://pbs.twimg.com/profile_images/1586001587675308033/YOx7JRA2_400x400.jpg",
+    "name": "Nearblocks",
+    "type": "Explorer"
+  },
+  {
+    "type": "Game",
+    "text": "Play-To-Earn NFT Collectible Game",
+    "site": "https://zomland.com/",
+    "twitter": "https://twitter.com/Zomland_Game",
+    "image": "https://pbs.twimg.com/profile_images/1508387956704350209/gfVyJfM6_400x400.jpg",
+    "name": "Zomland"
+  }
+]

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 import { colors } from "../uikit/theme";
 import HereQRCode from "../uikit/HereQRCode";
-import { isAndroid, isIOS } from "../helpers";
+import { isAndroid, isIOS } from "../core/helpers";
 import { ActionButton, H2, H3, ActivityIndicator, Text } from "../uikit";
 import { Connector } from "./Connector/Transactions";
 import Footer from "./Footer";
@@ -59,10 +59,7 @@ const TransactionCard = () => {
     <S.ScanCode>
       <HereQRCode value={link} />
       <H2>Approve with QR</H2>
-      <Text>
-        Scan this code with your phone's camera to sign.{" "}
-        {request.type !== "import" && toggleAppClipWidget}
-      </Text>
+      <Text>Scan this code with your phone's camera to sign. {request.type !== "import" && toggleAppClipWidget}</Text>
     </S.ScanCode>
   );
 

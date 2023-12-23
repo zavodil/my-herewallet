@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { AnalyticsConfig, AnalyticsEvents } from "./events";
-import { HereApi } from "../api";
-import { useWallet } from "../useWallet";
+import { HereApi } from "../network/api";
+import { useWallet } from "../Accounts";
 import UserAccount from "../UserAccount";
 
 export interface AnalyticEvent {
@@ -38,11 +38,7 @@ export class AnalyticsTracker {
     });
   }
 
-  async track(
-    name: string,
-    params: Record<string, number | string | boolean> = {},
-    account_id?: string
-  ) {
+  async track(name: string, params: Record<string, number | string | boolean> = {}, account_id?: string) {
     console.log("Analytics", name, params);
     this._lastAccountId = account_id;
     this.events.push({
@@ -75,29 +71,19 @@ export class AnalyticsTracker {
   }
 }
 
-export const useAnalyticsTrack = <
-  T extends keyof AnalyticsEvents,
-  D extends AnalyticsConfig = AnalyticsEvents[T]
->(
+export const useAnalyticsTrack = <T extends keyof AnalyticsEvents, D extends AnalyticsConfig = AnalyticsEvents[T]>(
   domain: T,
   defaultUser?: UserAccount
 ) => {
-  const { user } = useWallet() || { user: defaultUser };
+  const account = useWallet() || defaultUser;
   const track = useCallback(<E extends keyof D>(event: E, params: D[E] | {} = {}) => {
-    AnalyticsTracker.shared.track(
-      `web:staking:${domain}:${event.toString()}`,
-      params,
-      user?.wallet.accountId
-    );
+    AnalyticsTracker.shared.track(`web:staking:${domain}:${event.toString()}`, params, account?.near.accountId);
   }, []);
 
   return track;
 };
 
-export const useAnalytics = <
-  T extends keyof AnalyticsEvents,
-  D extends AnalyticsConfig = AnalyticsEvents[T]
->(
+export const useAnalytics = <T extends keyof AnalyticsEvents, D extends AnalyticsConfig = AnalyticsEvents[T]>(
   domain: T,
   defaultUser?: UserAccount
 ) => {
