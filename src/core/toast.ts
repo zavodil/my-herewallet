@@ -5,7 +5,7 @@ import { colors } from "../uikit/theme";
 export const notify = (txt: string) => {
   Toastify({
     text: txt,
-    duration: 1500,
+    duration: 2500,
     gravity: "bottom", // `top` or `bottom`
     position: "left", // `left`, `center` or `right`
     stopOnFocus: true, // Prevents dismissing of toast on hover

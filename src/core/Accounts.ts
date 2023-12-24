@@ -1,11 +1,12 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { HereWallet, SignedMessageNEP0413, WidgetStrategy } from "@here-wallet/core";
 import { base_encode } from "near-api-js/lib/utils/serialize";
+import { PublicKey } from "near-api-js/lib/utils";
+import { NearSnap } from "@near-snap/sdk";
 
 import UserAccount, { ConnectType } from "./UserAccount";
 import { getStorageJson } from "./helpers";
 import { HereApi } from "./network/api";
-import { NearSnap } from "@near-snap/sdk";
 import { notify } from "./toast";
 
 export interface AccountCreds {
@@ -21,9 +22,7 @@ class Accounts {
   public accounts: AccountCreds[] = [];
 
   readonly api = new HereApi();
-  readonly snap = new NearSnap({
-    id: "local:http://localhost:3000",
-  });
+  readonly snap = new NearSnap();
 
   readonly wallet = new HereWallet({
     defaultStrategy: () =>
@@ -62,10 +61,6 @@ class Accounts {
     localStorage.setItem("selected", JSON.stringify(this.account?.credential.accountId || ""));
     localStorage.setItem("accounts", JSON.stringify(this.accounts));
     notify("Wallet has been disconnected");
-
-    if (this.account == null) {
-      location.assign("/");
-    }
   };
 
   register = async (type: ConnectType = ConnectType.Here) => {
@@ -74,6 +69,25 @@ class Accounts {
 
     if (type === ConnectType.Snap) {
       await this.snap.install();
+      const account = await this.snap.connect({ network: "mainnet" });
+      if (account?.publicKey == null || account?.accountId == null) {
+        notify("Register failed");
+        return;
+      }
+
+      const names = await this.api.findAccount(PublicKey.from(account.publicKey));
+      if (names[0] != null && names[0] !== account.accountId) {
+        try {
+          await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", {
+            network: "mainnet",
+            nickname: names[0],
+          });
+        } catch {
+          notify("You need bind nickname before login, but something failed, restart page and try again please");
+          return;
+        }
+      }
+
       const signMaybe = await this.snap.signMessage({
         network: "mainnet",
         nonce: Array.from(new Uint8Array(Buffer.from(nonce))),

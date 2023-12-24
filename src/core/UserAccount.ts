@@ -11,6 +11,8 @@ import { NFTModel, RecentlyApps, UserContact, UserData } from "./network/types";
 import { accounts } from "./Accounts";
 import { Chain } from "./token/types";
 import { wait } from "./helpers";
+import { notify } from "./toast";
+import { NearSnapStatus } from "@near-snap/sdk";
 
 export enum ConnectType {
   Ledger = "ledger",
@@ -65,18 +67,15 @@ class UserAccount {
 
     wait(100).then(async () => {
       if (this.credential.type !== ConnectType.Snap) return;
+      const status = await accounts.snap.getStatus();
+      if (status !== NearSnapStatus.INSTALLED) await accounts.snap.install();
 
-      const data = await accounts.snap.getAccount("mainnet").catch(() => accounts.snap.connect({ network: "mainnet" }));
-      if (data?.publicKey !== this.credential.publicKey) return;
-      if (data.accountId === this.credential.accountId) return;
-      if (!this.credential.accountId.endsWith(".near")) return;
-      if (data.accountId?.endsWith(".near")) return;
-
-      await this.near.getAccessKeyInfo(this.credential.accountId, PublicKey.from(data.publicKey));
-      await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", {
-        nickname: this.credential.accountId,
-        network: "mainnet",
-      });
+      const acc = await accounts.snap.getAccount("mainnet").catch(() => accounts.snap.connect({ network: "mainnet" }));
+      if (acc?.accountId !== this.credential.accountId || acc?.publicKey !== this.credential.publicKey) {
+        notify("The address does not match, please re-login to your account");
+        accounts.disconnect(this.credential.accountId);
+        return;
+      }
     });
   }
 
@@ -89,15 +88,9 @@ class UserAccount {
       sign: "",
     });
 
-    try {
-      await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", { network: "mainnet", nickname });
-    } catch {
-      await wait(1000);
-      await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", { network: "mainnet", nickname });
-    }
-
-    await accounts.register(this.credential.type);
     accounts.disconnect(this.credential.accountId);
+    notify("The nickname was successfully created. Attach it to your account and re-login to your wallet.");
+    await accounts.register(this.credential.type);
   }
 
   async isNeedActivate() {

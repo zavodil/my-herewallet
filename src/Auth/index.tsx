@@ -1,5 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
 import hereWebLogo from "../assets/here-web.svg?url";
 import hereLogo from "../assets/here-logo2.svg?url";
@@ -10,9 +11,14 @@ import { accounts } from "../core/Accounts";
 import { ConnectType } from "../core/UserAccount";
 import { BoldP, H0, LargeP, SmallText } from "../uikit/typographic";
 import { ButtonCard, Card, Header, IntroImage, Page, Root } from "./styled";
-import { observer } from "mobx-react-lite";
 
 const Auth = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (accounts.account == null) navigate("/");
+  }, [accounts.account]);
+
   return (
     <Root>
       <Header>

@@ -8,12 +8,13 @@ import introImage from "../assets/intro.png";
 import { Receiver } from "../core/Receiver";
 import { ConnectType } from "../core/UserAccount";
 import { useWallet } from "../core/Accounts";
+
 import { BoldP, H1, LargeP, SmallText } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import HereInput from "../uikit/Input";
+import { colors } from "../uikit/theme";
 
 import { Card, Header, IntroImage, Page, Root } from "./styled";
-import { colors } from "../uikit/theme";
 
 const CreateNickname = () => {
   const user = useWallet();
@@ -25,12 +26,12 @@ const CreateNickname = () => {
 
   useEffect(() => {
     if (user?.credential.type !== ConnectType.Snap) return navigate("/");
+
     setLoading(true);
-    user
-      .isNeedActivate()
-      .then((is) => !is && navigate("/"))
-      .catch(() => navigate("/"))
-      .finally(() => setLoading(false));
+    user.isNeedActivate().then((needActivate) => {
+      if (needActivate) return setLoading(false);
+      navigate("/");
+    });
   }, [user]);
 
   useEffect(() => {

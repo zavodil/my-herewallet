@@ -4,6 +4,7 @@ import { Storage } from "../Storage";
 import { FtAsset, FtGroup } from "../token/types";
 import { TransactionModel } from "../transactions/types";
 import { AllocateUsername, NFTModel, RecentlyApps, RequestAccessToken } from "./types";
+import { PublicKey } from "near-api-js/lib/utils";
 
 export class HereError extends Error {
   constructor(readonly title: string, readonly body: string) {
@@ -64,6 +65,13 @@ export class HereApi {
       body: JSON.stringify(data),
       method: "POST",
     });
+  }
+
+  public async findAccount(publicKey: PublicKey): Promise<string[]> {
+    const route = `/api/v1/user/by_public_key?public_key=${publicKey.toString()}`;
+    const res = await this.request(route);
+    const { users } = await res.json();
+    return users;
   }
 
   async getUser() {
