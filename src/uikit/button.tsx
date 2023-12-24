@@ -18,7 +18,7 @@ export const Button = styled.button`
   }
 `;
 
-export const ActionButton = styled.button<{ big?: boolean }>`
+export const ActionButton = styled.button<{ big?: boolean; stroke?: boolean }>`
   color: #fff;
   border: none;
   text-decoration: none;
@@ -59,6 +59,14 @@ export const ActionButton = styled.button<{ big?: boolean }>`
     css`
       border-radius: 32px;
       height: 80px;
+    `}
+
+  ${(p) =>
+    p.stroke &&
+    css`
+      background: transparent;
+      border: 1px solid var(--Black-Primary);
+      color: var(--Black-Primary);
     `}
 `;
 

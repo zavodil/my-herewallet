@@ -4,29 +4,29 @@ import { base_decode, base_encode } from "near-api-js/lib/utils/serialize";
 import { AccessKeyView, AccessKeyViewRaw, FinalExecutionOutcome } from "near-api-js/lib/providers/provider";
 import { Account, Connection, InMemorySigner, KeyPair, providers, transactions } from "near-api-js";
 import { ChangeFunctionCallOptions } from "near-api-js/lib/account";
-import { Action, HereCall, createAction } from "@here-wallet/core";
 import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
 import { encodeDelegateAction } from "@near-js/transactions";
+import { Action, HereCall } from "@here-wallet/core";
+import { PublicKey } from "near-api-js/lib/utils";
+import { NearSnapAccount } from "@near-snap/sdk";
 import * as ref from "@ref-finance/ref-sdk";
 
 import UserAccount, { ConnectType } from "../UserAccount";
-import { chunk, parseAmount } from "../helpers";
 import { near, testnetNear } from "../token/defaults";
 import { Chain, FtModel } from "../token/types";
+import { chunk, parseAmount } from "../helpers";
 import { TGAS } from "../constants";
 
 import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
-import { RequestError, ResponseError, TransactionError } from "../network/types";
+import { ResponseError, TransactionError } from "../network/types";
+import { accounts } from "../Accounts";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getWrapNear } from "./constants";
-import { SAFE_NEAR, parseNearOfActions, waitTransactionResult } from "./utils";
+import { SAFE_NEAR, waitTransactionResult } from "./utils";
 import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
 import HereToken from "./HereToken";
-import { accounts } from "../Accounts";
-import { NearSnapAccount } from "@near-snap/sdk";
-import { PublicKey } from "near-api-js/lib/utils";
 
 export class NearAccount extends Account {
   readonly native: NearToken;
@@ -131,16 +131,17 @@ export class NearAccount extends Account {
   ): Promise<FinalExecutionOutcome[]> {
     const list: any = transactions.filter((t): t is HereCall => t != null);
 
-    // if (this.type === ConnectType.Snap) {
-    //   const account = new NearSnapAccount({
-    //     publicKey: PublicKey.fromString(this.user.credential.publicKey),
-    //     accountId: this.user.credential.accountId,
-    //     network: "mainnet",
-    //   });
+    if (this.type === ConnectType.Snap) {
+      const account = new NearSnapAccount({
+        snap: accounts.snap,
+        publicKey: PublicKey.fromString(this.user.credential.publicKey),
+        accountId: this.user.credential.accountId,
+        network: "mainnet",
+      });
 
-    //   console.log({ list });
-    //   return await account.executeTransactions(list);
-    // }
+      await accounts.snap.install();
+      return await account.executeTransactions(list);
+    }
 
     return await accounts.wallet.signAndSendTransactions({ transactions: list });
 
@@ -425,8 +426,8 @@ export class NearAccount extends Account {
     return { publicKey, accessKey };
   }
 
-  async getAccessKeyInfo(accountId: string, keyPair: any): Promise<any> {
-    const publicKey = keyPair.getPublicKey();
+  async getAccessKeyInfo(accountId: string, keyPair: KeyPair | PublicKey): Promise<any> {
+    const publicKey = keyPair instanceof KeyPair ? keyPair.getPublicKey() : keyPair.toString();
     return this.connection.provider.query<any>(`access_key/${accountId}/${publicKey.toString()}`, "");
   }
 

@@ -192,19 +192,21 @@ const Header = observer(() => {
         <img style={{ width: 165, height: 22, objectFit: "contain" }} src={hereWebLogo} />
       </Link>
 
-      <S.NavBar>
-        <Link to="/">
-          <S.NavButton $active={location.pathname === "/"}>Home</S.NavButton>
-        </Link>
+      {accounts.account != null && (
+        <S.NavBar>
+          <Link to="/">
+            <S.NavButton $active={location.pathname === "/"}>Home</S.NavButton>
+          </Link>
 
-        <Link to="/stake">
-          <S.NavButton $active={location.pathname === "/stake"}>Stake</S.NavButton>
-        </Link>
+          <Link to="/stake">
+            <S.NavButton $active={location.pathname === "/stake"}>Stake</S.NavButton>
+          </Link>
 
-        <Link to="/apps">
-          <S.NavButton $active={location.pathname === "/apps"}>Apps</S.NavButton>
-        </Link>
-      </S.NavBar>
+          <Link to="/apps">
+            <S.NavButton $active={location.pathname === "/apps"}>Apps</S.NavButton>
+          </Link>
+        </S.NavBar>
+      )}
 
       <AccountManager className="header-right" />
     </S.Header>

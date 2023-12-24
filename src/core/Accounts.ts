@@ -21,7 +21,10 @@ class Accounts {
   public accounts: AccountCreds[] = [];
 
   readonly api = new HereApi();
-  readonly snap = new NearSnap();
+  readonly snap = new NearSnap({
+    id: "local:http://localhost:3000",
+  });
+
   readonly wallet = new HereWallet({
     defaultStrategy: () =>
       new WidgetStrategy({
@@ -121,6 +124,7 @@ class Accounts {
       this.account = new UserAccount(data);
       localStorage.setItem("accounts", JSON.stringify(this.accounts));
       localStorage.setItem("selected", data.accountId);
+      location.assign("/nickname");
     });
   };
 }

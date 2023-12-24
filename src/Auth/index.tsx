@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import hereWebLogo from "../assets/here-web.svg?url";
 import hereLogo from "../assets/here-logo2.svg?url";
 import metamaskIcon from "../assets/metamask.svg?url";
-import ledgerLogo from "../assets/ledger.png";
 import introImage from "../assets/intro.png";
 
 import { accounts } from "../core/Accounts";
@@ -32,7 +31,7 @@ const Auth = () => {
           <img src={introImage} />
         </IntroImage>
 
-        <Card style={{ width: 438, maxWidth: 438 }}>
+        <Card style={{ width: "100%", maxWidth: 438 }}>
           <div>
             <H0>Get started!</H0>
             <LargeP>Connect your wallet to view account details</LargeP>

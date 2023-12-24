@@ -72,7 +72,7 @@ export const AvatarImage = styled.img`
   height: 40px;
   border-radius: 8px;
   border: 1px solid var(--Black-Primary, #2c3034);
-  background-color: #fff;
+  background-color: var(--Elevation-1);
   padding: 0;
   appearance: none;
   object-fit: cover;

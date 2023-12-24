@@ -2,33 +2,41 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Text } from "./typographic";
 
+type TextareaProps = React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>;
+type InputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+
 type Props =
-  | (React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement> & {
+  | (TextareaProps & {
       multiline: true;
       label?: string;
+      postfix?: void;
+      postfixStyle?: void;
     })
-  | (React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+  | (InputProps & {
       label?: string;
       multiline?: false;
       postfix?: string;
+      postfixStyle?: any;
     });
 
-const HereInput = (props: Props) => {
+const HereInput = ({ multiline, postfix, postfixStyle, label, ...props }: Props) => {
+  const usePostfix = !multiline && postfix;
+
   return (
     <InputWrap
-      className={props.value ? "editted" : ""}
-      style={{ paddingTop: props.multiline ? 25 : 12, paddingBottom: props.multiline ? 12 : 0 }}
+      className={props.value || usePostfix ? "editted" : ""}
+      style={{ paddingTop: multiline ? 25 : 12, paddingBottom: multiline ? 12 : 0 }}
     >
-      {props.label && <Label>{props.label}</Label>}
-      {props.multiline ? (
-        <textarea {...props} />
+      {label && <Label>{label}</Label>}
+      {multiline ? (
+        <textarea {...(props as TextareaProps)} />
       ) : (
         <div style={{ position: "relative", maxWidth: "90%" }}>
-          <span>{props.value}</span>
-          <input {...props} />
+          <span>|{props.value}</span>
+          <input {...(props as InputProps)} />
         </div>
       )}
-      {!props.multiline && props.postfix && <Postfix>{props.postfix}</Postfix>}
+      {usePostfix && <Postfix style={postfixStyle}>{postfix}</Postfix>}
     </InputWrap>
   );
 };

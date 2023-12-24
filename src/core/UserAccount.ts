@@ -1,4 +1,5 @@
 import { makeObservable, observable, runInAction } from "mobx";
+import { PublicKey } from "near-api-js/lib/utils";
 import BN from "bn.js";
 
 import { Storage } from "./Storage";
@@ -6,8 +7,10 @@ import { HereApi } from "./network/api";
 import { NearAccount } from "./near-chain/NearAccount";
 import { TokensStorage } from "./token/TokensStorage";
 import { TransactionsStorage } from "./transactions";
-import { NFTModel, UserContact, UserData } from "./network/types";
+import { NFTModel, RecentlyApps, UserContact, UserData } from "./network/types";
+import { accounts } from "./Accounts";
 import { Chain } from "./token/types";
+import { wait } from "./helpers";
 
 export enum ConnectType {
   Ledger = "ledger",
@@ -31,6 +34,7 @@ class UserAccount {
   readonly localStorage: Storage;
 
   public nfts: NFTModel[] = [];
+  public recentlyApps: RecentlyApps[] = [];
   public contacts: UserContact[] = [];
   public user: UserData = {
     can_bind_referral: false,
@@ -44,6 +48,7 @@ class UserAccount {
       user: observable,
       nfts: observable,
       contacts: observable,
+      recentlyApps: observable,
     });
 
     this.api = new HereApi(credential.jwt);
@@ -55,7 +60,52 @@ class UserAccount {
 
     this.transactions.refresh().catch(() => {});
     this.tokens.refreshTokens().catch(() => {});
+    this.loadRecentlyApps().catch(() => {});
     this.fetchUser().catch(() => {});
+
+    wait(100).then(async () => {
+      if (this.credential.type !== ConnectType.Snap) return;
+
+      const data = await accounts.snap.getAccount("mainnet").catch(() => accounts.snap.connect({ network: "mainnet" }));
+      if (data?.publicKey !== this.credential.publicKey) return;
+      if (data.accountId === this.credential.accountId) return;
+      if (!this.credential.accountId.endsWith(".near")) return;
+      if (data.accountId?.endsWith(".near")) return;
+
+      await this.near.getAccessKeyInfo(this.credential.accountId, PublicKey.from(data.publicKey));
+      await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", {
+        nickname: this.credential.accountId,
+        network: "mainnet",
+      });
+    });
+  }
+
+  async bindNickname(nickname: string) {
+    const api = new HereApi("metamask");
+    await api.allocateNickname({
+      device_id: "metamask",
+      public_key: this.credential.publicKey,
+      near_account_id: nickname,
+      sign: "",
+    });
+
+    try {
+      await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", { network: "mainnet", nickname });
+    } catch {
+      await wait(1000);
+      await accounts.snap.provider.invokeSnap(accounts.snap.id, "near_bindNickname", { network: "mainnet", nickname });
+    }
+
+    await accounts.register(this.credential.type);
+    accounts.disconnect(this.credential.accountId);
+  }
+
+  async isNeedActivate() {
+    if (this.credential.type !== ConnectType.Snap) return false;
+    return this.near
+      .getAccessKeyInfo(this.credential.accountId, PublicKey.from(this.credential.publicKey))
+      .then(() => false)
+      .catch(() => true);
   }
 
   async fetchUser() {
@@ -71,6 +121,11 @@ class UserAccount {
     const nfts = await this.api.getNfts();
     this.localStorage.set("nfts", JSON.stringify(nfts));
     runInAction(() => (this.nfts = nfts));
+  }
+
+  async loadRecentlyApps() {
+    const apps = await this.api.getRecentlyApps();
+    runInAction(() => (this.recentlyApps = apps));
   }
 
   async loadContacts() {

@@ -1,4 +1,5 @@
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
+import { Button } from "../uikit";
 
 export const Root = styled.div`
   width: 100%;
@@ -94,6 +95,11 @@ export const TokenCard = styled.div`
   grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr;
   padding-bottom: 20px;
   padding-top: 20px;
+  grid-gap: 8px;
+
+  > * {
+    overflow: hidden;
+  }
 
   & + & {
     border-top: 1px solid var(--Stroke);
@@ -149,7 +155,7 @@ export const NftCard = styled.img`
   border: 1px solid #2c3034;
   border-radius: 12px;
   object-fit: cover;
-  background-color: #2c3034;
+  background-color: var(--Elevation-1);
 
   cursor: pointer;
   transition: 0.2s box-shadow;
@@ -163,4 +169,18 @@ export const NftsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 24px;
+`;
+
+export const AppIcon = styled.img``;
+
+export const RecentlyApp = styled(Button)`
+  padding: 12px 0;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+  gap: 12px;
+
+  * + * {
+    padding-bottom: 1px solid #d9cdcb;
+  }
 `;

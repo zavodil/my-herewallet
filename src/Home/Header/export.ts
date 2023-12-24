@@ -5,8 +5,7 @@ import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupSender } from "@near-wallet-selector/sender";
 import { KeyPairEd25519 } from "near-api-js/lib/utils";
-
-import { accounts, useWallet } from "../../core/Accounts";
+import { useWallet } from "../../core/Accounts";
 
 export const exportWallet = async () => {
   const user = useWallet();

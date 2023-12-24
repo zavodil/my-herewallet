@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
+import { groupBy } from "lodash";
 
 import { H3, Text } from "../uikit";
 import { SmallText, H2, BoldP } from "../uikit/typographic";
@@ -24,11 +25,11 @@ import {
   NftCard,
   NftsGrid,
   RightContainer,
+  AppIcon,
+  RecentlyApp,
 } from "./styled";
 import { Transaction } from "./Transactions";
 import Header from "./Header";
-import { groupBy } from "lodash";
-import { toJS } from "mobx";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
 
@@ -214,6 +215,19 @@ const Home = () => {
                 <Icon name="cursor-right" />
               </Button>
             </div>
+
+            {account.recentlyApps.map((app) => (
+              <RecentlyApp
+                as="a"
+                rel="noopener noreferrer"
+                href={`https://nearblocks.io/address/${app.contract_id}`}
+                target="_blank"
+              >
+                <AppIcon src={app.image} />
+                <BoldP>{app.name}</BoldP>
+                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
+              </RecentlyApp>
+            ))}
           </Card>
         </RightContainer>
       </Container>

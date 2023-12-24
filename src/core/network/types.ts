@@ -67,6 +67,13 @@ interface RequestSerialized {
   url: string;
 }
 
+export interface RecentlyApps {
+  contract_id: string;
+  name: string;
+  image: string;
+  timestamp: number;
+}
+
 export interface RequestAccessToken {
   msg: string;
   device_id: string;
@@ -126,4 +133,11 @@ export class ResponseError extends HereError {
       headers: Object.fromEntries((res.headers as any).entries()),
     });
   }
+}
+
+export interface AllocateUsername {
+  near_account_id: string;
+  public_key: string;
+  sign: string;
+  device_id: string;
 }

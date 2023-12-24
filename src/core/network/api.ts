@@ -3,7 +3,7 @@ import { AnalyticEvent } from "../analytics";
 import { Storage } from "../Storage";
 import { FtAsset, FtGroup } from "../token/types";
 import { TransactionModel } from "../transactions/types";
-import { NFTModel, RequestAccessToken } from "./types";
+import { AllocateUsername, NFTModel, RecentlyApps, RequestAccessToken } from "./types";
 
 export class HereError extends Error {
   constructor(readonly title: string, readonly body: string) {
@@ -12,7 +12,7 @@ export class HereError extends Error {
 }
 
 export class HereApi {
-  public readonly endpoint = "https://dev.herewallet.app";
+  public readonly endpoint = "https://api.herewallet.app";
   public readonly storage = new Storage("");
 
   constructor(readonly jwt = "") {}
@@ -59,6 +59,13 @@ export class HereApi {
     return nfts;
   }
 
+  public async allocateNickname(data: AllocateUsername) {
+    await this.request("/api/v1/user/create_near_username", {
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+  }
+
   async getUser() {
     const res = await this.request(`/api/v1/user`);
     return await res.json();
@@ -68,6 +75,12 @@ export class HereApi {
     const res = await this.request(`/api/v1/user/contacts`);
     const { contacts } = await res.json();
     return contacts;
+  }
+
+  async getRecentlyApps(): Promise<RecentlyApps[]> {
+    const res = await this.request(`/api/v1/transactions/recent_apps`);
+    const { apps } = await res.json();
+    return apps;
   }
 
   async getRate(coin = "NEAR"): Promise<number> {

@@ -3,14 +3,22 @@ import styled from "styled-components";
 export const Root = styled.div`
   width: 100%;
   padding: 0 120px;
+  padding-left: 60px;
   margin: auto;
   min-height: calc(var(--vh, 1vh) * 100);
   background-color: var(--Elevation-0);
-  display: flex;
   flex-direction: column;
+  display: flex;
 
   @media (max-width: 1200px) {
     padding: 0 32px;
+    padding-left: 0;
+    padding-right: 48px;
+  }
+
+  @media (max-width: 1024px) {
+    padding-left: 32px;
+    padding-right: 32px;
   }
 `;
 
@@ -49,6 +57,8 @@ export const Page = styled.div`
 
 export const IntroImage = styled.div`
   position: relative;
+  max-width: 500px;
+  width: 100%;
 
   img {
     max-width: 500px;

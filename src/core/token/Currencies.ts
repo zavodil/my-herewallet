@@ -79,7 +79,7 @@ class Currencies {
         const [yest = 0, now = yest] = prices as any;
         this.prices[symbol] = {
           precision: this.getPrecision(now),
-          usd_24h_change: now / yest,
+          usd_24h_change: ((now - yest) / yest) * 100,
           usd_yesterday: yest,
           usd: now,
         };
