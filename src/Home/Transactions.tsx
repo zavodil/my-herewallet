@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { TransactionModel } from "../core/transactions/types";
 import { BoldP, SmallText, Text } from "../uikit/typographic";
-import { truncateAddress } from "../core/helpers";
 import { notify } from "../core/toast";
 import { Button } from "../uikit";
 import Icon from "../uikit/Icon";
@@ -11,24 +10,28 @@ import Icon from "../uikit/Icon";
 export const Transaction = ({ trx }: { trx: TransactionModel }) => {
   return (
     <TransactionItem key={trx.metadata.id + "i"}>
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <TransactionIcon>
-          <Icon name={trx.badge.icon as any} />
-        </TransactionIcon>
+      <TransactionIcon>
+        <Icon name={trx.badge.icon as any} />
+      </TransactionIcon>
 
-        <Text style={{ fontWeight: "bolder" }}>
-          {trx.badge.title.length > 16
-            ? trx.badge.title.slice(0, 6) + ".." + trx.badge.title.slice(-6)
-            : trx.badge.title}
-        </Text>
-      </div>
+      <Flex style={{ gap: 0 }}>
+        <Text style={{ fontWeight: "bolder" }}>{trx.badge.title}</Text>
+        <SmallText>
+          {new Date(trx.timestamp * 1000).toLocaleDateString("en", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hourCycle: "h24",
+          })}
+        </SmallText>
+      </Flex>
 
       <Flex style={{ gap: 0 }}>
         <Text style={{ fontWeight: "bolder" }}>{trx.badge.info}</Text>
-        <SmallText>{truncateAddress(trx.badge.sub_info)}</SmallText>
+        <SmallText>{trx.badge.sub_info}</SmallText>
       </Flex>
-
-      <Text>{trx.badge.sub_title}</Text>
 
       <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginRight: -4, paddingRight: 8 }}>
         {trx.metadata.link && (
@@ -71,7 +74,7 @@ const TransactionIcon = styled.div`
 const TransactionItem = styled.div`
   width: calc(100% + 48px);
   display: grid;
-  grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr;
+  grid-template-columns: 40px 1fr 1fr 68px;
   align-items: center;
   transition: 0.2s background;
   padding: 8px 24px;

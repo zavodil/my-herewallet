@@ -171,16 +171,23 @@ export const NftsGrid = styled.div`
   grid-gap: 24px;
 `;
 
-export const AppIcon = styled.img``;
+export const AppIcon = styled.img`
+  border-radius: 12px;
+  border: 1px solid var(--Stroke, #c7bab8);
+  background: var(--Elevation-1, #ebdedc);
+  width: 40px;
+  height: 40px;
+`;
 
 export const RecentlyApp = styled(Button)`
-  padding: 12px 0;
   align-items: center;
   display: flex;
   cursor: pointer;
   gap: 12px;
+  padding-top: 12px;
 
-  * + * {
-    padding-bottom: 1px solid #d9cdcb;
+  & + & {
+    border-top: 1px solid #d9cdcb;
+    margin-top: 12px;
   }
 `;

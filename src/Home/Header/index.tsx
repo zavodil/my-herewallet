@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { generateFromString } from "generate-avatar";
+import { observer } from "mobx-react-lite";
 
 import hereWebLogo from "../../assets/here-web.svg?url";
 import { useAnalyticsTrack } from "../../core/analytics";
 import { accounts, useWallet } from "../../core/Accounts";
 
+import Icon from "../../uikit/Icon";
 import { Button, Text } from "../../uikit";
 import { colors } from "../../uikit/theme";
-import Icon from "../../uikit/Icon";
-
 import { TinyText } from "../../uikit/typographic";
 import { ConnectType } from "../../core/UserAccount";
+import { notify } from "../../core/toast";
 
 import { exportWallet } from "./export";
 import * as S from "./styled";
-import { observer } from "mobx-react-lite";
-import { notify } from "../../core/toast";
 
 export const AccountManager = observer(
   ({
@@ -45,7 +44,19 @@ export const AccountManager = observer(
     const accountId = account.near.accountId;
 
     return (
-      <div className={className} style={{ display: "flex", gap: 8, ...style }}>
+      <div className={className} style={{ display: "flex", ...style }}>
+        {!onlySwitch && (
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenManager(true);
+              setOpenMenu(false);
+            }}
+          >
+            <Icon name="switch-vertical" />
+          </Button>
+        )}
+
         <S.AccountButton
           style={{ gap: 12, height: "auto", width: "auto", padding: 4 }}
           onClick={(e) => {
@@ -76,18 +87,6 @@ export const AccountManager = observer(
           >
             <Icon name="copy" />
           </Button>
-
-          {!onlySwitch && (
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpenManager(true);
-                setOpenMenu(false);
-              }}
-            >
-              <Icon name="switch-vertical" />
-            </Button>
-          )}
         </S.AccountButton>
 
         {openMenu && (

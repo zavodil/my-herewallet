@@ -82,16 +82,20 @@ const Home = () => {
                 >
                   <SmallText style={{ color: colors.blackSecondary }}>Recent transactions</SmallText>
 
-                  {!showAll ? (
-                    <Button onClick={() => setShowAll(true)}>
-                      <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>See all</SmallText>
-                      <Icon name="cursor-right" />
-                    </Button>
-                  ) : (
-                    <Button onClick={() => setShowAll(false)}>
-                      <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>Hide all</SmallText>
-                      <Icon name="cursor-down" />
-                    </Button>
+                  {account.transactions.list.length > 2 && (
+                    <>
+                      {!showAll ? (
+                        <Button onClick={() => setShowAll(true)}>
+                          <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>See all</SmallText>
+                          <Icon name="cursor-right" />
+                        </Button>
+                      ) : (
+                        <Button onClick={() => setShowAll(false)}>
+                          <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>Hide all</SmallText>
+                          <Icon name="cursor-down" />
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -170,45 +174,51 @@ const Home = () => {
 
             {!showTokens && (
               <NftsGrid style={{ display: "block" }}>
-                {Object.values(groupBy(account.nfts, (t) => t.collection_name))
-                  .sort((a, b) => b.length - a.length)
-                  .map((group) => (
-                    <div style={{ marginTop: 24 }}>
-                      <BoldP style={{ width: "100%" }}> {group[0].collection_name}</BoldP>
-                      <NftsGrid style={{ marginTop: 18 }}>
-                        {group.map((nft) => (
-                          <a
-                            style={{ textDecoration: "none" }}
-                            rel="noopener noreferrer"
-                            href={`https://paras.id/collection/${nft.contract_id}`}
-                            target="_blank"
-                          >
-                            <NftCard key={nft.nft_id} src={nft.media_url} />
-                            <BoldP style={{ marginTop: 4 }}>{nft.nft_title}</BoldP>
-                          </a>
-                        ))}
-                      </NftsGrid>
-                    </div>
-                  ))}
+                {Object.values(groupBy(account.nfts, (t) => t.collection_name)).map((group) => (
+                  <div style={{ marginTop: 24 }}>
+                    <BoldP style={{ width: "100%" }}> {group[0].collection_name}</BoldP>
+                    <NftsGrid style={{ marginTop: 18 }}>
+                      {group.map((nft) => (
+                        <a
+                          style={{ textDecoration: "none" }}
+                          rel="noopener noreferrer"
+                          href={`https://paras.id/collection/${nft.contract_id}`}
+                          target="_blank"
+                        >
+                          <NftCard key={nft.nft_id} src={nft.media_url} />
+                          <BoldP style={{ marginTop: 4 }}>{nft.nft_title}</BoldP>
+                        </a>
+                      ))}
+                    </NftsGrid>
+                  </div>
+                ))}
               </NftsGrid>
             )}
           </Card>
         </div>
 
         <RightContainer>
-          <Card style={{ padding: 16, width: "100%", height: 540 }}>
+          <Card style={{ padding: 16, width: "100%", height: 290 }}>
             <Tabs>
               <Tab $active>Swaps</Tab>
               <Tab>Bridge</Tab>
             </Tabs>
 
             <div style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ textAlign: "center", color: "var(--Black-Secondary)" }}>Comming soon</Text>
+              <Text style={{ textAlign: "center", color: "var(--Black-Secondary)" }}>Coming soon</Text>
             </div>
           </Card>
 
           <Card style={{ width: "100%" }}>
-            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                marginBottom: 12,
+                width: "100%",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <H3>Recent Apps</H3>
               <Button onClick={() => navigate("/apps")}>
                 <Text style={{ fontWeight: "bold", color: "var(--Black-Secondary)" }}>See all</Text>
@@ -216,7 +226,7 @@ const Home = () => {
               </Button>
             </div>
 
-            {account.recentlyApps.map((app) => (
+            {account.recentlyApps.slice(0, 6).map((app) => (
               <RecentlyApp
                 as="a"
                 rel="noopener noreferrer"

@@ -35,34 +35,28 @@ export class TransactionsStorage {
     return await this.remote.getTransactions(data);
   }
 
-  groups(data: TransactionModel[]) {
-    const groups: TransactionModel[][] = [[]];
-    data.forEach((trx) => {
-      if (groups.length === 1) {
-        groups.push([trx]);
-        return;
-      }
-
-      const id = Math.floor(trx.timestamp / (3600 * 24));
-      const prevId = Math.floor(groups[groups.length - 1][0].timestamp / (3600 * 24));
-      if (prevId === id) {
-        groups[groups.length - 1].push(trx);
-        return;
-      }
-
-      groups.push([trx]);
+  async refresh() {
+    const trxs = await this.remote.getTransactions({
+      type: [
+        "TRANSFER",
+        "CROSS_CHAIN",
+        "TECHNICAL_REQUEST",
+        "FUNCTION_CALL",
+        "DIVIDEND_PAYMENT",
+        "NFT_TRANSFER",
+        "STAKE_UNSTAKE",
+        "TRANSFER_FT",
+        "TRANSFER_PHONE",
+        "SWAP",
+        "ADD_KEY",
+        "DELETE_KEY",
+        "LINKDROP",
+        "SOCIAL_DB",
+        "PHONE_SERVICE",
+        "CASHBACK",
+      ],
     });
 
-    return groups;
-  }
-
-  async refresh() {
-    // let start = 0;
-    // if (this.list.length >= 3) {
-    //   start = this.list[3].timestamp;
-    // }
-
-    const trxs = await this.remote.getTransactions({});
     this.user.localStorage.set("transactions", JSON.stringify(trxs));
     runInAction(() => {
       this.isLoading = false;

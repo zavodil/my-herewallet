@@ -2,10 +2,10 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import { colors } from "../uikit/theme";
 
-export const notify = (txt: string) => {
+export const notify = (txt: string, ms = 2500) => {
   Toastify({
     text: txt,
-    duration: 2500,
+    duration: ms,
     gravity: "bottom", // `top` or `bottom`
     position: "left", // `left`, `center` or `right`
     stopOnFocus: true, // Prevents dismissing of toast on hover

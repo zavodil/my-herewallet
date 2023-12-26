@@ -83,7 +83,7 @@ class Accounts {
             nickname: names[0],
           });
         } catch {
-          notify("You need bind nickname before login, but something failed, restart page and try again please");
+          notify("You need bind nickname before login, but something failed, restart page and try again please", 5000);
           return;
         }
       }
