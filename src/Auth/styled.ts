@@ -2,24 +2,11 @@ import styled from "styled-components";
 
 export const Root = styled.div`
   width: 100%;
-  padding: 0 120px;
-  padding-left: 60px;
   margin: auto;
   min-height: calc(var(--vh, 1vh) * 100);
   background-color: var(--Elevation-0);
   flex-direction: column;
   display: flex;
-
-  @media (max-width: 1200px) {
-    padding: 0 32px;
-    padding-left: 0;
-    padding-right: 48px;
-  }
-
-  @media (max-width: 1024px) {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
 `;
 
 export const Header = styled.header`
@@ -31,26 +18,40 @@ export const Header = styled.header`
   align-items: center;
   display: flex;
   height: 100px;
+  padding: 0 120px;
+
+  @media (max-width: 1200px) {
+    padding: 0 60px;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0 32px;
+  }
 `;
 
 export const Page = styled.div`
   display: flex;
   box-sizing: border-box;
   justify-content: center;
-  padding: 200px 0;
+  padding: 200px 120px;
+  padding-left: 60px;
   width: 100%;
   gap: 120px;
   flex: 1;
 
   @media (max-width: 1200px) {
     gap: 80px;
+    padding-left: 0;
+    padding-right: 48px;
   }
 
   @media (max-width: 1024px) {
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
-    padding: 32px 0;
+    padding-top: 32px;
+    padding-left: 32px;
+    padding-right: 32px;
     gap: 42px;
   }
 `;

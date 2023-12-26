@@ -138,7 +138,6 @@ class Accounts {
       this.account = new UserAccount(data);
       localStorage.setItem("accounts", JSON.stringify(this.accounts));
       localStorage.setItem("selected", data.accountId);
-      location.assign("/nickname");
     });
   };
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
+import { isMobile } from "@here-wallet/core";
 
 import hereWebLogo from "../assets/here-web.svg?url";
 import hereLogo from "../assets/here-logo2.svg?url";
@@ -26,7 +27,7 @@ const Auth = () => {
           <img style={{ height: 22, objectFit: "contain" }} src={hereWebLogo} />
         </Link>
 
-        <BoldP as="a" href="https://download.herewallet.app">
+        <BoldP style={{ textAlign: "right" }} as="a" href="https://download.herewallet.app">
           Don’t have an account? <span style={{ textDecoration: "underline" }}>Click here</span>
         </BoldP>
       </Header>
@@ -54,13 +55,15 @@ const Auth = () => {
             <BoldP style={{ marginLeft: -12 }}>Log in with Ledger</BoldP>
           </ButtonCard> */}
 
-            <ButtonCard onClick={() => accounts.register(ConnectType.Snap)}>
-              <img style={{ objectFit: "contain" }} width="48" height="48" src={metamaskIcon} />
-              <div>
-                <BoldP>Log in with NEAR MetaMask Snap</BoldP>
-                <SmallText>Sponsored by BANYAN Collective</SmallText>
-              </div>
-            </ButtonCard>
+            {!isMobile() && (
+              <ButtonCard onClick={() => accounts.register(ConnectType.Snap)}>
+                <img style={{ objectFit: "contain" }} width="48" height="48" src={metamaskIcon} />
+                <div>
+                  <BoldP>Log in with NEAR MetaMask Snap</BoldP>
+                  <SmallText>Sponsored by BANYAN Collective</SmallText>
+                </div>
+              </ButtonCard>
+            )}
           </div>
         </Card>
       </Page>
