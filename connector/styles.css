@@ -1,6 +1,4 @@
-import { createGlobalStyle } from "styled-components";
 
-export const GlobalStyles = createGlobalStyle`
 * {
   font-family: "Manrope", sans-serif;
   box-sizing: border-box;
@@ -13,9 +11,8 @@ body, html {
 }
 
 a {
-  font-family: "Manrope";
   font-style: normal;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   line-height: 22px;
   text-decoration-line: underline;
@@ -119,6 +116,25 @@ input::-webkit-inner-spin-button {
 
 .here-connector-close-button:hover, .here-connector-text:hover {
   opacity: 0.7;
+}
+
+.here-connector-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #c7bab8;
+  cursor: pointer;
+  border-radius: 24px;
+  padding: 8px 12px;
+  width: fit-content;
+
+  position: absolute;
+  top: 28px;
+  left: 28px;
+}
+
+.here-connector-switch:hover {
+  background-color: #ebdedc;
 }
 
 .here-connector-content {
@@ -335,4 +351,16 @@ input::-webkit-inner-spin-button {
 .loading-spin div:nth-child(3) {
   animation-delay: -0.15s;
 }
-`;
+
+.snap-card {
+  flex-direction: column;
+  cursor: pointer;  
+}
+
+.snap-card img {
+  transition: 0.2s transform;
+}
+
+.snap-card:hover img {
+  transform: scale(1.1);
+}

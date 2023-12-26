@@ -3,7 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - web
+      - master
 
 jobs:
   build-and-deploy:
@@ -32,5 +32,12 @@ jobs:
 
       - name: SCP files
         run: |
-          scp -o StrictHostKeyChecking=no -r ./.well-known/* fedor@web.herewallet.app:/var/www/here/beta/.well-known
-          scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/beta
+          scp -o StrictHostKeyChecking=no -r ./.well-known/* fedor@web.herewallet.app:/var/www/here/my/.well-known
+          scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/my
+
+      - name: Build Connector
+        run: yarn build:connector
+
+      - name: SCP files
+        run: |
+          scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/my/connector

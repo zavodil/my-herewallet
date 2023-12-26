@@ -38,9 +38,10 @@
     "uuid4": "^2.0.3"
   },
   "scripts": {
-    "clean": "rm -rf .parcel-cache",
-    "build": "yarn clean && parcel build index.html && cp ./dist/index.html ./dist/200.html",
-    "start": "yarn clean && parcel index.html"
+    "clean": "rm -rf .parcel-cache ./dist",
+    "build": "yarn clean && parcel build index.html",
+    "build:connector": "yarn clean && parcel build ./connector/index.html",
+    "start": "yarn clean && parcel index.html ./connector/index.html"
   },
   "browserslist": {
     "production": [

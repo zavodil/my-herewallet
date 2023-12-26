@@ -12,7 +12,6 @@ import CreateNickname from "./Auth/CreateNickname";
 import OpenInApp from "./Connector/OpenInApp";
 import WebConnector from "./Connector";
 import Transfer from "./Transfer";
-import Widget from "./widget";
 import Auth from "./Auth";
 import Apps from "./Apps";
 
@@ -41,8 +40,6 @@ function App() {
         )}
 
         <Route path="/loading" element={<LoadingPage />} />
-        <Route path="/connector/*" element={<Widget />} />
-
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
         <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
         <Route path="/request/:id" element={<WebConnector />} />
