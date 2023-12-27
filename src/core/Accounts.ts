@@ -130,15 +130,23 @@ class Accounts {
       web_auth: true,
     });
 
-    runInAction(() => {
-      const data = { type, accountId: sign.accountId, publicKey: sign.publicKey, jwt: token };
-      if (this.accounts.find((t) => t.accountId === data.accountId)) return;
+    const data = { type, accountId: sign.accountId, publicKey: sign.publicKey, jwt: token };
+    if (this.accounts.find((t) => t.accountId === data.accountId)) return;
 
+    const account = new UserAccount(data);
+    const needNickname = await account.isNeedActivate();
+
+    // @ts-ignore
+    const clientVersion = await window.ethereum?.request({ method: "web3_clientVersion" }).catch(() => null);
+
+    runInAction(() => {
       this.accounts.push(data);
-      this.account = new UserAccount(data);
+      this.account = account;
       localStorage.setItem("accounts", JSON.stringify(this.accounts));
       localStorage.setItem("selected", data.accountId);
     });
+
+    return needNickname && data.type === ConnectType.Snap && clientVersion.includes("flask");
   };
 }
 

@@ -20,17 +20,13 @@ const CreateNickname = () => {
   const user = useWallet();
   const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
-  const [isLoading, setLoading] = useState(true);
   const [receiver] = useState(() => new Receiver(user!));
   const [isCreating, setCreating] = useState(false);
 
   useEffect(() => {
     if (user?.credential.type !== ConnectType.Snap) return navigate("/");
-
-    setLoading(true);
     user.isNeedActivate().then((needActivate) => {
-      if (needActivate) return setLoading(false);
-      navigate("/");
+      if (!needActivate) navigate("/");
     });
   }, [user]);
 
@@ -38,8 +34,6 @@ const CreateNickname = () => {
     receiver.setInput(nickname + ".near");
     receiver.load();
   }, [nickname]);
-
-  if (isLoading) return null;
 
   return (
     <Root>

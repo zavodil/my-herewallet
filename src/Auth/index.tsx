@@ -20,6 +20,11 @@ const Auth = () => {
     if (accounts.account == null) navigate("/");
   }, [accounts.account]);
 
+  const register = async (type: ConnectType) => {
+    const needNickname = await accounts.register(type);
+    if (needNickname) navigate("/nickname");
+  };
+
   return (
     <Root>
       <Header>
@@ -45,7 +50,7 @@ const Auth = () => {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <ButtonCard onClick={() => accounts.register(ConnectType.Here)}>
+            <ButtonCard onClick={() => register(ConnectType.Here)}>
               <img style={{ objectFit: "contain" }} width="48" height="48" src={hereLogo} />
               <BoldP>Log in with HERE Wallet</BoldP>
             </ButtonCard>
@@ -56,7 +61,7 @@ const Auth = () => {
           </ButtonCard> */}
 
             {!isMobile() && (
-              <ButtonCard onClick={() => accounts.register(ConnectType.Snap)}>
+              <ButtonCard onClick={() => register(ConnectType.Snap)}>
                 <img style={{ objectFit: "contain" }} width="48" height="48" src={metamaskIcon} />
                 <div>
                   <BoldP>Log in with NEAR MetaMask Snap</BoldP>
