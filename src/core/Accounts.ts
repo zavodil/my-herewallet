@@ -137,7 +137,7 @@ class Accounts {
     const needNickname = await account.isNeedActivate();
 
     // @ts-ignore
-    const clientVersion = await window.ethereum?.request({ method: "web3_clientVersion" }).catch(() => null);
+    const clientVersion = await window.ethereum?.request({ method: "web3_clientVersion" }).catch(() => "");
 
     runInAction(() => {
       this.accounts.push(data);
@@ -146,7 +146,7 @@ class Accounts {
       localStorage.setItem("selected", data.accountId);
     });
 
-    return needNickname && data.type === ConnectType.Snap && clientVersion.includes("flask");
+    return needNickname && data.type === ConnectType.Snap && clientVersion?.includes("flask");
   };
 }
 
