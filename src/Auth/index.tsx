@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { isMobile } from "@here-wallet/core";
+import { isMobile } from "is-mobile";
 
 import hereWebLogo from "../assets/here-web.svg?url";
 import hereLogo from "../assets/here-logo2.svg?url";

@@ -2,7 +2,7 @@ import React from "react";
 import { ActionButton, H1, H2, Text } from "../uikit";
 import Footer from "./Footer";
 import * as S from "./styled";
-import { isMobile } from "@here-wallet/core";
+import { isMobile } from "is-mobile";
 import HereQRCode from "../uikit/HereQRCode";
 
 const OpenInApp = () => {

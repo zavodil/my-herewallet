@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { HereProviderStatus } from "@here-wallet/core";
 import { useParams } from "react-router-dom";
+import { isMobile } from "is-mobile";
 
 import { colors } from "../uikit/theme";
 import HereQRCode from "../uikit/HereQRCode";
@@ -16,7 +17,6 @@ const TransactionCard = () => {
   const { id } = useParams();
   const { result, link, request } = useSignRequest(id);
   const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
-  const isMobile = isAndroid() || isIOS();
 
   useEffect(() => {
     if (useAppclip) localStorage.removeItem("disableAppClip");
@@ -70,17 +70,17 @@ const TransactionCard = () => {
           {result?.status === HereProviderStatus.APPROVING && <ActivityIndicator />}
           <Connector request={request} />
 
-          {!isMobile && window.innerWidth >= 800 && qrCode}
+          {!isMobile() && window.innerWidth >= 800 && qrCode}
         </S.Card>
 
-        {!isMobile && window.innerWidth < 800 && (
+        {!isMobile() && window.innerWidth < 800 && (
           <S.Card style={{ marginTop: 0 }} isLoading={result?.status === HereProviderStatus.APPROVING}>
             {result?.status === HereProviderStatus.APPROVING && <ActivityIndicator />}
             {qrCode}
           </S.Card>
         )}
 
-        {isMobile && (
+        {isMobile() && (
           <ActionButton as="a" href={link} style={{ marginBottom: 32, marginTop: -8, borderRadius: 16 }}>
             Tap to approve in HERE
           </ActionButton>
