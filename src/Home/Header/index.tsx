@@ -14,7 +14,7 @@ import { TinyText } from "../../uikit/typographic";
 import { ConnectType } from "../../core/UserAccount";
 import { notify } from "../../core/toast";
 
-import { exportWallet } from "./export";
+import { ExportAccountWidget } from "./ExportAccountWidget";
 import * as S from "./styled";
 
 export const AccountManager = observer(
@@ -32,6 +32,7 @@ export const AccountManager = observer(
     const account = useWallet()!;
     const [openMenu, setOpenMenu] = useState(false);
     const [openManager, setOpenManager] = useState(false);
+    const [isExportOpen, setToggleExport] = useState(false);
 
     useEffect(() => {
       document.body.addEventListener("click", () => {
@@ -97,15 +98,17 @@ export const AccountManager = observer(
               setOpenManager(false);
             }}
           >
-            <S.AccountButton
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpenMenu(false);
-                exportWallet();
-              }}
-            >
-              <Text>Export wallet</Text>
-            </S.AccountButton>
+            {account.isFlask && (
+              <S.AccountButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenMenu(false);
+                  setToggleExport(true);
+                }}
+              >
+                <Text>Export wallet</Text>
+              </S.AccountButton>
+            )}
 
             <S.AccountButton
               onClick={(e) => {
@@ -172,6 +175,8 @@ export const AccountManager = observer(
             )}
           </S.AccountMenu>
         )}
+
+        <ExportAccountWidget onClose={() => setToggleExport(false)} isOpen={isExportOpen} />
       </div>
     );
   }

@@ -11,6 +11,7 @@
     "@near-wallet-selector/account-export": "^8.9.1",
     "@near-wallet-selector/here-wallet": "^8.9.1",
     "@near-wallet-selector/meteor-wallet": "^8.9.1",
+    "@near-wallet-selector/modal-ui": "^8.9.1",
     "@near-wallet-selector/my-near-wallet": "^8.9.1",
     "@near-wallet-selector/sender": "^8.9.1",
     "@ref-finance/ref-sdk": "^1.2.2",

@@ -108,3 +108,34 @@ export const AccountMenu = styled.div`
   top: 52px;
   right: -4px;
 `;
+
+export const ModalWrap = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ModalOverlay = styled.div`
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+`;
+
+export const ModalContent = styled.div`
+  max-width: 600px;
+  background-color: var(--Elevation-0);
+  border-radius: 16px;
+  padding: 48px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+`;

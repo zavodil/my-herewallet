@@ -45,12 +45,15 @@ class UserAccount {
     id: "0",
   };
 
+  isFlask = true;
+
   constructor(readonly credential: { type: ConnectType; accountId: string; publicKey: string; jwt: string }) {
     makeObservable(this, {
       user: observable,
       nfts: observable,
       contacts: observable,
       recentlyApps: observable,
+      isFlask: observable,
     });
 
     this.api = new HereApi(credential.jwt);
@@ -67,6 +70,11 @@ class UserAccount {
 
     wait(100).then(async () => {
       if (this.credential.type !== ConnectType.Snap) return;
+
+      // @ts-ignore
+      const version = await window.ethereum?.request({ method: "web3_clientVersion" }).catch(() => "");
+      runInAction(() => (this.isFlask = version.includes("flask")));
+
       const status = await accounts.snap.getStatus();
       if (status !== NearSnapStatus.INSTALLED) await accounts.snap.install();
 
