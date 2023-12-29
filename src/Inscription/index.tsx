@@ -78,7 +78,7 @@ const Inscription = () => {
   useEffect(() => {
     if (!account) return;
     const fetch = async () => {
-      setBalance(await fetchBalance(account.accountId));
+      fetchBalance(account.accountId).then((b) => setBalance(b));
       const stats = await fetchStats(account.accountId);
       setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
     };
