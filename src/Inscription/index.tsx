@@ -13,6 +13,7 @@ import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
 import { Account, transactions } from "near-api-js";
 import { BoldP, H4, SmallText } from "../uikit/typographic";
+import { base_decode } from "near-api-js/lib/utils/serialize";
 
 const fetchBalance = async (accId: string) => {
   const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
@@ -38,7 +39,9 @@ const fetchStats = async () => {
   return data.data;
 };
 
-const here = new HereWallet();
+const here = new HereWallet({
+  nodeUrl: "https://rpc.herewallet.app",
+});
 
 const Inscription = () => {
   const [count, setCount] = useState(0);
@@ -109,44 +112,64 @@ const Inscription = () => {
       return;
     }
 
-    let isError = false;
     let minted = 0;
 
+    const publicKey = await account.connection.signer.getPublicKey(account.accountId, "mainnet");
+    let { nonce } = await account.connection.provider.query<any>({
+      account_id: account.accountId,
+      request_type: "view_access_key",
+      public_key: publicKey.toString(),
+      finality: "optimistic",
+    });
+
     const mintOne = async () => {
-      if (isError) return;
+      nonce += 1;
 
-      try {
-        // @ts-ignore
-        const [tx, signed] = await account.signTransaction("inscription.near", [
-          transactions.functionCall(
-            "inscribe",
-            { p: "nrc-20", op: "mint", tick: "1dragon", amt: "100000000" },
-            new BN(TGAS * 10),
-            new BN(0)
-          ),
-        ]);
+      const block = await account.connection.provider.block({ finality: "final" });
+      const blockHash = block.header.hash;
 
-        await account.connection.provider.sendTransactionAsync(signed);
-        await wait(9000);
-        setSuccessed((t) => t + 1);
-        minted += 1;
+      const [tx, signed] = await transactions.signTransaction(
+        transactions.createTransaction(
+          account.accountId,
+          publicKey,
+          "inscription.near",
+          nonce,
+          [
+            transactions.functionCall(
+              "inscribe",
+              { p: "nrc-20", op: "mint", tick: "1dragon", amt: stats.limit },
+              new BN(TGAS * 30),
+              new BN(0)
+            ),
+          ],
+          base_decode(blockHash)
+        ),
+        account.connection.signer,
+        account.accountId,
+        "mainnet"
+      );
 
-        console.log("SUCCESS", successed);
-        if (minted < count) await mintOne();
-      } catch (e) {
-        console.log(e);
-        isError = true;
-        await wait(5000);
-        isError = false;
-        await mintOne();
-      }
+      await account.connection.provider.sendTransactionAsync(signed);
+      await wait(10000);
+
+      setSuccessed((t) => t + 1);
+      minted += 1;
+      if (minted < count) await mintOne();
     };
 
-    await mintOne();
-    isStart.current = false;
-    setLoading(false);
-    setSuccessed(0);
-    notify("Success!");
+    try {
+      await mintOne();
+      isStart.current = false;
+      setLoading(false);
+      setSuccessed(0);
+      notify("Success!");
+    } catch (e) {
+      console.log(e);
+      isStart.current = false;
+      setLoading(false);
+      setSuccessed(0);
+      notify("Something wrong, try again");
+    }
   };
 
   return (
