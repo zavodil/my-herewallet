@@ -17,6 +17,7 @@ const Widget = () => {
   useEffect(() => {
     window.addEventListener("message", (e) => {
       try {
+        console.log(e.data);
         const event = JSON.parse(e.data);
         if (event.type === "request") {
           const { id, request } = event.payload;
