@@ -86,14 +86,13 @@ export const InscriptionTokens = () => {
     accounts.api.getRates().then(setRates);
 
     fetchAll().then(({ data }) => {
-      const list = data.holderCounts.flatMap((t: any) => {
-        const token: any = data.tokenInfos.find((i: any) => i.id === t.id);
-        const wrap: any = data.ftWrappers.find((i: any) => i.id === t.id);
-        if (token == null) return [];
+      const list = data.tokenInfos.flatMap((token: any) => {
+        const holder: any = data.holderCounts.find((i: any) => i.id === token.id);
+        const wrap: any = data.ftWrappers.find((i: any) => i.id === token.id);
         return [
           {
             ...token,
-            owner: t.count,
+            owner: holder?.count || "0",
             ftAmount: wrap?.amount,
             ftContract: wrap?.tokenId,
             progress: Formatter.round((token.totalSupply / token.maxSupply) * 100),
