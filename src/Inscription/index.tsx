@@ -12,7 +12,7 @@ import { Formatter, parseAmount, wait } from "../core/helpers";
 import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
 import { Account, transactions } from "near-api-js";
-import { BoldP, H4, SmallText } from "../uikit/typographic";
+import { BoldP, H2, H4, SmallText } from "../uikit/typographic";
 import { base_decode } from "near-api-js/lib/utils/serialize";
 import isMobile from "is-mobile";
 
@@ -141,6 +141,19 @@ const Inscription = () => {
       const block = await account.connection.provider.block({ finality: "final" });
       const blockHash = block.header.hash;
 
+      const price = await account.connection.provider.gasPrice(blockHash);
+      const gasPrice = new BN(price.gas_price).mul(new BN(TGAS * 300));
+
+      if (new BN(nearBalance).lt(gasPrice)) {
+        notify(
+          `You don't have enough NEAR to pay for gas. The account must have at least ${formatNearAmount(
+            gasPrice.toString()
+          )} NEAR`,
+          10000
+        );
+        throw Error();
+      }
+
       const [tx, signed] = await transactions.signTransaction(
         transactions.createTransaction(
           account.accountId,
@@ -198,14 +211,29 @@ const Inscription = () => {
           alignItems: "center",
           justifyContent: "space-between",
           textAlign: "left",
+          marginBottom: -40,
         }}
       >
-        <div>
+        <H1>Mint 1DRAGON</H1>
+      </Container>
+
+      <Container
+        style={{
+          flexDirection: isMobile() ? "column" : "row",
+          maxWidth: 1200,
+          width: "100%",
+          margin: "0 auto",
+          alignItems: "center",
+          justifyContent: "space-between",
+          textAlign: "left",
+        }}
+      >
+        <div style={{ width: "100%", textAlign: "left" }}>
           <BoldP>Balance: {formatNearAmount(nearBalance, 4)} NEAR</BoldP>
           <SmallText>Unstake some NEAR before mint</SmallText>
         </div>
 
-        <div style={{ textAlign: isMobile() ? "left" : "right" }}>
+        <div style={{ width: "100%", textAlign: isMobile() ? "left" : "right" }}>
           <BoldP>You minted: {balance} 1DRAGON</BoldP>
           <SmallText>The balance will be updated with a delay</SmallText>
         </div>
