@@ -3,7 +3,7 @@ import { mobileCheck, ConnectType, connectHere, connectMetamask } from "./utils"
 
 const Widget = () => {
   const [request, setRequest] = useState<{ id: string; request: any } | null>(null);
-  const [isApproving, setApproving] = useState(true);
+  const [isApproving, setApproving] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
 
   const link = `herewallet://request/${request?.id}`;
