@@ -26,7 +26,7 @@ const fetchBalance = async (accId: string) => {
   return data.data.holderInfo.amount;
 };
 
-const fetchStats = async (accId: string) => {
+const fetchStats = async () => {
   const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
     body: `{"query":"query {\\n        tokenInfo (id: \\"1DRAGON\\") {\\n          ticker\\n          maxSupply\\n          totalSupply\\n          limit\\n        }\\n        holderCount (id: \\"1DRAGON\\") {\\n          count\\n        }\\n      }"}`,
     method: "POST",
@@ -79,7 +79,7 @@ const Inscription = () => {
     if (!account) return;
     const fetch = async () => {
       fetchBalance(account.accountId).then((b) => setBalance(b));
-      const stats = await fetchStats(account.accountId);
+      const stats = await fetchStats();
       setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
     };
 
@@ -145,6 +145,7 @@ const Inscription = () => {
     await mintOne();
     isStart.current = false;
     setLoading(false);
+    setSuccessed(0);
     notify("Success!");
   };
 
