@@ -127,7 +127,7 @@ const Inscription = () => {
         ]);
 
         await account.connection.provider.sendTransactionAsync(signed);
-        await wait(3000);
+        await wait(9000);
         setSuccessed((t) => t + 1);
         minted += 1;
 
