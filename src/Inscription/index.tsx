@@ -1,39 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Card, Container, Root } from "../Home/styled";
+import { base_decode } from "near-api-js/lib/utils/serialize";
+import { formatNearAmount } from "near-api-js/lib/utils/format";
+import { Account, transactions } from "near-api-js";
+import { HereWallet } from "@here-wallet/core";
+import { useParams } from "react-router-dom";
+import isMobile from "is-mobile";
+import { BN } from "bn.js";
+
 import Header from "../Home/Header";
-import { ActionButton, H1, Text } from "../uikit";
-import * as S from "./styled";
 import HereInput from "../uikit/Input";
 import { formatNumber } from "../Staking/useAmountInput";
-import { BN } from "bn.js";
-import { formatNearAmount } from "near-api-js/lib/utils/format";
-import { HereWallet, WidgetStrategy } from "@here-wallet/core";
 import { Formatter, parseAmount, wait } from "../core/helpers";
+import { BoldP, H4, SmallText } from "../uikit/typographic";
+import { Card, Container, Root } from "../Home/styled";
+import { ActionButton, H1, Text } from "../uikit";
 import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
-import { Account, transactions } from "near-api-js";
-import { BoldP, H2, H4, LargeP, SmallText } from "../uikit/typographic";
-import { base_decode } from "near-api-js/lib/utils/serialize";
-import isMobile from "is-mobile";
+import * as S from "./styled";
 
-const fetchBalance = async (accId: string) => {
+const fetchToken = async (token: string, accId?: string) => {
   const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
-    body: `{"query": "\\n        query MyQuery {\\n          holderInfo(id: \\"1DRAGON:${accId}\\") {\\n            accountId\\n            amount\\n            ticker\\n          }\\n        }\\n      "}`,
     method: "POST",
     mode: "cors",
     credentials: "omit",
-  });
-
-  const data = await res.json();
-  return data.data?.holderInfo?.amount || "0";
-};
-
-const fetchStats = async () => {
-  const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
-    body: `{"query":"query {\\n        tokenInfo (id: \\"1DRAGON\\") {\\n          ticker\\n          maxSupply\\n          totalSupply\\n          limit\\n        }\\n        holderCount (id: \\"1DRAGON\\") {\\n          count\\n        }\\n      }"}`,
-    method: "POST",
-    mode: "cors",
-    credentials: "omit",
+    body: JSON.stringify({
+      query: `query {
+        holderCount (id: "${token}") { count }
+        tokenInfo (id: "${token}") { ticker maxSupply totalSupply limit }
+        ${accId ? `holderInfo(id: "${token}:${accId}") { accountId amount ticker }` : ""}
+      }`,
+    }),
   });
 
   const data = await res.json();
@@ -42,14 +38,10 @@ const fetchStats = async () => {
 
 const here = new HereWallet({
   nodeUrl: "https://rpc.herewallet.app",
-  // defaultStrategy() {
-  //   return new WidgetStrategy({
-  //     widget: "http://localhost:1234/connector",
-  //   });
-  // },
 });
 
 const Inscription = () => {
+  const params = useParams();
   const [count, setCount] = useState(0);
   const [fee, setFee] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -58,11 +50,11 @@ const Inscription = () => {
   const [nearBalance, setNearBalance] = useState("0");
   const [gasPrice, setGasPrice] = useState("0");
   const [stats, setStats] = useState({
-    limit: "100000000",
-    maxSupply: "1000000000000000",
-    ticker: "1dragon",
-    totalSupply: "434551000035557",
-    owners: "4898",
+    limit: "0",
+    maxSupply: "0",
+    ticker: params.id || "1DRAGON",
+    totalSupply: "0",
+    owners: "0",
   });
 
   const [account, setAccount] = useState<Account | null>();
@@ -88,16 +80,14 @@ const Inscription = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      fetchStats().then((stats) => {
-        setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
-      });
-
       account?.getAccountBalance().then((b) => {
         setNearBalance(b.available);
       });
 
-      if (!account) return;
-      fetchBalance(account.accountId).then((b) => setBalance(b));
+      fetchToken(params.id || "1DRAGON", account?.accountId).then((stats) => {
+        setStats((t) => ({ ...(stats.tokenInfo || t), owners: stats.holderCount?.count ?? "0" }));
+        setBalance(stats.holderInfo?.amount || "0");
+      });
     };
 
     const fetchGasPrice = async () => {
@@ -136,7 +126,6 @@ const Inscription = () => {
     }
 
     let minted = 0;
-
     const publicKey = await account.connection.signer.getPublicKey(account.accountId, "mainnet");
     let { nonce } = await account.connection.provider.query<any>({
       account_id: account.accountId,
@@ -175,7 +164,7 @@ const Inscription = () => {
           [
             transactions.functionCall(
               "inscribe",
-              { p: "nrc-20", op: "mint", tick: "1dragon", amt: stats.limit },
+              { p: "nrc-20", op: "mint", tick: stats.ticker, amt: stats.limit },
               new BN(TGAS * 10),
               new BN(0)
             ),
@@ -235,7 +224,7 @@ const Inscription = () => {
           marginBottom: -40,
         }}
       >
-        <H1>Mint 1DRAGON</H1>
+        <H1>Mint {stats.ticker.toUpperCase()}</H1>
       </Container>
 
       <Container
@@ -255,7 +244,9 @@ const Inscription = () => {
         </div>
 
         <div style={{ width: "100%", textAlign: isMobile() ? "left" : "right" }}>
-          <BoldP>You minted: {balance} 1DRAGON</BoldP>
+          <BoldP>
+            You minted: {balance} {stats.ticker.toUpperCase()}
+          </BoldP>
           <SmallText>The balance will be updated with a delay</SmallText>
         </div>
       </Container>
@@ -279,7 +270,9 @@ const Inscription = () => {
 
             <S.Row>
               <Text>Receive:</Text>
-              <Text style={{ textAlign: "right" }}>{count * 100000000} 1DRAGON</Text>
+              <Text style={{ textAlign: "right" }}>
+                {count * 100000000} {stats.ticker.toUpperCase()}
+              </Text>
             </S.Row>
           </div>
 
@@ -323,7 +316,7 @@ const Inscription = () => {
         <Card style={{ gap: 8, overflow: "hidden" }}>
           <S.Row>
             <Text>Token:</Text>
-            <Text>1DRAGON</Text>
+            <Text>{stats.ticker.toUpperCase()}</Text>
           </S.Row>
           <S.Row>
             <Text>Protocol:</Text>
@@ -359,7 +352,7 @@ const Inscription = () => {
         <Card style={{ flex: 1 }}>
           <H4>Disclaimer</H4>
           <Text>
-            1DRAGON token isn't linked to HERE Wallet team. We offer minting only.{" "}
+            {stats.ticker.toUpperCase()} token isn't linked to HERE Wallet team. We offer minting only.{" "}
             <BoldP>
               HERE Wallet isn't liable for token changes. This platform allows NRC-20 token minting and cost estimation.
             </BoldP>{" "}

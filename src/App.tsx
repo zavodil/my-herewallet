@@ -40,7 +40,7 @@ function App() {
           </>
         )}
 
-        <Route path="/inscription" element={<Inscription />} />
+        <Route path="/inscription/:id?" element={<Inscription />} />
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
         <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
