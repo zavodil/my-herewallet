@@ -25,7 +25,7 @@ const fetchBalance = async (accId: string) => {
   });
 
   const data = await res.json();
-  return data.data.holderInfo.amount;
+  return data.data?.holderInfo?.amount || "0";
 };
 
 const fetchStats = async () => {
@@ -37,7 +37,7 @@ const fetchStats = async () => {
   });
 
   const data = await res.json();
-  return data.data;
+  return data.data || {};
 };
 
 const here = new HereWallet({
@@ -155,6 +155,7 @@ const Inscription = () => {
       const gasPrice = new BN(price.gas_price).mul(new BN(TGAS * 20));
       setGasPrice(price.gas_price);
 
+      const nearBalance = (await account?.getAccountBalance()).available;
       if (new BN(nearBalance).lt(gasPrice)) {
         notify(
           `You don't have enough NEAR to pay for gas. The account must have at least ${formatNearAmount(
