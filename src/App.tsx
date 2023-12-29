@@ -14,6 +14,7 @@ import WebConnector from "./Connector";
 import Transfer from "./Transfer";
 import Auth from "./Auth";
 import Apps from "./Apps";
+import Inscription from "./Inscription";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           </>
         )}
 
+        <Route path="/inscription" element={<Inscription />} />
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
         <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
