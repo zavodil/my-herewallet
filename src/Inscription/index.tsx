@@ -230,7 +230,7 @@ const Inscription = () => {
       >
         <div style={{ width: "100%", textAlign: "left" }}>
           <BoldP>Balance: {formatNearAmount(nearBalance, 4)} NEAR</BoldP>
-          <SmallText>Unstake some NEAR before mint</SmallText>
+          <SmallText>If you have staked NEAR, unstake them to use</SmallText>
         </div>
 
         <div style={{ width: "100%", textAlign: isMobile() ? "left" : "right" }}>
