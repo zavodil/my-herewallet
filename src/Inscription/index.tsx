@@ -54,43 +54,56 @@ const Inscription = () => {
     owners: "4898",
   });
 
-  const account = useRef<Account | null>();
+  const [account, setAccount] = useState<Account | null>();
 
   useEffect(() => {
+    const init = async () => {
+      const account = await here.account().catch(() => null);
+      setAccount(account);
+    };
+
     setInterval(() => {
       fetch("https://api.herewallet.app/api/v1/rate/near_fee")
         .then((t) => t.json())
         .then((e) => setFee(e.fee));
-    }, 3000);
+    }, 30000);
 
-    const init = async () => {
-      account.current = await here.account().catch(() => null);
-      if (!account.current) return;
-      setBalance(await fetchBalance(account.current.accountId));
-      const stats = await fetchStats(account.current.accountId);
-      setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
-    };
-
-    setInterval(async () => {
-      if (!account.current) return;
-      setBalance(await fetchBalance(account.current.accountId));
-      const stats = await fetchStats(account.current.accountId);
-      setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
-    }, 5000);
+    fetch("https://api.herewallet.app/api/v1/rate/near_fee")
+      .then((t) => t.json())
+      .then((e) => setFee(e.fee));
 
     init();
   }, []);
 
+  useEffect(() => {
+    if (!account) return;
+    const fetch = async () => {
+      setBalance(await fetchBalance(account.accountId));
+      const stats = await fetchStats(account.accountId);
+      setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
+    };
+
+    const timer = setInterval(fetch, 5000);
+    fetch();
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [account]);
+
+  const isStart = useRef(false);
   const startMint = async () => {
+    if (isStart.current) return;
     if (loading) return;
     setLoading(true);
+    isStart.current = true;
 
-    if (account.current == null) {
+    if (account == null) {
       await here.signIn({ contractId: "inscription.near", allowance: parseAmount(10) });
-      account.current = await here.account();
+      setAccount(await here.account());
     }
 
-    if (account.current == null) {
+    if (account == null) {
       notify("Something wrong");
       setLoading(false);
       return;
@@ -104,7 +117,7 @@ const Inscription = () => {
 
       try {
         // @ts-ignore
-        await account.current!.signTransaction("inscription.near", [
+        const [tx, signed] = await account.signTransaction("inscription.near", [
           transactions.functionCall(
             "inscribe",
             { p: "nrc-20", op: "mint", tick: "1dragon", amt: "100000000" },
@@ -113,6 +126,7 @@ const Inscription = () => {
           ),
         ]);
 
+        await account.connection.provider.sendTransactionAsync(signed);
         await wait(1000);
         setSuccessed((t) => t + 1);
         minted += 1;
@@ -122,14 +136,16 @@ const Inscription = () => {
       } catch (e) {
         console.log(e);
         isError = true;
-        await wait(3000);
+        await wait(5000);
         isError = false;
         await mintOne();
       }
     };
 
     await mintOne();
+    isStart.current = false;
     setLoading(false);
+    notify("Success!");
   };
 
   return (
@@ -173,17 +189,42 @@ const Inscription = () => {
             </S.Row>
           </div>
 
-          <S.Row style={{ alignItems: "center" }}>
-            <ActionButton disabled={loading || count < 1} style={{ marginTop: 24, width: 300 }} onClick={startMint}>
-              {loading ? (
-                <>
-                  <H4>Progress: {Formatter.round((successed / count) * 100, 2)}%</H4>
-                </>
-              ) : (
-                "Start mint"
-              )}
+          {account != null && (
+            <S.Row style={{ alignItems: "center", marginTop: 24, gap: 16 }}>
+              <ActionButton disabled={loading || count < 1} style={{ flex: 1 }} onClick={startMint}>
+                {loading ? (
+                  <>
+                    <H4>Progress: {Formatter.round((successed / count) * 100, 2)}%</H4>
+                  </>
+                ) : (
+                  "Start mint"
+                )}
+              </ActionButton>
+
+              <ActionButton
+                stroke
+                style={{ flex: 1 }}
+                onClick={async () => {
+                  await here.signOut();
+                  setAccount(null);
+                }}
+              >
+                Logout
+              </ActionButton>
+            </S.Row>
+          )}
+
+          {account == null && (
+            <ActionButton
+              style={{ marginTop: 24 }}
+              onClick={async () => {
+                await here.signIn({ contractId: "inscription.near", allowance: parseAmount(10) });
+                setAccount(await here.account());
+              }}
+            >
+              Connect HERE
             </ActionButton>
-          </S.Row>
+          )}
         </Card>
         <Card style={{ gap: 8 }}>
           <S.Row>
