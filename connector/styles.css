@@ -285,6 +285,7 @@ input::-webkit-inner-spin-button {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border: none;
+    padding-top: 0px;
   }
 
   .here-connector-text {
@@ -298,6 +299,7 @@ input::-webkit-inner-spin-button {
 
   .here-connector-wrap {
     margin-top: 32px;
+    margin-bottom: -16px;
   }
 
   .here-connector-close-button {

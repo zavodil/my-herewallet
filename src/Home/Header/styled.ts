@@ -27,7 +27,7 @@ export const Header = styled.header`
     padding: 0 32px;
 
     .header-left {
-      display: none;
+      left: 32px;
     }
 
     .header-right {

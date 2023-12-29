@@ -7,13 +7,14 @@ import HereInput from "../uikit/Input";
 import { formatNumber } from "../Staking/useAmountInput";
 import { BN } from "bn.js";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
-import { HereWallet } from "@here-wallet/core";
+import { HereWallet, WidgetStrategy } from "@here-wallet/core";
 import { Formatter, parseAmount, wait } from "../core/helpers";
 import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
 import { Account, transactions } from "near-api-js";
 import { BoldP, H4, SmallText } from "../uikit/typographic";
 import { base_decode } from "near-api-js/lib/utils/serialize";
+import isMobile from "is-mobile";
 
 const fetchBalance = async (accId: string) => {
   const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
@@ -41,6 +42,11 @@ const fetchStats = async () => {
 
 const here = new HereWallet({
   nodeUrl: "https://rpc.herewallet.app",
+  //   defaultStrategy() {
+  //     return new WidgetStrategy({
+  //       widget: "http://localhost:1234/connector",
+  //     });
+  //   },
 });
 
 const Inscription = () => {
@@ -79,11 +85,12 @@ const Inscription = () => {
   }, []);
 
   useEffect(() => {
-    if (!account) return;
     const fetch = async () => {
-      fetchBalance(account.accountId).then((b) => setBalance(b));
       const stats = await fetchStats();
       setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
+
+      if (!account) return;
+      fetchBalance(account.accountId).then((b) => setBalance(b));
     };
 
     const timer = setInterval(fetch, 5000);
@@ -175,9 +182,10 @@ const Inscription = () => {
   return (
     <Root>
       <Header />
+
       <Container
         style={{
-          flexDirection: "row",
+          flexDirection: isMobile() ? "column" : "row",
           maxWidth: 1200,
           width: "100%",
           margin: "0 auto",
@@ -188,7 +196,7 @@ const Inscription = () => {
       >
         <H1>Mint 1DRAGON</H1>
 
-        <div style={{ textAlign: "right" }}>
+        <div style={{ textAlign: isMobile() ? "left" : "right" }}>
           <BoldP>Your balance: {balance} 1DRAGON</BoldP>
           <SmallText>The balance will be updated with a delay</SmallText>
         </div>
@@ -207,13 +215,15 @@ const Inscription = () => {
             {fee != null && (
               <S.Row>
                 <Text>Gas burn:</Text>
-                <Text>{formatNearAmount(new BN(fee).muln(count).toString(), 8)} NEAR</Text>
+                <Text style={{ textAlign: "right" }}>
+                  {formatNearAmount(new BN(fee).muln(count).toString(), 8)} NEAR
+                </Text>
               </S.Row>
             )}
 
             <S.Row>
               <Text>Receive:</Text>
-              <Text>{count * 100000000} 1DRAGON</Text>
+              <Text style={{ textAlign: "right" }}>{count * 100000000} 1DRAGON</Text>
             </S.Row>
           </div>
 
@@ -254,7 +264,7 @@ const Inscription = () => {
             </ActionButton>
           )}
         </Card>
-        <Card style={{ gap: 8 }}>
+        <Card style={{ gap: 8, overflow: "hidden" }}>
           <S.Row>
             <Text>Token:</Text>
             <Text>1DRAGON</Text>
