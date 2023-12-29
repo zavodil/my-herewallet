@@ -142,7 +142,7 @@ const Inscription = () => {
       const blockHash = block.header.hash;
 
       const price = await account.connection.provider.gasPrice(blockHash);
-      const gasPrice = new BN(price.gas_price).mul(new BN(TGAS * 300));
+      const gasPrice = new BN(price.gas_price).mul(new BN(TGAS * 100));
 
       if (new BN(nearBalance).lt(gasPrice)) {
         notify(
