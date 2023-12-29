@@ -1,8 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import { mobileCheck, ConnectType, connectHere, connectMetamask } from "./utils";
 
+let globalRequest: any = null;
+
+window.addEventListener("message", (e) => {
+  try {
+    console.log(e.data);
+    const event = JSON.parse(e.data);
+    if (event.type === "request") {
+      const { id, request } = event.payload;
+      globalRequest = { id, request };
+      return;
+    }
+
+    if (event.topic) window.localStorage.setItem("topic", event.topic || "");
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 const Widget = () => {
-  const [request, setRequest] = useState<{ id: string; request: any } | null>(null);
+  const [request, setRequest] = useState<{ id: string; request: any } | null>(globalRequest);
   const [isApproving, setApproving] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
 

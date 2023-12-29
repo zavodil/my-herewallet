@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, Container, Root } from "../Home/styled";
 import Header from "../Home/Header";
-import { ActionButton, ActivityIndicator, H1, Text } from "../uikit";
+import { ActionButton, H1, Text } from "../uikit";
 import * as S from "./styled";
 import HereInput from "../uikit/Input";
 import { formatNumber } from "../Staking/useAmountInput";
@@ -42,11 +42,11 @@ const fetchStats = async () => {
 
 const here = new HereWallet({
   nodeUrl: "https://rpc.herewallet.app",
-  //   defaultStrategy() {
-  //     return new WidgetStrategy({
-  //       widget: "http://localhost:1234/connector",
-  //     });
-  //   },
+  // defaultStrategy() {
+  //   return new WidgetStrategy({
+  //     widget: "http://localhost:1234/connector",
+  //   });
+  // },
 });
 
 const Inscription = () => {
