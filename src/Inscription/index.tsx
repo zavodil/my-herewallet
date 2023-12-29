@@ -3,7 +3,7 @@ import { base_decode } from "near-api-js/lib/utils/serialize";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { Account, transactions } from "near-api-js";
 import { HereWallet } from "@here-wallet/core";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import isMobile from "is-mobile";
 import { BN } from "bn.js";
 
@@ -11,12 +11,49 @@ import Header from "../Home/Header";
 import HereInput from "../uikit/Input";
 import { formatNumber } from "../Staking/useAmountInput";
 import { Formatter, parseAmount, wait } from "../core/helpers";
-import { BoldP, H4, SmallText } from "../uikit/typographic";
-import { Card, Container, Root } from "../Home/styled";
-import { ActionButton, H1, Text } from "../uikit";
+import { BoldP, H2, H4, SmallText } from "../uikit/typographic";
+import { Card, Container, Root, TokenAction } from "../Home/styled";
+import { ActionButton, Button, H1, Text } from "../uikit";
 import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
 import * as S from "./styled";
+import Icon from "../uikit/Icon";
+import { accounts } from "../core/Accounts";
+
+const fetchAll = async () => {
+  const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
+    referrer: "https://www.nearscription.com/",
+    body: JSON.stringify({
+      query: `query MyQuery {
+        tokenInfos {
+          ticker
+          decimals
+          creatorId
+          limit
+          maxSupply
+          totalSupply
+          createdBlockTimestamp
+          id
+        }
+        ftWrappers {
+          ticker
+          amount
+          tokenId
+          id
+        }
+        holderCounts {
+          id
+          count
+        }
+      }`,
+    }),
+    method: "POST",
+    mode: "cors",
+    credentials: "omit",
+  });
+
+  return await res.json();
+};
 
 const fetchToken = async (token: string, accId?: string) => {
   const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
@@ -40,7 +77,92 @@ const here = new HereWallet({
   nodeUrl: "https://rpc.herewallet.app",
 });
 
+export const InscriptionTokens = () => {
+  const navigate = useNavigate();
+  const [list, setList] = useState([]);
+  const [rates, setRates] = useState<Record<string, number[]>>({ NEAT: [0, 0], "1DRAGON": [0, 0] });
+
+  useEffect(() => {
+    accounts.api.getRates().then(setRates);
+
+    fetchAll().then(({ data }) => {
+      const list = data.holderCounts.flatMap((t: any) => {
+        const token: any = data.tokenInfos.find((i: any) => i.id === t.id);
+        const wrap: any = data.ftWrappers.find((i: any) => i.id === t.id);
+        if (token == null) return [];
+        return [
+          {
+            ...token,
+            owner: t.count,
+            ftAmount: wrap?.amount,
+            ftContract: wrap?.tokenId,
+            progress: Formatter.round((token.totalSupply / token.maxSupply) * 100),
+          },
+        ];
+      });
+
+      setList(list.sort((a: any, b: any) => b.progress - a.progress));
+    });
+  }, []);
+
+  return (
+    <Root>
+      <Header />
+      <Container>
+        <Card style={{ flex: 1 }}>
+          <H1>Inscription tokens</H1>
+
+          {list.map((token: any) => {
+            return (
+              <S.Row
+                key={token.id}
+                onClick={() => navigate(`/inscription/${token.id}`)}
+                style={{ padding: "12px 0", borderBottom: "1px solid var(--Stroke)", cursor: "pointer" }}
+              >
+                <div style={{ flex: 1 }}>
+                  <SmallText>TICKER</SmallText>
+                  <Text>{token.id}</Text>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <SmallText>Owners</SmallText>
+                  <Text>{token.owner}</Text>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <SmallText>Minted</SmallText>
+                  <Text>{token.progress}%</Text>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <SmallText>Market Price</SmallText>
+                  {token.ftContract != null && rates[token.id] ? (
+                    <Text>{rates[token.id][0]}</Text>
+                  ) : (
+                    <Text style={{ color: "#DB8520" }}>
+                      Not listed <Icon style={{ marginBottom: -5 }} name="warning" />
+                    </Text>
+                  )}
+                </div>
+                <TokenAction>
+                  <Icon name="arrow-right" />
+                </TokenAction>
+              </S.Row>
+            );
+          })}
+        </Card>
+        <Card style={{ maxWidth: 380, height: "fit-content" }}>
+          <H4 style={{ marginBottom: 8 }}>Disclaimer</H4>
+          <Text>Tokens aren't linked to HERE Wallet team. We offer minting only.</Text>
+          <BoldP>
+            HERE Wallet isn't liable for tokens changes. This platform allows NRC-20 tokens minting and cost estimation.
+          </BoldP>
+          <Text>HERE Wallet isn't responsible for tokens minted here.</Text>
+        </Card>
+      </Container>
+    </Root>
+  );
+};
+
 const Inscription = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const [count, setCount] = useState(0);
   const [fee, setFee] = useState(null);
@@ -50,7 +172,7 @@ const Inscription = () => {
   const [nearBalance, setNearBalance] = useState("0");
   const [gasPrice, setGasPrice] = useState("0");
   const [stats, setStats] = useState({
-    limit: "0",
+    limit: "1",
     maxSupply: "0",
     ticker: params.id || "1DRAGON",
     totalSupply: "0",
@@ -164,7 +286,7 @@ const Inscription = () => {
           [
             transactions.functionCall(
               "inscribe",
-              { p: "nrc-20", op: "mint", tick: stats.ticker, amt: stats.limit },
+              { p: "nrc-20", op: "mint", tick: stats.ticker, amt: stats.limit || "1" },
               new BN(TGAS * 10),
               new BN(0)
             ),
@@ -219,11 +341,15 @@ const Inscription = () => {
           width: "100%",
           margin: "0 auto",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           textAlign: "left",
           marginBottom: -40,
         }}
       >
+        <Button onClick={() => navigate("/inscription/tokens")}>
+          <Icon name="arrow-left" />
+        </Button>
+
         <H1>Mint {stats.ticker.toUpperCase()}</H1>
       </Container>
 
@@ -252,29 +378,34 @@ const Inscription = () => {
       </Container>
 
       <Container style={{ paddingTop: 0, maxWidth: 1200, margin: "0 auto" }}>
-        <Card style={{ flex: 1, gap: 8 }}>
-          <HereInput
-            label="Transaction count"
-            value={count}
-            onChange={(e) => setCount(+formatNumber(e.target.value))}
-            postfix=" "
-          />
+        <Card style={{ flex: 1, gap: 8, height: "fit-content" }}>
+          {stats.maxSupply !== "0" && stats.totalSupply === stats.maxSupply ? (
+            <H2>Mint is over</H2>
+          ) : (
+            <>
+              <HereInput
+                label="Transaction count"
+                value={count}
+                onChange={(e) => setCount(+formatNumber(e.target.value))}
+                postfix=" "
+              />
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16 }}>
+                {fee != null && (
+                  <S.Row>
+                    <Text>Gas burn (approx.):</Text>
+                    <Text style={{ textAlign: "right" }}>{burn === "0" ? nativeBurn : burn} NEAR</Text>
+                  </S.Row>
+                )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16 }}>
-            {fee != null && (
-              <S.Row>
-                <Text>Gas burn (approx.):</Text>
-                <Text style={{ textAlign: "right" }}>{burn === "0" ? nativeBurn : burn} NEAR</Text>
-              </S.Row>
-            )}
-
-            <S.Row>
-              <Text>Receive:</Text>
-              <Text style={{ textAlign: "right" }}>
-                {count * 100000000} {stats.ticker.toUpperCase()}
-              </Text>
-            </S.Row>
-          </div>
+                <S.Row>
+                  <Text>Receive:</Text>
+                  <Text style={{ textAlign: "right" }}>
+                    {count * 100000000} {stats.ticker.toUpperCase()}
+                  </Text>
+                </S.Row>
+              </div>
+            </>
+          )}
 
           {account != null && (
             <S.Row style={{ alignItems: "center", marginTop: 24, gap: 16 }}>
@@ -334,15 +465,20 @@ const Inscription = () => {
           </S.Row>
           <S.Row>
             <Text>Mint Limit</Text>
-            <Text>{stats.limit}</Text>
+            <Text>{stats.limit || "1"}</Text>
           </S.Row>
 
-          <S.Row style={{ marginTop: "auto" }}>
+          <S.Row style={{ marginTop: 32 }}>
             <BoldP>Previous NRC-20 tokens:</BoldP>
           </S.Row>
 
           <S.Row>
             <BoldP>NEAT</BoldP>
+            <Text>100% Minted</Text>
+          </S.Row>
+
+          <S.Row>
+            <BoldP>1DRAGON</BoldP>
             <Text>100% Minted</Text>
           </S.Row>
         </Card>

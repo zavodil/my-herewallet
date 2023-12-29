@@ -14,7 +14,7 @@ import WebConnector from "./Connector";
 import Transfer from "./Transfer";
 import Auth from "./Auth";
 import Apps from "./Apps";
-import Inscription from "./Inscription";
+import Inscription, { InscriptionTokens } from "./Inscription";
 
 function App() {
   return (
@@ -40,6 +40,7 @@ function App() {
           </>
         )}
 
+        <Route path="/inscription/tokens" element={<InscriptionTokens />} />
         <Route path="/inscription/:id?" element={<Inscription />} />
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
