@@ -56,6 +56,7 @@ const Inscription = () => {
   const [successed, setSuccessed] = useState(0);
   const [balance, setBalance] = useState("0");
   const [nearBalance, setNearBalance] = useState("0");
+  const [gasPrice, setGasPrice] = useState("0");
   const [stats, setStats] = useState({
     limit: "100000000",
     maxSupply: "1000000000000000",
@@ -99,7 +100,16 @@ const Inscription = () => {
       fetchBalance(account.accountId).then((b) => setBalance(b));
     };
 
+    const fetchGasPrice = async () => {
+      if (!account) return;
+      const block = await account.connection.provider.block({ finality: "final" });
+      const blockHash = block.header.hash;
+      const price = await account.connection.provider.gasPrice(blockHash);
+      setGasPrice(price.gas_price);
+    };
+
     const timer = setInterval(fetch, 5000);
+    fetchGasPrice();
     fetch();
 
     return () => {
@@ -142,7 +152,8 @@ const Inscription = () => {
       const blockHash = block.header.hash;
 
       const price = await account.connection.provider.gasPrice(blockHash);
-      const gasPrice = new BN(price.gas_price).mul(new BN(TGAS * 100));
+      const gasPrice = new BN(price.gas_price).mul(new BN(TGAS * 20));
+      setGasPrice(price.gas_price);
 
       if (new BN(nearBalance).lt(gasPrice)) {
         notify(
@@ -198,6 +209,15 @@ const Inscription = () => {
     }
   };
 
+  const burn = formatNearAmount(new BN(fee || 0).muln(count).toString(), 8);
+  const nativeBurn = formatNearAmount(
+    new BN(gasPrice)
+      .mul(new BN(TGAS * 5))
+      .muln(count)
+      .toString(),
+    8
+  );
+
   return (
     <Root>
       <Header />
@@ -251,10 +271,8 @@ const Inscription = () => {
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16 }}>
             {fee != null && (
               <S.Row>
-                <Text>Gas burn:</Text>
-                <Text style={{ textAlign: "right" }}>
-                  {formatNearAmount(new BN(fee).muln(count).toString(), 8)} NEAR
-                </Text>
+                <Text>Gas burn (approx.):</Text>
+                <Text style={{ textAlign: "right" }}>{burn === "0" ? nativeBurn : burn} NEAR</Text>
               </S.Row>
             )}
 
@@ -330,7 +348,7 @@ const Inscription = () => {
           </S.Row>
 
           <S.Row>
-            <Text>NEAR</Text>
+            <BoldP>NEAT</BoldP>
             <Text>100% Minted</Text>
           </S.Row>
         </Card>
