@@ -12,7 +12,7 @@ import { Formatter, parseAmount, wait } from "../core/helpers";
 import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
 import { Account, transactions } from "near-api-js";
-import { BoldP, H2, H4, SmallText } from "../uikit/typographic";
+import { BoldP, H2, H4, LargeP, SmallText } from "../uikit/typographic";
 import { base_decode } from "near-api-js/lib/utils/serialize";
 import isMobile from "is-mobile";
 
@@ -324,6 +324,29 @@ const Inscription = () => {
             <Text>Mint Limit</Text>
             <Text>{stats.limit}</Text>
           </S.Row>
+
+          <S.Row style={{ marginTop: "auto" }}>
+            <BoldP>Previous NRC-20 tokens:</BoldP>
+          </S.Row>
+
+          <S.Row>
+            <Text>NEAR</Text>
+            <Text>100% Minted</Text>
+          </S.Row>
+        </Card>
+      </Container>
+
+      <Container style={{ paddingTop: 0, maxWidth: 1200, margin: "0 auto" }}>
+        <Card style={{ flex: 1 }}>
+          <H4>Disclaimer</H4>
+          <Text>
+            1DRAGON token is not controlled or anyhow related to HERE Wallet team. We only provide the option to mint.
+            HERE Wallet team is not responsible for any future changes related to this tokens.
+          </Text>
+          <Text>
+            This resource is created so that users can make mint NRC-20 tokens and see approximately the spent
+            commission. HERE wallet team is not responsible for tokens mined here
+          </Text>
         </Card>
       </Container>
     </Root>
