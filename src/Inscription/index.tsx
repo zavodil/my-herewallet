@@ -12,7 +12,7 @@ import { Formatter, parseAmount, wait } from "../core/helpers";
 import { TGAS } from "../core/constants";
 import { notify } from "../core/toast";
 import { Account, transactions } from "near-api-js";
-import { BoldP, H4 } from "../uikit/typographic";
+import { BoldP, H4, SmallText } from "../uikit/typographic";
 
 const fetchBalance = async (accId: string) => {
   const res = await fetch("https://api.thegraph.com/subgraphs/name/inscriptionnear/neat", {
@@ -163,7 +163,11 @@ const Inscription = () => {
         }}
       >
         <H1>Mint 1DRAGON</H1>
-        <BoldP>Balance: {balance} 1DRAGON</BoldP>
+
+        <div style={{ textAlign: "right" }}>
+          <BoldP>Your balance: {balance} 1DRAGON</BoldP>
+          <SmallText>The balance will be updated with a delay</SmallText>
+        </div>
       </Container>
 
       <Container style={{ paddingTop: 0, maxWidth: 1200, margin: "0 auto" }}>
