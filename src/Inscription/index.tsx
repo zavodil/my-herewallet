@@ -55,6 +55,7 @@ const Inscription = () => {
   const [loading, setLoading] = useState(false);
   const [successed, setSuccessed] = useState(0);
   const [balance, setBalance] = useState("0");
+  const [nearBalance, setNearBalance] = useState("0");
   const [stats, setStats] = useState({
     limit: "100000000",
     maxSupply: "1000000000000000",
@@ -86,8 +87,13 @@ const Inscription = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const stats = await fetchStats();
-      setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
+      fetchStats().then((stats) => {
+        setStats({ ...stats.tokenInfo, owners: stats.holderCount.count });
+      });
+
+      account?.getAccountBalance().then((b) => {
+        setNearBalance(b.available);
+      });
 
       if (!account) return;
       fetchBalance(account.accountId).then((b) => setBalance(b));
@@ -194,10 +200,13 @@ const Inscription = () => {
           textAlign: "left",
         }}
       >
-        <H1>Mint 1DRAGON</H1>
+        <div>
+          <BoldP>Balance: {formatNearAmount(nearBalance, 4)} NEAR</BoldP>
+          <SmallText>Unstake some NEAR before mint</SmallText>
+        </div>
 
         <div style={{ textAlign: isMobile() ? "left" : "right" }}>
-          <BoldP>Your balance: {balance} 1DRAGON</BoldP>
+          <BoldP>You minted: {balance} 1DRAGON</BoldP>
           <SmallText>The balance will be updated with a delay</SmallText>
         </div>
       </Container>
