@@ -117,21 +117,27 @@ export const InscriptionTokens = () => {
               <S.Row
                 key={token.id}
                 onClick={() => navigate(`/inscription/${token.id}`)}
-                style={{ padding: "12px 0", borderBottom: "1px solid var(--Stroke)", cursor: "pointer" }}
+                style={{
+                  flexWrap: "wrap",
+                  padding: "12px 0",
+                  borderBottom: "1px solid var(--Stroke)",
+                  cursor: "pointer",
+                  gap: 8,
+                }}
               >
-                <div style={{ flex: 1 }}>
+                <div style={{ minWidth: 120, flex: 1 }}>
                   <SmallText>TICKER</SmallText>
                   <Text>{token.id}</Text>
                 </div>
-                <div style={{ flex: 1 }}>
+                <div style={{ minWidth: 120, flex: 1 }}>
                   <SmallText>Owners</SmallText>
                   <Text>{token.owner}</Text>
                 </div>
-                <div style={{ flex: 1 }}>
+                <div style={{ minWidth: 120, flex: 1 }}>
                   <SmallText>Minted</SmallText>
                   <Text>{token.progress}%</Text>
                 </div>
-                <div style={{ flex: 1 }}>
+                <div style={{ minWidth: 120, flex: 1 }}>
                   <SmallText>Market Price</SmallText>
                   {token.ftContract != null && rates[token.id] ? (
                     <Text>{rates[token.id][0]}</Text>
@@ -141,9 +147,12 @@ export const InscriptionTokens = () => {
                     </Text>
                   )}
                 </div>
-                <TokenAction>
-                  <Icon name="arrow-right" />
-                </TokenAction>
+
+                {!isMobile() && (
+                  <TokenAction>
+                    <Icon name="arrow-right" />
+                  </TokenAction>
+                )}
               </S.Row>
             );
           })}
