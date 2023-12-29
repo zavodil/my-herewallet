@@ -400,7 +400,7 @@ const Inscription = () => {
                 <S.Row>
                   <Text>Receive:</Text>
                   <Text style={{ textAlign: "right" }}>
-                    {count * 100000000} {stats.ticker.toUpperCase()}
+                    {count * +stats.limit} {stats.ticker.toUpperCase()}
                   </Text>
                 </S.Row>
               </div>
