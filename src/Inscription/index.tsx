@@ -164,7 +164,7 @@ const Inscription = () => {
             transactions.functionCall(
               "inscribe",
               { p: "nrc-20", op: "mint", tick: "1dragon", amt: stats.limit },
-              new BN(TGAS * 30),
+              new BN(TGAS * 10),
               new BN(0)
             ),
           ],
@@ -340,12 +340,11 @@ const Inscription = () => {
         <Card style={{ flex: 1 }}>
           <H4>Disclaimer</H4>
           <Text>
-            1DRAGON token is not controlled or anyhow related to HERE Wallet team. We only provide the option to mint.
-            HERE Wallet team is not responsible for any future changes related to this tokens.
-          </Text>
-          <Text>
-            This resource is created so that users can make mint NRC-20 tokens and see approximately the spent
-            commission. HERE wallet team is not responsible for tokens mined here
+            1DRAGON token isn't linked to HERE Wallet team. We offer minting only.{" "}
+            <BoldP>
+              HERE Wallet isn't liable for token changes. This platform allows NRC-20 token minting and cost estimation.
+            </BoldP>{" "}
+            HERE Wallet isn't responsible for tokens minted here.
           </Text>
         </Card>
       </Container>
