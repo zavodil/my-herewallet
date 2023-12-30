@@ -182,7 +182,7 @@ const Home = () => {
                         <a
                           style={{ textDecoration: "none" }}
                           rel="noopener noreferrer"
-                          href={`https://paras.id/collection/${nft.contract_id}`}
+                          href={`https://www.tradeport.xyz/near/collection/${nft.contract_id}`}
                           target="_blank"
                         >
                           <NftCard key={nft.nft_id} src={nft.media_url} />

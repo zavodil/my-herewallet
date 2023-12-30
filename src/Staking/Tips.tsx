@@ -95,7 +95,7 @@ export const TipBuyNFT = ({ user, onClose }: { user: UserAccount; onClose?: () =
         <Button
           as="a"
           target="_blank"
-          href="https://paras.id/collection/nft.herewallet.near/"
+          href="https://www.tradeport.xyz/near/collection/nft.herewallet.near/"
           style={{ marginTop: 8 }}
           onClick={() => track("buy_nft")}
         >
