@@ -1,1 +1,1 @@
-# Web version of HERE Wallet.
+# Web version of HERE Wallet
