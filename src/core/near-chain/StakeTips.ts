@@ -1,7 +1,9 @@
 import { action, computed, makeObservable, observable, observe, toJS } from "mobx";
-import UserAccount from "../UserAccount";
+import { NearAccount } from "./NearAccount";
+import { Storage } from "../Storage";
 
 class StakeTips {
+  readonly localStorage: Storage;
   public statistics = {
     stakeCount: 0,
     unstakeCount: 0,
@@ -13,7 +15,7 @@ class StakeTips {
     closedNFTTip: false,
   };
 
-  constructor(readonly user: UserAccount) {
+  constructor(readonly near: NearAccount) {
     makeObservable(this, {
       hideTipClaim: action,
       hideTipUnstake: action,
@@ -29,16 +31,17 @@ class StakeTips {
       statistics: observable,
     });
 
-    this.statistics.stakeCount = +(this.user.localStorage.get("stake_count") ?? 0);
-    this.statistics.unstakeCount = +(this.user.localStorage.get("unstake_count") ?? 0);
-    this.statistics.launchCount = +(this.user.localStorage.get("launch_count") ?? 0);
-    this.statistics.closedInstallDate = +(this.user.localStorage.get("closed_install_tip_date") ?? 0);
+    this.localStorage = new Storage(near.accountId);
+    this.statistics.stakeCount = +(this.localStorage.get("stake_count") ?? 0);
+    this.statistics.unstakeCount = +(this.localStorage.get("unstake_count") ?? 0);
+    this.statistics.launchCount = +(this.localStorage.get("launch_count") ?? 0);
+    this.statistics.closedInstallDate = +(this.localStorage.get("closed_install_tip_date") ?? 0);
 
     observe(this.statistics, () => {
-      this.user.localStorage.set("launch_count", this.statistics.launchCount);
-      this.user.localStorage.set("stake_count", this.statistics.stakeCount);
-      this.user.localStorage.set("unstake_count", this.statistics.unstakeCount);
-      this.user.localStorage.set("closed_install_tip_date", this.statistics.closedInstallDate);
+      this.localStorage.set("launch_count", this.statistics.launchCount);
+      this.localStorage.set("stake_count", this.statistics.stakeCount);
+      this.localStorage.set("unstake_count", this.statistics.unstakeCount);
+      this.localStorage.set("closed_install_tip_date", this.statistics.closedInstallDate);
     });
 
     this.statistics.launchCount += 1;
@@ -49,7 +52,7 @@ class StakeTips {
   get tipClaim() {
     if (this.statistics.closedClaimTip) return false;
     if (this.statistics.closedInstallTip) return true;
-    return this.statistics.launchCount > 2 && this.user.near.hnear.totalDividends === 0;
+    return this.statistics.launchCount > 2 && this.near.hnear.totalDividends === 0;
   }
 
   // We show this message if user haven’t downloaded the app in this cases:

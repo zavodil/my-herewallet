@@ -1,5 +1,5 @@
 import { AssetSymbol, ft } from "./utils";
-import { Chain, FtAsset } from "./types";
+import { Chain } from "./types";
 
 export const ethAurora = {
   amount: "0",

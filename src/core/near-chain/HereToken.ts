@@ -42,7 +42,7 @@ class HereToken {
       totalDividends: observable,
     });
 
-    this.tips = new StakeTips(wallet.user);
+    this.tips = new StakeTips(wallet);
     this.fetchBalance();
   }
 

@@ -69,7 +69,7 @@ export const H1 = styled.h1`
   font-style: normal;
   font-weight: 900;
   font-size: 40px;
-  line-height: 50px;
+  line-height: 42px;
   color: #2c3034;
   margin: 0;
 `;

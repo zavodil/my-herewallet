@@ -84,6 +84,7 @@ const Transfer = () => {
     } catch (e: any) {
       console.log(e);
       notify(e?.toString ? e.toString() : "Transfer failed");
+      setLoading(false);
     }
   };
 

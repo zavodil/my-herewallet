@@ -2,13 +2,14 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { keyBy } from "lodash";
 import { BN } from "bn.js";
 
-import { formatAmount, parseAmount } from "../helpers";
+import { NOT_STAKABLE_NEAR } from "../near-chain/constants";
+import { formatAmount } from "../helpers";
 import UserAccount from "../UserAccount";
+
 import { FtAsset, FtModel, FtGroup, Chain } from "./types";
 import { createToken, ft, tokenId } from "./utils";
 import * as defaults from "./defaults";
 import Currencies from "./Currencies";
-import { NOT_STAKABLE_NEAR } from "../near-chain/constants";
 
 export class TokensStorage {
   public groupsData: Record<string, FtGroup> = {};

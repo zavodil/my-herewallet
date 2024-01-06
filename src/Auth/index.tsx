@@ -1,42 +1,29 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { isMobile } from "is-mobile";
 
-import hereWebLogo from "../assets/here-web.svg?url";
 import hereLogo from "../assets/here-logo2.svg?url";
 import metamaskIcon from "../assets/metamask.svg?url";
 import introImage from "../assets/intro.png";
 
 import { accounts } from "../core/Accounts";
-import { ConnectType } from "../core/UserAccount";
-import { BoldP, H0, LargeP, SmallText } from "../uikit/typographic";
-import { ButtonCard, Card, Header, IntroImage, Page, Root } from "./styled";
+import { BoldP, H1, SmallText } from "../uikit/typographic";
+import { ButtonCard, Card, IntroImage, Page, Root } from "./styled";
+import Header from "../Home/Header";
+import CreateNickname from "./CreateNickname";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [showNickname, setShowNickname] = useState(false);
 
-  useEffect(() => {
-    if (accounts.account == null) navigate("/");
-  }, [accounts.account]);
-
-  const register = async (type: ConnectType) => {
-    const needNickname = await accounts.register(type);
-    if (needNickname) navigate("/nickname");
-  };
+  if (showNickname) {
+    return <CreateNickname />;
+  }
 
   return (
     <Root>
-      <Header>
-        <Link to="/">
-          <img style={{ height: 22, objectFit: "contain" }} src={hereWebLogo} />
-        </Link>
-
-        <BoldP style={{ textAlign: "right" }} as="a" href="https://download.herewallet.app">
-          Don’t have an account? <span style={{ textDecoration: "underline" }}>Click here</span>
-        </BoldP>
-      </Header>
-
+      <Header />
       <Page>
         <IntroImage>
           <img src={introImage} />
@@ -44,24 +31,45 @@ const Auth = () => {
         </IntroImage>
 
         <Card style={{ width: "100%", maxWidth: 438 }}>
-          <div>
-            <H0>Get started!</H0>
-            <LargeP>Connect your wallet to view account details</LargeP>
-          </div>
-
+          <H1>Get started!</H1>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <ButtonCard onClick={() => register(ConnectType.Here)}>
+            <ButtonCard onClick={() => navigate("/auth/create")}>
               <img style={{ objectFit: "contain" }} width="48" height="48" src={hereLogo} />
-              <BoldP>Log in with HERE Wallet</BoldP>
+              <div>
+                <BoldP>Create new account</BoldP>
+                <SmallText>Free nickname</SmallText>
+              </div>
             </ButtonCard>
 
-            {/* <ButtonCard style={{ marginTop: 16 }} onClick={() => accounts.register(ConnectType.Ledger)}>
-            <img width="64" height="64" style={{ objectFit: "contain", marginLeft: -4 }} src={ledgerLogo} />
-            <BoldP style={{ marginLeft: -12 }}>Log in with Ledger</BoldP>
-          </ButtonCard> */}
+            <ButtonCard onClick={() => navigate("/auth/import")}>
+              <img style={{ objectFit: "contain" }} width="48" height="48" src={require("../assets/import-seed.svg")} />
+              <div>
+                <BoldP>Import via seed phrase</BoldP>
+                <SmallText>Or private key</SmallText>
+              </div>
+            </ButtonCard>
+
+            <ButtonCard onClick={() => accounts.connectLedger().then(() => navigate("/"))}>
+              <img
+                width="64"
+                height="64"
+                style={{ objectFit: "contain", marginLeft: -4 }}
+                src={require("../assets/ledger.png")}
+              />
+              <div style={{ marginLeft: -12 }}>
+                <BoldP>Login via Ledger</BoldP>
+                <SmallText>Hardware wallet</SmallText>
+              </div>
+            </ButtonCard>
 
             {!isMobile() && (
-              <ButtonCard onClick={() => register(ConnectType.Snap)}>
+              <ButtonCard
+                onClick={async () => {
+                  const needNickname = await accounts.connectSnap();
+                  if (needNickname) setShowNickname(true);
+                  else navigate("/");
+                }}
+              >
                 <img style={{ objectFit: "contain" }} width="48" height="48" src={metamaskIcon} />
                 <div>
                   <BoldP>Log in with NEAR MetaMask Snap</BoldP>

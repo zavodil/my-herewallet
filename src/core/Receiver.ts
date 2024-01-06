@@ -2,6 +2,8 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import UserAccount from "./UserAccount";
 import { Chain } from "./token/types";
 import { NearAccount } from "./near-chain/NearAccount";
+import { JsonRpcProvider } from "near-api-js/lib/providers";
+import { accounts } from "./Accounts";
 
 export const MinAccountIdLen = 2;
 export const MaxAccountIdLen = 64;
@@ -20,7 +22,7 @@ class ReceiverFetcher {
   static shared = new ReceiverFetcher();
 
   private cached: Record<string, { avatar?: string; name?: string; isHere?: boolean; time: number }> = {};
-  constructor(readonly user?: UserAccount) {
+  constructor() {
     this.cached = {}; // this.getCache();
   }
 
@@ -36,20 +38,17 @@ class ReceiverFetcher {
   //     }
   //   }
 
-  async getUser(
-    near: NearAccount,
-    address: string,
-    useCache = true
-  ): Promise<{ avatar?: string; isHere?: boolean; name?: string }> {
+  private provider = new JsonRpcProvider({ url: "https://rpc.herewallet.app" });
+
+  async getUser(address: string, useCache = true): Promise<{ avatar?: string; isHere?: boolean; name?: string }> {
     if (useCache && this.cached[address]) {
       // Refetch data silently
-      if (Date.now() - this.cached[address].time > 3600 * 1000) void this.getUser(near, address, false);
+      if (Date.now() - this.cached[address].time > 3600 * 1000) void this.getUser(address, false);
       return this.cached[address];
     }
 
-    const rpc = near.connection.provider;
-    await rpc.query({ request_type: "view_account", finality: "optimistic", account_id: address });
-    const user = await near.api.isExist(address).catch(() => null);
+    await this.provider.query({ request_type: "view_account", finality: "optimistic", account_id: address });
+    const user = await accounts.api.isExist(address).catch(() => null);
 
     this.cached[address] = { avatar: user?.avatar_url, isHere: user?.exist, time: Date.now() };
     // this.setCache(this.cached);
@@ -113,7 +112,7 @@ export class Receiver {
 
     // Load near address metadata
     try {
-      const profile = await ReceiverFetcher.shared.getUser(this.user.near, address);
+      const profile = await ReceiverFetcher.shared.getUser(address);
       if (this.input !== address) return;
       return runInAction(() => {
         this.isHere = profile.isHere ?? false;
@@ -122,7 +121,8 @@ export class Receiver {
         this.isLoading = false;
         this.isExist = true;
       });
-    } catch {
+    } catch (e) {
+      console.log(e);
       if (this.input !== address) return;
       return runInAction(() => {
         this.isExist = address.endsWith(".near") || address.endsWith(".testnet") ? false : true;
@@ -140,6 +140,8 @@ export class Receiver {
     this.isLoading = false;
     this.needLoad = true;
     this.isExist = false;
+
+    console.log("setInput");
 
     if (isValidAccountId(this.input)) {
       if (this.input.length === 64 || this.input.endsWith(".near") || this.input.endsWith(".testnet")) {

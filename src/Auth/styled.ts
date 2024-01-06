@@ -4,37 +4,18 @@ export const Root = styled.div`
   width: 100%;
   margin: auto;
   min-height: calc(var(--vh, 1vh) * 100);
-  background-color: var(--Elevation-0);
+  background-color: var(--Elevation-1);
   flex-direction: column;
   display: flex;
-`;
-
-export const Header = styled.header`
-  width: 100%;
-  grid-area: header;
-  flex-direction: row;
-  background-color: var(--Elevation-0);
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  height: 100px;
-  padding: 0 120px;
-
-  @media (max-width: 1200px) {
-    padding: 0 60px;
-  }
-
-  @media (max-width: 1024px) {
-    padding: 0 32px;
-  }
 `;
 
 export const Page = styled.div`
   display: flex;
   box-sizing: border-box;
   justify-content: center;
-  padding: 200px 120px;
+  padding: 48px 120px;
   padding-left: 60px;
+  align-items: center;
   width: 100%;
   gap: 120px;
   flex: 1;
@@ -49,7 +30,6 @@ export const Page = styled.div`
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
-    padding-top: 32px;
     padding-left: 32px;
     padding-right: 32px;
     gap: 42px;
@@ -57,6 +37,7 @@ export const Page = styled.div`
 `;
 
 export const IntroImage = styled.div`
+  height: fit-content;
   position: relative;
   max-width: 500px;
   width: 100%;
@@ -82,9 +63,12 @@ export const IntroImage = styled.div`
 
 export const Card = styled.div`
   background: var(--Elevation-0, #ebdedc);
+  border: 1px solid var(--Stroke);
+  padding: 32px;
+  border-radius: 24px;
   flex-direction: column;
   display: flex;
-  gap: 56px;
+  gap: 24px;
 
   @media (max-width: 1024px) {
     gap: 24px;
@@ -109,4 +93,31 @@ export const ButtonCard = styled.button`
   &:hover {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   }
+`;
+
+export const WordItem = styled.div`
+  border-radius: 20px;
+  border: 1px solid var(--Stroke, #c7bab8);
+  background: var(--Elevation-1, #ebdedc);
+  display: flex;
+  width: 108px;
+  height: 40px;
+  padding: 10px 18px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  color: var(--Black-Primary, #2c3034);
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+`;
+
+export const WordsWrap = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 344px;
 `;

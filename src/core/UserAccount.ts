@@ -1,6 +1,6 @@
 import { makeObservable, observable, runInAction } from "mobx";
 import { PublicKey } from "near-api-js/lib/utils";
-import BN from "bn.js";
+import { NearSnapStatus } from "@near-snap/sdk";
 
 import { Storage } from "./Storage";
 import { HereApi } from "./network/api";
@@ -12,21 +12,7 @@ import { accounts } from "./Accounts";
 import { Chain } from "./token/types";
 import { wait } from "./helpers";
 import { notify } from "./toast";
-import { NearSnapStatus } from "@near-snap/sdk";
-
-export enum ConnectType {
-  Ledger = "ledger",
-  Here = "here",
-  Snap = "snap",
-}
-
-interface TransferParams {
-  receiver: string;
-  amount: string | BN;
-  type: "address";
-  token: string;
-  comment?: string;
-}
+import { ConnectType, TransferParams, UserCred } from "./types";
 
 class UserAccount {
   readonly api: HereApi;
@@ -45,15 +31,12 @@ class UserAccount {
     id: "0",
   };
 
-  isFlask = true;
-
-  constructor(readonly credential: { type: ConnectType; accountId: string; publicKey: string; jwt: string }) {
+  constructor(readonly credential: UserCred) {
     makeObservable(this, {
       user: observable,
       nfts: observable,
       contacts: observable,
       recentlyApps: observable,
-      isFlask: observable,
     });
 
     this.api = new HereApi(credential.jwt);
@@ -61,7 +44,7 @@ class UserAccount {
 
     this.tokens = new TokensStorage(this);
     this.transactions = new TransactionsStorage(this);
-    this.near = new NearAccount(this, credential.accountId, credential.type);
+    this.near = new NearAccount(credential);
 
     this.transactions.refresh().catch(() => {});
     this.tokens.refreshTokens().catch(() => {});
@@ -70,10 +53,6 @@ class UserAccount {
 
     wait(100).then(async () => {
       if (this.credential.type !== ConnectType.Snap) return;
-
-      // @ts-ignore
-      const version = await window.ethereum?.request({ method: "web3_clientVersion" }).catch(() => "");
-      runInAction(() => (this.isFlask = version.includes("flask")));
 
       const status = await accounts.snap.getStatus();
       if (status !== NearSnapStatus.INSTALLED) await accounts.snap.install();
@@ -97,8 +76,8 @@ class UserAccount {
     });
 
     accounts.disconnect(this.credential.accountId);
-    notify("The nickname was successfully created. Attach it to your account and re-login to your wallet.");
-    await accounts.register(this.credential.type);
+    notify("The nickname was successfully created. Attach it to your account and re-login to your wallet.", 4500);
+    await accounts.connectSnap();
   }
 
   async isNeedActivate() {

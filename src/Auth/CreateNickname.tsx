@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
-import hereWebLogo from "../assets/here-web.svg?url";
 import introImage from "../assets/intro.png";
-
 import { Receiver } from "../core/Receiver";
-import { ConnectType } from "../core/UserAccount";
 import { useWallet } from "../core/Accounts";
+import { ConnectType } from "../core/types";
 
-import { BoldP, H1, LargeP, SmallText } from "../uikit/typographic";
+import { H1, LargeP, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import HereInput from "../uikit/Input";
 import { colors } from "../uikit/theme";
 
-import { Card, Header, IntroImage, Page, Root } from "./styled";
+import { Card, IntroImage, Page, Root } from "./styled";
+import Header from "../Home/Header";
 
 const CreateNickname = () => {
   const user = useWallet();
@@ -37,15 +36,7 @@ const CreateNickname = () => {
 
   return (
     <Root>
-      <Header>
-        <Link to="/">
-          <img style={{ height: 22, objectFit: "contain" }} src={hereWebLogo} />
-        </Link>
-
-        <BoldP as="a" href="https://download.herewallet.app">
-          Don’t have an account? <span style={{ textDecoration: "underline" }}>Click here</span>
-        </BoldP>
-      </Header>
+      <Header />
 
       <Page>
         <IntroImage>
@@ -56,7 +47,7 @@ const CreateNickname = () => {
         <Card style={{ width: "100%", maxWidth: 380 }}>
           <div>
             <H1>Create nickname</H1>
-            <LargeP style={{ marginTop: 8 }}>Nickname is attached to your wallet address and cannot be changed</LargeP>
+            <Text style={{ marginTop: 8 }}>Nickname is attached to your wallet address and cannot be changed</Text>
           </div>
 
           <div style={{ position: "relative" }}>

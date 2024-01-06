@@ -13,7 +13,7 @@ export class HereError extends Error {
 }
 
 export class HereApi {
-  public readonly endpoint = "https://api.herewallet.app";
+  public readonly endpoint = "https://dev.herewallet.app";
   public readonly storage = new Storage("");
 
   constructor(readonly jwt = "") {}
@@ -52,6 +52,11 @@ export class HereApi {
     }
 
     return res;
+  }
+
+  public async isExist(address: string): Promise<{ exist: true; user_id: 0; avatar_url: "string" }> {
+    const res = await this.request(`/api/v1/user/check_account_exist?near_account_id=${address}`);
+    return await res.json();
   }
 
   public async getNfts(): Promise<NFTModel[]> {

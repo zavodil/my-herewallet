@@ -1,12 +1,9 @@
 import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
 import { NearSnap, NearSnapAccount, TransactionSignRejected } from "@near-snap/sdk";
 import { QRCode } from "@here-wallet/core/build/qrcode-strategy";
-
-export enum ConnectType {
-  Ledger = "ledger",
-  Here = "here",
-  Snap = "snap",
-}
+import { NearAccount } from "../core/near-chain/NearAccount";
+import { ConnectType } from "../core/types";
+import LedgerSigner from "./ledger";
 
 const snap = new NearSnap();
 
@@ -20,16 +17,60 @@ const sendResponse = async (id: string, data: HereProviderResult) => {
   if (!res.ok) throw Error();
 };
 
+export const connectLedger = async (id: string, request: HereProviderRequest, onConnected: (is: boolean) => void) => {
+  const ledger = new LedgerSigner(onConnected);
+
+  if (request.type === "sign") {
+    if (!("recipient" in request)) return await sendResponse(id, { status: HereProviderStatus.FAILED });
+    const { address, publicKey } = await ledger.getAddress();
+    await sendResponse(id, {
+      status: HereProviderStatus.SUCCESS,
+      account_id: address,
+      payload: JSON.stringify({
+        signature: "",
+        accountId: address,
+        publicKey: publicKey,
+        type: ConnectType.Ledger,
+      }),
+    });
+  }
+
+  if (request.type === "call") {
+    await sendResponse(id, { status: HereProviderStatus.APPROVING }).catch(() => {});
+    const { address, publicKey } = await ledger.getAddress();
+    const account = new NearAccount({
+      signer: ledger,
+      publicKey: publicKey.toString(),
+      type: ConnectType.Web,
+      accountId: address,
+      jwt: "",
+    });
+
+    const result = await account.callTransactions(request.transactions, { disableDelegate: true });
+
+    await sendResponse(id, {
+      status: HereProviderStatus.SUCCESS,
+      account_id: address,
+      payload: result.map((t) => t.transaction_outcome.id).join(","),
+    });
+  }
+};
+
 export const connectMetamask = async (id: string, request: HereProviderRequest) => {
   try {
     await snap.install();
     await sendResponse(id, { status: HereProviderStatus.APPROVING });
 
-    if (request.type === "sign" && "recipient" in request) {
+    if (request.type === "sign") {
+      if (!("recipient" in request)) {
+        await sendResponse(id, { status: HereProviderStatus.FAILED });
+        return;
+      }
+
       const result = await snap.signMessage({
-        message: request.message,
         network: (request.network as any) || "mainnet",
         recipient: request.recipient,
+        message: request.message,
         nonce: request.nonce,
       });
 
@@ -70,11 +111,7 @@ export const connectMetamask = async (id: string, request: HereProviderRequest) 
       await sendResponse(id, {
         status: HereProviderStatus.SUCCESS,
         account_id: account.accountId,
-        payload: JSON.stringify({
-          transactions: result.map((t) => t.transaction_outcome.id),
-          publicKey: account.publicKey,
-          type: ConnectType.Snap,
-        }),
+        payload: result.map((t) => t.transaction_outcome.id).join(","),
       });
     }
   } catch (e) {

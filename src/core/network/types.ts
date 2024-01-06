@@ -113,10 +113,13 @@ export class RequestError extends HereError {
 
 export class ResponseError extends HereError {
   constructor(readonly request: RequestSerialized, readonly response: ResponseSerialized) {
+    let title = "somethingWentWrong";
+    let text = String(response.body ?? `UnknownError (${response.status})`);
+
     if (typeof response.body === "object" && !Array.isArray(response.body)) {
       const { readable_title, readable_body, detail } = response.body;
-      super(String(readable_title || "Something wrong"), String(readable_body ?? detail ?? ""));
-      return;
+      title = String(readable_title || "Something wrong");
+      text = String(readable_body ?? detail ?? "");
     }
 
     super("somethingWentWrong", String(response.body ?? `UnknownError (${response.status})`));
