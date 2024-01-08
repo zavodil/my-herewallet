@@ -47,6 +47,7 @@ function App() {
         <Route path="/connector" element={<Widget />} />
         <Route path="/inscription/tokens" element={<InscriptionTokens />} />
         <Route path="/inscription/:id?" element={<Inscription />} />
+
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
         <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />

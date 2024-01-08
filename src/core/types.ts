@@ -5,13 +5,17 @@ export enum ConnectType {
   Ledger = "ledger",
   Here = "here",
   Snap = "snap",
+  Local = "local",
 }
 
 export interface UserCred {
   type: ConnectType;
   accountId: string;
   publicKey: string;
-  jwt: string;
+  path?: string;
+  privateKey?: string;
+  seed?: string;
+  jwt?: string;
 }
 
 export interface TransferParams {

@@ -3,6 +3,7 @@ import { FunctionCallAction, Transaction } from "@here-wallet/core";
 import { formatAmount } from "../../core/helpers";
 import { near } from "../../core/token/defaults";
 import { FtModel } from "../../core/token/types";
+import Currencies from "../../core/token/Currencies";
 
 export const parseArgs = (data: string | Object) => {
   if (typeof data !== "string") return data;
@@ -21,7 +22,7 @@ export const parseFunctionCall = (contract: string, action: FunctionCallAction, 
   const nearAmount = +formatAmount(action.params.deposit, nearToken.decimal);
   const nearGas = +formatAmount(action.params.gas.toString(), nearToken.decimal);
 
-  const ft = tokens.find((t) => t.contract_id === contract);
+  const ft = tokens.find((t) => t.contract === contract);
   const ftAmountRaw = (parseArgs(action.params.args) as Record<string, string>).amount;
   if (ftAmountRaw != null && ft != null) {
     const ftAmount = +formatAmount(ftAmountRaw, ft.decimal);
@@ -37,26 +38,22 @@ export function parseTotalAmountOfTransactions(transactions: Transaction[], toke
     return trx.actions.reduce((bn, action) => {
       switch (action.type) {
         case "FunctionCall": {
-          const { ft, nearToken, nearAmount, ftAmount, nearGas } = parseFunctionCall(
-            trx.receiverId ?? "",
-            action,
-            tokens
-          );
+          const { ft, nearAmount, ftAmount, nearGas } = parseFunctionCall(trx.receiverId ?? "", action, tokens);
 
-          let total = nearAmount * nearToken.usd_rate + nearGas * nearToken.usd_rate;
+          let total = nearAmount * Currencies.shared.usd("NEAR") + nearGas * Currencies.shared.usd("NEAR");
           if (ft != null && ftAmount != null) {
-            total += ftAmount * ft.usd_rate;
+            total += ftAmount * Currencies.shared.usd(ft.asset);
           }
 
           return total;
         }
 
         case "Stake": {
-          return +formatAmount(action.params.stake, nearToken.decimal) * nearToken.usd_rate;
+          return +formatAmount(action.params.stake, nearToken.decimal) * Currencies.shared.usd("NEAR");
         }
 
         case "Transfer": {
-          return +formatAmount(action.params.deposit, nearToken.decimal) * nearToken.usd_rate;
+          return +formatAmount(action.params.deposit, nearToken.decimal) * Currencies.shared.usd("NEAR");
         }
 
         default:

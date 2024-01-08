@@ -13,7 +13,7 @@ export class HereError extends Error {
 }
 
 export class HereApi {
-  public readonly endpoint = "https://dev.herewallet.app";
+  public readonly endpoint = "https://api.herewallet.app";
   public readonly storage = new Storage("");
 
   constructor(readonly jwt = "") {}

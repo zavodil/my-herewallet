@@ -127,3 +127,14 @@ export const getStorageJson = (key: string, def: any) => {
     return def;
   }
 };
+
+export const recaptchaToken = async (): Promise<string> => {
+  // @ts-ignore
+  if (process.env.NODE_ENV === "development") return undefined;
+  return new Promise((resolve, reject) => {
+    const repatcha = (window as any).grecaptcha;
+    repatcha.ready(() => {
+      repatcha.execute("6LezLUUpAAAAAB52b8j8t-wSZHifwVFT3Qe_MzSE", { action: "submit" }).then(resolve).catch(reject);
+    });
+  });
+};

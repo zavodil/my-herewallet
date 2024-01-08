@@ -12,6 +12,7 @@ import { parseArgs, parseFunctionCall } from "./parseTransactions";
 import { near } from "../../core/token/defaults";
 import { formatAmount } from "../../core/helpers";
 import { FtModel } from "../../core/token/types";
+import Currencies from "../../core/token/Currencies";
 
 interface Props {
   action: Action;
@@ -31,7 +32,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
           <View style={{ alignItems: "center" }}>
             <H2 style={{ marginBottom: 8 }}>Add full key</H2>
             <Text style={{ marginTop: 12, textAlign: "center" }}>
-              You give this key full access to your account. The third party apText will have{" "}
+              You give this key full access to your account. The third party app will have{" "}
               <Text style={{ color: colors.red }}>full access to your account and your money.</Text>
             </Text>
           </View>
@@ -120,7 +121,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>{act.nearAmount} NEAR</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${+act.nearAmount * (act.nearToken?.usd_rate ?? 0)}
+                  ${+act.nearAmount * Currencies.shared.usd("NEAR")}
                 </SmallText>
               </View>
             </View>
@@ -165,7 +166,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
             <View style={{ alignItems: "flex-end" }}>
               <Text>{act.nearAmount} NEAR</Text>
               <SmallText style={{ color: colors.blackSecondary }}>
-                ${+act.nearAmount * (act.nearToken?.usd_rate ?? 0)}
+                ${+act.nearAmount * Currencies.shared.usd("NEAR")}
               </SmallText>
             </View>
           </View>
@@ -215,14 +216,16 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
         <View style={{ alignItems: "center" }}>
           <H2 style={{ marginBottom: 8 }}>Stake</H2>
           <H3>{stake} NEAR</H3>
-          <SmallText style={{ color: colors.blackSecondary }}>${(stake * nearToken.usd_rate).toFixed(6)}</SmallText>
+          <SmallText style={{ color: colors.blackSecondary }}>
+            ${(stake * Currencies.shared.usd("NEAR")).toFixed(6)}
+          </SmallText>
           <View style={styles.row}>
             <Text>From</Text>
             {nearToken.amount ? (
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${(formatAmount(nearToken.amount) * nearToken.usd_rate).toFixed(6)}
+                  ${(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR")).toFixed(6)}
                 </SmallText>
               </View>
             ) : (
@@ -240,7 +243,9 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
       return (
         <View style={{ alignItems: "center" }}>
           <H2 style={{ marginBottom: 8 }}>{deposit} NEAR</H2>
-          <SmallText style={{ color: colors.blackSecondary }}>${(deposit * nearToken.usd_rate).toFixed(6)}</SmallText>
+          <SmallText style={{ color: colors.blackSecondary }}>
+            ${(deposit * Currencies.shared.usd("NEAR")).toFixed(6)}
+          </SmallText>
 
           <View style={styles.row}>
             <Text>From</Text>
@@ -248,7 +253,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${(formatAmount(nearToken.amount) * nearToken.usd_rate).toFixed(6)}
+                  ${(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR")).toFixed(6)}
                 </SmallText>
               </View>
             ) : (

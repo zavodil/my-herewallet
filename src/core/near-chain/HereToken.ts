@@ -5,6 +5,8 @@ import { formatAmount } from "../helpers";
 import { NOT_STAKABLE_NEAR, TGAS, getHereStorage } from "./constants";
 import { NearAccount } from "./NearAccount";
 import StakeTips from "./StakeTips";
+import { HereCall } from "@here-wallet/core";
+import { Transaction } from "@near-wallet-selector/core";
 
 class HereToken {
   readonly contract = "storage.herewallet.near";
@@ -111,6 +113,26 @@ class HereToken {
     });
 
     return trx.transaction_outcome.id;
+  }
+
+  async unstakeTransaction(amount: string | BN): Promise<Omit<Transaction, "signerId">> {
+    await this.fetchBalance();
+    amount = BN.min(new BN(amount), this.safe);
+
+    return {
+      receiverId: getHereStorage(this.wallet.connection.networkId),
+      actions: [
+        {
+          type: "FunctionCall",
+          params: {
+            args: { amount: amount.toString() },
+            methodName: "withdraw",
+            deposit: "1",
+            gas: String(50 * TGAS),
+          },
+        },
+      ],
+    };
   }
 
   async unstake(amount: string | BN) {

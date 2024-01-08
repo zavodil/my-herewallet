@@ -1,9 +1,14 @@
 import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
 import { NearSnap, NearSnapAccount, TransactionSignRejected } from "@near-snap/sdk";
 import { QRCode } from "@here-wallet/core/build/qrcode-strategy";
+import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
+import { InMemorySigner, KeyPair } from "near-api-js";
+
 import { NearAccount } from "../core/near-chain/NearAccount";
 import { ConnectType } from "../core/types";
+import { storage } from "../core/Storage";
 import LedgerSigner from "./ledger";
+import { notify } from "../core/toast";
 
 const snap = new NearSnap();
 
@@ -17,53 +22,111 @@ const sendResponse = async (id: string, data: HereProviderResult) => {
   if (!res.ok) throw Error();
 };
 
-export const connectLedger = async (id: string, request: HereProviderRequest, onConnected: (is: boolean) => void) => {
-  const ledger = new LedgerSigner(onConnected);
+export const connectLedger = async (
+  accountId: string,
+  requestId: string,
+  request: HereProviderRequest,
+  onConnected: (is: boolean) => void
+) => {
+  const creds = storage.getAccount(accountId);
+  const path = creds?.path || "44'/397'/0'/0'/1'";
+  const ledger = new LedgerSigner(path, onConnected);
 
   if (request.type === "sign") {
-    if (!("recipient" in request)) return await sendResponse(id, { status: HereProviderStatus.FAILED });
     const { address, publicKey } = await ledger.getAddress();
-    await sendResponse(id, {
-      status: HereProviderStatus.SUCCESS,
+    await sendResponse(requestId, {
+      status: HereProviderStatus.FAILED,
       account_id: address,
-      payload: JSON.stringify({
-        signature: "",
-        accountId: address,
-        publicKey: publicKey,
-        type: ConnectType.Ledger,
-      }),
+      payload: publicKey.toString(),
     });
   }
 
   if (request.type === "call") {
-    await sendResponse(id, { status: HereProviderStatus.APPROVING }).catch(() => {});
+    await sendResponse(requestId, { status: HereProviderStatus.APPROVING }).catch(() => {});
     const { address, publicKey } = await ledger.getAddress();
+    const creds = storage.getAccount(address);
     const account = new NearAccount({
-      signer: ledger,
       publicKey: publicKey.toString(),
-      type: ConnectType.Web,
+      type: ConnectType.Local,
       accountId: address,
-      jwt: "",
+      jwt: creds?.jwt,
+      signer: ledger,
+      path: path,
     });
 
-    const result = await account.callTransactions(request.transactions, { disableDelegate: true });
+    const result = await account.sendLocalTransactions(request.transactions, true);
 
-    await sendResponse(id, {
+    await sendResponse(requestId, {
       status: HereProviderStatus.SUCCESS,
+      // @ts-ignore
+      public_key: publicKey.toString(),
+      payload: result.map((t) => t).join(","),
       account_id: address,
-      payload: result.map((t) => t.transaction_outcome.id).join(","),
+      path: path,
     });
   }
 };
 
-export const connectMetamask = async (id: string, request: HereProviderRequest) => {
+export const connectWeb = async (accountId: string, requestId: string, request: HereProviderRequest) => {
+  try {
+    const creds = storage.getAccount(accountId);
+    const keyStore = new InMemoryKeyStore();
+    if (!creds?.privateKey) return;
+
+    const keyPair = KeyPair.fromString(creds.privateKey);
+    await keyStore.setKey("mainnet", creds.accountId, keyPair);
+
+    const account = new NearAccount({
+      signer: new InMemorySigner(keyStore),
+      type: ConnectType.Local,
+      accountId: creds.accountId,
+      publicKey: creds.publicKey,
+      jwt: creds.jwt,
+    });
+
+    if (request.type === "sign") {
+      if (!("recipient" in request)) return await sendResponse(requestId, { status: HereProviderStatus.FAILED });
+      const { accountId, publicKey, signature } = await account.signMessage({
+        message: request.message,
+        nonce: Buffer.from(request.nonce),
+        recipient: request.recipient,
+      });
+
+      await sendResponse(requestId, {
+        status: HereProviderStatus.SUCCESS,
+        account_id: accountId,
+        payload: JSON.stringify({
+          signature: signature,
+          accountId: accountId,
+          publicKey: publicKey,
+          type: ConnectType.Web,
+        }),
+      });
+    }
+
+    if (request.type === "call") {
+      await sendResponse(requestId, { status: HereProviderStatus.APPROVING }).catch(() => {});
+      const result = await account.sendLocalTransactions(request.transactions);
+      await sendResponse(requestId, {
+        status: HereProviderStatus.SUCCESS,
+        account_id: account.accountId,
+        payload: result.map((t) => t).join(","),
+      });
+    }
+  } catch (e: any) {
+    if (e?.message) notify(e?.message);
+    await sendResponse(requestId, { status: HereProviderStatus.FAILED });
+  }
+};
+
+export const connectMetamask = async (accountId: string, requestId: string, request: HereProviderRequest) => {
   try {
     await snap.install();
-    await sendResponse(id, { status: HereProviderStatus.APPROVING });
+    await sendResponse(requestId, { status: HereProviderStatus.APPROVING });
 
     if (request.type === "sign") {
       if (!("recipient" in request)) {
-        await sendResponse(id, { status: HereProviderStatus.FAILED });
+        await sendResponse(requestId, { status: HereProviderStatus.FAILED });
         return;
       }
 
@@ -75,11 +138,11 @@ export const connectMetamask = async (id: string, request: HereProviderRequest) 
       });
 
       if (result == null) {
-        await sendResponse(id, { status: HereProviderStatus.FAILED });
+        await sendResponse(requestId, { status: HereProviderStatus.FAILED });
         return;
       }
 
-      await sendResponse(id, {
+      await sendResponse(requestId, {
         status: HereProviderStatus.SUCCESS,
         account_id: result.accountId,
         payload: JSON.stringify({
@@ -92,15 +155,13 @@ export const connectMetamask = async (id: string, request: HereProviderRequest) 
     }
 
     if (request.type === "call") {
-      await sendResponse(id, { status: HereProviderStatus.APPROVING }).catch(() => {});
-
+      await sendResponse(requestId, { status: HereProviderStatus.APPROVING }).catch(() => {});
       const network = (request.network as any) || "mainnet";
       const account = await NearSnapAccount.restore({ snap, network }).catch(async () => {
         return await NearSnapAccount.connect({ snap, network });
       });
 
-      if (account == null) return await sendResponse(id, { status: HereProviderStatus.FAILED });
-
+      if (account == null) return await sendResponse(requestId, { status: HereProviderStatus.FAILED });
       const trxs = request.transactions.map((t) => ({
         receiverId: t.receiverId || account.accountId,
         signerId: account.accountId,
@@ -108,30 +169,30 @@ export const connectMetamask = async (id: string, request: HereProviderRequest) 
       }));
 
       const result = await account.executeTransactions(trxs as any);
-      await sendResponse(id, {
+      await sendResponse(requestId, {
+        payload: result.map((t) => t.transaction_outcome.id).join(","),
         status: HereProviderStatus.SUCCESS,
         account_id: account.accountId,
-        payload: result.map((t) => t.transaction_outcome.id).join(","),
       });
     }
   } catch (e) {
     if (e instanceof TransactionSignRejected) throw e;
-    await sendResponse(id, { status: HereProviderStatus.FAILED });
+    await sendResponse(requestId, { status: HereProviderStatus.FAILED });
   }
 };
 
-export const connectHere = async (id: string, el?: HTMLElement) => {
+export const connectHere = async (accountId: string, requestId: string, el?: HTMLElement) => {
   if (window.localStorage.getItem("topic")) {
     fetch("https://api.herewallet.app/api/v1/transactions/topic/sign", {
       method: "POST",
       body: JSON.stringify({
         topic: window.localStorage.getItem("topic"),
-        request_id: id,
+        request_id: requestId,
       }),
     });
   }
 
-  const link = `herewallet://request/${id}`;
+  const link = `herewallet://request/${requestId}`;
   const qrcode = new QRCode({ ...darkQR, value: link });
   qrcode.canvas.classList.add("here-connector-card");
   qrcode.render();

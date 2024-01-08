@@ -1,12 +1,12 @@
 import BN from "bn.js";
 import { JsonRpcProvider, TypedError } from "near-api-js/lib/providers";
-import { base_decode, base_encode } from "near-api-js/lib/utils/serialize";
+import { base_decode, base_encode, serialize } from "near-api-js/lib/utils/serialize";
 import { AccessKeyView, AccessKeyViewRaw, FinalExecutionOutcome } from "near-api-js/lib/providers/provider";
 import { Account, Connection, InMemorySigner, KeyPair, Signer, providers, transactions } from "near-api-js";
 import { ChangeFunctionCallOptions } from "near-api-js/lib/account";
 import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
 import { encodeDelegateAction } from "@near-js/transactions";
-import { Action, HereCall, createAction } from "@here-wallet/core";
+import { Action, HereCall, SignMessageOptionsNEP0413, createAction } from "@here-wallet/core";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapAccount } from "@near-snap/sdk";
 import * as ref from "@ref-finance/ref-sdk";
@@ -24,6 +24,7 @@ import { HereApi } from "../network/api";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getWrapNear } from "./constants";
 import { SAFE_NEAR, parseNearOfActions, waitTransactionResult } from "./utils";
+import { SignPayload, signPayloadSchema } from "./signMessage";
 import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
@@ -86,8 +87,6 @@ export class NearAccount extends Account {
   }
 
   async processingTx(tx: string, signal?: AbortSignal) {
-    return await waitTransactionResult(tx, this.accountId, this.connection.provider, 0, signal);
-
     try {
       const result = await this.api.processing(tx, this.accountId, signal);
       if (!result.success) throw new TransactionError(result.error.readable_title, result.error.readable_body);
@@ -132,61 +131,88 @@ export class NearAccount extends Account {
   async callTransactions(
     transactions: (HereCall | null)[],
     options?: { disableUnstake?: boolean; disableDelegate?: boolean }
-  ): Promise<FinalExecutionOutcome[]> {
-    const list: any = transactions.filter((t): t is HereCall => t != null);
+  ): Promise<string[]> {
+    const results: string[] = [];
+    let snapAccount: NearSnapAccount | null = null;
 
-    if (this.creds.type === ConnectType.Snap) {
-      const account = new NearSnapAccount({
-        snap: accounts.snap,
-        publicKey: PublicKey.fromString(this.creds.publicKey),
-        accountId: this.creds.accountId,
-        network: "mainnet",
+    for (let item of transactions) {
+      if (item == null) continue;
+      let batch = [item];
+
+      if (!options?.disableUnstake) {
+        const allocateNear = parseNearOfActions(item.actions);
+        const unstake = await this.tryAllocateNative(allocateNear);
+        if (unstake) batch.unshift(unstake);
+      }
+
+      if (this.creds.type === ConnectType.Snap) {
+        if (snapAccount == null) {
+          await accounts.snap.install();
+          snapAccount = new NearSnapAccount({
+            snap: accounts.snap,
+            publicKey: PublicKey.fromString(this.creds.publicKey),
+            accountId: this.creds.accountId,
+            network: "mainnet",
+          });
+        }
+
+        // @ts-expect-error: receiverId is not undefined
+        const txs = await snapAccount.executeTransactions(batch);
+        results.push(...txs.map((t) => t.transaction_outcome.id));
+      }
+
+      const txs = await accounts.wallet.signAndSendTransactions({
+        // @ts-ignore
+        selector: { type: this.creds.type, id: this.accountId },
+        transactions: batch,
       });
-
-      await accounts.snap.install();
-      return await account.executeTransactions(list);
+      results.push(...txs.map((t) => t.transaction_outcome.id));
     }
 
-    if (this.creds.type === ConnectType.Here || this.creds.type === ConnectType.Ledger) {
-      return await accounts.wallet.signAndSendTransactions({ transactions: list });
+    return results;
+  }
+
+  async sendLocalTransactions(batch: HereCall[], disableDelegate?: boolean) {
+    const results: string[] = [];
+    for (let tx of batch) {
+      const res = await this.sendLocalCall(tx, disableDelegate);
+      results.push(res.transaction_outcome.id);
+    }
+
+    return results;
+  }
+
+  async sendLocalCall(tx: HereCall, disableDelegate?: boolean) {
+    const receiverId = tx.receiverId ?? this.accountId;
+    const actions = tx.actions.map((act) => createAction(act));
+
+    if (disableDelegate) {
+      return await this.executeDelegate(actions, receiverId);
     }
 
     try {
-      const trxs: FinalExecutionOutcome[] = [];
-      for (let item of transactions) {
-        if (item == null) continue;
-        let call = item;
-
-        if (!options?.disableUnstake) {
-          const allocateNear = parseNearOfActions(call.actions);
-          await this.tryAllocateNative(allocateNear);
-        }
-
-        const receiverId = call.receiverId ?? this.accountId;
-        const actions = call.actions.map((act) => createAction(act));
-
-        let trx: providers.FinalExecutionOutcome;
-        if (options?.disableDelegate) {
-          trx = await this.executeTransaction(actions, receiverId);
-        } else {
-          try {
-            trx = await this.executeDelegate(actions, receiverId);
-          } catch (e) {
-            const isInternalError =
-              e instanceof DelegateNotAllowed || e instanceof ResponseError || e instanceof RequestError;
-            if (!isInternalError) throw e;
-            trx = await this.executeTransaction(actions, receiverId);
-          }
-        }
-
-        trxs.push(trx);
-      }
-
-      return trxs;
+      return await this.executeDelegate(actions, receiverId);
     } catch (e) {
-      console.error(e);
-      throw e;
+      const isInternalError =
+        e instanceof DelegateNotAllowed || e instanceof ResponseError || e instanceof RequestError;
+      if (!isInternalError) throw e;
+      return await this.executeTransaction(actions, receiverId);
     }
+  }
+
+  async signMessage(config: SignMessageOptionsNEP0413) {
+    const payload = new SignPayload({
+      message: config.message,
+      nonce: Array.from(config.nonce),
+      recipient: config.recipient,
+    });
+
+    const borshPayload = serialize(signPayloadSchema, payload);
+    const signature = await this.connection.signer.signMessage(borshPayload, this.accountId, "mainnet");
+    const publicKey = await this.connection.signer.getPublicKey(this.accountId, "mainnet");
+
+    const base64 = Buffer.from(signature.signature).toString("base64");
+    return { accountId: this.accountId, signature: base64, publicKey: publicKey.toString(), nonce: config.nonce };
   }
 
   async tryAllocateNative(amount: BN) {
@@ -217,7 +243,7 @@ export class NearAccount extends Account {
 
     const needFromStake = amount.sub(safe);
     console.log("[tryAllocateNear] needFromStake", needFromStake.toString());
-    await this.hnear.unstake(needFromStake);
+    return await this.hnear.unstakeTransaction(needFromStake);
   }
 
   async callTransaction(call: HereCall, options?: { disableUnstake?: boolean }) {
@@ -368,8 +394,7 @@ export class NearAccount extends Account {
       const { available } = await this.getBalance();
       const deposit = BN.min(new BN(amount), available).toString();
       const actions: Action[] = [{ type: "Transfer", params: { deposit } }];
-      const trx = await this.callTransaction({ receiverId: receiver, actions });
-      return trx.transaction_outcome.id;
+      return await this.callTransaction({ receiverId: receiver, actions });
     }
 
     return await this.transferToken(asset, amount, receiver);
@@ -393,13 +418,12 @@ export class NearAccount extends Account {
       },
     });
 
-    const trx = await this.callTransaction({ receiverId: asset.contract, actions });
-    return trx.transaction_outcome.id;
+    return await this.callTransaction({ receiverId: asset.contract, actions });
   }
 
   async functionCall(data: ChangeFunctionCallOptions & { disableUnstake?: boolean }): Promise<FinalExecutionOutcome> {
     const { contractId, methodName, disableUnstake, args, gas, attachedDeposit } = data;
-    return await this.callTransaction(
+    const hash = await this.callTransaction(
       {
         receiverId: contractId,
         actions: [
@@ -416,6 +440,8 @@ export class NearAccount extends Account {
       },
       { disableUnstake }
     );
+
+    return await this.connection.provider.txStatus(hash, this.accountId);
   }
 
   async findAccessKey() {

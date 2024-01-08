@@ -76,6 +76,7 @@ export interface RecentlyApps {
 
 export interface RequestAccessToken {
   msg: string;
+  recapcha_response: string;
   device_id: string;
   account_sign: string;
   device_name: string;
@@ -143,4 +144,5 @@ export interface AllocateUsername {
   public_key: string;
   sign: string;
   device_id: string;
+  recapcha_response: string;
 }
