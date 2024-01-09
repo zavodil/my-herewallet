@@ -16,6 +16,7 @@ import Icon from "../../uikit/Icon";
 
 import { ExportAccountWidget } from "./ExportAccountWidget";
 import * as S from "./styled";
+import { generateFromString } from "generate-avatar";
 
 interface Props {
   style?: any;
@@ -27,6 +28,16 @@ interface Props {
   onSelect?: (t: { id: string; type: ConnectType }) => void;
 }
 
+const walletName = (type: ConnectType) => {
+  if (type === ConnectType.Here) return "HERE Wallet";
+  if (type === ConnectType.Ledger) return "Ledger Wallet";
+  if (type === ConnectType.Snap) return "Metamask Wallet";
+  if (type === ConnectType.Web) return "Web Wallet";
+  if (type === ConnectType.Meteor) return "Meteor Wallet";
+  if (type === ConnectType.MyNearWallet) return "MyNearWallet";
+  if (type === ConnectType.WalletConnect) return "Wallet Connect";
+  if (type === ConnectType.Sender) return "Sender Wallet";
+};
 export const AccountManager = observer((props: Props) => {
   const { style = {}, className, onlySwitch, left, account, onSelect } = props;
   const navigate = useNavigate();
@@ -43,7 +54,6 @@ export const AccountManager = observer((props: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log("dsfjkd");
     setAvatar("");
     accounts.getAvatar(account.id, account.type).then(setAvatar);
   }, [account]);
@@ -70,7 +80,7 @@ export const AccountManager = observer((props: Props) => {
           if (props.accounts.length > 1) setOpenManager(onlySwitch ? true : false);
         }}
       >
-        <S.AvatarImage style={{ borderWidth: account.id ? 1 : 0 }} src={avatar} />
+        <S.AvatarImage as={avatar ? "img" : "div"} style={{ borderWidth: account.id ? 1 : 0 }} src={avatar} />
         {account.id ? (
           <>
             <div style={{ textAlign: "left", marginTop: -4 }}>
@@ -78,12 +88,7 @@ export const AccountManager = observer((props: Props) => {
                 {account.id.length > 16 ? account.id.slice(0, 8) + ".." + account.id.slice(-8) : account.id}
               </Text>
 
-              <TinyText style={{ marginTop: 2 }}>
-                {account.type === ConnectType.Here && "HERE Wallet"}
-                {account.type === ConnectType.Ledger && "Ledger Wallet"}
-                {account.type === ConnectType.Snap && "Metamask Wallet"}
-                {account.type === ConnectType.Web && "Web Wallet"}
-              </TinyText>
+              <TinyText style={{ marginTop: 2 }}>{walletName(account.type)}</TinyText>
             </div>
             <Button
               onClick={async (e) => {
@@ -98,13 +103,7 @@ export const AccountManager = observer((props: Props) => {
         ) : (
           <>
             <div style={{ textAlign: "left", marginTop: -4, marginRight: 8 }}>
-              <Text style={{ fontWeight: "bold" }}>
-                {account.type === ConnectType.Here && "HERE Wallet"}
-                {account.type === ConnectType.Ledger && "Ledger Wallet"}
-                {account.type === ConnectType.Snap && "Metamask Wallet"}
-                {account.type === ConnectType.Web && "Web Wallet"}
-              </Text>
-
+              <Text style={{ fontWeight: "bold" }}>{walletName(account.type)}</Text>
               <TinyText style={{ marginTop: 2 }}>Connect new one</TinyText>
             </div>
 
@@ -154,19 +153,14 @@ export const AccountManager = observer((props: Props) => {
                   <S.AccountButton
                     key={acc.id}
                     style={{ justifyContent: "space-between" }}
-                    onClick={(e) => onSelect?.(toJS(acc))}
+                    onClick={() => onSelect?.(toJS(acc))}
                   >
                     <div style={{ textAlign: "left", marginTop: -4 }}>
                       <Text style={{ fontWeight: "bold" }}>
                         {acc.id.length > 16 ? acc.id.slice(0, 8) + ".." + acc.id.slice(-8) : acc.id}
                       </Text>
 
-                      <TinyText style={{ marginTop: 2 }}>
-                        {acc.type === ConnectType.Here && "HERE Wallet"}
-                        {acc.type === ConnectType.Ledger && "Ledger Wallet"}
-                        {acc.type === ConnectType.Snap && "Metamask Wallet"}
-                        {acc.type === ConnectType.Web && "Web Wallet"}
-                      </TinyText>
+                      <TinyText style={{ marginTop: 2 }}>{walletName(acc.type)}</TinyText>
                     </div>
 
                     <Button

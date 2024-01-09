@@ -5,7 +5,6 @@ import { observer } from "mobx-react-lite";
 import introImage from "../assets/intro.png";
 import { Receiver } from "../core/Receiver";
 import { useWallet } from "../core/Accounts";
-import { ConnectType } from "../core/types";
 
 import { H1, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
@@ -15,7 +14,7 @@ import { colors } from "../uikit/theme";
 import { IntroImage, Page, Root } from "./styled";
 import Header from "../Home/Header";
 
-const CreateNickname = () => {
+const CreateNickname = ({ onCreate }: { onCreate: (n: string) => Promise<void> }) => {
   const user = useWallet();
   const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
@@ -37,7 +36,7 @@ const CreateNickname = () => {
           <img src={introImage} />
         </IntroImage>
 
-        <div style={{ width: "100%", maxWidth: 380 }}>
+        <div style={{ width: "100%", maxWidth: 420 }}>
           <div>
             <H1>Create nickname</H1>
             <Text style={{ marginTop: 8 }}>Nickname is attached to your wallet address and cannot be changed</Text>
@@ -72,10 +71,7 @@ const CreateNickname = () => {
               onClick={() => {
                 if (isCreating) return;
                 setCreating(true);
-                user
-                  ?.bindNickname(receiver.input)
-                  .then(() => setCreating(false))
-                  .catch(() => setCreating(false));
+                onCreate(receiver.input).finally(() => setCreating(false));
               }}
             >
               {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}

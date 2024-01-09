@@ -1,12 +1,12 @@
 import BN from "bn.js";
 import { JsonRpcProvider, TypedError } from "near-api-js/lib/providers";
 import { base_decode, base_encode, serialize } from "near-api-js/lib/utils/serialize";
+import { Action, HereCall, HereWallet, SignMessageOptionsNEP0413, createAction } from "@here-wallet/core";
 import { AccessKeyView, AccessKeyViewRaw, FinalExecutionOutcome } from "near-api-js/lib/providers/provider";
 import { Account, Connection, InMemorySigner, KeyPair, Signer, providers, transactions } from "near-api-js";
 import { ChangeFunctionCallOptions } from "near-api-js/lib/account";
-import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
 import { encodeDelegateAction } from "@near-js/transactions";
-import { Action, HereCall, SignMessageOptionsNEP0413, createAction } from "@here-wallet/core";
+import { Transaction } from "@near-wallet-selector/core";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapAccount } from "@near-snap/sdk";
 import * as ref from "@ref-finance/ref-sdk";
@@ -16,9 +16,9 @@ import { Chain, FtModel } from "../token/types";
 import { chunk, parseAmount } from "../helpers";
 import { TGAS } from "../constants";
 
-import { ConnectType, UserCred } from "../types";
+import { ConnectType } from "../types";
 import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
-import { RequestError, ResponseError, TransactionError } from "../network/types";
+import { HereError, ResponseError, TransactionError } from "../network/types";
 import { accounts } from "../Accounts";
 import { HereApi } from "../network/api";
 
@@ -29,6 +29,7 @@ import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
 import HereToken from "./HereToken";
+import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
 
 export class NearAccount extends Account {
   readonly native: NearToken;
@@ -37,19 +38,18 @@ export class NearAccount extends Account {
   readonly neat: NeatToken;
   readonly api: NearApi;
 
-  constructor(readonly creds: UserCred & { signer?: Signer }) {
-    console.log(creds);
+  constructor(id: string, readonly type: ConnectType, signer: Signer, jwt?: string) {
     super(
       Connection.fromConfig({
-        signer: creds.signer || new InMemorySigner(new InMemoryKeyStore()),
+        signer: signer,
         provider: new JsonRpcProvider({ url: "https://rpc.herewallet.app" }),
         jsvmAccountId: "jsvm.mainnet",
         networkId: "mainnet",
       }),
-      creds.accountId
+      id
     );
 
-    this.api = new NearApi(new HereApi(creds.jwt));
+    this.api = new NearApi(new HereApi(jwt));
     this.native = new NearToken(this);
     this.hnear = new HereToken(this);
     this.wnear = new WrapToken(this);
@@ -102,6 +102,7 @@ export class NearAccount extends Account {
   }
 
   async executeTransaction(actions: transactions.Action[], receiverId: string): Promise<FinalExecutionOutcome> {
+    console.log("executeTransaction");
     let [tx, signedTx] = await this.signTransaction(receiverId, actions);
     return new Promise(async (resolve, reject) => {
       const abort = new AbortController();
@@ -110,6 +111,7 @@ export class NearAccount extends Account {
         reject(err);
       });
 
+      console.log("processingTx", base_encode(tx));
       this.processingTx(base_encode(tx), abort.signal).then(resolve).catch(reject);
     });
   }
@@ -137,7 +139,14 @@ export class NearAccount extends Account {
 
     for (let item of transactions) {
       if (item == null) continue;
-      let batch = [item];
+      let batch: Transaction[] = [
+        {
+          signerId: this.accountId,
+          receiverId: item.receiverId || this.accountId,
+          // @ts-ignore
+          actions: item.actions,
+        },
+      ];
 
       if (!options?.disableUnstake) {
         const allocateNear = parseNearOfActions(item.actions);
@@ -145,27 +154,38 @@ export class NearAccount extends Account {
         if (unstake) batch.unshift(unstake);
       }
 
-      if (this.creds.type === ConnectType.Snap) {
+      if (
+        this.type === ConnectType.Sender ||
+        this.type === ConnectType.MyNearWallet ||
+        this.type === ConnectType.Meteor
+      ) {
+        const selector = await accounts.selector;
+        const wallet = await selector.wallet(this.type);
+        const txs = await wallet.signAndSendTransactions({ transactions: batch });
+        if (!txs) throw Error();
+        results.push(...txs.map((t) => t.transaction_outcome.id));
+      }
+
+      if (this.type === ConnectType.Snap) {
         if (snapAccount == null) {
           await accounts.snap.install();
           snapAccount = new NearSnapAccount({
             snap: accounts.snap,
-            publicKey: PublicKey.fromString(this.creds.publicKey),
-            accountId: this.creds.accountId,
+            publicKey: await this.getPublicKey(),
+            accountId: this.accountId,
             network: "mainnet",
           });
         }
 
-        // @ts-expect-error: receiverId is not undefined
         const txs = await snapAccount.executeTransactions(batch);
         results.push(...txs.map((t) => t.transaction_outcome.id));
       }
 
       const txs = await accounts.wallet.signAndSendTransactions({
-        // @ts-ignore
-        selector: { type: this.creds.type, id: this.accountId },
+        selector: { type: this.type, id: this.accountId },
         transactions: batch,
       });
+
       results.push(...txs.map((t) => t.transaction_outcome.id));
     }
 
@@ -173,6 +193,7 @@ export class NearAccount extends Account {
   }
 
   async sendLocalTransactions(batch: HereCall[], disableDelegate?: boolean) {
+    console.log("sendLocalTransactions", batch);
     const results: string[] = [];
     for (let tx of batch) {
       const res = await this.sendLocalCall(tx, disableDelegate);
@@ -184,18 +205,19 @@ export class NearAccount extends Account {
 
   async sendLocalCall(tx: HereCall, disableDelegate?: boolean) {
     const receiverId = tx.receiverId ?? this.accountId;
-    const actions = tx.actions.map((act) => createAction(act));
+    const actions: transactions.Action[] = tx.actions.map((act) => createAction(act));
 
     if (disableDelegate) {
-      return await this.executeDelegate(actions, receiverId);
+      return await this.executeTransaction(actions, receiverId);
     }
 
     try {
       return await this.executeDelegate(actions, receiverId);
     } catch (e) {
-      const isInternalError =
-        e instanceof DelegateNotAllowed || e instanceof ResponseError || e instanceof RequestError;
+      console.log(e);
+      const isInternalError = e instanceof DelegateNotAllowed || e instanceof HereError;
       if (!isInternalError) throw e;
+
       return await this.executeTransaction(actions, receiverId);
     }
   }
@@ -207,7 +229,7 @@ export class NearAccount extends Account {
       recipient: config.recipient,
     });
 
-    const borshPayload = serialize(signPayloadSchema, payload);
+    const borshPayload = serialize(authPayloadSchema, payload);
     const signature = await this.connection.signer.signMessage(borshPayload, this.accountId, "mainnet");
     const publicKey = await this.connection.signer.getPublicKey(this.accountId, "mainnet");
 

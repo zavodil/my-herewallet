@@ -1,5 +1,12 @@
 import { action, makeObservable, observable } from "mobx";
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupSender } from "@near-wallet-selector/sender";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupModal } from "@near-wallet-selector/modal-ui";
+import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { HereWallet, SignedMessageNEP0413, WidgetStrategy } from "@here-wallet/core";
+import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
 import { base_encode, serialize } from "near-api-js/lib/utils/serialize";
 import { KeyPair, KeyPairEd25519, PublicKey } from "near-api-js/lib/utils";
 import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
@@ -9,16 +16,16 @@ import { NearSnap } from "@near-snap/sdk";
 import { SignPayload, signPayloadSchema } from "./near-chain/signMessage";
 import { generateMnemonic } from "./near-chain/passphrase/bip39";
 import { parseSeedPhrase } from "./near-chain/passphrase";
-import { ConnectType, UserCred } from "./types";
 import { HereError } from "./network/types";
 import UserAccount from "./UserAccount";
-import { HereApi } from "./network/api";
-import { notify } from "./toast";
-import { storage } from "./Storage";
+
 import { recaptchaToken } from "./helpers";
+import { ConnectType, UserCred } from "./types";
 import { generateFromString } from "generate-avatar";
 import { ReceiverFetcher } from "./Receiver";
-import { proxyProvider } from "./provider";
+import { HereApi } from "./network/api";
+import { storage } from "./Storage";
+import { notify } from "./toast";
 
 class Accounts {
   static shared = new Accounts();
@@ -28,8 +35,26 @@ class Accounts {
   readonly api = new HereApi();
   readonly snap = new NearSnap();
 
+  readonly selector = setupWalletSelector({
+    modules: [
+      setupSender(),
+      setupMeteorWallet(),
+      setupMyNearWallet(),
+      setupWalletConnect({
+        projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
+        chainId: "near:mainnet",
+        metadata: {
+          name: "HERE Stake",
+          description: "Liquid Staking for Near Protocol",
+          url: "https://my.herewallet.app/stake",
+          icons: [],
+        },
+      }),
+    ],
+    network: "mainnet",
+  });
+
   readonly wallet = new HereWallet({
-    defaultProvider: proxyProvider,
     defaultStrategy: () =>
       new WidgetStrategy({
         widget: location.origin + "/connector",
@@ -49,19 +74,27 @@ class Accounts {
     });
 
     const { accounts, activeAccount } = storage.read();
-    if (activeAccount) this.account = new UserAccount(activeAccount);
+    if (activeAccount) {
+      let data = storage.getAccount(activeAccount);
+      if (data) this.account = new UserAccount(data);
+    }
+
     this.accounts = accounts;
   }
 
   select = (id: string) => {
     if (!this.accounts.find((t) => t.id === id)) return;
-    this.account = new UserAccount(id);
+    const data = storage.getAccount(id);
+    if (!data) return;
+
+    this.account = new UserAccount(data);
     storage.selectAccount(id);
   };
 
   disconnect = (id: string) => {
     this.accounts = this.accounts.filter((t) => t.id !== id);
-    this.account = this.accounts[0] ? new UserAccount(id) : null;
+    const data = storage.getAccount(this.accounts[0]?.id);
+    this.account = data ? new UserAccount(data) : null;
     storage.removeAccount(id);
     notify("Wallet has been disconnected");
   };
@@ -71,7 +104,7 @@ class Accounts {
       ? { publicKey: KeyPair.fromString(secret).getPublicKey().toString(), secretKey: secret }
       : parseSeedPhrase(seed || generateMnemonic());
 
-    const api = new HereApi("metamask");
+    const api = new HereApi();
     const accounts = await api.findAccount(PublicKey.from(publicKey));
     if (accounts[0] == null) {
       notify("Account is not found");
@@ -109,7 +142,7 @@ class Accounts {
       }
 
       storage.addAccount({ ...cred, jwt: token });
-      const account = new UserAccount(cred.accountId);
+      const account = new UserAccount({ ...cred, jwt: token });
 
       const addAccount = action(() => {
         this.accounts.push({ id: cred.accountId, type: cred.type });
@@ -137,7 +170,7 @@ class Accounts {
 
     const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
     const payload = new SignPayload({ message: "web_wallet", nonce: Array.from(nonce), recipient: "HERE Wallet" });
-    const borshPayload = serialize(signPayloadSchema, payload);
+    const borshPayload = serialize(authPayloadSchema, payload);
     const signature = await signer.signMessage(borshPayload, accountId, "mainnet");
     const publicKey = await signer.getPublicKey(accountId, "mainnet");
 
@@ -150,7 +183,7 @@ class Accounts {
     const accountId = nickname || defaultAddress;
 
     notify("Activating account...");
-    const api = new HereApi("metamask");
+    const api = new HereApi();
     const captcha = await recaptchaToken();
     await api.allocateNickname({
       device_id: "metamask",
@@ -171,6 +204,39 @@ class Accounts {
     };
 
     return await this.addAccount(cred, sign);
+  }
+
+  async connectSelector() {
+    return new Promise(async (resolve, reject) => {
+      const selector = await this.selector;
+      const modal = setupModal(selector, { contractId: "herewallet.near" });
+      modal.show();
+
+      selector.on("signedIn", async ({ walletId }) => {
+        const wallet = await selector.wallet(walletId);
+
+        const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
+        const sign = await wallet.signMessage({
+          nonce: Buffer.from(nonce),
+          recipient: "HERE Wallet",
+          message: "web_wallet",
+        });
+
+        if (sign == null) {
+          reject();
+          return;
+        }
+
+        let type = ConnectType.Meteor;
+        if (walletId === ConnectType.Sender) type = ConnectType.Sender;
+        if (walletId === ConnectType.MyNearWallet) type = ConnectType.MyNearWallet;
+        if (walletId === ConnectType.WalletConnect) type = ConnectType.WalletConnect;
+
+        const cred = { type, accountId: sign.accountId, publicKey: sign.publicKey };
+        await this.addAccount(cred, { ...sign, nonce });
+        resolve(false);
+      });
+    });
   }
 
   async connectSnap() {

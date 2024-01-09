@@ -7,6 +7,7 @@ import { AllocateUsername, NFTModel, RecentlyApps, RequestAccessToken } from "./
 import { PublicKey } from "near-api-js/lib/utils";
 
 export class HereError extends Error {
+  name = "HereError";
   constructor(readonly title: string, readonly body: string) {
     super(body);
   }
@@ -19,9 +20,9 @@ export class HereApi {
   constructor(readonly jwt = "") {}
 
   get deviceId() {
-    const id = this.storage.get("_deviceid") ?? uuid4();
-    this.storage.set("_deviceid", id);
-    return id;
+    const id = this.storage.get("_deviceid");
+    if (id == null) this.storage.set("_deviceid", uuid4());
+    return this.storage.get("_deviceid")!;
   }
 
   public async request(input: RequestInfo, init: RequestInit & { endpoint?: string } = {}) {

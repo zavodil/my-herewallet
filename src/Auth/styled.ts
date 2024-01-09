@@ -69,9 +69,14 @@ export const Card = styled.div`
   flex-direction: column;
   display: flex;
   gap: 24px;
-
+  cursor: pointer;
+  transition: 0.2s border-color;
   @media (max-width: 1024px) {
     gap: 24px;
+  }
+
+  &:hover {
+    border-color: var(--Black-Primary);
   }
 `;
 

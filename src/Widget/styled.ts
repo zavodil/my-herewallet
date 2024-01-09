@@ -189,10 +189,15 @@ export const Footer = styled.div`
   & > img:first-child {
     left: 32px;
   }
+
+  @media (max-width: 620px) {
+    & > img {
+      display: none;
+    }
+  }
 `;
 
 export const ApproveButton = styled.div`
-  display: none;
   border: none;
   outline: 0;
   padding: 0;
@@ -211,6 +216,8 @@ export const ApproveButton = styled.div`
   background: #2c3034;
   color: #fff;
 
+  display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
 
@@ -316,6 +323,11 @@ export const HereModal = styled.div`
     font-size: 16px;
     line-height: 1.6;
     transition: visibility linear, opacity 0.25s;
+
+    @media (max-width: 620px) {
+      border: none;
+      bottom: 0;
+    }
   }
 `;
 

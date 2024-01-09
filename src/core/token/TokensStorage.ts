@@ -88,7 +88,6 @@ export class TokensStorage {
 
     const newTokens = fts.reduce<Record<string, FtAsset>>((acc, asset) => {
       try {
-        console.log({ asset });
         const token = createToken(asset);
         this.tokens[token.id] = token;
         acc[token.id] = asset;
@@ -136,7 +135,6 @@ export class TokensStorage {
       tokens[nearIndex].viewBalance = formatAmount((is ? balance.available : balance.total).toString(), 24, 4);
     }
 
-    console.log(tokens);
     this.user.localStorage.set("tokens", JSON.stringify(tokens));
     this.setTokens(tokens, groups);
   }

@@ -115,11 +115,12 @@ class HereToken {
     return trx.transaction_outcome.id;
   }
 
-  async unstakeTransaction(amount: string | BN): Promise<Omit<Transaction, "signerId">> {
+  async unstakeTransaction(amount: string | BN): Promise<Transaction> {
     await this.fetchBalance();
     amount = BN.min(new BN(amount), this.safe);
 
     return {
+      signerId: this.wallet.accountId,
       receiverId: getHereStorage(this.wallet.connection.networkId),
       actions: [
         {
@@ -127,8 +128,8 @@ class HereToken {
           params: {
             args: { amount: amount.toString() },
             methodName: "withdraw",
-            deposit: "1",
             gas: String(50 * TGAS),
+            deposit: "1",
           },
         },
       ],

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupExportSelectorModal } from "@near-wallet-selector/account-export";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
@@ -46,21 +46,21 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
         setPair(activePair);
       }
 
-      console.log(activePair);
       const selector = await setupWalletSelector({
         network: "mainnet",
         modules: [setupMyNearWallet(), setupSender(), setupMeteorWallet(), setupHereWallet()],
       });
 
-      console.log(selector, [{ accountId: user.near.accountId, privateKey: activePair!.publicKey.toString() }]);
       const modal = setupExportSelectorModal(selector, {
         accounts: [{ accountId: user.near.accountId, privateKey: activePair!.secretKey }],
         onComplete: () => onClose(),
       });
 
       modal.show();
+      onClose();
       setLoading(false);
     } catch (e) {
+      console.log(e);
       notify(`Something wrong: ${e?.toString?.()}`);
       setLoading(false);
     }
