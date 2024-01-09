@@ -222,6 +222,7 @@ class Accounts {
         let type = ConnectType.Meteor;
         if (walletId === ConnectType.Sender) type = ConnectType.Sender;
         if (walletId === ConnectType.MyNearWallet) type = ConnectType.MyNearWallet;
+        if (walletId === ConnectType.WalletConnect) type = ConnectType.WalletConnect;
 
         const cred = { type, accountId: sign.accountId, publicKey: sign.publicKey };
         await this.addAccount(cred, { ...sign, nonce });
