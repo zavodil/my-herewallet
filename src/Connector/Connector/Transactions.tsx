@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { HereProviderRequest } from "@here-wallet/core";
 import { SnapList, SnapItem, useScroll, useDragToScroll, useVisibleElements } from "react-snaplist-carousel";
 import styled from "styled-components";
 
-import ArrowRightIcon from "../../assets/icons/arrow-right.svg";
-import ArrowLeftIcon from "../../assets/icons/arrow-left.svg";
 import { colors } from "../../uikit/theme";
 import { Button, H2, Text } from "../../uikit";
+import Icon from "../../uikit/Icon";
 import { ActionView } from "./Action";
 
 export const Connector = ({ request }: { request: HereProviderRequest }) => {
@@ -73,7 +72,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
       <View>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
           <Button onClick={() => nextPage(-1)} disabled={selected === 1} style={{ opacity: selected === 1 ? 0.3 : 1 }}>
-            <ArrowLeftIcon />
+            <Icon name="cursor-left" />
           </Button>
           <Text style={{ marginLeft: 8, marginRight: 8, marginTop: -4 }}>
             {selected}/{actionsCount}
@@ -83,7 +82,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
             disabled={selected === actionsCount}
             style={{ opacity: selected === actionsCount ? 0.3 : 1 }}
           >
-            <ArrowRightIcon />
+            <Icon name="cursor-right" />
           </Button>
         </View>
 
@@ -92,7 +91,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
             {request.transactions.flatMap((trx, i) =>
               trx.actions.map((action, j) => (
                 <SnapItem key={`${i}_${j}`} width="100%" snapAlign="center">
-                  <View style={{ padding: "0 16px" }}>
+                  <View style={{ padding: "0 16px", alignItems: "center", justifyContent: "center" }}>
                     <ActionView receiver={trx.receiverId ?? "Your wallet"} action={action} tokens={[]} />
                   </View>
                 </SnapItem>

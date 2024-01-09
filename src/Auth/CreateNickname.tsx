@@ -7,12 +7,12 @@ import { Receiver } from "../core/Receiver";
 import { useWallet } from "../core/Accounts";
 import { ConnectType } from "../core/types";
 
-import { H1, LargeP, SmallText, Text } from "../uikit/typographic";
+import { H1, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import HereInput from "../uikit/Input";
 import { colors } from "../uikit/theme";
 
-import { Card, IntroImage, Page, Root } from "./styled";
+import { IntroImage, Page, Root } from "./styled";
 import Header from "../Home/Header";
 
 const CreateNickname = () => {
@@ -21,13 +21,6 @@ const CreateNickname = () => {
   const [nickname, setNickname] = useState("");
   const [receiver] = useState(() => new Receiver(user!));
   const [isCreating, setCreating] = useState(false);
-
-  useEffect(() => {
-    if (user?.credential.type !== ConnectType.Snap) return navigate("/");
-    user.isNeedActivate().then((needActivate) => {
-      if (!needActivate) navigate("/");
-    });
-  }, [user]);
 
   useEffect(() => {
     receiver.setInput(nickname + ".near");
@@ -44,13 +37,13 @@ const CreateNickname = () => {
           <img src={introImage} />
         </IntroImage>
 
-        <Card style={{ width: "100%", maxWidth: 380 }}>
+        <div style={{ width: "100%", maxWidth: 380 }}>
           <div>
             <H1>Create nickname</H1>
             <Text style={{ marginTop: 8 }}>Nickname is attached to your wallet address and cannot be changed</Text>
           </div>
 
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative", margin: "42px 0 56px" }}>
             <HereInput
               label="Nickname"
               value={nickname}
@@ -88,7 +81,7 @@ const CreateNickname = () => {
               {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
             </ActionButton>
           </div>
-        </Card>
+        </div>
       </Page>
     </Root>
   );

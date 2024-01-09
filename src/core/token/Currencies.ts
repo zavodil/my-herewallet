@@ -16,7 +16,6 @@ interface CurrencyPrice {
 class Currencies {
   static readonly shared = new Currencies();
 
-  public tickers = new Set();
   public prices: Record<string, CurrencyPrice | undefined> = {};
   public remote = new HereApi("mainnet");
 
@@ -25,11 +24,10 @@ class Currencies {
   }
 
   constructor() {
-    makeObservable(this, { prices: observable, addTickers: action });
+    makeObservable(this, { prices: observable });
 
     try {
       this.prices = JSON.parse(localStorage.getItem("prices") ?? "{}");
-      this.tickers = new Set(Object.keys(this.prices));
     } catch {}
 
     this._update();
@@ -41,12 +39,8 @@ class Currencies {
     this._update();
   }
 
-  addTickers(tickers: string[]) {
-    tickers.forEach((t) => t && this.tickers.add(t));
-  }
-
-  removeTickers(tickers: string[]) {
-    tickers.forEach((t) => this.tickers.delete(t));
+  usd(asset: string) {
+    return this.prices[asset]?.usd || 0;
   }
 
   getCurrency(ft: FtModel | FtAsset | null) {

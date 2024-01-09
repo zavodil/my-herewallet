@@ -23,7 +23,6 @@ export const Header = styled.header`
   }
 
   @media (max-width: 1200px) {
-    justify-content: flex-start;
     padding: 0 32px;
 
     .header-left {
@@ -42,6 +41,10 @@ export const NavBar = styled.div`
 
   @media (max-width: 1200px) {
     gap: 24px;
+  }
+
+  @media (max-width: 960px) {
+    display: none;
   }
 `;
 

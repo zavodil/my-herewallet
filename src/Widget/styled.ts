@@ -27,6 +27,47 @@ export const GlobalStyles = createGlobalStyle`
     -webkit-appearance: none;
     margin: 0;
   }
+
+  .here-connector-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    aspect-ratio: 1 / 1;
+    height: 100%;
+    position: relative;
+  }
+
+  .here-connector-card {
+    max-height: 256px;
+    max-width: 256px;
+    width: 100% !important;
+    height: 100% !important;
+    background: #ebdedc;
+    border: 1px solid #2c3034;
+    border-radius: 16px;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    padding: 16px;
+    display: flex;
+    position: absolute;
+    box-shadow: 8px 8px #2c3034;
+  }
+
+  .snap-card {
+    flex-direction: column;
+    cursor: pointer;
+  }
+
+  .snap-card img {
+    transition: 0.2s transform;
+  }
+
+  .snap-card:hover img {
+    transform: scale(1.1);
+  }
 `;
 
 export const LedgerWrap = styled.div`
@@ -109,6 +150,7 @@ export const Links = styled.div`
     border-radius: 12px;
     padding: 4px;
     transition: 0.2s opacity;
+    text-decoration: none !important;
   }
 
   a:hover {
@@ -189,6 +231,29 @@ export const CloseButton = styled.div`
   height: 32px;
   width: 32px;
   padding: 0;
+
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: bolder;
+  font-size: 16px;
+  color: #2c3034;
+
+  border: none;
+  margin: 0;
+  outline: none;
+  cursor: pointer;
+  height: 32px;
+  background-color: #ebdedc;
+  border-radius: 50px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  transition: 0.2s opacity;
+
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
 export const HereModal = styled.div`
@@ -275,4 +340,14 @@ export const ButtonSwitch = styled.div`
   &:hover {
     background-color: #ebdedc;
   }
+`;
+
+export const ConnectorWrap = styled.div`
+  max-width: 480px;
+  width: 100%;
+  margin: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;

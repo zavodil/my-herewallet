@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { HereProviderStatus } from "@here-wallet/core";
 import { useParams } from "react-router-dom";
 import { isMobile } from "is-mobile";
 
-import { colors } from "../uikit/theme";
 import HereQRCode from "../uikit/HereQRCode";
-import { isAndroid, isIOS } from "../core/helpers";
 import { ActionButton, H2, H3, ActivityIndicator, Text } from "../uikit";
 import { Connector } from "./Connector/Transactions";
 import Footer from "./Footer";
@@ -16,12 +14,6 @@ import * as S from "./styled";
 const TransactionCard = () => {
   const { id } = useParams();
   const { result, link, request } = useSignRequest(id);
-  const [useAppclip, setAppclip] = useState(localStorage.getItem("disableAppClip") == null);
-
-  useEffect(() => {
-    if (useAppclip) localStorage.removeItem("disableAppClip");
-    else localStorage.setItem("disableAppClip", "1");
-  }, [useAppclip]);
 
   if (result?.status === HereProviderStatus.FAILED) {
     return (
@@ -49,17 +41,11 @@ const TransactionCard = () => {
     );
   }
 
-  const toggleAppClipWidget = (
-    <span onClick={() => setAppclip((v) => !v)} style={{ color: colors.pink, cursor: "pointer" }}>
-      {useAppclip ? "Doesn't work?" : "Use AppClip"}
-    </span>
-  );
-
   const qrCode = (
     <S.ScanCode>
       <HereQRCode value={link} />
       <H2>Approve with QR</H2>
-      <Text>Scan this code with your phone's camera to sign. {request.type !== "import" && toggleAppClipWidget}</Text>
+      <Text>Scan this code with your phone's camera to sign.</Text>
     </S.ScanCode>
   );
 

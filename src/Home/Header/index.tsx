@@ -1,186 +1,243 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { generateFromString } from "generate-avatar";
 import { observer } from "mobx-react-lite";
+import { toJS } from "mobx";
 
 import hereWebLogo from "../../assets/here-web.svg?url";
 import { useAnalyticsTrack } from "../../core/analytics";
-import { accounts, useWallet } from "../../core/Accounts";
+import { accounts } from "../../core/Accounts";
 import { ConnectType } from "../../core/types";
 import { notify } from "../../core/toast";
 
-import Icon from "../../uikit/Icon";
 import { Button, Text } from "../../uikit";
-import { colors } from "../../uikit/theme";
 import { TinyText } from "../../uikit/typographic";
+import { colors } from "../../uikit/theme";
+import Icon from "../../uikit/Icon";
 
 import { ExportAccountWidget } from "./ExportAccountWidget";
 import * as S from "./styled";
 
-export const AccountManager = observer(
-  ({
-    style = {},
-    className,
-    onlySwitch,
-    left,
-  }: {
-    className?: string;
-    style?: any;
-    left?: boolean;
-    onlySwitch?: boolean;
-  }) => {
-    const account = useWallet()!;
-    const navigate = useNavigate();
-    const [openMenu, setOpenMenu] = useState(false);
-    const [openManager, setOpenManager] = useState(false);
-    const [isExportOpen, setToggleExport] = useState(false);
+interface Props {
+  style?: any;
+  left?: boolean;
+  onlySwitch?: boolean;
+  className?: string;
+  accounts: { id: string; type: ConnectType }[];
+  account: { id: string; type: ConnectType };
+  onSelect?: (t: { id: string; type: ConnectType }) => void;
+}
 
-    useEffect(() => {
-      document.body.addEventListener("click", () => {
-        setOpenMenu(false);
-        setOpenManager(false);
-      });
-    }, []);
+export const AccountManager = observer((props: Props) => {
+  const { style = {}, className, onlySwitch, left, account, onSelect } = props;
+  const navigate = useNavigate();
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openManager, setOpenManager] = useState(false);
+  const [isExportOpen, setToggleExport] = useState(false);
+  const [avatar, setAvatar] = useState("");
 
-    if (account == null) return null;
-    const accountId = account.near.accountId;
+  useEffect(() => {
+    document.body.addEventListener("click", () => {
+      setOpenMenu(false);
+      setOpenManager(false);
+    });
+  }, []);
 
-    return (
-      <div className={className} style={{ display: "flex", ...style }}>
-        {!onlySwitch && (
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenManager(true);
-              setOpenMenu(false);
-            }}
-          >
-            <Icon name="switch-vertical" />
-          </Button>
-        )}
+  useEffect(() => {
+    console.log("dsfjkd");
+    setAvatar("");
+    accounts.getAvatar(account.id, account.type).then(setAvatar);
+  }, [account]);
 
-        <S.AccountButton
-          style={{ gap: 12, height: "auto", width: "auto", padding: 4 }}
+  return (
+    <div className={className} style={{ display: "flex", ...style }}>
+      {!onlySwitch && (
+        <Button
           onClick={(e) => {
             e.stopPropagation();
-            setOpenMenu(onlySwitch ? false : true);
-            setOpenManager(onlySwitch ? true : false);
+            setOpenManager(true);
+            setOpenMenu(false);
           }}
         >
-          <S.AvatarImage src={account.user.avatar_url || `data:image/svg+xml;utf8,${generateFromString(accountId)}`} />
-          <div style={{ textAlign: "left", marginTop: -4 }}>
-            <Text style={{ fontWeight: "bold" }}>
-              {accountId.length > 16 ? accountId.slice(0, 8) + ".." + accountId.slice(-8) : accountId}
-            </Text>
+          <Icon name="switch-vertical" />
+        </Button>
+      )}
 
-            <TinyText style={{ marginTop: 2 }}>
-              {account.credential.type === ConnectType.Here && "HERE Wallet"}
-              {account.credential.type === ConnectType.Ledger && "Ledger Wallet"}
-              {account.credential.type === ConnectType.Snap && "Metamask Wallet"}
-            </TinyText>
-          </div>
+      <S.AccountButton
+        style={{ gap: 12, height: "auto", width: "auto", padding: 4 }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpenMenu(onlySwitch ? false : true);
+          if (props.accounts.length > 1) setOpenManager(onlySwitch ? true : false);
+        }}
+      >
+        <S.AvatarImage style={{ borderWidth: account.id ? 1 : 0 }} src={avatar} />
+        {account.id ? (
+          <>
+            <div style={{ textAlign: "left", marginTop: -4 }}>
+              <Text style={{ fontWeight: "bold" }}>
+                {account.id.length > 16 ? account.id.slice(0, 8) + ".." + account.id.slice(-8) : account.id}
+              </Text>
 
-          <Button
-            onClick={async (e) => {
-              e.stopPropagation();
-              await navigator.clipboard.writeText(account.near.accountId);
-              notify("Account address has beed copied");
-            }}
-          >
-            <Icon name="copy" />
-          </Button>
-        </S.AccountButton>
+              <TinyText style={{ marginTop: 2 }}>
+                {account.type === ConnectType.Here && "HERE Wallet"}
+                {account.type === ConnectType.Ledger && "Ledger Wallet"}
+                {account.type === ConnectType.Snap && "Metamask Wallet"}
+                {account.type === ConnectType.Web && "Web Wallet"}
+              </TinyText>
+            </div>
+            <Button
+              onClick={async (e) => {
+                e.stopPropagation();
+                await navigator.clipboard.writeText(account.id);
+                notify("Account address has beed copied");
+              }}
+            >
+              <Icon name="copy" />
+            </Button>
+          </>
+        ) : (
+          <>
+            <div style={{ textAlign: "left", marginTop: -4, marginRight: 8 }}>
+              <Text style={{ fontWeight: "bold" }}>
+                {account.type === ConnectType.Here && "HERE Wallet"}
+                {account.type === ConnectType.Ledger && "Ledger Wallet"}
+                {account.type === ConnectType.Snap && "Metamask Wallet"}
+                {account.type === ConnectType.Web && "Web Wallet"}
+              </Text>
 
-        {openMenu && (
-          <S.AccountMenu
-            style={{ left: left ? 0 : "unset", right: left ? "unset" : 0 }}
+              <TinyText style={{ marginTop: 2 }}>Connect new one</TinyText>
+            </div>
+
+            {props.accounts.length > 1 && <Icon style={{ marginLeft: -8 }} name="cursor-down" />}
+          </>
+        )}
+      </S.AccountButton>
+
+      {openMenu && (
+        <S.AccountMenu
+          style={{ left: left ? 0 : "unset", right: left ? "unset" : 0 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenManager(false);
+          }}
+        >
+          <S.AccountButton
             onClick={(e) => {
               e.stopPropagation();
-              setOpenManager(false);
+              setOpenMenu(false);
+              setToggleExport(true);
             }}
           >
+            <Text>Export wallet</Text>
+          </S.AccountButton>
+
+          <S.AccountButton
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenMenu(false);
+              accounts.disconnect(account.id);
+            }}
+          >
+            <Icon name="logout" />
+            <Text style={{ color: colors.red }}>Log out</Text>
+          </S.AccountButton>
+        </S.AccountMenu>
+      )}
+
+      {openManager && (
+        <S.AccountMenu style={{ left: left ? 0 : "unset", right: left ? "unset" : 0 }}>
+          {props.accounts
+            .filter((t) => account.id !== t.id)
+            .map((acc) => {
+              if (acc.id)
+                return (
+                  <S.AccountButton
+                    key={acc.id}
+                    style={{ justifyContent: "space-between" }}
+                    onClick={(e) => onSelect?.(toJS(acc))}
+                  >
+                    <div style={{ textAlign: "left", marginTop: -4 }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {acc.id.length > 16 ? acc.id.slice(0, 8) + ".." + acc.id.slice(-8) : acc.id}
+                      </Text>
+
+                      <TinyText style={{ marginTop: 2 }}>
+                        {acc.type === ConnectType.Here && "HERE Wallet"}
+                        {acc.type === ConnectType.Ledger && "Ledger Wallet"}
+                        {acc.type === ConnectType.Snap && "Metamask Wallet"}
+                        {acc.type === ConnectType.Web && "Web Wallet"}
+                      </TinyText>
+                    </div>
+
+                    <Button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await navigator.clipboard.writeText(acc.id);
+                        notify("Account address has beed copied");
+                      }}
+                    >
+                      <Icon name="copy" />
+                    </Button>
+                  </S.AccountButton>
+                );
+
+              if (acc.type === ConnectType.Here)
+                return (
+                  <S.AccountButton key={acc.type} onClick={() => onSelect?.({ id: "", type: ConnectType.Here })}>
+                    <img
+                      style={{ objectFit: "contain" }}
+                      width={28}
+                      height={28}
+                      src={require("../../assets/here.svg")}
+                    />
+                    <Text>Use HERE Wallet</Text>
+                  </S.AccountButton>
+                );
+
+              if (acc.type === ConnectType.Ledger)
+                return (
+                  <S.AccountButton key={acc.type} onClick={() => onSelect?.({ id: "", type: ConnectType.Ledger })}>
+                    <img
+                      style={{ objectFit: "contain" }}
+                      width={28}
+                      height={28}
+                      src={require("../../assets/ledger.png")}
+                    />
+                    <Text>Use Ledger</Text>
+                  </S.AccountButton>
+                );
+
+              if (acc.type === ConnectType.Snap)
+                return (
+                  <S.AccountButton key={acc.type} onClick={() => onSelect?.({ id: "", type: ConnectType.Snap })}>
+                    <img width={24} height={24} src={require("../../assets/metamask.svg")} />
+                    <Text style={{ marginLeft: 4 }}>Use Metamask</Text>
+                  </S.AccountButton>
+                );
+
+              return null;
+            })}
+
+          {!onlySwitch && (
             <S.AccountButton
               onClick={(e) => {
                 e.stopPropagation();
                 setOpenMenu(false);
-                setToggleExport(true);
+                setOpenManager(false);
+                navigate("/auth");
               }}
             >
-              <Text>Export wallet</Text>
+              <Icon width={16} name="add" />
+              <Text>Add wallet</Text>
             </S.AccountButton>
+          )}
+        </S.AccountMenu>
+      )}
 
-            <S.AccountButton
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpenMenu(false);
-                accounts.disconnect(account.credential.accountId);
-              }}
-            >
-              <Icon name="logout" />
-              <Text style={{ color: colors.red }}>Log out</Text>
-            </S.AccountButton>
-          </S.AccountMenu>
-        )}
-
-        {openManager && (
-          <S.AccountMenu style={{ left: left ? 0 : "unset", right: left ? "unset" : 0 }}>
-            {accounts.accounts.map((acc) => (
-              <S.AccountButton
-                style={{ justifyContent: "space-between" }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenManager(false);
-                  accounts.select(acc.accountId);
-                }}
-              >
-                <div style={{ textAlign: "left", marginTop: -4 }}>
-                  <Text style={{ fontWeight: "bold" }}>
-                    {acc.accountId.length > 16
-                      ? acc.accountId.slice(0, 8) + ".." + acc.accountId.slice(-8)
-                      : acc.accountId}
-                  </Text>
-
-                  <TinyText style={{ marginTop: 2 }}>
-                    {acc.type === ConnectType.Here && "HERE Wallet"}
-                    {acc.type === ConnectType.Ledger && "Ledger Wallet"}
-                    {acc.type === ConnectType.Snap && "Metamask Wallet"}
-                    {acc.type === ConnectType.Web && "Web Wallet"}
-                  </TinyText>
-                </div>
-
-                <Button
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    await navigator.clipboard.writeText(acc.accountId);
-                    notify("Account address has beed copied");
-                  }}
-                >
-                  <Icon name="copy" />
-                </Button>
-              </S.AccountButton>
-            ))}
-
-            {!onlySwitch && (
-              <S.AccountButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenMenu(false);
-                  setOpenManager(false);
-                  navigate("/auth");
-                }}
-              >
-                <Icon width={16} name="add" />
-                <Text>Add wallet</Text>
-              </S.AccountButton>
-            )}
-          </S.AccountMenu>
-        )}
-
-        <ExportAccountWidget onClose={() => setToggleExport(false)} isOpen={isExportOpen} />
-      </div>
-    );
-  }
-);
+      <ExportAccountWidget onClose={() => setToggleExport(false)} isOpen={isExportOpen} />
+    </div>
+  );
+});
 
 const Header = observer(() => {
   const location = useLocation();
@@ -212,7 +269,14 @@ const Header = observer(() => {
         </S.NavBar>
       )}
 
-      <AccountManager className="header-right" />
+      {accounts.account && (
+        <AccountManager
+          onSelect={({ id }) => accounts.select(id)}
+          accounts={accounts.accounts}
+          account={accounts.account}
+          className="header-right"
+        />
+      )}
     </S.Header>
   );
 });

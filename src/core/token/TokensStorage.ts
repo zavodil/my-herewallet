@@ -14,7 +14,6 @@ import Currencies from "./Currencies";
 export class TokensStorage {
   public groupsData: Record<string, FtGroup> = {};
   public tokens: Record<string, FtModel> = {};
-  public pendingCashback: number | null = 0;
   public isLoading = false;
 
   constructor(private readonly user: UserAccount) {
@@ -23,7 +22,6 @@ export class TokensStorage {
       groupsData: observable,
       isLoading: observable,
       tokens: observable,
-      pendingCashback: observable,
       registerToken: action,
       setTokens: action,
     });
@@ -80,7 +78,6 @@ export class TokensStorage {
   registerToken(assets: FtAsset[]) {
     assets.forEach((asset) => {
       if (this.tokens[tokenId(asset)]) return;
-      Currencies.shared.addTickers([asset.coingecko_id]);
       const ft = createToken(asset);
       this.tokens[ft.id] = ft;
     });
@@ -90,11 +87,16 @@ export class TokensStorage {
     this.groupsData = keyBy(groups, (g) => g.asset);
 
     const newTokens = fts.reduce<Record<string, FtAsset>>((acc, asset) => {
-      const token = createToken(asset);
-      Currencies.shared.addTickers([token.coingeckoId]);
-      this.tokens[token.id] = token;
-      acc[token.id] = asset;
-      return acc;
+      try {
+        console.log({ asset });
+        const token = createToken(asset);
+        this.tokens[token.id] = token;
+        acc[token.id] = asset;
+        return acc;
+      } catch (e) {
+        console.error(e);
+        return acc;
+      }
     }, {});
 
     for (const id in this.tokens) {
@@ -119,8 +121,7 @@ export class TokensStorage {
     if (Date.now() - this._lastRefresh < 3000) return;
     this._lastRefresh = Date.now();
 
-    const { tokens, groups, cashback } = await this.user.api.getAssets();
-    runInAction(() => (this.pendingCashback = cashback));
+    const { tokens, groups } = await this.user.api.getAssets();
 
     // Костыль под NEAR
     const balance = await this.user.near.getNativeBalance().catch(() => null);
@@ -135,6 +136,7 @@ export class TokensStorage {
       tokens[nearIndex].viewBalance = formatAmount((is ? balance.available : balance.total).toString(), 24, 4);
     }
 
+    console.log(tokens);
     this.user.localStorage.set("tokens", JSON.stringify(tokens));
     this.setTokens(tokens, groups);
   }

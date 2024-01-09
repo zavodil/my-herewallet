@@ -49,6 +49,14 @@ const Auth = () => {
               </div>
             </ButtonCard>
 
+            <ButtonCard onClick={() => accounts.connectHere().then(() => navigate("/"))}>
+              <img style={{ objectFit: "contain" }} width="48" height="48" src={hereLogo} />
+              <div>
+                <BoldP>Login via HERE Wallt</BoldP>
+                <SmallText>Mobile wallet</SmallText>
+              </div>
+            </ButtonCard>
+
             <ButtonCard onClick={() => accounts.connectLedger().then(() => navigate("/"))}>
               <img
                 width="64"

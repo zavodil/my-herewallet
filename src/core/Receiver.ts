@@ -18,7 +18,7 @@ export function isValidAccountId(accountId: string) {
   );
 }
 
-class ReceiverFetcher {
+export class ReceiverFetcher {
   static shared = new ReceiverFetcher();
 
   private cached: Record<string, { avatar?: string; name?: string; isHere?: boolean; time: number }> = {};

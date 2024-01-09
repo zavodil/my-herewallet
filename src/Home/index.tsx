@@ -30,6 +30,7 @@ import {
 } from "./styled";
 import { Transaction } from "./Transactions";
 import Header from "./Header";
+import { toJS } from "mobx";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
 
@@ -42,7 +43,6 @@ const Home = () => {
   const [isNftsLoading, setNftsLoading] = useState(false);
   const selectNfts = async () => {
     toggleTokens(false);
-
     if (isNftsLoading) return;
     if (account.nfts.length > 0) return;
     setNftsLoading(true);
@@ -125,7 +125,7 @@ const Home = () => {
                   <SmallText>Asset</SmallText>
                   <SmallText>Balance</SmallText>
                   <SmallText>Price</SmallText>
-                  <SmallText>Actions</SmallText>
+                  <SmallText style={{ textAlign: "right" }}>Actions</SmallText>
                 </TokensRow>
 
                 {Object.values(account.tokens.tokens)
@@ -234,7 +234,7 @@ const Home = () => {
                 target="_blank"
               >
                 <AppIcon src={app.image} />
-                <BoldP>{app.name}</BoldP>
+                <BoldP style={{ overflowX: "hidden" }}>{app.name}</BoldP>
                 <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
               </RecentlyApp>
             ))}
