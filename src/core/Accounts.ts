@@ -19,6 +19,12 @@ import { recaptchaToken } from "./helpers";
 import { generateFromString } from "generate-avatar";
 import { ReceiverFetcher } from "./Receiver";
 import { proxyProvider } from "./provider";
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupSender } from "@near-wallet-selector/sender";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupModal } from "@near-wallet-selector/modal-ui";
+import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 
 class Accounts {
   static shared = new Accounts();
@@ -27,6 +33,25 @@ class Accounts {
 
   readonly api = new HereApi();
   readonly snap = new NearSnap();
+
+  readonly selector = setupWalletSelector({
+    modules: [
+      setupSender(),
+      setupMeteorWallet(),
+      setupMyNearWallet(),
+      setupWalletConnect({
+        projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
+        chainId: "near:mainnet",
+        metadata: {
+          name: "HERE Stake",
+          description: "Liquid Staking for Near Protocol",
+          url: "https://my.herewallet.app/stake",
+          icons: [],
+        },
+      }),
+    ],
+    network: "mainnet",
+  });
 
   readonly wallet = new HereWallet({
     defaultProvider: proxyProvider,
@@ -171,6 +196,38 @@ class Accounts {
     };
 
     return await this.addAccount(cred, sign);
+  }
+
+  async connectSelector() {
+    return new Promise(async (resolve, reject) => {
+      const selector = await this.selector;
+      const modal = setupModal(selector, { contractId: "herewallet.near" });
+      modal.show();
+
+      selector.on("signedIn", async ({ walletId }) => {
+        const wallet = await selector.wallet(walletId);
+
+        const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
+        const sign = await wallet.signMessage({
+          nonce: Buffer.from(nonce),
+          recipient: "HERE Wallet",
+          message: "web_wallet",
+        });
+
+        if (sign == null) {
+          reject();
+          return;
+        }
+
+        let type = ConnectType.Meteor;
+        if (walletId === ConnectType.Sender) type = ConnectType.Sender;
+        if (walletId === ConnectType.MyNearWallet) type = ConnectType.MyNearWallet;
+
+        const cred = { type, accountId: sign.accountId, publicKey: sign.publicKey };
+        await this.addAccount(cred, { ...sign, nonce });
+        resolve(false);
+      });
+    });
   }
 
   async connectSnap() {

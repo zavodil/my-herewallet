@@ -16,6 +16,7 @@ import Apps from "./Apps";
 import Widget from "./Widget";
 import CreateAccount from "./Auth/CreateAccount";
 import ImportAccount from "./Auth/ImportAccount";
+import ImportSeed from "./Auth/ImportSeed";
 import Inscription, { InscriptionTokens } from "./Inscription";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/auth/create" element={<CreateAccount />} />
         <Route path="/auth/import" element={<ImportAccount />} />
+        <Route path="/auth/import/backup" element={<ImportSeed />} />
 
         <Route path="/connector" element={<Widget />} />
         <Route path="/inscription/tokens" element={<InscriptionTokens />} />

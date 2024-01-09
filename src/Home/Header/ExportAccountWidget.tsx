@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupExportSelectorModal } from "@near-wallet-selector/account-export";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";

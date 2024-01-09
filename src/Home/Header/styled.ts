@@ -121,6 +121,7 @@ export const ModalWrap = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10000;
 `;
 
 export const ModalOverlay = styled.div`

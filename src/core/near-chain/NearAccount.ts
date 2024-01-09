@@ -29,6 +29,7 @@ import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
 import HereToken from "./HereToken";
+import { Transaction } from "@near-wallet-selector/core";
 
 export class NearAccount extends Account {
   readonly native: NearToken;
@@ -137,12 +138,31 @@ export class NearAccount extends Account {
 
     for (let item of transactions) {
       if (item == null) continue;
-      let batch = [item];
+      let batch: Transaction[] = [
+        {
+          signerId: this.accountId,
+          receiverId: item.receiverId || this.accountId,
+          // @ts-ignore
+          actions: item.actions,
+        },
+      ];
 
       if (!options?.disableUnstake) {
         const allocateNear = parseNearOfActions(item.actions);
         const unstake = await this.tryAllocateNative(allocateNear);
         if (unstake) batch.unshift(unstake);
+      }
+
+      if (
+        this.creds.type === ConnectType.Sender ||
+        this.creds.type === ConnectType.MyNearWallet ||
+        this.creds.type === ConnectType.Meteor
+      ) {
+        const selector = await accounts.selector;
+        const wallet = await selector.wallet(this.creds.type);
+        const txs = await wallet.signAndSendTransactions({ transactions: batch });
+        if (!txs) throw Error();
+        results.push(...txs.map((t) => t.transaction_outcome.id));
       }
 
       if (this.creds.type === ConnectType.Snap) {
@@ -156,7 +176,6 @@ export class NearAccount extends Account {
           });
         }
 
-        // @ts-expect-error: receiverId is not undefined
         const txs = await snapAccount.executeTransactions(batch);
         results.push(...txs.map((t) => t.transaction_outcome.id));
       }
@@ -166,6 +185,7 @@ export class NearAccount extends Account {
         selector: { type: this.creds.type, id: this.accountId },
         transactions: batch,
       });
+
       results.push(...txs.map((t) => t.transaction_outcome.id));
     }
 
