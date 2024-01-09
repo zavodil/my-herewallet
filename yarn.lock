@@ -623,18 +623,20 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.1.6.tgz#22958c042e10b67463997bd6ea7115fe28cbcaf9"
   integrity sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==
 
-"@here-wallet/core@../js-sdk":
-  version "1.5.0"
-  dependencies:
-    near-api-js "^3.0.1"
-    sha1 "^1.1.1"
-    uuid4 "2.0.3"
-
 "@here-wallet/core@1.5.1":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@here-wallet/core/-/core-1.5.1.tgz#618db9de547bfaed5229100002357663fcee5d77"
   integrity sha512-gCzB27k0QfviyJQUhxqX3kAH3g3mRHb6B5RJdUhX9tTsLlPW6AMV/PJiYBudPCt0EeyeyU4i8kEh223ACHXOjw==
   dependencies:
+    sha1 "^1.1.1"
+    uuid4 "2.0.3"
+
+"@here-wallet/core@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@here-wallet/core/-/core-1.6.0.tgz#a10442f5c933dd90ceca3386767bbe62b79bbbf6"
+  integrity sha512-1tWrxntOG7pTT4jD20FlUVlPX4LE8eZOlj1A31ar6Vc3OcN0WCvw/Sb0vDnehNhq9jBTaTP/Nx3zC4Pya9kTNg==
+  dependencies:
+    near-api-js "^3.0.1"
     sha1 "^1.1.1"
     uuid4 "2.0.3"
 
