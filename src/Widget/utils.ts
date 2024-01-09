@@ -26,39 +26,33 @@ export const connectLedger = async (
   accountId: string,
   requestId: string,
   request: HereProviderRequest,
-  onConnected: (is: boolean) => void
+  onConnected: (is: boolean) => void,
+  onSigned: () => void
 ) => {
   const creds = storage.getAccount(accountId);
   const path = creds?.path || "44'/397'/0'/0'/1'";
-  const ledger = new LedgerSigner(path, onConnected);
+  const ledger = new LedgerSigner(path, onConnected, onSigned);
 
   if (request.type === "sign") {
     const { address, publicKey } = await ledger.getAddress();
     await sendResponse(requestId, {
+      type: ConnectType.Ledger,
       status: HereProviderStatus.FAILED,
-      account_id: address,
+      public_key: publicKey.toString(),
       payload: publicKey.toString(),
+      account_id: address,
     });
   }
 
   if (request.type === "call") {
-    await sendResponse(requestId, { status: HereProviderStatus.APPROVING }).catch(() => {});
     const { address, publicKey } = await ledger.getAddress();
     const creds = storage.getAccount(address);
-    const account = new NearAccount({
-      publicKey: publicKey.toString(),
-      type: ConnectType.Local,
-      accountId: address,
-      jwt: creds?.jwt,
-      signer: ledger,
-      path: path,
-    });
-
+    const account = new NearAccount(address, ConnectType.Ledger, ledger, creds?.jwt);
     const result = await account.sendLocalTransactions(request.transactions, true);
 
     await sendResponse(requestId, {
+      type: ConnectType.Ledger,
       status: HereProviderStatus.SUCCESS,
-      // @ts-ignore
       public_key: publicKey.toString(),
       payload: result.map((t) => t).join(","),
       account_id: address,
@@ -75,17 +69,16 @@ export const connectWeb = async (accountId: string, requestId: string, request: 
 
     const keyPair = KeyPair.fromString(creds.privateKey);
     await keyStore.setKey("mainnet", creds.accountId, keyPair);
-
-    const account = new NearAccount({
-      signer: new InMemorySigner(keyStore),
-      type: ConnectType.Local,
-      accountId: creds.accountId,
-      publicKey: creds.publicKey,
-      jwt: creds.jwt,
-    });
+    const signer = new InMemorySigner(keyStore);
+    const account = new NearAccount(creds.accountId, ConnectType.Local, signer, creds.jwt);
 
     if (request.type === "sign") {
-      if (!("recipient" in request)) return await sendResponse(requestId, { status: HereProviderStatus.FAILED });
+      if (!("recipient" in request))
+        return await sendResponse(requestId, {
+          status: HereProviderStatus.FAILED,
+          type: ConnectType.Web,
+        });
+
       const { accountId, publicKey, signature } = await account.signMessage({
         message: request.message,
         nonce: Buffer.from(request.nonce),
@@ -93,7 +86,9 @@ export const connectWeb = async (accountId: string, requestId: string, request: 
       });
 
       await sendResponse(requestId, {
+        type: ConnectType.Web,
         status: HereProviderStatus.SUCCESS,
+        public_key: publicKey,
         account_id: accountId,
         payload: JSON.stringify({
           signature: signature,
@@ -105,29 +100,39 @@ export const connectWeb = async (accountId: string, requestId: string, request: 
     }
 
     if (request.type === "call") {
-      await sendResponse(requestId, { status: HereProviderStatus.APPROVING }).catch(() => {});
-      const result = await account.sendLocalTransactions(request.transactions);
+      await sendResponse(requestId, { type: ConnectType.Web, status: HereProviderStatus.APPROVING }).catch(() => {});
+      const result = await account.sendLocalTransactions(request.transactions, true);
       await sendResponse(requestId, {
-        status: HereProviderStatus.SUCCESS,
         account_id: account.accountId,
+        status: HereProviderStatus.SUCCESS,
+        public_key: (await account.getPublicKey()).toString(),
         payload: result.map((t) => t).join(","),
+        type: ConnectType.Web,
       });
     }
   } catch (e: any) {
     if (e?.message) notify(e?.message);
-    await sendResponse(requestId, { status: HereProviderStatus.FAILED });
+    await sendResponse(requestId, {
+      status: HereProviderStatus.FAILED,
+      type: ConnectType.Web,
+    });
   }
 };
 
 export const connectMetamask = async (accountId: string, requestId: string, request: HereProviderRequest) => {
   try {
     await snap.install();
-    await sendResponse(requestId, { status: HereProviderStatus.APPROVING });
+    await sendResponse(requestId, {
+      status: HereProviderStatus.APPROVING,
+      type: ConnectType.Snap,
+    });
 
     if (request.type === "sign") {
       if (!("recipient" in request)) {
-        await sendResponse(requestId, { status: HereProviderStatus.FAILED });
-        return;
+        return await sendResponse(requestId, {
+          status: HereProviderStatus.FAILED,
+          type: ConnectType.Snap,
+        });
       }
 
       const result = await snap.signMessage({
@@ -138,30 +143,42 @@ export const connectMetamask = async (accountId: string, requestId: string, requ
       });
 
       if (result == null) {
-        await sendResponse(requestId, { status: HereProviderStatus.FAILED });
-        return;
+        return await sendResponse(requestId, {
+          status: HereProviderStatus.FAILED,
+          type: ConnectType.Snap,
+        });
       }
 
       await sendResponse(requestId, {
+        type: ConnectType.Snap,
         status: HereProviderStatus.SUCCESS,
+        public_key: result.publicKey,
         account_id: result.accountId,
         payload: JSON.stringify({
           signature: result.signature,
           accountId: result.accountId,
           publicKey: result.publicKey,
-          type: ConnectType.Snap,
         }),
       });
     }
 
     if (request.type === "call") {
-      await sendResponse(requestId, { status: HereProviderStatus.APPROVING }).catch(() => {});
+      await sendResponse(requestId, {
+        type: ConnectType.Snap,
+        status: HereProviderStatus.APPROVING,
+      }).catch(() => {});
+
       const network = (request.network as any) || "mainnet";
       const account = await NearSnapAccount.restore({ snap, network }).catch(async () => {
         return await NearSnapAccount.connect({ snap, network });
       });
 
-      if (account == null) return await sendResponse(requestId, { status: HereProviderStatus.FAILED });
+      if (account == null)
+        return await sendResponse(requestId, {
+          type: ConnectType.Snap,
+          status: HereProviderStatus.FAILED,
+        });
+
       const trxs = request.transactions.map((t) => ({
         receiverId: t.receiverId || account.accountId,
         signerId: account.accountId,
@@ -170,14 +187,19 @@ export const connectMetamask = async (accountId: string, requestId: string, requ
 
       const result = await account.executeTransactions(trxs as any);
       await sendResponse(requestId, {
-        payload: result.map((t) => t.transaction_outcome.id).join(","),
         status: HereProviderStatus.SUCCESS,
+        payload: result.map((t) => t.transaction_outcome.id).join(","),
+        public_key: account.publicKey?.toString(),
         account_id: account.accountId,
+        type: ConnectType.Snap,
       });
     }
   } catch (e) {
     if (e instanceof TransactionSignRejected) throw e;
-    await sendResponse(requestId, { status: HereProviderStatus.FAILED });
+    await sendResponse(requestId, {
+      status: HereProviderStatus.FAILED,
+      type: ConnectType.Snap,
+    });
   }
 };
 

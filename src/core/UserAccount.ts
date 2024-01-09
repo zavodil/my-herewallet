@@ -13,6 +13,8 @@ import { Chain } from "./token/types";
 import { recaptchaToken, wait } from "./helpers";
 import { notify } from "./toast";
 import { ConnectType, TransferParams, UserCred } from "./types";
+import { Signer } from "near-api-js";
+import { Signature } from "near-api-js/lib/utils/key_pair";
 
 class UserAccount {
   readonly api: HereApi;
@@ -21,8 +23,8 @@ class UserAccount {
   readonly transactions: TransactionsStorage;
   readonly localStorage: Storage;
   readonly type: ConnectType;
+  readonly id: string;
 
-  #credential: UserCred;
   public nfts: NFTModel[] = [];
   public recentlyApps: RecentlyApps[] = [];
   public contacts: UserContact[] = [];
@@ -33,7 +35,7 @@ class UserAccount {
     id: "0",
   };
 
-  constructor(readonly id: string) {
+  constructor(creds: UserCred) {
     makeObservable(this, {
       user: observable,
       nfts: observable,
@@ -41,14 +43,16 @@ class UserAccount {
       recentlyApps: observable,
     });
 
-    this.#credential = storage.getAccount(id)!;
-    this.type = this.#credential.type;
-    this.api = new HereApi(this.#credential.jwt);
-    this.localStorage = new Storage(this.#credential.accountId);
+    this.id = creds.accountId;
+    this.type = creds.type;
+    this.api = new HereApi(creds.jwt);
+    this.localStorage = new Storage(creds.accountId);
 
     this.tokens = new TokensStorage(this);
     this.transactions = new TransactionsStorage(this);
-    this.near = new NearAccount(this.#credential);
+
+    const signer = new HereSigner(creds.accountId);
+    this.near = new NearAccount(creds.accountId, this.type, signer, creds.jwt);
 
     this.transactions.refresh().catch(() => {});
     this.tokens.refreshTokens().catch(() => {});
@@ -56,40 +60,40 @@ class UserAccount {
     this.fetchUser().catch(() => {});
 
     wait(100).then(async () => {
-      if (this.#credential.type !== ConnectType.Snap) return;
+      if (this.near.type !== ConnectType.Snap) return;
 
       const status = await accounts.snap.getStatus();
       if (status !== NearSnapStatus.INSTALLED) await accounts.snap.install();
 
       const acc = await accounts.snap.getAccount("mainnet").catch(() => accounts.snap.connect({ network: "mainnet" }));
-      if (acc?.accountId !== this.#credential.accountId || acc?.publicKey !== this.#credential.publicKey) {
+      if (acc?.accountId !== this.near.accountId || acc?.publicKey !== (await this.near.getPublicKey()).toString()) {
         notify("The address does not match, please re-login to your account");
-        accounts.disconnect(this.#credential.accountId);
+        accounts.disconnect(this.near.accountId);
         return;
       }
     });
   }
 
   async bindNickname(nickname: string) {
-    const api = new HereApi("metamask");
+    const api = new HereApi();
     const captcha = await recaptchaToken();
     await api.allocateNickname({
       device_id: "metamask",
-      public_key: this.#credential.publicKey,
+      public_key: (await this.near.getPublicKey()).toString(),
       recapcha_response: captcha,
       near_account_id: nickname,
       sign: "",
     });
 
-    accounts.disconnect(this.#credential.accountId);
+    accounts.disconnect(this.near.accountId);
     notify("The nickname was successfully created. Attach it to your account and re-login to your wallet.", 4500);
     await accounts.connectSnap();
   }
 
   async isNeedActivate() {
-    if (this.#credential.type !== ConnectType.Snap) return false;
+    if (this.near.type !== ConnectType.Snap) return false;
     return this.near
-      .getAccessKeyInfo(this.#credential.accountId, PublicKey.from(this.#credential.publicKey))
+      .getAccessKeyInfo(this.near.accountId, await this.near.getPublicKey())
       .then(() => false)
       .catch(() => true);
   }
@@ -137,6 +141,26 @@ class UserAccount {
 
   get isProduction() {
     return true;
+  }
+}
+
+class HereSigner extends Signer {
+  constructor(readonly id: string) {
+    super();
+  }
+
+  createKey(): Promise<PublicKey> {
+    throw Error("");
+  }
+
+  async getPublicKey(): Promise<PublicKey> {
+    const acc = storage.getAccount(this.id);
+    if (!acc) throw Error();
+    return PublicKey.fromString(acc.publicKey);
+  }
+
+  signMessage(): Promise<Signature> {
+    throw Error();
   }
 }
 

@@ -6,7 +6,11 @@ import { PublicKey } from "near-api-js/lib/utils";
 import { Signer } from "near-api-js";
 
 class LedgerSigner implements Signer {
-  constructor(readonly path = "44'/397'/0'/0'/1'", readonly toggleConnect: (v: boolean) => void) {}
+  constructor(
+    readonly path = "44'/397'/0'/0'/1'",
+    readonly toggleConnect: (v: boolean) => void,
+    readonly onSigned: () => void
+  ) {}
 
   createKey(): Promise<PublicKey> {
     throw new Error("Method not implemented.");
@@ -27,10 +31,13 @@ class LedgerSigner implements Signer {
   async signMessage(message: Uint8Array): Promise<Signature> {
     const near = await this.connectNear();
     const publicKey = await this.getPublicKey();
-
-    console.log("signMessage", message, publicKey);
     const signature = await near.signTransaction(message, this.path);
-    if (signature == null) throw Error("Signature is not allowed");
+    if (signature == null) {
+      this.toggleConnect(false);
+      throw Error("Signature is not allowed");
+    }
+
+    this.onSigned();
     return { signature, publicKey };
   }
 

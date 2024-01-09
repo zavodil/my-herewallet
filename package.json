@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@here-wallet/core": "^1.5.1",
+    "@here-wallet/core": "../js-sdk",
     "@ledgerhq/devices": "^8.2.0",
     "@ledgerhq/hw-app-near": "^6.28.1",
     "@ledgerhq/hw-transport-u2f": "^5.36.0-deprecated",
@@ -26,9 +26,10 @@
     "generate-avatar": "^1.4.10",
     "is-mobile": "^4.0.0",
     "lodash": "^4.17.21",
+    "lottie-react": "^2.4.0",
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.0",
-    "near-api-js": "^2.1.4",
+    "near-api-js": "^3.0.1",
     "path-browserify": "^1.0.1",
     "pbkdf2": "^3.1.2",
     "platform": "^1.3.6",
@@ -69,6 +70,7 @@
   "devDependencies": {
     "@parcel/optimizer-data-url": "2.10.3",
     "@parcel/packager-raw-url": "2.10.3",
+    "@parcel/resolver-default": "^2.11.0",
     "@parcel/transformer-inline-string": "2.10.3",
     "@parcel/transformer-svg-react": "^2.10.3",
     "@parcel/transformer-webmanifest": "2.10.3",
@@ -82,6 +84,7 @@
     "@vitejs/plugin-react": "^3.1.0",
     "https-browserify": "^1.0.0",
     "parcel": "^2.10.3",
+    "querystring-es3": "^0.2.1",
     "stream-http": "^3.1.0",
     "typescript": "^4.9.4",
     "url": "^0.11.0"

@@ -1,20 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { HereProviderRequest } from "@here-wallet/core";
+import { observer } from "mobx-react-lite";
+import Lottie from "lottie-react";
 import { toJS } from "mobx";
 
+import { AccountManager } from "../Home/Header";
 import { Connector } from "../Connector/Connector/Transactions";
 import { parseNearOfTransactions } from "../core/near-chain/utils";
 import { Formatter, getStorageJson } from "../core/helpers";
 import Currencies from "../core/token/Currencies";
 import { ConnectType } from "../core/types";
 import { accounts } from "../core/Accounts";
-import { ActionButton } from "../uikit";
+import { ActionButton, H4 } from "../uikit";
 
-import { AccountManager } from "../Home/Header";
 import { mobileCheck, connectHere, connectMetamask, connectLedger, connectWeb } from "./utils";
 import * as S from "./styled";
-import { observer } from "mobx-react-lite";
 
 let globalRequest: any = { id: "", request: {} };
 window.addEventListener("message", (e) => {
@@ -66,10 +67,14 @@ const Widget = () => {
     const selected = getStorageJson("last-connect", def);
     const isExist = accountsList.find((t) => t.id === selected.id && t.type === selected.type);
     const acc = isExist ? selected : accountsList[0];
-
-    if (acc.type === ConnectType.Here) connectHere(account?.id || "", requestId, qrCodeRef.current!);
     setAccount(acc);
   }, [request]);
+
+  useEffect(() => {
+    if (!requestId) return;
+    if (account?.type !== ConnectType.Here) return;
+    connectHere(account.id, requestId, qrCodeRef.current!);
+  }, [account, requestId]);
 
   const rejectButton = () => {
     if (isApproving) return;
@@ -86,6 +91,10 @@ const Widget = () => {
           setRequestId(id);
           setApproving(false);
           return;
+        }
+
+        if (event.type === "approving") {
+          setApproving(true);
         }
 
         if (event.topic) window.localStorage.setItem("topic", event.topic || "");
@@ -131,7 +140,7 @@ const Widget = () => {
               className="here-connector-card snap-card"
               onClick={() => {
                 setApproving(true);
-                connectMetamask(account.id, requestId, request).finally(() => setApproving(false));
+                connectMetamask(account.id, requestId, request).catch(() => setApproving(false));
               }}
             >
               <img width={156} height={156} src={require("../assets/metamask.svg")} />
@@ -169,7 +178,9 @@ const Widget = () => {
                 <p>Make sure your Ledger is connected securely, and that the NEAR app is open on your device.</p>
                 <S.ButtonSwitch
                   style={{ marginTop: 16 }}
-                  onClick={() => connectLedger(account.id, requestId, request, setLedgerConnected)}
+                  onClick={() =>
+                    connectLedger(account.id, requestId, request, setLedgerConnected, () => setApproving(true))
+                  }
                 >
                   Click to connect
                 </S.ButtonSwitch>
@@ -187,7 +198,7 @@ const Widget = () => {
                 style={{ width: 300, margin: "auto" }}
                 onClick={() => {
                   setApproving(true);
-                  connectWeb(account.id, requestId, request).finally(() => setApproving(false));
+                  connectWeb(account.id, requestId, request).catch(() => setApproving(false));
                 }}
               >
                 Approve all
@@ -263,6 +274,32 @@ const Widget = () => {
             </>
           )}
         </S.Footer>
+
+        {isApproving && (
+          <div
+            style={{
+              position: "absolute",
+              background: "var(--Elevation-0)",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              display: "flex",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+            }}
+          >
+            <Lottie
+              animationData={require("../assets/loading.json")}
+              style={{ width: 256, height: 256, marginTop: -56 }}
+              width={48}
+              height={48}
+              loop={true}
+            />
+            <H4>Transaction is processing...</H4>
+          </div>
+        )}
       </div>
     </S.HereModal>
   );

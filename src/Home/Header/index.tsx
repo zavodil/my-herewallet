@@ -16,6 +16,7 @@ import Icon from "../../uikit/Icon";
 
 import { ExportAccountWidget } from "./ExportAccountWidget";
 import * as S from "./styled";
+import { generateFromString } from "generate-avatar";
 
 interface Props {
   style?: any;
@@ -53,7 +54,6 @@ export const AccountManager = observer((props: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log("dsfjkd");
     setAvatar("");
     accounts.getAvatar(account.id, account.type).then(setAvatar);
   }, [account]);
@@ -80,7 +80,7 @@ export const AccountManager = observer((props: Props) => {
           if (props.accounts.length > 1) setOpenManager(onlySwitch ? true : false);
         }}
       >
-        <S.AvatarImage style={{ borderWidth: account.id ? 1 : 0 }} src={avatar} />
+        <S.AvatarImage as={avatar ? "img" : "div"} style={{ borderWidth: account.id ? 1 : 0 }} src={avatar} />
         {account.id ? (
           <>
             <div style={{ textAlign: "left", marginTop: -4 }}>
