@@ -34,3 +34,5 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no -r ./.well-known/* fedor@web.herewallet.app:/var/www/here/beta/.well-known
           scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/beta
+          scp -o StrictHostKeyChecking=no -r ./.well-known/* fedor@web.herewallet.app:/var/www/here/web/.well-known
+          scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/web
