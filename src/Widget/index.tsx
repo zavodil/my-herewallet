@@ -12,10 +12,11 @@ import { Formatter, getStorageJson } from "../core/helpers";
 import Currencies from "../core/token/Currencies";
 import { ConnectType } from "../core/types";
 import { accounts } from "../core/Accounts";
-import { ActionButton, H4 } from "../uikit";
+import { ActionButton, Button, H4 } from "../uikit";
 
 import { mobileCheck, connectHere, connectMetamask, connectLedger, connectWeb } from "./utils";
 import * as S from "./styled";
+import Icon from "../uikit/Icon";
 
 let globalRequest: any = { id: "", request: {} };
 window.addEventListener("message", (e) => {
@@ -34,17 +35,20 @@ window.addEventListener("message", (e) => {
 const Widget = () => {
   const [requestId, setRequestId] = useState(globalRequest.id);
   const [request, setRequest] = useState<HereProviderRequest>(globalRequest.request);
-  const [account, setAccount] = useState<{ id: string; type: ConnectType }>();
+  const [account, setAccount] = useState<{ id: string; path?: string; type: ConnectType }>();
   const [isLedger, setLedgerConnected] = useState(false);
   const [isApproving, setApproving] = useState(false);
+  const [isNeedActivate, setNeedActivate] = useState("");
   const qrCodeRef = useRef<HTMLDivElement>(null);
 
   const link = `herewallet://request/${requestId}`;
   const accountsList = toJS(accounts.accounts)
     .concat([
       { id: "", type: ConnectType.Here },
-      { id: "", type: ConnectType.Ledger },
       { id: "", type: ConnectType.Snap },
+      { id: "", path: "44'/397'/0'/0'/0'", type: ConnectType.Ledger } as any,
+      { id: "", path: "44'/397'/0'/0'/1'", type: ConnectType.Ledger } as any,
+      { id: "", path: "44'/397'/0'/0'/2'", type: ConnectType.Ledger } as any,
     ])
     .filter((t) => {
       // @ts-ignore
@@ -61,7 +65,7 @@ const Widget = () => {
     }
 
     const def = accounts.account
-      ? { type: accounts.account.type, id: accounts.account.id }
+      ? { type: accounts.account.type, path: accounts.account.path, id: accounts.account.id }
       : { id: "", type: ConnectType.Here };
 
     const selected = getStorageJson("last-connect", def);
@@ -126,6 +130,8 @@ const Widget = () => {
             style={{ position: "absolute", top: 24 }}
             onSelect={(acc) => {
               setAccount(acc);
+              setNeedActivate("");
+              setLedgerConnected(false);
               localStorage.setItem("last-connect", JSON.stringify(account));
               if (acc.type === ConnectType.Here) {
                 connectHere(account.id, requestId, qrCodeRef.current!);
@@ -172,14 +178,53 @@ const Widget = () => {
                 </h2>
                 <p>You will need to confirm the transaction details on your Ledger</p>
               </>
+            ) : isNeedActivate ? (
+              <>
+                <h2>
+                  Your account is not activated.
+                  <br />
+                  Transfer 0.1 NEAR to your Ledger address
+                </h2>
+
+                <div style={{ display: "flex", gap: 8, width: 300 }}>
+                  <p style={{ lineBreak: "anywhere" }}>{isNeedActivate}</p>
+                  <Button>
+                    <Icon style={{ marginTop: 6, width: 24, height: 24 }} name="copy" />
+                  </Button>
+                </div>
+
+                <S.ButtonSwitch
+                  style={{ marginTop: 16 }}
+                  onClick={() =>
+                    connectLedger(
+                      account,
+                      requestId,
+                      request,
+                      setLedgerConnected,
+                      () => setApproving(true),
+                      setNeedActivate
+                    )
+                  }
+                >
+                  I did, connect again
+                </S.ButtonSwitch>
+              </>
             ) : (
               <>
                 <h2>Connect to your Ledger device</h2>
                 <p>Make sure your Ledger is connected securely, and that the NEAR app is open on your device.</p>
+
                 <S.ButtonSwitch
                   style={{ marginTop: 16 }}
                   onClick={() =>
-                    connectLedger(account.id, requestId, request, setLedgerConnected, () => setApproving(true))
+                    connectLedger(
+                      account,
+                      requestId,
+                      request,
+                      setLedgerConnected,
+                      () => setApproving(true),
+                      setNeedActivate
+                    )
                   }
                 >
                   Click to connect
@@ -192,23 +237,6 @@ const Widget = () => {
         {request != null && account.type === ConnectType.Web && (
           <S.ConnectorWrap>
             <Connector request={toJS(request)} />
-            {accounts.account != null && (
-              <ActionButton
-                disabled={isApproving}
-                style={{ width: 300, margin: "auto" }}
-                onClick={() => {
-                  setApproving(true);
-                  connectWeb(account.id, requestId, request).catch(() => setApproving(false));
-                }}
-              >
-                Approve all
-                {request.type === "call" &&
-                  ` (${Formatter.usd(
-                    +formatNearAmount(parseNearOfTransactions(request.transactions).toString()) *
-                      Currencies.shared.usd("NEAR")
-                  )})`}
-              </ActionButton>
-            )}
           </S.ConnectorWrap>
         )}
 
@@ -272,6 +300,24 @@ const Widget = () => {
                 Don’t have an account yet? Visit <a href="https://my.herewallet.app">my.herewallet.app</a>
               </p>
             </>
+          )}
+
+          {account.type === ConnectType.Web && (
+            <ActionButton
+              disabled={isApproving}
+              style={{ width: 300, margin: "auto" }}
+              onClick={() => {
+                setApproving(true);
+                connectWeb(account.id, requestId, request).catch(() => setApproving(false));
+              }}
+            >
+              Approve all
+              {request.type === "call" &&
+                ` (${Formatter.usd(
+                  +formatNearAmount(parseNearOfTransactions(request.transactions).toString()) *
+                    Currencies.shared.usd("NEAR")
+                )})`}
+            </ActionButton>
           )}
         </S.Footer>
 

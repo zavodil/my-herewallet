@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { HereProviderStatus } from "@here-wallet/core";
 import { useParams } from "react-router-dom";
 import { isMobile } from "is-mobile";

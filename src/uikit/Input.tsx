@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Text } from "./typographic";
 
@@ -19,8 +19,8 @@ type Props =
       postfixStyle?: any;
     });
 
-const HereInput = ({ multiline, postfix, postfixStyle, label, ...props }: Props) => {
-  const usePostfix = !multiline && postfix;
+const HereInput = ({ multiline, postfix = "", postfixStyle, label, ...props }: Props) => {
+  const usePostfix = !multiline;
 
   return (
     <InputWrap
@@ -112,9 +112,12 @@ const InputWrap = styled.label`
     resize: none;
   }
 
+  &:focus-within {
+    box-shadow: 4px 4px 0 0 var(--Black-Primary, #2c3034);
+  }
+
   &:focus-within,
   &.editted {
-    box-shadow: 4px 4px 0 0 var(--Black-Primary, #2c3034);
     ${Label} {
       top: 8px;
       font-size: 12px;

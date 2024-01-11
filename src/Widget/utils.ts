@@ -23,14 +23,15 @@ const sendResponse = async (id: string, data: HereProviderResult) => {
 };
 
 export const connectLedger = async (
-  accountId: string,
+  account: { id: string; type: ConnectType; path?: string },
   requestId: string,
   request: HereProviderRequest,
   onConnected: (is: boolean) => void,
-  onSigned: () => void
+  onSigned: () => void,
+  onNeedActivate: (v: string) => void
 ) => {
-  const creds = storage.getAccount(accountId);
-  const path = creds?.path || "44'/397'/0'/0'/1'";
+  const creds = storage.getAccount(account.id);
+  const path = creds?.path || account.path;
   const ledger = new LedgerSigner(path, onConnected, onSigned);
 
   if (request.type === "sign") {
@@ -48,6 +49,13 @@ export const connectLedger = async (
     const { address, publicKey } = await ledger.getAddress();
     const creds = storage.getAccount(address);
     const account = new NearAccount(address, ConnectType.Ledger, ledger, creds?.jwt);
+    const isAccess = await account.getAccessKeyInfo(address, publicKey).catch(() => null);
+
+    if (!isAccess) {
+      onNeedActivate(address);
+      return;
+    }
+
     const result = await account.sendLocalTransactions(request.transactions, true);
 
     await sendResponse(requestId, {

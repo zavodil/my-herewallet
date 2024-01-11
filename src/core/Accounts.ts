@@ -39,7 +39,6 @@ class Accounts {
     modules: [
       setupSender(),
       setupMeteorWallet(),
-      setupMyNearWallet(),
       setupWalletConnect({
         projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
         chainId: "near:mainnet",
@@ -134,7 +133,12 @@ class Accounts {
           nonce: sign.nonce,
           web_auth: true,
         })
-        .catch(() => "");
+        .catch(() => null);
+
+      if (token == null) {
+        notify("Authorization failed");
+        return;
+      }
 
       if (this.accounts.find((t) => t.id === cred.accountId)) {
         notify("Account already exist...");
@@ -208,34 +212,54 @@ class Accounts {
 
   async connectSelector() {
     return new Promise(async (resolve, reject) => {
-      const selector = await this.selector;
-      const modal = setupModal(selector, { contractId: "herewallet.near" });
-      modal.show();
+      try {
+        const selector = await this.selector;
+        const currentWallet = await selector.wallet().catch(() => null);
 
-      selector.on("signedIn", async ({ walletId }) => {
-        const wallet = await selector.wallet(walletId);
-
-        const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
-        const sign = await wallet.signMessage({
-          nonce: Buffer.from(nonce),
-          recipient: "HERE Wallet",
-          message: "web_wallet",
-        });
-
-        if (sign == null) {
-          reject();
-          return;
+        if (currentWallet) {
+          const [account] = await currentWallet.getAccounts();
+          await currentWallet.signOut();
+          this.disconnect(account.accountId);
         }
 
-        let type = ConnectType.Meteor;
-        if (walletId === ConnectType.Sender) type = ConnectType.Sender;
-        if (walletId === ConnectType.MyNearWallet) type = ConnectType.MyNearWallet;
-        if (walletId === ConnectType.WalletConnect) type = ConnectType.WalletConnect;
+        const modal = setupModal(selector, { contractId: "" });
+        modal.show();
 
-        const cred = { type, accountId: sign.accountId, publicKey: sign.publicKey };
-        await this.addAccount(cred, { ...sign, nonce });
-        resolve(false);
-      });
+        const onSigned = async ({ walletId = "" }) => {
+          try {
+            selector.off("signedIn", onSigned);
+            const wallet = await selector.wallet(walletId);
+            modal.hide();
+
+            const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
+            const sign = await wallet.signMessage({
+              nonce: Buffer.from(nonce),
+              recipient: "HERE Wallet",
+              message: "web_wallet",
+            });
+
+            if (sign == null) {
+              reject();
+              return;
+            }
+
+            let type = ConnectType.Meteor;
+            if (walletId === ConnectType.Sender) type = ConnectType.Sender;
+            if (walletId === ConnectType.MyNearWallet) type = ConnectType.MyNearWallet;
+            if (walletId === ConnectType.WalletConnect) type = ConnectType.WalletConnect;
+
+            const cred = { type, accountId: sign.accountId, publicKey: sign.publicKey };
+            await this.addAccount(cred, { ...sign, nonce });
+            resolve(false);
+          } catch (e) {
+            reject(e);
+          }
+        };
+
+        selector.on("signedIn", onSigned);
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -299,6 +323,7 @@ class Accounts {
       onSuccess: (result: any) => {
         cred.accountId = result.account_id;
         cred.publicKey = result.public_key;
+        console.log(cred);
         cred.path = result.path;
       },
       actions: [

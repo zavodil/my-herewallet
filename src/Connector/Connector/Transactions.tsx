@@ -3,13 +3,15 @@ import { HereProviderRequest } from "@here-wallet/core";
 import { SnapList, SnapItem, useScroll, useDragToScroll, useVisibleElements } from "react-snaplist-carousel";
 import styled from "styled-components";
 
-import { colors } from "../../uikit/theme";
+import { useWallet } from "../../core/Accounts";
 import { Button, H2, Text } from "../../uikit";
+import { colors } from "../../uikit/theme";
 import Icon from "../../uikit/Icon";
 import { ActionView } from "./Action";
 
 export const Connector = ({ request }: { request: HereProviderRequest }) => {
   const snapList = useRef(null);
+  const account = useWallet();
   const goToSnapItem = useScroll({ ref: snapList });
   const selected = useVisibleElements({ ref: snapList, debounce: 10 }, (elements) => elements[0] + 1);
   useDragToScroll({ ref: snapList, disabled: false });
@@ -17,6 +19,8 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
   const nextPage = (diff: number) => {
     goToSnapItem(selected + diff - 1, { animationEnabled: true });
   };
+
+  const tokens = Object.values(account?.tokens.tokens || {});
 
   if (request.type === "import") {
     return (
@@ -92,7 +96,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
               trx.actions.map((action, j) => (
                 <SnapItem key={`${i}_${j}`} width="100%" snapAlign="center">
                   <View style={{ padding: "0 16px", alignItems: "center", justifyContent: "center" }}>
-                    <ActionView receiver={trx.receiverId ?? "Your wallet"} action={action} tokens={[]} />
+                    <ActionView receiver={trx.receiverId ?? "Your wallet"} action={action} tokens={tokens} />
                   </View>
                 </SnapItem>
               ))

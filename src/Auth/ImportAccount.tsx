@@ -18,7 +18,7 @@ const ImportAccount = () => {
   const wallet = useWallet();
 
   if (needActive && wallet) {
-    return <CreateNickname onCreate={(n) => wallet.bindNickname(n)} />;
+    return <CreateNickname onCreate={(n) => wallet.bindNickname(n).then(() => navigate("/"))} />;
   }
 
   return (
@@ -91,6 +91,12 @@ const ImportAccount = () => {
             <Card
               style={{ flexDirection: "row", gap: 12, height: 64, padding: "16px 32px" }}
               onClick={async () => {
+                const isAvailable = await accounts.snap.provider.isSnapsAvailable().catch(() => false);
+                if (!isAvailable) {
+                  window.open("https://metamask.io/download/", "_blank")?.focus();
+                  return;
+                }
+
                 const isNeed = await accounts.connectSnap();
                 if (isNeed) setNeedActive(true);
                 else navigate("/");

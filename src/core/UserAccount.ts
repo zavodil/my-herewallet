@@ -22,6 +22,8 @@ class UserAccount {
   readonly near: NearAccount;
   readonly transactions: TransactionsStorage;
   readonly localStorage: Storage;
+
+  readonly path?: string;
   readonly type: ConnectType;
   readonly id: string;
 
@@ -45,6 +47,10 @@ class UserAccount {
 
     this.id = creds.accountId;
     this.type = creds.type;
+    this.path = creds.path;
+
+    console.log(creds);
+
     this.api = new HereApi(creds.jwt);
     this.localStorage = new Storage(creds.accountId);
 

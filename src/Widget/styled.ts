@@ -163,7 +163,6 @@ export const Links = styled.div`
 `;
 
 export const Footer = styled.div`
-  margin-top: 24px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -312,7 +311,7 @@ export const HereModal = styled.div`
     max-width: 812px;
     height: 524px;
     width: 100%;
-    padding: 96px 20px 32px;
+    padding: 32px 20px;
     gap: 32px;
     left: 50%;
     transform: translate(-50%);

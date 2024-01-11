@@ -1,10 +1,13 @@
-import { action, makeObservable, observable, runInAction, toJS } from "mobx";
+import { makeObservable, observable, runInAction, toJS } from "mobx";
 import { scientificNotationToString } from "@ref-finance/ref-sdk";
+import { formatNearAmount } from "near-api-js/lib/utils/format";
+import { JsonRpcProvider } from "near-api-js/lib/providers";
 
 import { wait } from "../helpers";
-import { FtAsset, FtModel } from "./types";
 import { HereApi } from "../network/api";
 import { accounts } from "../Accounts";
+import { TGAS } from "../constants";
+import { FtAsset, FtModel } from "./types";
 
 interface CurrencyPrice {
   usd: number;
@@ -18,13 +21,14 @@ class Currencies {
 
   public prices: Record<string, CurrencyPrice | undefined> = {};
   public remote = new HereApi("mainnet");
+  public nearGasPrice = "100000000";
 
   get api() {
     return accounts.account?.api || this.remote;
   }
 
   constructor() {
-    makeObservable(this, { prices: observable });
+    makeObservable(this, { prices: observable, nearGasPrice: observable });
 
     try {
       this.prices = JSON.parse(localStorage.getItem("prices") ?? "{}");
@@ -34,6 +38,7 @@ class Currencies {
   }
 
   private async _update() {
+    this.updateNearGas();
     await this.updatePrices();
     await wait(15000);
     this._update();
@@ -61,6 +66,23 @@ class Currencies {
     }
 
     return 2;
+  }
+
+  private rpc = new JsonRpcProvider({ url: "https://rpc.herewallet.app" });
+  async updateNearGas() {
+    const { gas_price } = await this.rpc.gasPrice(null);
+    runInAction(() => {
+      this.nearGasPrice = gas_price.toString();
+    });
+  }
+
+  public getNearGas(tgas: number) {
+    console.log({
+      tgas,
+      gas: this.nearGasPrice,
+      t: (BigInt(this.nearGasPrice) * BigInt(tgas) * BigInt(TGAS)).toString(),
+    });
+    return formatNearAmount((BigInt(this.nearGasPrice) * BigInt(tgas) * BigInt(TGAS)).toString());
   }
 
   private _lastRefresh = 0;

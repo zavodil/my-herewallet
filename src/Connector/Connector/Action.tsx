@@ -4,15 +4,17 @@ import { Action } from "@here-wallet/core";
 import styled from "styled-components";
 
 import DoneIcon from "../../assets/icons/done.svg";
+import { near } from "../../core/token/defaults";
+import { Formatter, formatAmount } from "../../core/helpers";
+import Currencies from "../../core/token/Currencies";
+
 import { H2, H3, Text, SmallText } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
 import { Button } from "../../uikit";
 
 import { parseArgs, parseFunctionCall } from "./parseTransactions";
-import { near } from "../../core/token/defaults";
-import { formatAmount } from "../../core/helpers";
+import { observer } from "mobx-react-lite";
 import { FtModel } from "../../core/token/types";
-import Currencies from "../../core/token/Currencies";
 
 interface Props {
   action: Action;
@@ -20,7 +22,7 @@ interface Props {
   tokens: FtModel[];
 }
 
-export const ActionView = ({ action, receiver, tokens }: Props) => {
+export const ActionView = observer(({ action, receiver, tokens }: Props) => {
   const [isShowArgs, setShowArgs] = useState(false);
 
   switch (action.type) {
@@ -90,7 +92,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
       if (act.ftAmount != null && act.ft != null) {
         return (
           <View style={{ alignItems: "center" }}>
-            <H2 style={{ marginBottom: 8 }}>
+            <H2>
               {act.ftAmount} {act.ft.symbol}
             </H2>
 
@@ -121,14 +123,14 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>{act.nearAmount} NEAR</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${+act.nearAmount * Currencies.shared.usd("NEAR")}
+                  {Formatter.usd(+act.nearAmount * Currencies.shared.usd("NEAR"))}
                 </SmallText>
               </View>
             </View>
             <View style={styles.row}>
               <Text>Gas</Text>
               <View style={{ alignItems: "flex-end" }}>
-                <Text>{act.Tgas} TGas</Text>
+                <Text>{Currencies.shared.getNearGas(act.Tgas)} NEAR</Text>
               </View>
             </View>
           </View>
@@ -161,21 +163,26 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
             </View>
           )}
 
-          <View style={styles.row}>
-            <Text>Deposit</Text>
-            <View style={{ alignItems: "flex-end" }}>
-              <Text>{act.nearAmount} NEAR</Text>
-              <SmallText style={{ color: colors.blackSecondary }}>
-                ${+act.nearAmount * Currencies.shared.usd("NEAR")}
-              </SmallText>
-            </View>
-          </View>
-          <View style={styles.row}>
-            <Text>Gas</Text>
-            <View style={{ alignItems: "flex-end" }}>
-              <Text>{act.Tgas} TGas</Text>
-            </View>
-          </View>
+          {!isShowArgs && (
+            <>
+              <View style={styles.row}>
+                <Text>Deposit</Text>
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text>{act.nearAmount} NEAR</Text>
+                  <SmallText style={{ color: colors.blackSecondary }}>
+                    ${+act.nearAmount * Currencies.shared.usd("NEAR")}
+                  </SmallText>
+                </View>
+              </View>
+
+              <View style={styles.row}>
+                <Text>Gas</Text>
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text>{Currencies.shared.getNearGas(act.Tgas)} NEAR</Text>
+                </View>
+              </View>
+            </>
+          )}
         </View>
       );
 
@@ -217,7 +224,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
           <H2 style={{ marginBottom: 8 }}>Stake</H2>
           <H3>{stake} NEAR</H3>
           <SmallText style={{ color: colors.blackSecondary }}>
-            ${(stake * Currencies.shared.usd("NEAR")).toFixed(6)}
+            {Formatter.usd(stake * Currencies.shared.usd("NEAR"))}
           </SmallText>
           <View style={styles.row}>
             <Text>From</Text>
@@ -225,7 +232,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR")).toFixed(6)}
+                  {Formatter.usd(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR"))}
                 </SmallText>
               </View>
             ) : (
@@ -238,13 +245,13 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
 
     case "Transfer": {
       const deposit = +format.formatNearAmount(action.params.deposit, 6);
-      const nearToken = tokens.find((t) => t.symbol === "NEAR") ?? near;
+      const nearToken = tokens.find((t) => t.symbol === "NEAR")!;
 
       return (
         <View style={{ alignItems: "center" }}>
-          <H2 style={{ marginBottom: 8 }}>{deposit} NEAR</H2>
+          <H2>{deposit} NEAR</H2>
           <SmallText style={{ color: colors.blackSecondary }}>
-            ${(deposit * Currencies.shared.usd("NEAR")).toFixed(6)}
+            {Formatter.usd(deposit * Currencies.shared.usd("NEAR"))}
           </SmallText>
 
           <View style={styles.row}>
@@ -253,7 +260,8 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  ${(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR")).toFixed(6)}
+                  {Formatter.round(nearToken.amountFloat, 4)} NEAR (
+                  {Formatter.usd(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR"))})
                 </SmallText>
               </View>
             ) : (
@@ -271,7 +279,7 @@ export const ActionView = ({ action, receiver, tokens }: Props) => {
     default:
       return null;
   }
-};
+});
 
 const styles = {
   row: {

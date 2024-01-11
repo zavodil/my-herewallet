@@ -69,10 +69,6 @@ const Home = () => {
               >
                 Transfer
               </HereButton>
-
-              <HereButton style={{ ...LinkButtonStyle, marginLeft: 12, width: 150 }} onClick={() => navigate("/stake")}>
-                Stake
-              </HereButton>
             </div>
 
             {account.transactions.list.length > 0 && (
