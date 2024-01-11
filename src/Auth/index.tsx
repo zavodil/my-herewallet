@@ -16,11 +16,6 @@ import { colors } from "../uikit/theme";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [showNickname, setShowNickname] = useState(false);
-
-  if (showNickname) {
-    return <CreateNickname />;
-  }
 
   return (
     <Root>

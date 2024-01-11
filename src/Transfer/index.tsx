@@ -42,8 +42,8 @@ const Transfer = () => {
 
   const tokenAmount = isFiat ? Formatter.round(+amount / cur.usd, cur.precision) : +amount;
   const fiatAmount = isFiat ? +amount : Formatter.round(+amount * cur.usd, cur.precision);
-  const isTooMuch = isFiat ? fiatAmount > user.tokens.fiat(token) : tokenAmount > (token?.amountFloat ?? 0);
-  const isDisabled = isTooMuch || !!receiver.validateError || !receiver.isExist || !token;
+  const isTooMuch = token && isFiat ? fiatAmount > user.tokens.fiat(token) : tokenAmount > (token?.amountFloat ?? 0);
+  const isDisabled = isTooMuch || !!receiver.validateError || !receiver.isExist || !token || tokenAmount <= 0;
 
   useEffect(() => {
     setParams({ recipient, asset, amount, comment, fiat: isFiat ? "true" : "false" });
@@ -132,7 +132,7 @@ const Transfer = () => {
 
           <HereSelect
             label="Select asset"
-            options={tokens}
+            options={tokens.filter((t) => t.amountFloat > 0)}
             value={tokens.find((ft) => ft.symbol === asset)}
             renderOption={(ft: FtModel) => (
               <TokenOption key={ft.id} onClick={() => setAsset(ft.symbol)}>
@@ -157,8 +157,15 @@ const Transfer = () => {
           <div style={{ display: "flex", gap: 12 }}>
             {tokens.slice(0, 3).map((ft) => (
               <TokenAction
-                style={{ height: 56, width: "fit-content", gap: 8, padding: 8, borderRadius: 12 }}
                 onClick={() => setAsset(ft.symbol)}
+                style={{
+                  borderColor: ft.symbol == asset ? "var(--Black-Primary)" : "var(--Stroke)",
+                  width: "fit-content",
+                  borderRadius: 12,
+                  height: 56,
+                  padding: 8,
+                  gap: 8,
+                }}
               >
                 <TokenIcon src={ft.icon} />
                 <div style={{ textAlign: "left", height: 40 }}>
@@ -173,7 +180,8 @@ const Transfer = () => {
         </Card>
 
         <Card style={{ gridArea: "amount", gap: 12, position: "relative" }}>
-          {isTooMuch && <Text style={{ color: colors.red, position: "absolute", right: 24 }}>It's too much</Text>}
+          {isTooMuch && <Text style={{ color: colors.red, position: "absolute", right: 24 }}>Not enough balance</Text>}
+          {!token && <Text style={{ color: colors.red, position: "absolute", right: 24 }}>Please select asset</Text>}
 
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <H4>Amount</H4>

@@ -23,8 +23,8 @@ interface Props {
   left?: boolean;
   onlySwitch?: boolean;
   className?: string;
-  accounts: { id: string; type: ConnectType }[];
-  account: { id: string; type: ConnectType };
+  accounts: { id: string; path?: string; type: ConnectType }[];
+  account: { id: string; type: ConnectType; path?: string };
   onSelect?: (t: { id: string; type: ConnectType }) => void;
 }
 
@@ -44,7 +44,7 @@ export const AccountManager = observer((props: Props) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [openManager, setOpenManager] = useState(false);
   const [isExportOpen, setToggleExport] = useState(false);
-  const [avatar, setAvatar] = useState("");
+  const [avatars, setAvatars] = useState<Record<string, string>>({});
 
   useEffect(() => {
     document.body.addEventListener("click", () => {
@@ -53,10 +53,17 @@ export const AccountManager = observer((props: Props) => {
     });
   }, []);
 
-  useEffect(() => {
-    setAvatar("");
-    accounts.getAvatar(account.id, account.type).then(setAvatar);
-  }, [account]);
+  useEffect(
+    () => {
+      setAvatars({});
+      props.accounts.forEach((acc) => {
+        accounts.getAvatar(acc.id, acc.type).then((url) => setAvatars((t) => ({ ...t, [acc.id]: url })));
+      });
+    },
+    props.accounts.map((t) => t.id)
+  );
+
+  console.log(account.path);
 
   return (
     <div className={className} style={{ display: "flex", ...style }}>
@@ -80,7 +87,11 @@ export const AccountManager = observer((props: Props) => {
           if (props.accounts.length > 1) setOpenManager(onlySwitch ? true : false);
         }}
       >
-        <S.AvatarImage as={avatar ? "img" : "div"} style={{ borderWidth: account.id ? 1 : 0 }} src={avatar} />
+        <S.AvatarImage
+          as={avatars[account.id] ? "img" : "div"}
+          style={{ borderWidth: account.id ? 1 : 0 }}
+          src={avatars[account.id]}
+        />
         {account.id ? (
           <>
             <div style={{ textAlign: "left", marginTop: -4 }}>
@@ -88,7 +99,9 @@ export const AccountManager = observer((props: Props) => {
                 {account.id.length > 16 ? account.id.slice(0, 8) + ".." + account.id.slice(-8) : account.id}
               </Text>
 
-              <TinyText style={{ marginTop: 2 }}>{walletName(account.type)}</TinyText>
+              <TinyText style={{ marginTop: 2 }}>
+                {walletName(account.type)} {account.path?.split("/").pop()}
+              </TinyText>
             </div>
             <Button
               onClick={async (e) => {
@@ -104,7 +117,7 @@ export const AccountManager = observer((props: Props) => {
           <>
             <div style={{ textAlign: "left", marginTop: -4, marginRight: 8 }}>
               <Text style={{ fontWeight: "bold" }}>{walletName(account.type)}</Text>
-              <TinyText style={{ marginTop: 2 }}>Connect new one</TinyText>
+              <TinyText style={{ marginTop: 2 }}>Connect {(account as any).path || "new one"}</TinyText>
             </div>
 
             {props.accounts.length > 1 && <Icon style={{ marginLeft: -8 }} name="cursor-down" />}
@@ -144,26 +157,44 @@ export const AccountManager = observer((props: Props) => {
       )}
 
       {openManager && (
-        <S.AccountMenu style={{ left: left ? 0 : "unset", right: left ? "unset" : 0 }}>
+        <S.AccountMenu
+          style={{
+            left: left ? 0 : "unset",
+            display: "flex",
+            flexDirection: "column",
+            width: 320,
+            gap: 8,
+            right: left ? "unset" : 0,
+          }}
+        >
           {props.accounts
-            .filter((t) => account.id !== t.id)
+            .filter((t) => !account.id || account.id !== t.id)
             .map((acc) => {
               if (acc.id)
                 return (
-                  <S.AccountButton
+                  <S.AccountButtonSelect
                     key={acc.id}
-                    style={{ justifyContent: "space-between" }}
+                    style={{ paddingLeft: 4, gap: 8, width: "100%" }}
                     onClick={() => onSelect?.(toJS(acc))}
                   >
-                    <div style={{ textAlign: "left", marginTop: -4 }}>
+                    <S.AvatarImage
+                      as={avatars[acc.id] ? "img" : "div"}
+                      style={{ borderWidth: acc.id ? 1 : 0 }}
+                      src={avatars[acc.id]}
+                    />
+
+                    <div style={{ textAlign: "left", flex: 1, overflowX: "hidden" }}>
                       <Text style={{ fontWeight: "bold" }}>
                         {acc.id.length > 16 ? acc.id.slice(0, 8) + ".." + acc.id.slice(-8) : acc.id}
                       </Text>
 
-                      <TinyText style={{ marginTop: 2 }}>{walletName(acc.type)}</TinyText>
+                      <TinyText style={{ marginTop: 2 }}>
+                        {walletName(acc.type)} {acc.path}
+                      </TinyText>
                     </div>
 
                     <Button
+                      style={{ marginLeft: "auto", flexShrink: 0 }}
                       onClick={async (e) => {
                         e.stopPropagation();
                         await navigator.clipboard.writeText(acc.id);
@@ -172,12 +203,16 @@ export const AccountManager = observer((props: Props) => {
                     >
                       <Icon name="copy" />
                     </Button>
-                  </S.AccountButton>
+                  </S.AccountButtonSelect>
                 );
 
               if (acc.type === ConnectType.Here)
                 return (
-                  <S.AccountButton key={acc.type} onClick={() => onSelect?.({ id: "", type: ConnectType.Here })}>
+                  <S.AccountButton
+                    key={acc.type + (acc.path || 0)}
+                    style={{ width: "100%" }}
+                    onClick={() => onSelect?.(acc)}
+                  >
                     <img
                       style={{ objectFit: "contain" }}
                       width={28}
@@ -190,20 +225,31 @@ export const AccountManager = observer((props: Props) => {
 
               if (acc.type === ConnectType.Ledger)
                 return (
-                  <S.AccountButton key={acc.type} onClick={() => onSelect?.({ id: "", type: ConnectType.Ledger })}>
+                  <S.AccountButton
+                    key={acc.type + (acc.path || 0)}
+                    style={{ width: "100%" }}
+                    onClick={() => onSelect?.(acc)}
+                  >
                     <img
                       style={{ objectFit: "contain" }}
                       width={28}
                       height={28}
                       src={require("../../assets/ledger.png")}
                     />
-                    <Text>Use Ledger</Text>
+                    <div style={{ textAlign: "left", flex: 1, overflowX: "hidden" }}>
+                      <Text>Use Ledger {acc.path?.split("/").pop()}</Text>
+                      <TinyText>{acc.path}</TinyText>
+                    </div>
                   </S.AccountButton>
                 );
 
               if (acc.type === ConnectType.Snap)
                 return (
-                  <S.AccountButton key={acc.type} onClick={() => onSelect?.({ id: "", type: ConnectType.Snap })}>
+                  <S.AccountButton
+                    key={acc.type + (acc.path || 0)}
+                    style={{ width: "100%" }}
+                    onClick={() => onSelect?.(acc)}
+                  >
                     <img width={24} height={24} src={require("../../assets/metamask.svg")} />
                     <Text style={{ marginLeft: 4 }}>Use Metamask</Text>
                   </S.AccountButton>
@@ -214,6 +260,7 @@ export const AccountManager = observer((props: Props) => {
 
           {!onlySwitch && (
             <S.AccountButton
+              style={{ width: "100%" }}
               onClick={(e) => {
                 e.stopPropagation();
                 setOpenMenu(false);

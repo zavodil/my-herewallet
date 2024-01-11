@@ -99,6 +99,18 @@ export const AccountButton = styled(Button)`
   }
 `;
 
+export const AccountButtonSelect = styled(AccountButton)`
+  & > button {
+    opacity: 0;
+  }
+
+  &:hover {
+    & > button {
+      opacity: 1;
+    }
+  }
+`;
+
 export const AccountMenu = styled.div`
   border-radius: 24px;
   border: 1px solid var(--Stroke, #c7bab8);

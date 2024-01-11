@@ -631,10 +631,10 @@
     sha1 "^1.1.1"
     uuid4 "2.0.3"
 
-"@here-wallet/core@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@here-wallet/core/-/core-1.6.0.tgz#a10442f5c933dd90ceca3386767bbe62b79bbbf6"
-  integrity sha512-1tWrxntOG7pTT4jD20FlUVlPX4LE8eZOlj1A31ar6Vc3OcN0WCvw/Sb0vDnehNhq9jBTaTP/Nx3zC4Pya9kTNg==
+"@here-wallet/core@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@here-wallet/core/-/core-1.6.1.tgz#af4e8c85cc65f47a06079c3ea415a0971924a04e"
+  integrity sha512-rLSh+Jy6REq9ApY3xO3NIs5QeD8qeC44kiEHrhff3ynYKqaaITfehXPjzx6xk791gMSTeCmUOwR4QbR9DTCIYw==
   dependencies:
     near-api-js "^3.0.1"
     sha1 "^1.1.1"

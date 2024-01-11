@@ -23,14 +23,14 @@ const sendResponse = async (id: string, data: HereProviderResult) => {
 };
 
 export const connectLedger = async (
-  accountId: string,
+  account: { id: string; type: ConnectType; path?: string },
   requestId: string,
   request: HereProviderRequest,
   onConnected: (is: boolean) => void,
   onSigned: () => void
 ) => {
-  const creds = storage.getAccount(accountId);
-  const path = creds?.path || "44'/397'/0'/0'/1'";
+  const creds = storage.getAccount(account.id);
+  const path = creds?.path || account.path;
   const ledger = new LedgerSigner(path, onConnected, onSigned);
 
   if (request.type === "sign") {
