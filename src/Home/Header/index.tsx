@@ -173,8 +173,6 @@ export const AccountManager = observer((props: Props) => {
             left: left ? 0 : "unset",
             display: "flex",
             flexDirection: "column",
-            width: 320,
-            gap: 8,
             right: left ? "unset" : 0,
           }}
         >
@@ -188,13 +186,7 @@ export const AccountManager = observer((props: Props) => {
                     style={{ paddingLeft: 4, gap: 8, width: "100%" }}
                     onClick={() => onSelect?.(toJS(acc))}
                   >
-                    <S.AvatarImage
-                      as={avatars[acc.id] ? "img" : "div"}
-                      style={{ borderWidth: acc.id ? 1 : 0 }}
-                      src={avatars[acc.id]}
-                    />
-
-                    <div style={{ textAlign: "left", flex: 1, overflowX: "hidden" }}>
+                    <div style={{ textAlign: "left", flex: 1 }}>
                       <Text style={{ fontWeight: "bold" }}>
                         {acc.id.length > 16 ? acc.id.slice(0, 8) + ".." + acc.id.slice(-8) : acc.id}
                       </Text>
@@ -226,11 +218,14 @@ export const AccountManager = observer((props: Props) => {
                   >
                     <img
                       style={{ objectFit: "contain" }}
-                      width={28}
-                      height={28}
+                      width={32}
+                      height={32}
                       src={require("../../assets/here.svg")}
                     />
-                    <Text>Use HERE Wallet</Text>
+                    <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
+                      <Text>Use HERE Wallet</Text>
+                      <TinyText>Mobile app</TinyText>
+                    </div>
                   </S.AccountButton>
                 );
 
@@ -243,11 +238,11 @@ export const AccountManager = observer((props: Props) => {
                   >
                     <img
                       style={{ objectFit: "contain" }}
-                      width={28}
-                      height={28}
+                      width={32}
+                      height={32}
                       src={require("../../assets/ledger.png")}
                     />
-                    <div style={{ textAlign: "left", flex: 1, overflowX: "hidden" }}>
+                    <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
                       <Text>Use Ledger {acc.path?.split("/").pop()}</Text>
                       <TinyText>{acc.path}</TinyText>
                     </div>
@@ -261,8 +256,11 @@ export const AccountManager = observer((props: Props) => {
                     style={{ width: "100%" }}
                     onClick={() => onSelect?.(acc)}
                   >
-                    <img width={24} height={24} src={require("../../assets/metamask.svg")} />
-                    <Text style={{ marginLeft: 4 }}>Use Metamask</Text>
+                    <img width={32} height={32} src={require("../../assets/metamask.svg")} />
+                    <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
+                      <Text>Use Metamask</Text>
+                      <TinyText>Near Snap</TinyText>
+                    </div>
                   </S.AccountButton>
                 );
 

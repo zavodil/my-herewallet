@@ -89,9 +89,8 @@ export const AccountButton = styled(Button)`
   padding: 4px;
   border-radius: 8px;
   align-items: center;
-  padding: 8px;
   width: 248px;
-  height: 48px;
+  padding: 8px;
 
   &:hover {
     opacity: 1;
@@ -118,6 +117,8 @@ export const AccountMenu = styled.div`
   box-shadow: 0px 16px 40px 0px rgba(44, 48, 52, 0.1);
   position: absolute;
   padding: 16px;
+  max-height: 350px;
+  overflow-y: auto;
 
   z-index: 100000;
   top: 52px;
