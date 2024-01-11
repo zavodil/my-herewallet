@@ -49,7 +49,7 @@
   },
   "scripts": {
     "clean": "rm -rf .parcel-cache ./dist",
-    "build": "yarn clean && parcel build index.html",
+    "build": "yarn clean && parcel build index.html ./connector/index.html",
     "start": "yarn clean && parcel index.html"
   },
   "browserslist": {
