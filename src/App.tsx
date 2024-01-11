@@ -5,21 +5,21 @@ import { Staking } from "./Staking";
 import Home from "./Home";
 
 import { accounts } from "./core/Accounts";
+import Inscription, { InscriptionTokens } from "./Inscription";
 import { CustomRequestResolver, ImportAccountsResolver, KeypomResolver } from "./Connector/RequstResolver";
 import { LoadingPage } from "./Connector/Loading";
 import TransferSuccess from "./Transfer/Success";
-import OpenInApp from "./Connector/OpenInApp";
-import WebConnector from "./Connector";
-import Transfer from "./Transfer";
-import Auth from "./Auth";
-import Apps from "./Apps";
-import Widget from "./Widget";
 import CreateAccount from "./Auth/CreateAccount";
 import ImportAccount from "./Auth/ImportAccount";
+import OpenInApp from "./Connector/OpenInApp";
 import ImportSeed from "./Auth/ImportSeed";
-import Inscription, { InscriptionTokens } from "./Inscription";
-import Mobile from "./Mobile";
+import WebConnector from "./Connector";
+import Transfer from "./Transfer";
 import Settings from "./Settings";
+import Mobile from "./Mobile";
+import Widget from "./Widget";
+import Auth from "./Auth";
+import Apps from "./Apps";
 
 function App() {
   return (
@@ -49,7 +49,7 @@ function App() {
         <Route path="/auth/import" element={<Mobile Comp={ImportAccount} />} />
         <Route path="/auth/import/backup" element={<Mobile Comp={ImportSeed} />} />
 
-        <Route path="/connector" element={<Widget />} />
+        <Route path="/connector/*" element={<Widget />} />
         <Route path="/inscription/tokens" element={<InscriptionTokens />} />
         <Route path="/inscription/:id?" element={<Inscription />} />
 
