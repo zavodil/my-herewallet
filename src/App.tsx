@@ -19,6 +19,7 @@ import ImportAccount from "./Auth/ImportAccount";
 import ImportSeed from "./Auth/ImportSeed";
 import Inscription, { InscriptionTokens } from "./Inscription";
 import Mobile from "./Mobile";
+import Settings from "./Settings";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/transfer/success" element={<Mobile Comp={TransferSuccess} />} />
             <Route path="/transfer/*" element={<Mobile Comp={Transfer} />} />
             <Route path="/apps/*" element={<Mobile Comp={Apps} />} />
+            <Route path="/settings/*" element={<Mobile Comp={Settings} />} />
           </>
         ) : (
           <>

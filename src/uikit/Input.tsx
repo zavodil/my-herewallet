@@ -19,8 +19,8 @@ type Props =
       postfixStyle?: any;
     });
 
-const HereInput = ({ multiline, postfix, postfixStyle, label, ...props }: Props) => {
-  const usePostfix = !multiline && postfix;
+const HereInput = ({ multiline, postfix = "", postfixStyle, label, ...props }: Props) => {
+  const usePostfix = !multiline;
 
   return (
     <InputWrap

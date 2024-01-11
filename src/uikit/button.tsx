@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-export const Button = styled.button`
+export const Button = styled.button<{ $active?: boolean }>`
   border: none;
   background: transparent;
   padding: 0;
@@ -11,6 +11,7 @@ export const Button = styled.button`
   display: flex;
   align-items: center;
   gap: 4px;
+  background: ${(p) => (p.$active ? "#E7DFDE" : "")};
 
   transition: 0.2s opacity;
   &:hover {

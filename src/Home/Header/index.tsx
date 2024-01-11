@@ -16,7 +16,6 @@ import Icon from "../../uikit/Icon";
 
 import { ExportAccountWidget } from "./ExportAccountWidget";
 import * as S from "./styled";
-import { generateFromString } from "generate-avatar";
 
 interface Props {
   style?: any;
@@ -28,7 +27,7 @@ interface Props {
   onSelect?: (t: { id: string; type: ConnectType }) => void;
 }
 
-const walletName = (type: ConnectType) => {
+export const walletName = (type: ConnectType) => {
   if (type === ConnectType.Here) return "HERE Wallet";
   if (type === ConnectType.Ledger) return "Ledger Wallet";
   if (type === ConnectType.Snap) return "Metamask Wallet";
@@ -38,6 +37,7 @@ const walletName = (type: ConnectType) => {
   if (type === ConnectType.WalletConnect) return "Wallet Connect";
   if (type === ConnectType.Sender) return "Sender Wallet";
 };
+
 export const AccountManager = observer((props: Props) => {
   const { style = {}, className, onlySwitch, left, account, onSelect } = props;
   const navigate = useNavigate();
@@ -136,10 +136,21 @@ export const AccountManager = observer((props: Props) => {
           <S.AccountButton
             onClick={(e) => {
               e.stopPropagation();
+              navigate("/settings");
+            }}
+          >
+            <Icon name="settings" />
+            <Text>Settings</Text>
+          </S.AccountButton>
+
+          <S.AccountButton
+            onClick={(e) => {
+              e.stopPropagation();
               setOpenMenu(false);
               setToggleExport(true);
             }}
           >
+            <Icon name="switch_horizontal" />
             <Text>Export wallet</Text>
           </S.AccountButton>
 
