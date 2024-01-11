@@ -27,7 +27,8 @@ export const connectLedger = async (
   requestId: string,
   request: HereProviderRequest,
   onConnected: (is: boolean) => void,
-  onSigned: () => void
+  onSigned: () => void,
+  onNeedActivate: (v: string) => void
 ) => {
   const creds = storage.getAccount(account.id);
   const path = creds?.path || account.path;
@@ -48,6 +49,13 @@ export const connectLedger = async (
     const { address, publicKey } = await ledger.getAddress();
     const creds = storage.getAccount(address);
     const account = new NearAccount(address, ConnectType.Ledger, ledger, creds?.jwt);
+    const isAccess = await account.getAccessKeyInfo(address, publicKey).catch(() => null);
+
+    if (!isAccess) {
+      onNeedActivate(address);
+      return;
+    }
+
     const result = await account.sendLocalTransactions(request.transactions, true);
 
     await sendResponse(requestId, {
