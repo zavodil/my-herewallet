@@ -77,11 +77,6 @@ class Currencies {
   }
 
   public getNearGas(tgas: number) {
-    console.log({
-      tgas,
-      gas: this.nearGasPrice,
-      t: (BigInt(this.nearGasPrice) * BigInt(tgas) * BigInt(TGAS)).toString(),
-    });
     return formatNearAmount((BigInt(this.nearGasPrice) * BigInt(tgas) * BigInt(TGAS)).toString());
   }
 

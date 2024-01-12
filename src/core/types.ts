@@ -6,10 +6,7 @@ export enum ConnectType {
   Here = "here",
   Snap = "snap",
   Local = "local",
-  Meteor = "meteor-wallet",
-  MyNearWallet = "mynearwallet",
   WalletConnect = "wallet-connect",
-  Sender = "sender",
 }
 
 export interface UserCred {

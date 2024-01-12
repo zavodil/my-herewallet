@@ -70,8 +70,13 @@ class Accounts {
       connectSnap: action,
       connectWeb: action,
       select: action,
+      init: action,
     });
 
+    this.init();
+  }
+
+  init() {
     const { accounts, activeAccount } = storage.read();
     if (activeAccount) {
       let data = storage.getAccount(activeAccount);
@@ -214,49 +219,30 @@ class Accounts {
     return new Promise(async (resolve, reject) => {
       try {
         const selector = await this.selector;
-        const currentWallet = await selector.wallet().catch(() => null);
+        const wallet = await selector.wallet("wallet-connect");
+        const exists = await wallet.getAccounts();
 
-        if (currentWallet) {
-          const [account] = await currentWallet.getAccounts();
-          await currentWallet.signOut();
+        if (exists.length > 0) {
+          const [account] = await wallet.getAccounts();
+          await wallet.signOut();
           this.disconnect(account.accountId);
         }
 
-        const modal = setupModal(selector, { contractId: "" });
-        modal.show();
+        const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
+        const sign = await wallet.signMessage({
+          nonce: Buffer.from(nonce),
+          recipient: "HERE Wallet",
+          message: "web_wallet",
+        });
 
-        const onSigned = async ({ walletId = "" }) => {
-          try {
-            selector.off("signedIn", onSigned);
-            const wallet = await selector.wallet(walletId);
-            modal.hide();
+        if (sign == null) {
+          reject();
+          return;
+        }
 
-            const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
-            const sign = await wallet.signMessage({
-              nonce: Buffer.from(nonce),
-              recipient: "HERE Wallet",
-              message: "web_wallet",
-            });
-
-            if (sign == null) {
-              reject();
-              return;
-            }
-
-            let type = ConnectType.Meteor;
-            if (walletId === ConnectType.Sender) type = ConnectType.Sender;
-            if (walletId === ConnectType.MyNearWallet) type = ConnectType.MyNearWallet;
-            if (walletId === ConnectType.WalletConnect) type = ConnectType.WalletConnect;
-
-            const cred = { type, accountId: sign.accountId, publicKey: sign.publicKey };
-            await this.addAccount(cred, { ...sign, nonce });
-            resolve(false);
-          } catch (e) {
-            reject(e);
-          }
-        };
-
-        selector.on("signedIn", onSigned);
+        const cred = { type: ConnectType.WalletConnect, accountId: sign.accountId, publicKey: sign.publicKey };
+        await this.addAccount(cred, { ...sign, nonce });
+        resolve(false);
       } catch (e) {
         reject(e);
       }
@@ -318,12 +304,10 @@ class Accounts {
     const cred = { type: ConnectType.Ledger, accountId: "", publicKey: "", path: "" };
 
     await this.wallet.signAndSendTransaction({
-      // @ts-ignore
       selector: { type: ConnectType.Ledger },
       onSuccess: (result: any) => {
         cred.accountId = result.account_id;
         cred.publicKey = result.public_key;
-        console.log(cred);
         cred.path = result.path;
       },
       actions: [

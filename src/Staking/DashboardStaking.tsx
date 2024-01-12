@@ -45,8 +45,6 @@ export const DashboardStakingScreen = observer(({ user, onStake }: { user: UserA
     </div>
   );
 
-  console.log(user.near.hnear.accrued);
-
   return (
     <S.FullCardView style={{ padding: 0 }}>
       <Flex style={{ justifyContent: "center", height: 56, flexShrink: 0 }}>

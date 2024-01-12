@@ -32,10 +32,7 @@ export const walletName = (type: ConnectType) => {
   if (type === ConnectType.Ledger) return "Ledger Wallet";
   if (type === ConnectType.Snap) return "Metamask Wallet";
   if (type === ConnectType.Web) return "Web Wallet";
-  if (type === ConnectType.Meteor) return "Meteor Wallet";
-  if (type === ConnectType.MyNearWallet) return "MyNearWallet";
   if (type === ConnectType.WalletConnect) return "Wallet Connect";
-  if (type === ConnectType.Sender) return "Sender Wallet";
 };
 
 export const AccountManager = observer((props: Props) => {
@@ -57,13 +54,13 @@ export const AccountManager = observer((props: Props) => {
     () => {
       setAvatars({});
       props.accounts.forEach((acc) => {
-        accounts.getAvatar(acc.id, acc.type).then((url) => setAvatars((t) => ({ ...t, [acc.id]: url })));
+        accounts.getAvatar(acc.id, acc.type).then((url) => {
+          setAvatars((t) => ({ ...t, [acc.id || acc.type]: url }));
+        });
       });
     },
     props.accounts.map((t) => t.id)
   );
-
-  console.log(account.path);
 
   return (
     <div className={className} style={{ display: "flex", ...style }}>
@@ -88,10 +85,11 @@ export const AccountManager = observer((props: Props) => {
         }}
       >
         <S.AvatarImage
-          as={avatars[account.id] ? "img" : "div"}
+          as={account.id ? (avatars[account.id] ? "img" : "div") : "img"}
           style={{ borderWidth: account.id ? 1 : 0 }}
-          src={avatars[account.id]}
+          src={avatars[account.id || account.type]}
         />
+
         {account.id ? (
           <>
             <div style={{ textAlign: "left", marginTop: -4 }}>
@@ -117,7 +115,11 @@ export const AccountManager = observer((props: Props) => {
           <>
             <div style={{ textAlign: "left", marginTop: -4, marginRight: 8 }}>
               <Text style={{ fontWeight: "bold" }}>{walletName(account.type)}</Text>
-              <TinyText style={{ marginTop: 2 }}>Connect {(account as any).path || "new one"}</TinyText>
+              {account.type === ConnectType.Web ? (
+                <TinyText style={{ marginTop: 2 }}>Web wallet</TinyText>
+              ) : (
+                <TinyText style={{ marginTop: 2 }}>Connect {(account as any).path || "new one"}</TinyText>
+              )}
             </div>
 
             {props.accounts.length > 1 && <Icon style={{ marginLeft: -8 }} name="cursor-down" />}
@@ -174,6 +176,7 @@ export const AccountManager = observer((props: Props) => {
             display: "flex",
             flexDirection: "column",
             right: left ? "unset" : 0,
+            width: 260,
           }}
         >
           {props.accounts
@@ -209,6 +212,26 @@ export const AccountManager = observer((props: Props) => {
                   </S.AccountButtonSelect>
                 );
 
+              if (acc.type === ConnectType.Web)
+                return (
+                  <S.AccountButton
+                    key={acc.type + (acc.path || 0)}
+                    style={{ width: "100%" }}
+                    onClick={() => onSelect?.(acc)}
+                  >
+                    <img
+                      width={32}
+                      height={32}
+                      style={{ objectFit: "contain" }}
+                      src={require("../../assets/here.svg")}
+                    />
+                    <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
+                      <Text>Unlock HERE</Text>
+                      <TinyText>Web Wallet</TinyText>
+                    </div>
+                  </S.AccountButton>
+                );
+
               if (acc.type === ConnectType.Here)
                 return (
                   <S.AccountButton
@@ -217,9 +240,9 @@ export const AccountManager = observer((props: Props) => {
                     onClick={() => onSelect?.(acc)}
                   >
                     <img
-                      style={{ objectFit: "contain" }}
                       width={32}
                       height={32}
+                      style={{ objectFit: "contain" }}
                       src={require("../../assets/here.svg")}
                     />
                     <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
@@ -237,9 +260,9 @@ export const AccountManager = observer((props: Props) => {
                     onClick={() => onSelect?.(acc)}
                   >
                     <img
-                      style={{ objectFit: "contain" }}
                       width={32}
                       height={32}
+                      style={{ objectFit: "contain" }}
                       src={require("../../assets/ledger.png")}
                     />
                     <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>

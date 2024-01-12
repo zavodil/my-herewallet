@@ -40,7 +40,6 @@ export const Staking = () => {
 const BootPage = observer(() => {
   const user = useWallet()!;
 
-  console.log(user.near.hnear.totalDividends, user.tokens.hnear.amountFloat);
   if (!user.tokens.hnear.amountFloat && !user.near.hnear.totalDividends) {
     return <PageStaking children={<FirstStaking />} />;
   }

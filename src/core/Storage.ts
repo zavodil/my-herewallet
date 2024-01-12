@@ -91,9 +91,11 @@ interface StorageData {
 const pwd = "dz_3!R$%2pdf~";
 
 class SecureStorage {
+  storage = window.self !== window.top ? sessionStorage : localStorage;
+
   read(): StorageData {
     try {
-      const text = localStorage.getItem("storage")!;
+      const text = this.storage.getItem("storage")!;
       return JSON.parse(decryptText(text, pwd));
     } catch {
       return { accounts: [], activeAccount: null };
@@ -101,12 +103,12 @@ class SecureStorage {
   }
 
   write(data: StorageData) {
-    localStorage.setItem("storage", encryptText(JSON.stringify(data), pwd));
+    this.storage.setItem("storage", encryptText(JSON.stringify(data), pwd));
   }
 
   addAccount(data: UserCred) {
     const salt = crypto.createHash("sha256").update(data.accountId).digest().toString("hex");
-    localStorage.setItem(data.accountId, encryptText(JSON.stringify(data), pwd + salt));
+    this.storage.setItem(data.accountId, encryptText(JSON.stringify(data), pwd + salt));
 
     const storage = this.read();
     storage.activeAccount = data.accountId;
@@ -122,7 +124,7 @@ class SecureStorage {
       storage.activeAccount = storage.accounts[0]?.id || null;
     }
 
-    localStorage.removeItem(id);
+    this.storage.removeItem(id);
     this.write(storage);
   }
 
@@ -134,7 +136,7 @@ class SecureStorage {
 
   getAccount(id: string): UserCred | null {
     try {
-      const text = localStorage.getItem(id)!;
+      const text = this.storage.getItem(id)!;
       const salt = crypto.createHash("sha256").update(id).digest().toString("hex");
       return JSON.parse(decryptText(text, pwd + salt));
     } catch {

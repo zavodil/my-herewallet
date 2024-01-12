@@ -38,8 +38,6 @@ export const waitTransactionResult = async (
 ): Promise<providers.FinalExecutionOutcome> => {
   if (signal?.aborted) throw Error("Aborted");
 
-  console.log("waitTransactionResult", accountId, attemps);
-
   if (attemps > 10) {
     return await provider.txStatus(txHash, accountId);
   }
@@ -50,7 +48,6 @@ export const waitTransactionResult = async (
   let logs: providers.FinalExecutionOutcome;
   try {
     logs = await provider.txStatus(txHash, accountId);
-    console.log("waitTransactionResult", accountId, logs);
   } catch {
     if (signal?.aborted) throw Error("Aborted");
     return await waitTransactionResult(txHash, accountId, provider, attemps + 1, signal);

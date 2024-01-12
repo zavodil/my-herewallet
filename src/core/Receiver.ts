@@ -141,8 +141,6 @@ export class Receiver {
     this.needLoad = true;
     this.isExist = false;
 
-    console.log("setInput");
-
     if (isValidAccountId(this.input)) {
       if (this.input.length === 64 || this.input.endsWith(".near") || this.input.endsWith(".testnet")) {
         this.address = this.input;
