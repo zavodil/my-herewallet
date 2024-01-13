@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { HereProviderRequest } from "@here-wallet/core";
 import { observer } from "mobx-react-lite";
 import Lottie from "lottie-react";
+import isMobile from "is-mobile";
 import { toJS } from "mobx";
 
 import { AccountManager } from "../Home/Header";
@@ -12,11 +13,16 @@ import { Formatter, getStorageJson } from "../core/helpers";
 import Currencies from "../core/token/Currencies";
 import { ConnectType } from "../core/types";
 import { accounts } from "../core/Accounts";
-import { ActionButton, Button, H4 } from "../uikit";
 
-import { mobileCheck, connectHere, connectMetamask, connectLedger, connectWeb } from "./utils";
-import * as S from "./styled";
+import { colors } from "../uikit/theme";
+import { ActionButton, Button, H2, H4, Text } from "../uikit";
+import HereInput from "../uikit/Input";
 import Icon from "../uikit/Icon";
+
+import { connectMetamask, connectLedger, connectWeb } from "./utils";
+import HereQrcode from "./here";
+import * as S from "./styled";
+import { storage } from "../core/Storage";
 
 let globalRequest: any = { id: "", request: {} };
 window.addEventListener("message", (e) => {
@@ -39,24 +45,62 @@ const Widget = () => {
   const [isLedger, setLedgerConnected] = useState(false);
   const [isApproving, setApproving] = useState(false);
   const [isNeedActivate, setNeedActivate] = useState("");
-  const qrCodeRef = useRef<HTMLDivElement>(null);
+  const [password, setPassword] = useState("");
+  const [isInit, setInit] = useState(accounts.accounts.length > 0);
 
-  const link = `herewallet://request/${requestId}`;
+  useEffect(() => {
+    storage.storage = window.sessionStorage;
+  }, []);
+
   const accountsList = toJS(accounts.accounts)
+    .concat(isInit ? [] : [{ id: "", type: ConnectType.Web }])
     .concat([
       { id: "", type: ConnectType.Here },
       { id: "", type: ConnectType.Snap },
       { id: "", path: "44'/397'/0'/0'/0'", type: ConnectType.Ledger } as any,
       { id: "", path: "44'/397'/0'/0'/1'", type: ConnectType.Ledger } as any,
-      { id: "", path: "44'/397'/0'/0'/2'", type: ConnectType.Ledger } as any,
     ])
     .filter((t) => {
-      // @ts-ignore
       const selector = request.selector || {};
+      if (t.type === ConnectType.WalletConnect) return false;
       if (selector.id) return selector.id === t.id;
       if (selector.type) return selector.type === t.type && !t.id;
       return true;
     });
+
+  const handleInit = async () => {
+    const left = window.innerWidth / 2 - 360 / 2;
+    const top = window.innerHeight / 2 - 100;
+    const url = location.origin + "/loading";
+    const params = "popup,toolbar=no,status=no,menubar=no,scrollbars=no,resizable=no,width=360,height=300,visible=none";
+    const w = window.open(url, "HereBridge", `${params}, left=${left}, top=${top}`);
+    if (w == null) return;
+
+    w.addEventListener("load", () => {
+      w.addEventListener("message", (e: any) => {
+        if (!e.data?.storage) return;
+
+        Object.entries(e.data.storage).forEach(([key, value]) => {
+          console.log(key, value);
+          storage.storage.setItem(key, value as any);
+        });
+
+        accounts.init();
+        if (accounts.accounts.length > 0) {
+          localStorage.setItem("last-connect", JSON.stringify(toJS(accounts.accounts)[0]));
+          setInit(true);
+          w.close();
+          return;
+        }
+
+        w.resizeTo(1280, 770);
+        w.moveTo(window.screen.width / 2 - 1280 / 2, window.screen.height / 2 - 770 / 2);
+        w.location.assign(location.origin + "/auth/create");
+      });
+
+      w?.postMessage({ password }, location.origin);
+    });
+  };
 
   useEffect(() => {
     if (request?.type == null) {
@@ -72,13 +116,7 @@ const Widget = () => {
     const isExist = accountsList.find((t) => t.id === selected.id && t.type === selected.type);
     const acc = isExist ? selected : accountsList[0];
     setAccount(acc);
-  }, [request]);
-
-  useEffect(() => {
-    if (!requestId) return;
-    if (account?.type !== ConnectType.Here) return;
-    connectHere(account.id, requestId, qrCodeRef.current!);
-  }, [account, requestId]);
+  }, [request, isInit]);
 
   const rejectButton = () => {
     if (isApproving) return;
@@ -133,9 +171,6 @@ const Widget = () => {
               setNeedActivate("");
               setLedgerConnected(false);
               localStorage.setItem("last-connect", JSON.stringify(account));
-              if (acc.type === ConnectType.Here) {
-                connectHere(account.id, requestId, qrCodeRef.current!);
-              }
             }}
           />
         )}
@@ -155,11 +190,7 @@ const Widget = () => {
           </div>
         )}
 
-        {account.type === ConnectType.Here && (
-          <div className="here-connector-wrap" ref={qrCodeRef}>
-            <div className="here-connector-card"></div>
-          </div>
-        )}
+        {account.type === ConnectType.Here && <HereQrcode requestId={requestId} />}
 
         {account.type === ConnectType.Ledger && (
           <S.LedgerWrap>
@@ -235,9 +266,40 @@ const Widget = () => {
         )}
 
         {request != null && account.type === ConnectType.Web && (
-          <S.ConnectorWrap>
-            <Connector request={toJS(request)} />
-          </S.ConnectorWrap>
+          <>
+            {isInit ? (
+              <S.ConnectorWrap>
+                <Connector request={toJS(request)} />
+              </S.ConnectorWrap>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: -32,
+                  gap: 32,
+                  flex: 1,
+                }}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <H2>Enter password</H2>
+                  <Text style={{ color: colors.blackSecondary }}>
+                    If you don't have a password, leave this input blank
+                  </Text>
+                </div>
+
+                <div style={{ width: 320 }}>
+                  <HereInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+
+                <ActionButton style={{ width: 200 }} onClick={() => handleInit()}>
+                  Unlock HERE
+                </ActionButton>
+              </div>
+            )}
+          </>
         )}
 
         <S.CloseButton onClick={rejectButton}>
@@ -252,8 +314,10 @@ const Widget = () => {
 
           {account.type === ConnectType.Here && (
             <>
-              {mobileCheck() && (
-                <S.ApproveButton onClick={() => window.open(link, "_top")}>Tap to approve HERE</S.ApproveButton>
+              {isMobile() && (
+                <S.ApproveButton onClick={() => window.open(`herewallet://request/${requestId}`, "_top")}>
+                  Tap to approve HERE
+                </S.ApproveButton>
               )}
 
               <S.Links>
@@ -302,7 +366,7 @@ const Widget = () => {
             </>
           )}
 
-          {account.type === ConnectType.Web && (
+          {isInit && account.type === ConnectType.Web && (
             <ActionButton
               disabled={isApproving}
               style={{ width: 300, margin: "auto" }}

@@ -18,7 +18,14 @@ const ImportAccount = () => {
   const wallet = useWallet();
 
   if (needActive && wallet) {
-    return <CreateNickname onCreate={(n) => wallet.bindNickname(n).then(() => navigate("/"))} />;
+    return (
+      <CreateNickname
+        onCreate={async (n) => {
+          if (!n) return navigate("/");
+          await wallet.bindNickname(n).then(() => navigate("/"));
+        }}
+      />
+    );
   }
 
   return (
@@ -85,7 +92,7 @@ const ImportAccount = () => {
               onClick={() => accounts.connectSelector().then(() => navigate("/"))}
             >
               <img style={{ width: 32, height: 32 }} src={require("../assets/near.svg")} />
-              <H3>Wallet selector</H3>
+              <H3>Wallet connect</H3>
             </Card>
 
             <Card

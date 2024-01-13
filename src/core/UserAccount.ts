@@ -49,8 +49,6 @@ class UserAccount {
     this.type = creds.type;
     this.path = creds.path;
 
-    console.log(creds);
-
     this.api = new HereApi(creds.jwt);
     this.localStorage = new Storage(creds.accountId);
 

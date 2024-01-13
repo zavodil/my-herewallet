@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { format } from "near-api-js/lib/utils";
 import { Action } from "@here-wallet/core";
 import styled from "styled-components";
+import { observer } from "mobx-react-lite";
 
-import DoneIcon from "../../assets/icons/done.svg";
 import { near } from "../../core/token/defaults";
 import { Formatter, formatAmount } from "../../core/helpers";
 import Currencies from "../../core/token/Currencies";
@@ -13,8 +13,8 @@ import { colors } from "../../uikit/theme";
 import { Button } from "../../uikit";
 
 import { parseArgs, parseFunctionCall } from "./parseTransactions";
-import { observer } from "mobx-react-lite";
 import { FtModel } from "../../core/token/types";
+import Icon from "../../uikit/Icon";
 
 interface Props {
   action: Action;
@@ -57,7 +57,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
               justifyContent: "flex-start",
             }}
           >
-            <DoneIcon style={{ flexShrink: 0, marginRight: 8 }} />
+            <Icon name="done" style={{ flexShrink: 0, marginRight: 8 }} />
             <Text>View info of your pemitted account</Text>
           </View>
           <View
@@ -67,7 +67,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
               alignSelf: "stretch",
             }}
           >
-            <DoneIcon style={{ flexShrink: 0, marginRight: 8 }} />
+            <Icon name="done" style={{ flexShrink: 0, marginRight: 8 }} />
             {methodNames.length > 0 ? (
               <Text>
                 Call methods:{" "}

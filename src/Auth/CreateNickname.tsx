@@ -60,7 +60,7 @@ const CreateNickname = ({ onCreate }: { onCreate: (n: string) => Promise<void> }
           </div>
 
           <div style={{ display: "flex", gap: 12 }}>
-            <ActionButton stroke style={{ flex: 1 }} onClick={() => navigate("/")} disabled={isCreating}>
+            <ActionButton stroke style={{ flex: 1 }} onClick={() => onCreate("")} disabled={isCreating}>
               Skip
             </ActionButton>
             <ActionButton

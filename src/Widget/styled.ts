@@ -311,7 +311,7 @@ export const HereModal = styled.div`
     max-width: 812px;
     height: 524px;
     width: 100%;
-    padding: 32px 20px;
+    padding: 62px 32px 32px;
     gap: 32px;
     left: 50%;
     transform: translate(-50%);
@@ -361,4 +361,5 @@ export const ConnectorWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: -24px;
 `;
