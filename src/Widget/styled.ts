@@ -5,8 +5,7 @@ export const GlobalStyles = createGlobalStyle`
   html {
     margin: 0;
     padding: 0;
-    background-color: transparent !important;
-    background: transparent !important;
+    background: #f3ebea;
   }
 
   a {
@@ -278,56 +277,20 @@ export const HereModal = styled.div`
     margin: 0;
   }
 
-  backdrop-filter: blur(4px);
-  opacity: 1;
-  visibility: visible;
-  transition: visibility linear, opacity 0.25s;
-  justify-content: center;
-  align-items: center;
-  font-family: Manrope, sans-serif;
-  z-index: 10000;
   display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: absolute;
+  overflow: hidden;
 
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
+  height: 100%;
+  padding: 62px 32px 32px;
+  gap: 32px;
 
-  .here-connector-overlay {
-    position: absolute;
-    background: hwb(0 0% 100% / 0.2);
-    height: 100%;
-    width: 100%;
-  }
-
-  .here-connector-content {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    position: absolute;
-    overflow: hidden;
-
-    max-width: 812px;
-    height: 524px;
-    width: 100%;
-    padding: 62px 32px 32px;
-    gap: 32px;
-    left: 50%;
-    transform: translate(-50%);
-    border: 1px solid #2c3034;
-
-    background: #f3ebea;
-    border-radius: 24px;
-    font-size: 16px;
-    line-height: 1.6;
-    transition: visibility linear, opacity 0.25s;
-
-    @media (max-width: 620px) {
-      border: none;
-      bottom: 0;
-    }
-  }
+  background: #f3ebea;
+  font-size: 16px;
+  line-height: 1.6;
 `;
 
 export const SwitchersWrap = styled.div`

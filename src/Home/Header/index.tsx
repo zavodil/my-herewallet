@@ -172,8 +172,8 @@ export const AccountManager = observer((props: Props) => {
       {openManager && (
         <S.AccountMenu
           style={{
-            left: left ? 0 : "unset",
             display: "flex",
+            left: left ? 0 : "unset",
             flexDirection: "column",
             right: left ? "unset" : 0,
             width: 260,
@@ -210,26 +210,6 @@ export const AccountManager = observer((props: Props) => {
                       <Icon name="copy" />
                     </Button>
                   </S.AccountButtonSelect>
-                );
-
-              if (acc.type === ConnectType.Web)
-                return (
-                  <S.AccountButton
-                    key={acc.type + (acc.path || 0)}
-                    style={{ width: "100%" }}
-                    onClick={() => onSelect?.(acc)}
-                  >
-                    <img
-                      width={32}
-                      height={32}
-                      style={{ objectFit: "contain" }}
-                      src={require("../../assets/here.svg")}
-                    />
-                    <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
-                      <Text>Unlock HERE</Text>
-                      <TinyText>Web Wallet</TinyText>
-                    </div>
-                  </S.AccountButton>
                 );
 
               if (acc.type === ConnectType.Here)

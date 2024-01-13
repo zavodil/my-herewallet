@@ -13,7 +13,6 @@ import CreateAccount from "./Auth/CreateAccount";
 import ImportAccount from "./Auth/ImportAccount";
 import OpenInApp from "./Connector/OpenInApp";
 import ImportSeed from "./Auth/ImportSeed";
-import WebConnector from "./Connector";
 import Transfer from "./Transfer";
 import Settings from "./Settings";
 import Mobile from "./Mobile";
@@ -56,7 +55,7 @@ function App() {
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/g/:id?" element={<CustomRequestResolver />} />
         <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
-        <Route path="/request/:id" element={<WebConnector />} />
+        <Route path="/request/:id" element={<Widget />} />
         <Route path="/import/*" element={<ImportAccountsResolver />} />
         <Route path="*" element={<OpenInApp />} />
       </Routes>

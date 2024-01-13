@@ -91,7 +91,7 @@ interface StorageData {
 const pwd = "dz_3!R$%2pdf~";
 
 class SecureStorage {
-  storage = window.self !== window.top ? sessionStorage : localStorage;
+  storage = localStorage;
 
   read(): StorageData {
     try {
