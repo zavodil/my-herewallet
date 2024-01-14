@@ -69,7 +69,7 @@
       const openPopup = () => {
         if (!requestId) return;
         popup = window.open(
-          location.origin + `/request`,
+          location.origin + `/request/${requestId}`,
           "HereBridge",
           `popup=yes,menubar=no,resizable=no,scrollbars=no,status=no,titlebar=no,toolbar=no,width=820,height=524,left=${
             window.screen.width / 2 - 410
