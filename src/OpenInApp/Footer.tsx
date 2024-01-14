@@ -1,33 +1,33 @@
 import React from "react";
-import { isAndroid, isIOS } from "../../core/helpers";
-import { APP_STORE, GOOGLE_PLAY } from "../../core/constants";
-import nearhereImage from "../../assets/nearhere.png";
-import rockImage from "../../assets/rock.png";
+import { isAndroid, isIOS } from "../core/helpers";
+import { APP_STORE, GOOGLE_PLAY } from "../core/constants";
+import nearhereImage from "../assets/nearhere.png";
+import rockImage from "../assets/rock.png";
 import * as S from "./styled";
 
 const Buttons = () => {
   if (isAndroid())
     return (
       <a href={GOOGLE_PLAY}>
-        <img src={require("../../assets/googleplay.svg")} />
+        <img src={require("../assets/googleplay.svg")} />
       </a>
     );
 
   if (isIOS())
     return (
       <a href={APP_STORE}>
-        <img src={require("../../assets/appstore.svg")} />
+        <img src={require("../assets/appstore.svg")} />
       </a>
     );
 
   return (
     <S.Flexbox>
       <a href={APP_STORE}>
-        <img src={require("../../assets/appstore.svg")} />
+        <img src={require("../assets/appstore.svg")} />
       </a>
 
       <a href={GOOGLE_PLAY}>
-        <img src={require("../../assets/googleplay.svg")} />
+        <img src={require("../assets/googleplay.svg")} />
       </a>
     </S.Flexbox>
   );

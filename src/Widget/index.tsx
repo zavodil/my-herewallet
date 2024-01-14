@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
-import { HereProviderRequest, getRequest } from "@here-wallet/core";
+import { HereProviderRequest, getRequest, createRequest } from "@here-wallet/core";
+import { base_decode } from "near-api-js/lib/utils/serialize";
+import { useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import Lottie from "lottie-react";
 import isMobile from "is-mobile";
 import { toJS } from "mobx";
 
-import { useParams } from "react-router-dom";
 import { AccountManager } from "../Home/Header";
-import { Connector } from "../Connector/Connector/Transactions";
+import { Connector } from "./Connector/Transactions";
 import { parseNearOfTransactions } from "../core/near-chain/utils";
 import { Formatter, getStorageJson } from "../core/helpers";
 import Currencies from "../core/token/Currencies";
@@ -24,20 +25,37 @@ import { connectMetamask, connectLedger, connectWeb } from "./utils";
 import HereQrcode from "./here";
 import * as S from "./styled";
 
-const Widget = () => {
-  const params = useParams();
+const useRequest = () => {
+  // @ts-ignore
+  const input = window.hereRequestId || useParams().id;
   const [request, setRequest] = useState<HereProviderRequest>();
-  const [account, setAccount] = useState<{ id: string; path?: string; type: ConnectType }>();
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    try {
+      const request = JSON.parse(Buffer.from(base_decode(input)).toString("utf8"));
+      createRequest(request).then((id) => {
+        setRequest(request);
+        setId(id);
+      });
+    } catch {
+      // @ts-ignore
+      if (window.hereRequest) setRequest(window.hereRequest);
+      getRequest(id).then(setRequest);
+    }
+  }, [input]);
+
+  return { request, id };
+};
+
+const Widget = () => {
+  const { request, id } = useRequest();
+  const [account, setAccount] = useState({ type: ConnectType.Here, id: "" });
   const [isLedger, setLedgerConnected] = useState(false);
   const [isApproving, setApproving] = useState(false);
   const [isNeedActivate, setNeedActivate] = useState("");
   const [password, setPassword] = useState("");
   const [isInit, setInit] = useState(true);
-
-  useEffect(() => {
-    if (!params.id) return setRequest(undefined);
-    getRequest(params.id).then(setRequest);
-  }, [params.id]);
 
   const accountsList = toJS(accounts.accounts)
     .concat([
@@ -55,16 +73,13 @@ const Widget = () => {
     });
 
   useEffect(() => {
-    if (!request) return;
-
     const def = accounts.account
       ? { type: accounts.account.type, path: accounts.account.path, id: accounts.account.id }
       : { id: "", type: ConnectType.Here };
 
     const selected = getStorageJson("last-connect", def);
     const isExist = accountsList.find((t) => t.id === selected.id && t.type === selected.type);
-    const acc = isExist ? selected : accountsList[0];
-    setAccount(acc);
+    setAccount(isExist ? selected : accountsList[0]);
   }, [request]);
 
   const rejectButton = () => {
@@ -72,7 +87,7 @@ const Widget = () => {
     window.close();
   };
 
-  if (params.id == null || request?.type == null || account == null) {
+  if (request == null) {
     return (
       <S.HereModal>
         <S.GlobalStyles />
@@ -83,21 +98,19 @@ const Widget = () => {
   return (
     <S.HereModal>
       <S.GlobalStyles />
-      {request.type != null && (
-        <AccountManager
-          left
-          onlySwitch
-          account={account}
-          accounts={accountsList}
-          style={{ position: "absolute", top: 24 }}
-          onSelect={(acc) => {
-            setAccount(acc);
-            setNeedActivate("");
-            setLedgerConnected(false);
-            localStorage.setItem("last-connect", JSON.stringify(acc));
-          }}
-        />
-      )}
+      <AccountManager
+        left
+        onlySwitch
+        account={account}
+        accounts={accountsList}
+        style={{ position: "absolute", top: 24 }}
+        onSelect={(acc) => {
+          setAccount(acc);
+          setNeedActivate("");
+          setLedgerConnected(false);
+          localStorage.setItem("last-connect", JSON.stringify(acc));
+        }}
+      />
 
       {account.type === ConnectType.Snap && (
         <div className="here-connector-wrap">
@@ -105,7 +118,7 @@ const Widget = () => {
             className="here-connector-card snap-card"
             onClick={() => {
               setApproving(true);
-              connectMetamask(account.id, params.id!, request).catch(() => setApproving(false));
+              connectMetamask(account.id, id, request);
             }}
           >
             <img width={156} height={156} src={require("../assets/metamask.svg")} />
@@ -114,7 +127,7 @@ const Widget = () => {
         </div>
       )}
 
-      {account.type === ConnectType.Here && <HereQrcode requestId={params.id} />}
+      {account.type === ConnectType.Here && <HereQrcode requestId={id} />}
 
       {account.type === ConnectType.Ledger && (
         <S.LedgerWrap>
@@ -151,14 +164,7 @@ const Widget = () => {
               <S.ButtonSwitch
                 style={{ marginTop: 16 }}
                 onClick={() =>
-                  connectLedger(
-                    account,
-                    params.id!,
-                    request,
-                    setLedgerConnected,
-                    () => setApproving(true),
-                    setNeedActivate
-                  )
+                  connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)
                 }
               >
                 I did, connect again
@@ -172,14 +178,7 @@ const Widget = () => {
               <S.ButtonSwitch
                 style={{ marginTop: 16 }}
                 onClick={() =>
-                  connectLedger(
-                    account,
-                    params.id!,
-                    request,
-                    setLedgerConnected,
-                    () => setApproving(true),
-                    setNeedActivate
-                  )
+                  connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)
                 }
               >
                 Click to connect
@@ -189,11 +188,11 @@ const Widget = () => {
         </S.LedgerWrap>
       )}
 
-      {request != null && account.type === ConnectType.Web && (
+      {account.type === ConnectType.Web && (
         <>
           {isInit ? (
             <S.ConnectorWrap>
-              <Connector request={toJS(request)} />
+              <Connector request={request} />
             </S.ConnectorWrap>
           ) : (
             <div
@@ -239,7 +238,7 @@ const Widget = () => {
         {account.type === ConnectType.Here && (
           <>
             {isMobile() && (
-              <S.ApproveButton onClick={() => window.open(`herewallet://request/${params.id}`, "_top")}>
+              <S.ApproveButton onClick={() => window.open(`herewallet://request/${id}`, "_top")}>
                 Tap to approve HERE
               </S.ApproveButton>
             )}
@@ -296,7 +295,7 @@ const Widget = () => {
             style={{ width: 300, margin: "auto" }}
             onClick={() => {
               setApproving(true);
-              connectWeb(account.id, params.id!, request).catch(() => setApproving(false));
+              connectWeb(account.id, id, request).catch(() => setApproving(false));
             }}
           >
             Approve all
