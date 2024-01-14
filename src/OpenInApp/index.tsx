@@ -1,9 +1,9 @@
 import React from "react";
 import { ActionButton, H1, H2, Text } from "../uikit";
 import Footer from "./Footer";
-import * as S from "./styled";
 import { isMobile } from "is-mobile";
 import HereQRCode from "../uikit/HereQRCode";
+import * as S from "./styled";
 
 const OpenInApp = () => {
   const link = window.location.href
