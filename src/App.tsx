@@ -1,9 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { Staking } from "./Staking";
-import Home from "./Home";
 
+import { Staking } from "./Staking";
 import { accounts } from "./core/Accounts";
 import Inscription, { InscriptionTokens } from "./Inscription";
 import { CustomRequestResolver, ImportAccountsResolver, KeypomResolver } from "./Widget/resolvers";
@@ -18,6 +17,7 @@ import Mobile from "./Mobile";
 import Widget from "./Widget";
 import Auth from "./Auth";
 import Apps from "./Apps";
+import Home from "./Home";
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
             <Route path="/stake/*" element={<Mobile Comp={Staking} />} />
             <Route path="/transfer/success" element={<Mobile Comp={TransferSuccess} />} />
             <Route path="/transfer/*" element={<Mobile Comp={Transfer} />} />
-            <Route path="/apps/*" element={<Mobile Comp={Apps} />} />
+            <Route path="/apps/:id?" element={<Mobile Comp={Apps} />} />
             <Route path="/settings/*" element={<Mobile Comp={Settings} />} />
           </>
         ) : (
@@ -38,7 +38,7 @@ function App() {
             <Route path="/stake/*" element={<Mobile Comp={Auth} />} />
             <Route path="/transfer/success" element={<Mobile Comp={Auth} />} />
             <Route path="/transfer/*" element={<Mobile Comp={Auth} />} />
-            <Route path="/apps/*" element={<Mobile Comp={Apps} />} />
+            <Route path="/apps/:id?" element={<Mobile Comp={Apps} />} />
           </>
         )}
 

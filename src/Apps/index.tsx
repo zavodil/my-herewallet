@@ -1,98 +1,112 @@
-import React from "react";
-import { Card, Container, Root } from "../Home/styled";
-import Header from "../Home/Header";
-import { Button, H0, Text } from "../uikit";
-import apps from "./apps.json";
-import styled from "styled-components";
-import { H3, LargeP, SmallText } from "../uikit/typographic";
+import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
 import { groupBy } from "lodash";
 
+import { BoldP, H3, LargeP, SmallText } from "../uikit/typographic";
+import { Card, Container, Root } from "../Home/styled";
+import { Button } from "../uikit";
+import Header from "../Home/Header";
+import Icon from "../uikit/Icon";
+
+import { AppsGrid, SearchInput, Tab } from "./styled";
+import apps from "./apps.json";
+
 const Apps = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
+  const groups = Object.values(groupBy(apps, (a) => a.type));
+  const searched = groups
+    .filter((group) => !id || group[0].type.replaceAll(" ", "_").toLowerCase() === id)
+    .map((group) =>
+      group.filter((item) => {
+        if (item.type.includes(search)) return true;
+        if (item.contract && item.contract.includes(search)) return true;
+        if (item.name && item.name.includes(search)) return true;
+        if (item.text && item.text.includes(search)) return true;
+        return false;
+      })
+    )
+    .filter((g) => g.length > 0);
+
   return (
     <Root>
       <Header />
       <Container style={{ flexDirection: "column" }}>
-        <div style={{ textAlign: "center", marginTop: 48, marginBottom: 52 }}>
-          <H0>Apps</H0>
-          <Text style={{ marginTop: 8 }}>Connect your wallet and explore more in the ecosystem</Text>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <Tab $active={!id} onClick={() => navigate("/apps")}>
+            <BoldP>All</BoldP>
+          </Tab>
+          {groups
+            .map((t) => t[0].type)
+            .sort()
+            .map((type) => (
+              <Tab
+                key={type}
+                $active={type.replaceAll(" ", "_").toLowerCase() === id}
+                onClick={() => navigate("/apps/" + type.replaceAll(" ", "_").toLowerCase())}
+              >
+                <BoldP>{type}</BoldP>
+              </Tab>
+            ))}
+
+          <SearchInput>
+            <Icon name="search" />
+            <input value={search} onChange={(e) => setSearch(e.target.value.toLowerCase())} />
+          </SearchInput>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          {Object.values(groupBy(apps, (a) => a.type)).map((group) => (
-            <div>
-              <H3>{group[0].type} projects</H3>
-              <AppsGrid>
-                {group.map((app) => (
-                  <Card
-                    style={{ minHeight: 300, position: "relative", marginTop: 48, textDecoration: "none" }}
-                    as="a"
-                    rel="noopener noreferrer"
-                    href={app.site}
-                    target="_blank"
-                  >
-                    <div style={{ marginTop: -60, marginBottom: 24, position: "relative" }}>
-                      <img
-                        style={{ position: "absolute", top: 20, filter: "blur(20px)", opacity: 0.6 }}
-                        src={app.image}
-                      />
-                      <img style={{ zIndex: 10, position: "relative" }} src={app.image} />
-                    </div>
-
-                    <Button
-                      style={{ position: "absolute", top: 16, right: 16 }}
-                      as="a"
+        <div style={{ display: "flex", flexDirection: "column", gap: 32, marginTop: 40 }}>
+          {!searched.length && <H3>No projects found</H3>}
+          {searched.map((group) => {
+            return (
+              <div key={group[0].type}>
+                <H3>{group[0].type}</H3>
+                <AppsGrid>
+                  {group.map((app) => (
+                    <Card
+                      style={{ minHeight: 300, position: "relative", marginTop: 48, textDecoration: "none" }}
                       rel="noopener noreferrer"
-                      href={app.twitter}
+                      href={app.site}
                       target="_blank"
+                      as="a"
                     >
-                      <img style={{ width: 24, height: 24 }} src={require("../assets/twitter.svg")} />
-                    </Button>
+                      <div style={{ marginTop: -60, marginBottom: 24, position: "relative" }}>
+                        <img
+                          style={{ position: "absolute", top: 20, filter: "blur(20px)", opacity: 0.6 }}
+                          src={app.image}
+                        />
+                        <img style={{ zIndex: 10, position: "relative" }} src={app.image} />
+                      </div>
 
-                    <LargeP style={{ fontWeight: 800 }}>{app.name}</LargeP>
-                    <SmallText style={{ marginTop: 12, fontWeight: 600 }}>{app.text}</SmallText>
-                  </Card>
-                ))}
-              </AppsGrid>
-            </div>
-          ))}
+                      <div style={{ display: "flex", gap: 8, position: "absolute", top: 16, right: 16 }}>
+                        {[
+                          { url: app.twitter, img: require("../assets/twitter.svg") },
+                          { url: app.discord, img: require("../assets/discord.svg") },
+                          { url: app.telegram, img: require("../assets/telegram.svg"), size: 28 },
+                        ].map(
+                          (social) =>
+                            social.url != null && (
+                              <Button rel="noopener noreferrer" href={social.url} target="_blank" as="a">
+                                <img style={{ width: social.size || 24, height: social.size || 24 }} src={social.img} />
+                              </Button>
+                            )
+                        )}
+                      </div>
+
+                      <LargeP style={{ fontWeight: 800 }}>{app.name}</LargeP>
+                      <SmallText style={{ marginTop: 12, fontWeight: 600 }}>{app.text}</SmallText>
+                    </Card>
+                  ))}
+                </AppsGrid>
+              </div>
+            );
+          })}
         </div>
       </Container>
     </Root>
   );
 };
-
-const AppsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 24px;
-  width: 100%;
-  margin-top: 12px;
-  margin-bottom: 48px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  @media (max-width: 920px) {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
-
-  img {
-    border-radius: 40px;
-    width: 136px;
-    height: 136px;
-  }
-
-  ${Card} {
-    transition: 0.2s border;
-    &:hover {
-      border: 1px solid var(--Black-Primary);
-    }
-  }
-`;
 
 export default Apps;
