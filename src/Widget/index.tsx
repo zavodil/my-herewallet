@@ -41,7 +41,7 @@ const useRequest = () => {
     } catch {
       // @ts-ignore
       if (window.hereRequest) setRequest(window.hereRequest);
-      getRequest(id).then(setRequest);
+      else getRequest(id).then(setRequest);
     }
   }, [input]);
 
