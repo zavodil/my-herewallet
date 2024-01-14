@@ -1,138 +1,462 @@
 [
   {
-    "site": "https://app.ref.finance/",
     "name": "REF Finance",
     "text": "The leading  AMM DEX on the NEAR Protocol. Also has spot and futures modes built on the Orderly Network and lending mode built on the Burrow Finance",
+    "site": "https://app.ref.finance/",
+    "contract": "asset-manager.orderly-network.near",
     "twitter": "https://twitter.com/finance_ref",
-    "image": "https://pbs.twimg.com/profile_images/1481004943452655618/rvJtgIsU_400x400.jpg",
+    "telegram": "https://t.me/ref_finance",
+    "discord": "https://discord.com/invite/SJBGcfMxJz",
+    "image": "https://storage.herewallet.app/upload/c853fa52-a1b6-4c34-8702-83a84122d0a2.png",
     "type": "DeFi"
   },
   {
-    "text": "Spot and futures DEX from the centralized BTSE exchange, built on Orderly Network",
-    "site": "https://dex.btse.com/",
-    "twitter": "https://twitter.com/BTSEDEX",
-    "image": "https://pbs.twimg.com/profile_images/1696824331605839872/3cmoH8-2_400x400.jpg",
-    "name": "BTSE",
-    "type": "DeFi"
-  },
-  {
-    "text": "Veax is an advanced single-sided liquidity DEX built on NEAR Protoco",
-    "site": "https://app.veax.com/swap",
-    "twitter": "https://twitter.com/veaxlabs",
-    "image": "https://pbs.twimg.com/profile_images/1656278112093478913/q6LPSQt2_400x400.jpg",
     "name": "VEAX",
+    "text": "Veax is an advanced single-sided liquidity DEX built on NEAR Protocol.",
+    "site": "https://app.veax.com/",
+    "contract": "veax.near",
+    "twitter": "https://twitter.com/veaxlabs",
+    "telegram": "https://t.me/veaxlabs",
+    "discord": "https://discord.gg/gkpSZzrebQ",
+    "image": "https://storage.herewallet.app/upload/25ccf8d2-42b1-4aec-a6da-bf7125c89637.png",
     "type": "DeFi"
   },
   {
-    "text": "The first money market on NEAR. Supply and borrow interest-bearing assets",
-    "site": "https://burrow.finance/",
-    "twitter": "https://twitter.com/burrow_finance",
-    "image": "https://pbs.twimg.com/profile_images/1734188905950216192/5Iyp-BNB_400x400.png",
-    "name": "Burrow Finance",
+    "name": "BTSE",
+    "text": "Spot and futures DEX from the centralized BTSE exchange, built on Orderly Network.",
+    "site": "https://dex.btse.com/",
+    "contract": "asset-manager.orderly-network.near",
+    "twitter": "https://twitter.com/BTSEDEX",
+    "image": "https://storage.herewallet.app/upload/9ba2d078-3e7b-499d-ab13-6293497da372.jpg",
     "type": "DeFi"
   },
   {
-    "text": "Liquid Staking on NEAR Protocol without unstaking comissions",
-    "site": "https://my.herewallet.app/stake",
-    "twitter": "https://twitter.com/here_wallet",
-    "image": "https://pbs.twimg.com/profile_images/1545154799699640321/4GoTucoZ_400x400.jpg",
+    "name": "Jump DeFi",
+    "text": "NFT Staking,IDO, Launchpad platform ",
+    "site": "https://www.jumpdefi.xyz/",
+    "contract": "nftstaking.jumpfinance.near",
+    "twitter": "https://twitter.com/JumpDeFi",
+    "discord": "https://discord.gg/j9AakSzAwy",
+    "image": "https://storage.herewallet.app/upload/291e61a2-c2ae-44d8-90c3-423e556b76aa.jpg",
+    "type": "DeFi"
+  },
+  {
     "name": "HERE wallet staking",
+    "text": "Liquid Staking on NEAR Protocol without unstaking fees",
+    "site": "https://my.herewallet.app/stake",
+    "contract": "storage.herewallet.near",
+    "twitter": "https://twitter.com/here_wallet",
+    "telegram": "https://t.me/herewallet",
+    "discord": "https://discord.gg/8Q3gw3gsD2",
+    "image": "https://storage.herewallet.app/upload/e9567878-6ba9-44d9-b9ed-25c2d7c7f783.jpg",
     "type": "DeFi"
   },
   {
+    "name": "Burrow",
+    "text": "The first money market on NEAR. Supply and borrow interest-bearing assets.",
+    "site": "https://burrow.finance/",
+    "contract": "contract.main.burrow.near",
+    "twitter": "hhttps://twitter.com/burrow_finance",
+    "discord": "https://discord.com/invite/gUWBKy9Vur",
+    "image": "https://storage.herewallet.app/upload/5efacb58-0b9f-4177-b485-1623200e7466.png",
+    "type": "DeFi"
+  },
+  {
+    "name": "Metapool",
     "text": "Liquid Staking on NEAR Protocol",
     "site": "https://www.metapool.app/",
+    "contract": "meta-pool.near",
     "twitter": "https://twitter.com/meta_pool",
-    "image": "https://pbs.twimg.com/profile_images/1732166094704488449/q-pM9w0i_400x400.jpg",
-    "name": "Metapool",
+    "telegram": "https://t.me/MetaPoolOfficialGroup",
+    "discord": "https://discord.gg/9DzPZCzzxp",
+    "image": "https://storage.herewallet.app/upload/d7cf4c8b-1e84-4116-a9c1-50dae6c67d2b.png",
     "type": "DeFi"
   },
   {
+    "name": "LiNEAR",
     "text": "Liquid Staking on NEAR Protocol",
     "site": "https://linearprotocol.org/",
+    "contract": "linear-protocol.near",
     "twitter": "https://twitter.com/LinearProtocol",
-    "image": "https://pbs.twimg.com/profile_images/1633344453065977856/Tz6Zbq_W_400x400.jpg",
-    "name": "Linear",
+    "discord": "https://discord.gg/9DzPZCzzxp",
+    "image": "https://storage.herewallet.app/upload/e7aaae8c-6aeb-420b-bb14-4303aaf7d9d0.jpg",
     "type": "DeFi"
   },
   {
-    "text": "The permissionless liquidity layer for Web3 trading",
-    "site": "https://orderly.network/",
-    "twitter": "https://twitter.com/OrderlyNetwork",
-    "image": "https://pbs.twimg.com/profile_images/1610066785025523713/2iij3ydV_400x400.jpg",
     "name": "Orderly Network",
+    "text": "The permissionless liquidity layer for Web3 trading. A single, shared Omnichain orderbook across all blockchains.",
+    "site": "https://orderly.network/",
+    "contract": "asset-manager.orderly-network.near",
+    "twitter": "https://twitter.com/OrderlyNetwork",
+    "discord": "https://discord.com/invite/orderlynetwork",
+    "image": "https://storage.herewallet.app/upload/209b558d-69f1-4f7b-8a60-3e2aeab58d48.jpg",
     "type": "DeFi"
   },
   {
-    "text": "NFT Marketplace & Aggregator",
-    "site": "https://www.tradeport.xyz/",
-    "twitter": "https://twitter.com/tradeportxyz",
-    "image": "https://pbs.twimg.com/profile_images/1565351982268760064/ihFcIVqC_400x400.png",
-    "name": "Tradeport",
-    "type": "NFT"
+    "name": "Jumbo",
+    "text": "AMM dex on NEAR Protocol.",
+    "site": "https://dex.btse.com/",
+    "contract": "v1.jumbo_exchange.near",
+    "twitter": "https://twitter.com/jumbo_exchange",
+    "telegram": "https://t.me/jumbo_exchange",
+    "image": "https://storage.herewallet.app/upload/cc3cee29-3fa5-4e1b-b15d-1d3fe99b032f.png",
+    "type": "DeFi"
   },
   {
-    "text": "NFT Marketplace",
-    "site": "https://paras.id/",
-    "twitter": "https://twitter.com/ParasHQ",
-    "image": "https://pbs.twimg.com/profile_images/1622813258800578560/z0g_O0oc_400x400.jpg",
     "name": "Paras",
+    "text": "Create, Trade, and Collect Digital Collectibles. All-in-one social NFT marketplace for creators and collectors.",
+    "site": "https://paras.id/",
+    "contract": "marketplace.paras.near",
+    "twitter": "https://twitter.com/ParasHQ",
+    "telegram": "https://t.me/parasannouncement",
+    "image": "https://storage.herewallet.app/upload/5a401dee-5496-450f-b19d-d6346897f9be.jpg",
     "type": "NFT"
   },
   {
-    "text": "Bodega is a dynamic, composable NFT infrastructure, digital traits marketplace & launchpad",
-    "site": "https://www.bodega-nft.io/",
-    "twitter": "https://twitter.com/Bodega_Web3",
-    "image": "https://pbs.twimg.com/profile_images/1696922404700798977/HIZVkad3_400x400.jpg",
-    "name": "Bogeda",
+    "name": "TradePort",
+    "text": "Trading platform aggregating NFTs from all marketplaces across NEAR",
+    "site": "tradeport.xyz",
+    "contract": "market.tradeport.near",
+    "twitter": "https://twitter.com/tradeportxyz",
+    "discord": "http://discord.gg/b8qYwxTr3K",
+    "image": "https://storage.herewallet.app/upload/9918ba3d-9be0-4915-b805-46aec73f0e35.png",
     "type": "NFT"
   },
   {
-    "text": "All inclusive hands-on onboarding platform to NEAR Protocol connecting NEAR Ecosystem projects to pro-active community members",
+    "name": "Mintbase",
+    "text": "An ownership and scarcity hub for creators and developers pioneering utility NFTs in AI, payments, rewards, tickets, art, memberships",
+    "site": "https://www.mintbase.xyz/",
+    "contract": "mintbase1.near",
+    "twitter": "https://twitter.com/mintbase",
+    "telegram": "https://mintbase.xyz/telegram",
+    "image": "https://storage.herewallet.app/upload/beca6028-4a76-4cb6-a5d3-22fb30e431cb.png",
+    "type": "NFT"
+  },
+  {
+    "name": "ShardDog",
+    "text": "Marketing platform for empowering creators, brands, and projects to leverage digital collectables",
+    "site": "https://shard.dog/",
+    "contract": "mint.sharddog.near",
+    "twitter": "https://twitter.com/sharddog",
+    "image": "https://storage.herewallet.app/upload/10373b51-d608-4598-8129-c8a5f1be9266.jpg",
+    "type": "NFT"
+  },
+  {
+    "name": "Genadrop",
+    "text": "GenaDrop is the ultimate no code generative NFT creator, minter, and marketplace.",
+    "site": "https://www.genadrop.com/",
+    "contract": "nft.genadrop.near",
+    "twitter": "https://twitter.com/genadrop",
+    "telegram": "https://t.me/genadrop",
+    "discord": "https://discord.gg/4vdtmQqz6d",
+    "image": "https://storage.herewallet.app/upload/d64256d2-85a0-4028-9298-893f7b1055ae.jpg",
+    "type": "NFT"
+  },
+  {
+    "name": "El Cafe Cartel",
+    "text": "El Cafe Cartel is a Web 3.0 lifestyle brand dedicated to creating iconic PFP art, vibrant community, and single origin coffee.",
+    "site": "https://www.elcafecartel.com/project",
+    "contract": "staking.elcafecartel.near",
+    "twitter": "https://twitter.com/ElCafeCartel",
+    "discord": "https://discord.gg/k5YJnz9RY2",
+    "image": "https://storage.herewallet.app/upload/98531a7f-33d6-4245-b164-8a99b5b319fa.jpg",
+    "type": "NFT"
+  },
+  {
+    "name": "NEAR SOCIAL",
+    "text": "Near Social - social data protocol on NEAR Protocol",
+    "site": "https://near.social/",
+    "contract": "social.near",
+    "twitter": "https://twitter.com/nearsocial_?lang=en",
+    "telegram": "https://t.me/NearSocial",
+    "image": "https://storage.herewallet.app/upload/1ea0ace6-0e2a-43ea-a5f1-9536320eb085.jpg",
+    "type": "Social"
+  },
+  {
+    "name": "Learn NEAR Club",
+    "text": "All inclusive hands-on onboarding platform that connects NEAR Ecosystem projects to pro-active community members via (L)Earn method.",
     "site": "https://learnnear.club/",
+    "contract": "login.learnclub.near",
     "twitter": "https://twitter.com/LearnNear",
-    "image": "https://pbs.twimg.com/profile_images/1441054604716875787/CMsEe0BI_400x400.jpg",
-    "name": "Learn Near Club",
+    "telegram": "https://t.me/LearnNEARClub",
+    "image": "https://storage.herewallet.app/upload/d272e638-f833-496e-9669-2413b4e8bfcf.jpg",
     "type": "Social"
   },
   {
-    "text": "On-chain tools empowering communities to OWN, CONTROL and MONETISE their social data.",
-    "site": "https://popula.io/",
-    "twitter": "https://twitter.com/beepopula",
-    "image": "https://pbs.twimg.com/profile_images/1724934299441336320/Kkvr4Ryo_400x400.jpg",
     "name": "Popula",
+    "text": "On-chain tools empowering communities to OWN, CONTROL and MONETISE their social data",
+    "site": "https://popula.io/",
+    "contract": "app.popula.near",
+    "twitter": "https://twitter.com/beepopula",
+    "discord": "https://discord.com/invite/tnWS95Kwdb",
+    "image": "https://storage.herewallet.app/upload/a01398a1-6ce2-44cd-b665-2a1ff821f8e2.jpg",
     "type": "Social"
   },
   {
-    "text": "Decentralized Customizable Social Network on NEAR Protocol",
-    "site": "https://near.social",
-    "twitter": "https://twitter.com/NearSocial_",
-    "image": "https://pbs.twimg.com/profile_images/1587521388751060992/Gmm9Tqpa_400x400.jpg",
-    "name": "Near Social",
+    "name": "NEARWEEK",
+    "text": "The Official NEAR (BOS) Newsletter & Community Platform and Research",
+    "site": "https://nearweek.com/",
+    "twitter": "https://twitter.com/NEARWEEK",
+    "telegram": "https://t.me/nearweek",
+    "image": "https://storage.herewallet.app/upload/d51764e9-f840-4e44-ae9f-5b1072ff18a9.jpg",
     "type": "Social"
   },
   {
-    "text": "Data & Analytics on NEARProtocol",
-    "site": "https://pikespeak.ai/",
-    "twitter": "https://twitter.com/pikespeak_ai",
-    "image": "https://pbs.twimg.com/profile_images/1716821282095050752/PoebykJN_400x400.jpg",
     "name": "Pikespeak",
-    "type": "Explorer"
+    "text": "Data & Analytics on NEAR Protocol",
+    "site": "https://pikespeak.ai/",
+    "contract": "subscription.pikespeak.near",
+    "twitter": "https://twitter.com/pikespeak_ai",
+    "image": "https://storage.herewallet.app/upload/376d4758-c9cb-478e-88f5-9fd827fefbb4.jpg",
+    "type": "Infrastructure"
   },
   {
-    "text": "Near Explorer",
-    "site": "https://nearblocks.io",
+    "name": "NearBlocks",
+    "text": "NearBlocks is a Blockchain Explorer and Analytics Platform for Near Protocol.",
+    "site": "https://nearblocks.io/",
     "twitter": "https://twitter.com/nearblocks",
-    "image": "https://pbs.twimg.com/profile_images/1586001587675308033/YOx7JRA2_400x400.jpg",
-    "name": "Nearblocks",
-    "type": "Explorer"
+    "image": "https://storage.herewallet.app/upload/773f402e-eef9-4805-a7a9-95ab37f3d33d.jpg",
+    "type": "Infrastructure"
   },
   {
-    "type": "Game",
+    "name": "Defillama",
+    "text": "Open and transparent DeFi analytics.",
+    "site": "https://defillama.com/chain/Near",
+    "image": "https://storage.herewallet.app/upload/6f796257-69d7-438c-9aeb-e63835ee834e.jpg",
+    "type": "Infrastructure"
+  },
+  {
+    "name": "Ref Analytics",
+    "text": "Ref Analytics (Sodaki) is a minimal data analytics web app, built on top of Ref Finance.",
+    "site": "https://stats.ref.finance/",
+    "image": "https://storage.herewallet.app/upload/c853fa52-a1b6-4c34-8702-83a84122d0a2.png",
+    "type": "Infrastructure"
+  },
+  {
+    "name": "Pulsar Finance",
+    "text": "The Portfolio Manager",
+    "site": "pulsar.finance",
+    "twitter": "https://twitter.com/pulsarfinance",
+    "telegram": "https://t.me/pulsarfinance",
+    "image": "https://storage.herewallet.app/upload/3da830fb-8d1f-4b07-a715-aff0f2fb6f5d.jpg",
+    "type": "Infrastructure"
+  },
+  {
+    "name": "DEX Screener",
+    "text": "Realtime DEX analytics",
+    "site": "https://dexscreener.com/near",
+    "image": "https://storage.herewallet.app/upload/eb55b121-df04-40d0-b258-35fb4d406f8b.jpg",
+    "type": "Infrastructure"
+  },
+  {
+    "name": "NEAR-STAKING",
+    "text": "View all information about staking in the NEAR Protocol",
+    "site": "https://near-staking.com/",
+    "image": "https://storage.herewallet.app/upload/3b400658-9768-4769-ada0-8875870c9c30.png",
+    "type": "Infrastructure"
+  },
+  {
+    "name": "HEROES",
+    "text": "Identify bounties, connect with projects and get rewarded, all through the NEAR ecosystem",
+    "site": "https://heroes.build/",
+    "twitter": "https://twitter.com/heroes_build",
+    "telegram": "https://t.me/+DYD6bL5sHclkMzRk",
+    "image": "https://storage.herewallet.app/upload/3c0246bd-4061-4360-9f5b-d39bbdc49f0f.png",
+    "type": "Social"
+  },
+  {
+    "name": "Arkana",
+    "text": "Thrilling & Rewarding Experiences with Digital Items",
+    "site": "https://arkana.gg/",
+    "twitter": "https://twitter.com/ArkanaHQ",
+    "image": "https://storage.herewallet.app/upload/5a975a98-e995-4811-b361-5d1fc240e41b.jpg",
+    "type": "Social"
+  },
+  {
+    "name": "Ludero",
+    "text": "Gather high quality zero party data, reward quality engagement and increase your communities Life Time Value",
+    "site": "https://www.ludero.com/",
+    "twitter": "https://twitter.com/luder0",
+    "telegram": "https://t.me/LuderoOfficial",
+    "image": "https://storage.herewallet.app/upload/a6a244b5-9c4b-4096-b369-20aedc6a8980.jpg",
+    "type": "Social"
+  },
+  {
+    "name": "Rainbow Bridge",
+    "text": "Transfer tokens between Ethereum, NEAR & Aurora!",
+    "site": "https://rainbowbridge.app/",
+    "contract": "aurora",
+    "image": "https://storage.herewallet.app/upload/5745e806-7a6b-4690-800a-1d0e5af7781b.webp",
+    "type": "Bridge"
+  },
+  {
+    "name": "Electron Labs",
+    "text": "Crosschain bridging with zero knowledge proofs",
+    "site": "https://mainnet.electronlabs.org/bridge",
+    "contract": "token_receiver.zkrouter.near",
+    "twitter": "https://twitter.com/labs_electron",
+    "telegram": "https://t.me/zkElectron",
+    "image": "https://storage.herewallet.app/upload/40f474a5-1f22-499c-b99c-9098d3089b73.jpg",
+    "type": "Bridge"
+  },
+  {
+    "name": "XP.Network",
+    "text": "An NFT bridge connecting 20+ EVM and non-EVM blockchains",
+    "site": "https://xp.network/",
+    "contract": "1a5c1f4fea55549b4cb8746f42f0a9d79e5aa7a91d3596f12fdd592db15d803e",
+    "twitter": "https://twitter.com/xpnetwork_",
+    "telegram": "https://t.me/xp_network",
+    "discord": "https://discord.com/invite/g3vkcsmd38",
+    "image": "https://storage.herewallet.app/upload/19a40fe4-912a-437a-8589-4505a7e06725.jpg",
+    "type": "Bridge"
+  },
+  {
+    "name": "Ludero",
+    "text": "Gather high quality zero party data, reward quality engagement and increase your communities Life Time Value",
+    "site": "https://app.ludero.com/",
+    "contract": "subscription.pikespeak.near",
+    "twitter": "https://twitter.com/luder0",
+    "telegram": "https://t.me/LuderoOfficial",
+    "image": "https://storage.herewallet.app/upload/a6a244b5-9c4b-4096-b369-20aedc6a8980.jpg",
+    "type": "Social"
+  },
+  {
+    "name": "PotLock",
+    "text": "PotLock is bringing public goods funding legos to NEAR. Direct donations & on chain referrals built on Web3 social. Quadratic funding soon.",
+    "site": "https://app.potlock.org/",
+    "contract": "social.near",
+    "twitter": "https://twitter.com/potlock_",
+    "image": "https://storage.herewallet.app/upload/8897aaf4-0ede-41b2-9bca-5460c2627bf8.jpg",
+    "type": "Other"
+  },
+  {
+    "name": "Pitchtalk",
+    "text": "Connect, showcase, and elevate your project in the web3 universe.",
+    "site": "https://pitchtalk.com/",
+    "twitter": "https://twitter.com/pitchtalk_com",
+    "telegram": "https://t.me/pitchtalk_official",
+    "image": "https://storage.herewallet.app/upload/50b824ec-ce52-471a-81d7-8a1291f02d5d.png",
+    "type": "Other"
+  },
+  {
+    "name": "NEAT Protocol",
+    "text": "A rollup scaling solution based on inscription technology. Built by some of the earliest contributors to NEAR Protocol, NEAT pioneered NRC-20, the 1st inscription standard on the NEAR Blockchain.",
+    "site": "https://neatprotocol.ai/",
+    "contract": "inscription.near",
+    "twitter": "https://twitter.com/inscriptionneat",
+    "telegram": "https://t.me/neat_inscription",
+    "image": "https://storage.herewallet.app/upload/4a4a8599-0e7f-4b4a-897b-c8d9cc2ae687.jpg",
+    "type": "Other"
+  },
+  {
+    "name": "ZOMLAND",
     "text": "Play-To-Earn NFT Collectible Game",
     "site": "https://zomland.com/",
+    "contract": "zomland.near",
     "twitter": "https://twitter.com/Zomland_Game",
-    "image": "https://pbs.twimg.com/profile_images/1508387956704350209/gfVyJfM6_400x400.jpg",
-    "name": "Zomland"
+    "telegram": "https://t.me/zomland_official",
+    "discord": "https://discord.gg/Te3GkcJPjt",
+    "image": "https://storage.herewallet.app/upload/99fc0fd9-3867-4a53-828c-803151779353.jpg",
+    "type": "Games"
+  },
+  {
+    "name": "Moonshot",
+    "text": "Crash Game on NEAR Protocol",
+    "site": "https://moonshot.win/crash",
+    "contract": "nearcrashnft.near",
+    "twitter": "https://twitter.com/moonshot_win",
+    "discord": "https://discord.gg/nmM53SHRQn",
+    "image": "https://storage.herewallet.app/upload/eae2c701-799c-4d2f-9c87-f3d8884abb52.jpg",
+    "type": "Games"
+  },
+  {
+    "name": "ENG chat",
+    "text": "Official chat in English",
+    "telegram": "https://t.me/cryptonear",
+    "image": "https://storage.herewallet.app/upload/b47115e7-d2cf-444d-b930-8d40b495fa0e.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Protocol Official (ENG)",
+    "telegram": "https://t.me/cryptonear",
+    "image": "https://storage.herewallet.app/upload/b47115e7-d2cf-444d-b930-8d40b495fa0e.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Vietnam Hub",
+    "twitter": "https://twitter.com/NearVietnamHub",
+    "telegram": "https://storage.herewallet.app/upload/2220d542-627f-47ab-9130-bab9d0e83799.jpg",
+    "image": "https://storage.herewallet.app/upload/b47115e7-d2cf-444d-b930-8d40b495fa0e.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "Near Protocol Turkey",
+    "twitter": "https://twitter.com/near_turkey",
+    "telegram": "https://t.me/near_tr",
+    "image": "https://storage.herewallet.app/upload/833ec51b-96d7-438c-938c-b8f156293b54.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR NATIVE: Russian-language chat",
+    "twitter": "https://twitter.com/near_protocol",
+    "telegram": "https://t.me/near_protocol",
+    "image": "https://storage.herewallet.app/upload/d2fbf439-af2c-4daf-8a78-b8c1653e7f00.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "Near Ukraine Guild",
+    "twitter": "https://twitter.com/nearuaguild",
+    "telegram": "https://t.me/nearprotocolua",
+    "image": "https://storage.herewallet.app/upload/3a5f6a4c-23a5-4cb9-ae59-93fc15817059.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Indonesia",
+    "twitter": "https://twitter.com/nearindonesia",
+    "telegram": "https://t.me/NEARIndonesiaHQ",
+    "image": "https://storage.herewallet.app/upload/ede46cba-f3d5-4cf7-b963-16bb6d35bedc.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Brazil",
+    "twitter": "https://twitter.com/nearbrazilguild",
+    "telegram": "https://t.me/nearbrasil",
+    "image": "https://storage.herewallet.app/upload/c159f2d8-eeb1-4758-944c-42dd212eb796.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Korea DAO",
+    "twitter": "https://twitter.com/NearKoreaDAO",
+    "telegram": "https://t.me/NEARKoreaDAO",
+    "image": "https://storage.herewallet.app/upload/39998d9a-1123-4c3b-8173-5284a0696198.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR India",
+    "twitter": "https://twitter.com/NearIndia",
+    "telegram": "https://t.me/nearindia",
+    "image": "https://storage.herewallet.app/upload/074bd828-6d3a-4560-802b-c1b8e224b6dd.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Arabic",
+    "twitter": "https://twitter.com/NEAR_Arabic",
+    "telegram": "https://t.me/NEAR_Arabic",
+    "image": "https://storage.herewallet.app/upload/d07b4587-2e4f-4d87-8c4c-b028fb92db20.jpg",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR China",
+    "twitter": "https://twitter.com/NEAR_China",
+    "telegram": "https://t.me/NEAR_China",
+    "image": "https://storage.herewallet.app/upload/6f07f613-337e-48cd-924f-fbe50a987e75.png",
+    "type": "Chats"
+  },
+  {
+    "name": "NEAR Hausa",
+    "twitter": "https://twitter.com/NearHausa",
+    "telegram": "https://t.me/NearHausaa",
+    "image": "https://storage.herewallet.app/upload/77abbcc2-0aa9-49e8-8909-0b44c6c1bf13.jpg",
+    "type": "Chats"
   }
 ]
