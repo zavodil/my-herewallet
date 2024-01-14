@@ -29,7 +29,7 @@ const useRequest = () => {
   // @ts-ignore
   const input = window.hereRequestId || useParams().id;
   const [request, setRequest] = useState<HereProviderRequest>();
-  const [id, setId] = useState("");
+  const [id, setId] = useState(input);
 
   useEffect(() => {
     try {
