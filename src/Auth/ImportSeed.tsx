@@ -7,7 +7,6 @@ import { H1, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import HereInput from "../uikit/Input";
 import Header from "../Home/Header";
-
 import { Root } from "./styled";
 
 const ImportAccount = () => {
@@ -63,7 +62,7 @@ const ImportAccount = () => {
               if (isCreating) return;
               setCreating(true);
               accounts
-                .importAccount({ seed: value })
+                .importAccount(value)
                 .then(() => navigate("/"))
                 .finally(() => setCreating(false));
             }}
