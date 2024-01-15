@@ -107,8 +107,8 @@ export const WordItem = styled.div`
   display: flex;
   width: 108px;
   height: 40px;
-  padding: 10px 18px;
-  justify-content: center;
+  padding: 10px;
+  justify-content: flex-start;
   align-items: center;
   flex-shrink: 0;
 
@@ -118,6 +118,16 @@ export const WordItem = styled.div`
   font-style: normal;
   font-weight: 600;
   line-height: 20px;
+
+  span:first-child {
+    color: var(--Black-Secondary);
+    font-size: 13px;
+  }
+
+  span:last-child {
+    margin: auto;
+    margin-top: -2px;
+  }
 `;
 
 export const WordsWrap = styled.div`

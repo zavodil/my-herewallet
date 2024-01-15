@@ -56,7 +56,10 @@ const CreateAccount = () => {
 
           <WordsWrap style={{ marginTop: 40 }}>
             {seed?.split(" ").map((item, i) => (
-              <WordItem key={i}>{item}</WordItem>
+              <WordItem key={i}>
+                <span>{i + 1}.</span>
+                <span>{item}</span>
+              </WordItem>
             ))}
 
             <div style={{ marginTop: 12, width: "100%", display: "flex", gap: 24, justifyContent: "space-between" }}>

@@ -103,10 +103,15 @@ class Accounts {
     notify("Wallet has been disconnected");
   };
 
-  importAccount = async ({ seed, secret }: { seed?: string; secret?: string }) => {
-    const { publicKey, secretKey } = secret
-      ? { publicKey: KeyPair.fromString(secret).getPublicKey().toString(), secretKey: secret }
-      : parseSeedPhrase(seed || generateMnemonic());
+  importAccount = async (key: string) => {
+    let keyPair: KeyPair | null = null;
+    try {
+      keyPair = KeyPair.fromString(key);
+    } catch {}
+
+    const { publicKey, secretKey, seedPhrase } = keyPair
+      ? { publicKey: keyPair.getPublicKey().toString(), secretKey: keyPair.toString(), seedPhrase: undefined }
+      : parseSeedPhrase(key || generateMnemonic());
 
     const api = new HereApi();
     const accounts = await api.findAccount(PublicKey.from(publicKey));
@@ -115,9 +120,15 @@ class Accounts {
       throw Error("Account is not found");
     }
 
-    const keyPair = KeyPair.fromString(secretKey);
+    keyPair = KeyPair.fromString(secretKey);
     const sign = await this.localSign(accounts[0], keyPair);
-    const cred = { accountId: accounts[0], publicKey: publicKey, privateKey: secretKey, type: ConnectType.Web, seed };
+    const cred = {
+      accountId: accounts[0],
+      publicKey: publicKey,
+      privateKey: secretKey,
+      type: ConnectType.Web,
+      seed: seedPhrase,
+    };
     await this.addAccount(cred, sign);
   };
 
