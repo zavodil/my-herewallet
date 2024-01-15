@@ -311,16 +311,6 @@
     "type": "Bridge"
   },
   {
-    "name": "Ludero",
-    "text": "Gather high quality zero party data, reward quality engagement and increase your communities Life Time Value",
-    "site": "https://app.ludero.com/",
-    "contract": "subscription.pikespeak.near",
-    "twitter": "https://twitter.com/luder0",
-    "telegram": "https://t.me/LuderoOfficial",
-    "image": "https://storage.herewallet.app/upload/a6a244b5-9c4b-4096-b369-20aedc6a8980.jpg",
-    "type": "Social"
-  },
-  {
     "name": "PotLock",
     "text": "PotLock is bringing public goods funding legos to NEAR. Direct donations & on chain referrals built on Web3 social. Quadratic funding soon.",
     "site": "https://app.potlock.org/",
@@ -370,13 +360,6 @@
     "type": "Games"
   },
   {
-    "name": "ENG chat",
-    "text": "Official chat in English",
-    "telegram": "https://t.me/cryptonear",
-    "image": "https://storage.herewallet.app/upload/b47115e7-d2cf-444d-b930-8d40b495fa0e.jpg",
-    "type": "Chats"
-  },
-  {
     "name": "NEAR Protocol Official (ENG)",
     "telegram": "https://t.me/cryptonear",
     "image": "https://storage.herewallet.app/upload/b47115e7-d2cf-444d-b930-8d40b495fa0e.jpg",
@@ -386,7 +369,7 @@
     "name": "NEAR Vietnam Hub",
     "twitter": "https://twitter.com/NearVietnamHub",
     "telegram": "https://storage.herewallet.app/upload/2220d542-627f-47ab-9130-bab9d0e83799.jpg",
-    "image": "https://storage.herewallet.app/upload/b47115e7-d2cf-444d-b930-8d40b495fa0e.jpg",
+    "image": "https://storage.herewallet.app/upload/378c0e0b-e62d-4166-8084-cc6e25f2aa2b.jpg",
     "type": "Chats"
   },
   {
