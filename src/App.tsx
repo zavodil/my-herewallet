@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { WebAppProvider } from "@vkruglikov/react-telegram-web-app";
 
 import { Staking } from "./Staking";
 import { accounts } from "./core/Accounts";
@@ -20,6 +21,29 @@ import Apps from "./Apps";
 import Home from "./Home";
 
 function App() {
+  if (location.origin === "https://tgapp.herewallet.app") {
+    return (
+      <WebAppProvider options={{ smoothButtonsTransition: true }}>
+        <BrowserRouter>
+          <Routes>
+            {accounts.account && (
+              <>
+                <Route path="/" element={<Mobile Comp={Home} />} />
+                <Route path="/stake/*" element={<Mobile Comp={Staking} />} />
+                <Route path="/transfer/success" element={<Mobile Comp={TransferSuccess} />} />
+                <Route path="/transfer/*" element={<Mobile Comp={Transfer} />} />
+                <Route path="/apps/:id?" element={<Mobile Comp={Apps} />} />
+                <Route path="/settings/*" element={<Mobile Comp={Settings} />} />
+              </>
+            )}
+
+            <Route path="*" element={<Mobile Comp={CreateAccount} />} />
+          </Routes>
+        </BrowserRouter>
+      </WebAppProvider>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Routes>
