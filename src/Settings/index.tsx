@@ -53,7 +53,7 @@ const Settings = () => {
                 onClick={() => navigate("/settings/passphrase")}
               >
                 <Icon name="document" />
-                <Text>Passphrase</Text>
+                <Text>Seed phrase</Text>
               </Button>
               {/* <Button
                 $active={location.pathname === "/settings/password"}
@@ -158,7 +158,7 @@ const Settings = () => {
                       <Icon name="copy" />
                     </Button>
                   </div>
-                  <SensitiveCard style={{ width: 460, lineBreak: "anywhere" }}>
+                  <SensitiveCard style={{ maxWidth: 460, width: "100%", lineBreak: "anywhere" }}>
                     {storage.getAccount(user.id)?.privateKey}
                   </SensitiveCard>
                 </div>

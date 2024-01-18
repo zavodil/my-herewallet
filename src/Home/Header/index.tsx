@@ -10,12 +10,13 @@ import { ConnectType } from "../../core/types";
 import { notify } from "../../core/toast";
 
 import { Button, Text } from "../../uikit";
-import { TinyText } from "../../uikit/typographic";
+import { H1, H2, TinyText } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
 import Icon from "../../uikit/Icon";
 
 import { ExportAccountWidget } from "./ExportAccountWidget";
 import * as S from "./styled";
+import { isTgMobile } from "../../Mobile";
 
 interface Props {
   style?: any;
@@ -294,11 +295,33 @@ export const AccountManager = observer((props: Props) => {
 
 const Header = observer(() => {
   const location = useLocation();
+  const navigate = useNavigate();
   const track = useAnalyticsTrack("app");
 
   useEffect(() => {
     track("open", { from: document.referrer });
   }, []);
+
+  if (isTgMobile()) {
+    return (
+      <S.Header style={{ height: 56, padding: "0 20px" }}>
+        <div style={{ display: "flex", gap: 8 }} onClick={() => navigate("/")}>
+          <img src={require("../../assets/here.svg")} />
+          <H2 style={{ fontSize: 20 }}>NEAR WALLET</H2>
+        </div>
+
+        <div style={{ marginLeft: "auto", display: "flex", gap: 16 }}>
+          <Button>
+            <Icon name="qr" />
+          </Button>
+
+          <Button onClick={() => navigate("/settings")}>
+            <Icon name="settings" />
+          </Button>
+        </div>
+      </S.Header>
+    );
+  }
 
   return (
     <S.Header>

@@ -10,7 +10,7 @@ import { CustomRequestResolver, ImportAccountsResolver, KeypomResolver } from ".
 import TransferSuccess from "./Transfer/Success";
 import CreateAccount from "./Auth/CreateAccount";
 import ImportAccount from "./Auth/ImportAccount";
-import ImportSeed from "./Auth/ImportSeed";
+import ImportSeed from "./Auth/ImportAccount";
 import OpenInApp from "./OpenInApp";
 import Transfer from "./Transfer";
 import Settings from "./Settings";
@@ -20,24 +20,30 @@ import Auth from "./Auth";
 import Apps from "./Apps";
 import Home from "./Home";
 
+import CreateAccountMobile from "./AuthMobile/CreateAccountMobile";
+import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
+import AuthMobile from "./AuthMobile/AuthMobile";
+
 function App() {
-  if (location.origin === "https://tgapp.herewallet.app") {
+  if (location.origin !== "https://tgapp.herewallet.app") {
     return (
       <WebAppProvider options={{ smoothButtonsTransition: true }}>
         <BrowserRouter>
           <Routes>
             {accounts.account && (
               <>
-                <Route path="/" element={<Mobile Comp={Home} />} />
-                <Route path="/stake/*" element={<Mobile Comp={Staking} />} />
-                <Route path="/transfer/success" element={<Mobile Comp={TransferSuccess} />} />
-                <Route path="/transfer/*" element={<Mobile Comp={Transfer} />} />
-                <Route path="/apps/:id?" element={<Mobile Comp={Apps} />} />
-                <Route path="/settings/*" element={<Mobile Comp={Settings} />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/stake/*" element={<Staking />} />
+                <Route path="/transfer/success" element={<TransferSuccess />} />
+                <Route path="/transfer/*" element={<Transfer />} />
+                <Route path="/apps/:id?" element={<Apps />} />
+                <Route path="/settings/*" element={<Settings />} />
               </>
             )}
 
-            <Route path="*" element={<Mobile Comp={CreateAccount} />} />
+            <Route path="/auth/create" element={<CreateAccountMobile />} />
+            <Route path="/auth/import" element={<ImportAccountMobile />} />
+            <Route path="*" element={<AuthMobile />} />
           </Routes>
         </BrowserRouter>
       </WebAppProvider>

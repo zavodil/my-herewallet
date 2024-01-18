@@ -4,6 +4,10 @@ import { ActionButton, H3, Text } from "./uikit";
 import { Root } from "./Home/styled";
 import { colors } from "./uikit/theme";
 
+export const isTgMobile = () => {
+  return location.origin === "https://tgapp.herewallet.app";
+};
+
 const Mobile = ({ Comp }: { Comp: any }) => {
   if (isMobile()) {
     return (

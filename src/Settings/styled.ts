@@ -11,6 +11,12 @@ export const Container = styled.div`
   grid-template-areas:
     "navigation navigation"
     "menu content";
+
+  @media (max-width: 920px) {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
 `;
 
 export const Menu = styled(Card)`

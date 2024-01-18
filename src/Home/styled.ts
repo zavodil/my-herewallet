@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Button } from "../uikit";
+import { isTgMobile } from "../Mobile";
 
 export const Root = styled.div`
   width: 100%;
@@ -24,6 +25,7 @@ export const Container = styled.div`
 
   @media (max-width: 960px) {
     flex-direction: column;
+    padding: 16px;
   }
 `;
 
@@ -47,6 +49,10 @@ export const Card = styled.div`
   display: flex;
   gap: 16;
   padding: 24px;
+
+  @media (max-width: 960px) {
+    padding: 16px;
+  }
 `;
 
 export const Tabs = styled.div`

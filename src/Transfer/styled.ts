@@ -13,6 +13,12 @@ export const Container = styled.div`
     "recipient contacts"
     "asset contacts"
     "amount contacts";
+
+  @media (max-width: 920px) {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
 `;
 
 export const Content = styled.div`
