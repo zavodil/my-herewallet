@@ -14,7 +14,7 @@ import ImportSeed from "./Auth/ImportAccount";
 import OpenInApp from "./OpenInApp";
 import Transfer from "./Transfer";
 import Settings from "./Settings";
-import Mobile from "./Mobile";
+import Mobile, { isTgMobile } from "./Mobile";
 import Widget from "./Widget";
 import Auth from "./Auth";
 import Apps from "./Apps";
@@ -25,7 +25,7 @@ import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
 import AuthMobile from "./AuthMobile/AuthMobile";
 
 function App() {
-  if (location.origin !== "https://tgapp.herewallet.app") {
+  if (isTgMobile()) {
     return (
       <WebAppProvider options={{ smoothButtonsTransition: true }}>
         <BrowserRouter>
