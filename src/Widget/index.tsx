@@ -8,7 +8,7 @@ import Lottie from "lottie-react";
 import isMobile from "is-mobile";
 import { toJS } from "mobx";
 
-import { AccountManager } from "../Home/Header";
+import AccountsManager from "../Home/Header/AccountsManager";
 import { Connector } from "./Connector/Transactions";
 import { parseNearOfTransactions } from "../core/near-chain/utils";
 import { Formatter, getStorageJson } from "../core/helpers";
@@ -98,7 +98,7 @@ const Widget = () => {
   return (
     <S.HereModal>
       <S.GlobalStyles />
-      <AccountManager
+      <AccountsManager
         left
         onlySwitch
         account={account}

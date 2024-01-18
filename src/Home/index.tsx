@@ -72,13 +72,13 @@ const Home = () => {
               </div>
 
               <HereButton
+                onClick={() => navigate("/transfer")}
                 style={{
                   ...LinkButtonStyle,
                   marginLeft: "auto",
                   width: isTgMobile() ? "100%" : 150,
                   marginTop: isTgMobile() ? 16 : 0,
                 }}
-                onClick={() => navigate("/transfer")}
               >
                 Transfer
               </HereButton>
@@ -94,12 +94,12 @@ const Home = () => {
                   {account.transactions.list.length > 2 && (
                     <>
                       {!showAll ? (
-                        <Button style={{ marginRight: -12 }} onClick={() => setShowAll(true)}>
+                        <Button style={{ marginRight: -8 }} onClick={() => setShowAll(true)}>
                           <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>See all</SmallText>
                           <Icon name="cursor-right" />
                         </Button>
                       ) : (
-                        <Button style={{ marginRight: -12 }} onClick={() => setShowAll(false)}>
+                        <Button style={{ marginRight: -4 }} onClick={() => setShowAll(false)}>
                           <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>Hide all</SmallText>
                           <Icon name="cursor-down" />
                         </Button>
@@ -211,6 +211,20 @@ const Home = () => {
             <>
               <BoldP style={{ color: colors.blackSecondary }}>Portfolio</BoldP>
               <Card style={{ marginTop: -8, padding: "0" }}>
+                <TokenCard style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => navigate("/hot")}>
+                  <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 12 }}>
+                    <TokenIcon src={require("../assets/hot-icon.png")} />
+
+                    <div style={{ flex: 1 }}>
+                      <Text style={{ fontWeight: "bold" }}>HOT</Text>
+                      <SmallText>0.00</SmallText>
+                    </div>
+
+                    <BoldP>Claim 1000 (free)</BoldP>
+                    <Icon name="arrow-right" />
+                  </div>
+                </TokenCard>
+
                 {Object.values(account.tokens.tokens)
                   .filter((t) => t.amountFloat > 0 || t.symbol === "NEAR")
                   .sort((a, b) => account.tokens.fiat(b) - account.tokens.fiat(a))

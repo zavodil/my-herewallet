@@ -77,15 +77,24 @@ const Settings = () => {
             path="/general"
             element={
               <Card style={{ gridArea: "content", gap: 40, height: "fit-content" }}>
-                <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+                <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
                   <AvatarImage
                     as={avatar ? "img" : "div"}
                     src={avatar}
-                    style={{ width: 80, height: 80, borderRadius: 16 }}
+                    style={{ flexShrink: 0, width: 80, height: 80, borderRadius: 16 }}
                   />
-                  <div style={{ width: 360 }}>
+
+                  <div
+                    style={{
+                      maxWidth: 360,
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
                     <Text style={{ lineBreak: "anywhere" }}>{user.id}</Text>
-                    <TinyText style={{ marginTop: 8, lineHeight: "16px" }}>
+                    <TinyText style={{ marginTop: 4, lineHeight: "16px" }}>
                       You can change your avatar in the app.{" "}
                       <a style={{ color: colors.blackSecondary }} href="https://download.herewallet.app">
                         <TinyText as="span">Download HERE</TinyText>
@@ -191,10 +200,10 @@ const Settings = () => {
                 </div>
 
                 <div style={{ display: "flex", gap: 16 }}>
-                  <ActionButton style={{ width: 200 }} as="a" href="https://t.me/heresupport">
+                  <ActionButton style={{ flex: 1 }} as="a" href="https://t.me/heresupport">
                     Telegram
                   </ActionButton>
-                  <ActionButton style={{ width: 200 }} as="a" href="https://discord.com/invite/8Q3gw3gsD2">
+                  <ActionButton style={{ flex: 1 }} as="a" href="https://discord.com/invite/8Q3gw3gsD2">
                     Discord
                   </ActionButton>
                 </div>

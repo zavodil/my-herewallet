@@ -23,11 +23,14 @@ import Home from "./Home";
 import CreateAccountMobile from "./AuthMobile/CreateAccountMobile";
 import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
 import AuthMobile from "./AuthMobile/AuthMobile";
+import PopupsProvider from "./uikit/Popup";
+import HOT from "./Home/HOT";
 
 function App() {
   if (isTgMobile()) {
     return (
       <WebAppProvider options={{ smoothButtonsTransition: true }}>
+        <PopupsProvider />
         <BrowserRouter>
           <Routes>
             {accounts.account && (
@@ -38,6 +41,7 @@ function App() {
                 <Route path="/transfer/*" element={<Transfer />} />
                 <Route path="/apps/:id?" element={<Apps />} />
                 <Route path="/settings/*" element={<Settings />} />
+                <Route path="/hot/*" element={<HOT />} />
               </>
             )}
 
