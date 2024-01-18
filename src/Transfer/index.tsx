@@ -22,6 +22,7 @@ import { colors } from "../uikit/theme";
 
 import { Container, InputButton, TokenOption } from "./styled";
 import { notify } from "../core/toast";
+import { isTgMobile } from "../Mobile";
 
 const Transfer = () => {
   const user = useWallet()!;
@@ -154,29 +155,31 @@ const Transfer = () => {
             )}
           />
 
-          <div style={{ display: "flex", gap: 12 }}>
-            {tokens.slice(0, 3).map((ft) => (
-              <TokenAction
-                onClick={() => setAsset(ft.symbol)}
-                style={{
-                  borderColor: ft.symbol == asset ? "var(--Black-Primary)" : "var(--Stroke)",
-                  width: "fit-content",
-                  borderRadius: 12,
-                  height: 56,
-                  padding: 8,
-                  gap: 8,
-                }}
-              >
-                <TokenIcon src={ft.icon} />
-                <div style={{ textAlign: "left", height: 40 }}>
-                  <SmallText style={{ fontWeight: 800, color: "var(--Black-Primary)" }}>
-                    {ft.amountFloat} {ft.symbol}
-                  </SmallText>
-                  <TinyText>{Formatter.usd(user.tokens.fiat(ft))}</TinyText>
-                </div>
-              </TokenAction>
-            ))}
-          </div>
+          {!isTgMobile() && (
+            <div style={{ display: "flex", gap: 12 }}>
+              {tokens.slice(0, 3).map((ft) => (
+                <TokenAction
+                  onClick={() => setAsset(ft.symbol)}
+                  style={{
+                    borderColor: ft.symbol == asset ? "var(--Black-Primary)" : "var(--Stroke)",
+                    width: "fit-content",
+                    borderRadius: 12,
+                    height: 56,
+                    padding: 8,
+                    gap: 8,
+                  }}
+                >
+                  <TokenIcon src={ft.icon} />
+                  <div style={{ textAlign: "left", height: 40 }}>
+                    <SmallText style={{ fontWeight: 800, color: "var(--Black-Primary)" }}>
+                      {ft.amountFloat} {ft.symbol}
+                    </SmallText>
+                    <TinyText>{Formatter.usd(user.tokens.fiat(ft))}</TinyText>
+                  </div>
+                </TokenAction>
+              ))}
+            </div>
+          )}
         </Card>
 
         <Card style={{ gridArea: "amount", gap: 12, position: "relative" }}>
@@ -222,31 +225,39 @@ const Transfer = () => {
           />
         </Card>
 
-        <Card style={{ gridArea: "contacts", height: "fit-content", maxHeight: 400, overflowY: "auto", gap: 12 }}>
-          <Text style={{ color: "var(--Black-Secondary" }}>Recent recipients</Text>
+        {!isTgMobile() && (
+          <Card style={{ gridArea: "contacts", height: "fit-content", maxHeight: 400, overflowY: "auto", gap: 12 }}>
+            <Text style={{ color: "var(--Black-Secondary" }}>Recent recipients</Text>
 
-          {user.contacts.map((item) => (
-            <Button style={{ gap: 12 }} key={item.account_id} onClick={() => setRecipient(item.account_id)}>
-              <AvatarImage
-                style={{ flexShrink: 0 }}
-                src={item.avatar_url || `data:image/svg+xml;utf8,${generateFromString(item.account_id)}`}
-              />
-              <Text>{truncateAddress(item.account_id)}</Text>
-            </Button>
-          ))}
+            {user.contacts.map((item) => (
+              <Button style={{ gap: 12 }} key={item.account_id} onClick={() => setRecipient(item.account_id)}>
+                <AvatarImage
+                  style={{ flexShrink: 0 }}
+                  src={item.avatar_url || `data:image/svg+xml;utf8,${generateFromString(item.account_id)}`}
+                />
+                <Text>{truncateAddress(item.account_id)}</Text>
+              </Button>
+            ))}
 
-          {user.contacts.length === 0 && <Text>Yon dont have contacts yet. Maked transfers will be stay here </Text>}
-        </Card>
+            {user.contacts.length === 0 && <Text>Yon dont have contacts yet. Maked transfers will be stay here </Text>}
+          </Card>
+        )}
 
-        <div style={{ marginTop: 20, display: "flex", gap: 80 }}>
-          <ActionButton style={{ width: 256 }} big disabled={isDisabled || isLoading} onClick={makeTransfer}>
+        {isTgMobile() ? (
+          <ActionButton big style={{ width: "100%" }} disabled={isDisabled || isLoading} onClick={makeTransfer}>
             {isLoading ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Transfer"}
           </ActionButton>
+        ) : (
+          <div style={{ marginTop: 20, display: "flex", gap: 80 }}>
+            <ActionButton style={{ width: 256 }} big disabled={isDisabled || isLoading} onClick={makeTransfer}>
+              {isLoading ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Transfer"}
+            </ActionButton>
 
-          <Button onClick={() => navigate("/", { replace: true })}>
-            <BoldP>Back</BoldP>
-          </Button>
-        </div>
+            <Button onClick={() => navigate("/", { replace: true })}>
+              <BoldP>Back</BoldP>
+            </Button>
+          </div>
+        )}
       </Container>
     </Root>
   );

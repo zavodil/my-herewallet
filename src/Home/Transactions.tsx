@@ -6,6 +6,7 @@ import { BoldP, SmallText, Text } from "../uikit/typographic";
 import { notify } from "../core/toast";
 import { Button } from "../uikit";
 import Icon from "../uikit/Icon";
+import { isTgMobile } from "../Mobile";
 
 export const Transaction = ({ trx }: { trx: TransactionModel }) => {
   return (
@@ -28,34 +29,36 @@ export const Transaction = ({ trx }: { trx: TransactionModel }) => {
         </SmallText>
       </Flex>
 
-      <Flex style={{ gap: 0 }}>
+      <Flex style={{ gap: 0, textAlign: isTgMobile() ? "right" : "left" }}>
         <Text style={{ fontWeight: "bolder" }}>{trx.badge.info}</Text>
         <SmallText>{trx.badge.sub_info}</SmallText>
       </Flex>
 
-      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginRight: -4, paddingRight: 8 }}>
-        {trx.metadata.link && (
-          <>
-            <BoldP
-              style={{ textDecoration: "underline" }}
-              rel="noopener noreferrer"
-              href={trx.metadata.link}
-              target="_blank"
-              as="a"
-            >
-              Link
-            </BoldP>
-            <Button
-              onClick={async (e) => {
-                await navigator.clipboard.writeText(trx.metadata.link!);
-                notify("Transaction address has beed copied");
-              }}
-            >
-              <Icon name="copy" />
-            </Button>
-          </>
-        )}
-      </div>
+      {!isTgMobile() && (
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginRight: -4, paddingRight: 8 }}>
+          {trx.metadata.link && (
+            <>
+              <BoldP
+                style={{ textDecoration: "underline" }}
+                rel="noopener noreferrer"
+                href={trx.metadata.link}
+                target="_blank"
+                as="a"
+              >
+                Link
+              </BoldP>
+              <Button
+                onClick={async (e) => {
+                  await navigator.clipboard.writeText(trx.metadata.link!);
+                  notify("Transaction address has beed copied");
+                }}
+              >
+                <Icon name="copy" />
+              </Button>
+            </>
+          )}
+        </div>
+      )}
     </TransactionItem>
   );
 };
@@ -74,7 +77,7 @@ const TransactionIcon = styled.div`
 const TransactionItem = styled.div`
   width: calc(100% + 48px);
   display: grid;
-  grid-template-columns: 40px 1fr 1fr 68px;
+  grid-template-columns: 40px 1fr 1fr ${isTgMobile() ? "" : "68px"};
   align-items: center;
   transition: 0.2s background;
   padding: 8px 24px;
