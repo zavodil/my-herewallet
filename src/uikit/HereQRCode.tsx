@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { darkQR, QRCode } from "@here-wallet/core/build/qrcode-strategy";
 
-const HereQRCode = ({ value }: { value: string }) => {
+const HereQRCode = ({ value, size = 200 }: { value: string; size?: number }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (ref.current == null) return;
 
     const qrcode = new QRCode({
       ...darkQR,
+      size,
       ecLevel: "H",
       fill: {
         type: "linear-gradient",
