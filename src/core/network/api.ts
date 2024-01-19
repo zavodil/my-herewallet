@@ -5,6 +5,8 @@ import { FtAsset, FtGroup } from "../token/types";
 import { TransactionModel } from "../transactions/types";
 import { AllocateUsername, NFTModel, RecentlyApps, RequestAccessToken } from "./types";
 import { PublicKey } from "near-api-js/lib/utils";
+import { isTgMobile } from "../../Mobile";
+import { NETWORK } from "../constants";
 
 export class HereError extends Error {
   name = "HereError";
@@ -14,7 +16,7 @@ export class HereError extends Error {
 }
 
 export class HereApi {
-  public readonly endpoint = "https://api.herewallet.app";
+  public readonly endpoint = isTgMobile() ? "https://dev.herewallet.app" : "https://api.herewallet.app";
   public readonly storage = new Storage("");
 
   constructor(readonly jwt = "") {}
@@ -34,7 +36,8 @@ export class HereApi {
         ...init?.headers,
         DeviceId: this.deviceId,
         Authorization: this.jwt,
-        Network: "mainnet",
+        Platform: isTgMobile() ? "telegram" : "web",
+        Network: NETWORK,
       },
     });
 

@@ -1,9 +1,10 @@
 import BN from "bn.js";
 import { JsonRpcProvider, TypedError } from "near-api-js/lib/providers";
 import { base_decode, base_encode, serialize } from "near-api-js/lib/utils/serialize";
-import { Action, HereCall, HereWallet, SignMessageOptionsNEP0413, createAction } from "@here-wallet/core";
+import { Action, HereCall, SignMessageOptionsNEP0413, createAction } from "@here-wallet/core";
 import { AccessKeyView, AccessKeyViewRaw, FinalExecutionOutcome } from "near-api-js/lib/providers/provider";
 import { Account, Connection, InMemorySigner, KeyPair, Signer, providers, transactions } from "near-api-js";
+import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
 import { ChangeFunctionCallOptions } from "near-api-js/lib/account";
 import { encodeDelegateAction } from "@near-js/transactions";
 import { Transaction } from "@near-wallet-selector/core";
@@ -14,7 +15,7 @@ import * as ref from "@ref-finance/ref-sdk";
 import { near, testnetNear } from "../token/defaults";
 import { Chain, FtModel } from "../token/types";
 import { chunk, parseAmount } from "../helpers";
-import { TGAS } from "../constants";
+import { NETWORK, TGAS } from "../constants";
 
 import { ConnectType } from "../types";
 import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
@@ -22,14 +23,13 @@ import { HereError, ResponseError, TransactionError } from "../network/types";
 import { accounts } from "../Accounts";
 import { HereApi } from "../network/api";
 
-import { NOT_STAKABLE_NEAR, getHereStorage, getWrapNear } from "./constants";
+import { NOT_STAKABLE_NEAR, getHereStorage, getNodeUrl, getWrapNear } from "./constants";
 import { SAFE_NEAR, parseNearOfActions, waitTransactionResult } from "./utils";
-import { SignPayload, signPayloadSchema } from "./signMessage";
+import { SignPayload } from "./signMessage";
 import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
 import HereToken from "./HereToken";
-import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
 
 export class NearAccount extends Account {
   readonly native: NearToken;
@@ -42,9 +42,9 @@ export class NearAccount extends Account {
     super(
       Connection.fromConfig({
         signer: signer,
-        provider: new JsonRpcProvider({ url: "https://rpc.herewallet.app" }),
-        jsvmAccountId: "jsvm.mainnet",
-        networkId: "mainnet",
+        provider: new JsonRpcProvider({ url: getNodeUrl(NETWORK) }),
+        jsvmAccountId: "jsvm." + NETWORK,
+        networkId: NETWORK,
       }),
       id
     );
@@ -152,13 +152,7 @@ export class NearAccount extends Account {
         const allocateNear = parseNearOfActions(item.actions);
         const unstake = await this.tryAllocateNative(allocateNear);
         if (unstake) batch.unshift(unstake);
-      }
-
-      if (
-        this.type === ConnectType.Sender ||
-        this.type === ConnectType.MyNearWallet ||
-        this.type === ConnectType.Meteor
-      ) {
+      } else if (this.type === ConnectType.WalletConnect) {
         const selector = await accounts.selector;
         const wallet = await selector.wallet(this.type);
         const txs = await wallet.signAndSendTransactions({ transactions: batch });
@@ -166,7 +160,10 @@ export class NearAccount extends Account {
         results.push(...txs.map((t) => t.transaction_outcome.id));
       }
 
-      if (this.type === ConnectType.Snap) {
+      if (this.type === ConnectType.Web) {
+        const txs = await this.sendLocalTransactions(batch);
+        results.push(...txs);
+      } else if (this.type === ConnectType.Snap) {
         if (snapAccount == null) {
           await accounts.snap.install();
           snapAccount = new NearSnapAccount({
@@ -179,21 +176,20 @@ export class NearAccount extends Account {
 
         const txs = await snapAccount.executeTransactions(batch);
         results.push(...txs.map((t) => t.transaction_outcome.id));
+      } else {
+        const txs = await accounts.wallet.signAndSendTransactions({
+          selector: { type: this.type, id: this.accountId },
+          transactions: batch,
+        });
+
+        results.push(...txs.map((t) => t.transaction_outcome.id));
       }
-
-      const txs = await accounts.wallet.signAndSendTransactions({
-        selector: { type: this.type, id: this.accountId },
-        transactions: batch,
-      });
-
-      results.push(...txs.map((t) => t.transaction_outcome.id));
     }
 
     return results;
   }
 
   async sendLocalTransactions(batch: HereCall[], disableDelegate?: boolean) {
-    console.log("sendLocalTransactions", batch);
     const results: string[] = [];
     for (let tx of batch) {
       const res = await this.sendLocalCall(tx, disableDelegate);

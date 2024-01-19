@@ -103,6 +103,8 @@ const Settings = () => {
                   </div>
                 </div>
 
+                <Button onClick={() => accounts.disconnect(user.id)}>Logout</Button>
+
                 {/* {user.id.endsWith(".near") && (
                 <div>
                   <H2>Nickname</H2>

@@ -82,9 +82,7 @@ export interface RequestAccessToken {
   device_name: string;
   near_account_id: string;
   public_key: string;
-  wallet_type: string;
   nonce: number[];
-  web_auth: boolean;
 }
 
 type JSONValue = string | number | boolean | { [x: string]: JSONValue };

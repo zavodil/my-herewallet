@@ -1,4 +1,7 @@
 import { makeObservable, observable, runInAction } from "mobx";
+import { KeyPair, Signature } from "near-api-js/lib/utils/key_pair";
+import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
+import { InMemorySigner, Signer } from "near-api-js";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapStatus } from "@near-snap/sdk";
 
@@ -7,14 +10,14 @@ import { HereApi } from "./network/api";
 import { NearAccount } from "./near-chain/NearAccount";
 import { TokensStorage } from "./token/TokensStorage";
 import { TransactionsStorage } from "./transactions";
+import { ConnectType, TransferParams, UserCred } from "./types";
 import { NFTModel, RecentlyApps, UserContact, UserData } from "./network/types";
+import { recaptchaToken, wait } from "./helpers";
 import { accounts } from "./Accounts";
 import { Chain } from "./token/types";
-import { recaptchaToken, wait } from "./helpers";
 import { notify } from "./toast";
-import { ConnectType, TransferParams, UserCred } from "./types";
-import { Signer } from "near-api-js";
-import { Signature } from "near-api-js/lib/utils/key_pair";
+import Hot from "./Hot";
+import { NETWORK } from "./constants";
 
 class UserAccount {
   readonly api: HereApi;
@@ -22,6 +25,7 @@ class UserAccount {
   readonly near: NearAccount;
   readonly transactions: TransactionsStorage;
   readonly localStorage: Storage;
+  readonly hot: Hot;
 
   readonly path?: string;
   readonly type: ConnectType;
@@ -55,8 +59,18 @@ class UserAccount {
     this.tokens = new TokensStorage(this);
     this.transactions = new TransactionsStorage(this);
 
-    const signer = new HereSigner(creds.accountId);
-    this.near = new NearAccount(creds.accountId, this.type, signer, creds.jwt);
+    if (creds.privateKey) {
+      const keyPair = KeyPair.fromString(creds.privateKey!);
+      const keyStore = new InMemoryKeyStore();
+      keyStore.setKey(NETWORK, creds.accountId, keyPair);
+      const signer = new InMemorySigner(keyStore);
+      this.near = new NearAccount(creds.accountId, this.type, signer, creds.jwt);
+    } else {
+      const signer = new HereSigner(creds.accountId);
+      this.near = new NearAccount(creds.accountId, this.type, signer, creds.jwt);
+    }
+
+    this.hot = new Hot(this);
 
     this.transactions.refresh().catch(() => {});
     this.tokens.refreshTokens().catch(() => {});
@@ -163,7 +177,7 @@ class HereSigner extends Signer {
     return PublicKey.fromString(acc.publicKey);
   }
 
-  signMessage(): Promise<Signature> {
+  async signMessage(): Promise<Signature> {
     throw Error();
   }
 }
