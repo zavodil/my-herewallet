@@ -5,7 +5,7 @@ import { Root } from "./Home/styled";
 import { colors } from "./uikit/theme";
 
 export const isTgMobile = () => {
-  return location.origin !== "https://tgapp.herewallet.app";
+  return location.origin === "https://tgapp.herewallet.app";
 };
 
 const Mobile = ({ Comp }: { Comp: any }) => {
