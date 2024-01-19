@@ -1,4 +1,5 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { useWebApp } from "@vkruglikov/react-telegram-web-app";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
@@ -26,10 +27,13 @@ class SheetsManager {
         if (!popup) return;
 
         popup.isOpen = false;
-        setTimeout(() => {
-          this.popups = this.popups.filter((t) => t.id !== id);
-          onClose?.();
-        }, 300);
+        setTimeout(
+          action(() => {
+            this.popups = this.popups.filter((t) => t.id !== id);
+            onClose?.();
+          }),
+          300
+        );
       }),
     });
   };
@@ -69,6 +73,11 @@ const Popup = ({ children, onClose, isOpen }: { children: React.ReactNode; isOpe
 export const sheets = new SheetsManager();
 
 const PopupsProvider = observer(() => {
+  const app = useWebApp();
+  useEffect(() => {
+    app?.expend?.();
+  }, []);
+
   return (
     <div>
       {sheets.popups.map(({ id, element, isOpen, onClose }) => (
@@ -102,7 +111,7 @@ const PopupBody = styled.div`
 `;
 
 const PopupOverlay = styled.div`
-  transition: 0.3s backdrop-filter, 0.2s background-color;
+  transition: 0.6s backdrop-filter, 0.2s background-color;
   backdrop-filter: blur(0px);
   background-color: #00000000;
   position: fixed;

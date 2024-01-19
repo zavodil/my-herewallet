@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Root = styled.div`
   width: 100%;
   margin: auto;
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: var(--tg-viewport-height, calc(var(--vh, 1vh) * 100));
   background-color: var(--Elevation-1);
   flex-direction: column;
   justify-content: center;
