@@ -8,19 +8,33 @@ interface PopupConfig {
   id: string;
   element: React.ReactNode;
   onClose?: () => void;
+  blocked?: boolean;
+  fullscreen?: boolean;
 }
 
 class SheetsManager {
   public popups: (PopupConfig & { isOpen: boolean })[] = [];
 
   constructor() {
-    makeObservable(this, { popups: observable, present: action });
+    makeObservable(this, {
+      popups: observable,
+      blocked: action,
+      present: action,
+    });
   }
 
-  present = ({ id, element, onClose }: PopupConfig) => {
+  blocked = (id: string, isBlock: boolean) => {
+    const p = this.popups.find((t) => t.id === id);
+    if (!p) return;
+    p.blocked = isBlock;
+  };
+
+  present = ({ id, element, blocked, fullscreen, onClose }: PopupConfig) => {
     this.popups.push({
       id,
       element,
+      blocked,
+      fullscreen,
       isOpen: true,
       onClose: action(() => {
         const popup = this.popups.find((t) => t.id === id);
@@ -43,7 +57,19 @@ class SheetsManager {
   };
 }
 
-const Popup = ({ children, onClose, isOpen }: { children: React.ReactNode; isOpen: boolean; onClose?: () => void }) => {
+const Popup = ({
+  children,
+  onClose,
+  isOpen,
+  fullscreen,
+  blocked,
+}: {
+  children: React.ReactNode;
+  isOpen: boolean;
+  blocked?: boolean;
+  onClose?: () => void;
+  fullscreen?: boolean;
+}) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -64,8 +90,10 @@ const Popup = ({ children, onClose, isOpen }: { children: React.ReactNode; isOpe
 
   return (
     <PopupWrap>
-      <PopupOverlay ref={overlayRef} onClick={() => onClose?.()} />
-      <PopupBody ref={bodyRef}>{children}</PopupBody>
+      <PopupOverlay ref={overlayRef} onClick={() => !blocked && onClose?.()} />
+      <PopupBody style={{ height: fullscreen ? "100%" : "fit-content" }} ref={bodyRef}>
+        {children}
+      </PopupBody>
     </PopupWrap>
   );
 };
@@ -80,8 +108,8 @@ const PopupsProvider = observer(() => {
 
   return (
     <div>
-      {sheets.popups.map(({ id, element, isOpen, onClose }) => (
-        <Popup key={id} onClose={onClose} isOpen={isOpen}>
+      {sheets.popups.map(({ id, element, isOpen, fullscreen, onClose, blocked }) => (
+        <Popup key={id} onClose={onClose} fullscreen={fullscreen} isOpen={isOpen} blocked={blocked}>
           {element}
         </Popup>
       ))}
@@ -108,6 +136,8 @@ const PopupBody = styled.div`
   position: relative;
   transform: translateY(100%);
   transition: 0.3s transform;
+  will-change: transform;
+  overflow: hidden;
 `;
 
 const PopupOverlay = styled.div`

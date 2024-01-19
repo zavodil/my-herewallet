@@ -68,8 +68,10 @@ import document from "../icons/document.svg?url";
 import settings from "../icons/settings.svg?url";
 import favorite from "../icons/favorite.svg?url";
 import qr from "../icons/qr.svg?url";
+import mission from "../icons/mission.svg?url";
 
 export const icons = {
+  mission,
   arrow_left,
   add_circle,
   arrow_down,

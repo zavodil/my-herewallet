@@ -1,63 +1,46 @@
-import React, { useEffect } from "react";
-import { Card, Container, Root, TokenIcon } from "../styled";
+import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
+
 import Header from "../Header";
-import { BoldP, H0, H2, H3, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
-import { colors } from "../../uikit/theme";
+import { Card, Container, Root, TokenIcon } from "../styled";
+import { useWallet } from "../../core/Accounts";
+
+import { BoldP, H0, H2, H3, H4, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
 import { ActionButton, Button } from "../../uikit";
-import Icon from "../../uikit/Icon";
 import { sheets } from "../../uikit/Popup";
+import { colors } from "../../uikit/theme";
+import Icon from "../../uikit/Icon";
+import Lottie from "lottie-react";
+import { notify } from "../../core/toast";
 
-const boosters = {
-  storage: {
-    level: 0,
-    id: "storage",
-    title: "Storage",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
-    levels: [
-      { image: require("../../assets/hot/storage/1.png"), cost: 100 },
-      { image: require("../../assets/hot/storage/2.png"), cost: 100 },
-      { image: require("../../assets/hot/storage/3.png"), cost: 100 },
-      { image: require("../../assets/hot/storage/4.png"), cost: 100 },
-      { image: require("../../assets/hot/storage/5.png"), cost: 100 },
-    ],
-  },
-
-  woods: {
-    level: 0,
-    id: "wood",
-    title: "Wood",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
-    levels: [
-      { image: require("../../assets/hot/wood/1.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/wood/2.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/wood/3.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/wood/4.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/wood/5.png"), mission: "Hold 1 NEAR" },
-    ],
-  },
-  fireplace: {
-    level: 0,
-    id: "fireplace",
-    title: "Fireplace",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
-    levels: [
-      { image: require("../../assets/hot/fire/1.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/fire/2.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/fire/3.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/fire/4.png"), mission: "Hold 1 NEAR" },
-      { image: require("../../assets/hot/fire/5.png"), mission: "Hold 1 NEAR" },
-    ],
-  },
-  referrals: {
-    level: 0,
-    id: "referrals",
-    title: "Friends bonus",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
-    levels: [{ image: require("../../assets/hot/referral.png") }],
-  },
+const referrals = {
+  level: 0,
+  title: "Friends bonus",
+  text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+  levels: [{ image: require("../../assets/hot/referral.png") }],
 };
 
-const BoostPopup = ({ boost }: { boost: any }) => {
+const BoostPopup = ({ id }: { id: number }) => {
+  const user = useWallet()!;
+  const next = user.hot.getBooster(id + 1);
+  const [isLoading, setLoading] = useState(false);
+  if (!next) return null;
+
+  const upgrade = async () => {
+    try {
+      setLoading(true);
+      sheets.blocked("Boost", true);
+      await user.hot.upgradeBooster(id + 1);
+      sheets.dismiss("Boost");
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      sheets.blocked("Boost", false);
+      notify("Upgrade failed");
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -65,23 +48,61 @@ const BoostPopup = ({ boost }: { boost: any }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 24,
         justifyContent: "center",
         textAlign: "center",
+        gap: 24,
       }}
     >
-      <img src={boost.levels[boost.level].image} style={{ width: 140, height: 140, borderRadius: 12 }} />
-      <H2>{boost.title}</H2>
-      <Text style={{ color: colors.blackSecondary }}>{boost.text}</Text>
+      <img src={next.icon} style={{ width: 140, height: 140, borderRadius: 12 }} />
 
-      <ActionButton style={{ marginTop: 16 }} onClick={() => sheets.dismiss("Boost")}>
+      <H2>{next.title}</H2>
+      <Text style={{ color: colors.blackSecondary }}>{next.text}</Text>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+        {next.hot_price && (
+          <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot.png")} />
+        )}
+        <LargeP style={{ fontWeight: "bold" }}>{next.hot_price || next.mission_text}</LargeP>
+      </div>
+
+      <ActionButton
+        style={{ marginTop: 16 }}
+        disabled={!user.hot.canUpgrade(id + 1) || isLoading}
+        onClick={() => upgrade()}
+      >
         Upgrade
       </ActionButton>
+
+      {isLoading && (
+        <ClaimingLoading
+          text="Upgrading..."
+          style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }}
+        />
+      )}
     </div>
   );
 };
 
 const FirstClaimHOT = () => {
+  const user = useWallet()!;
+  const [isLoading, setLoading] = useState(false);
+  const referral = new URLSearchParams(location.search).get("referral");
+
+  const register = async () => {
+    try {
+      setLoading(true);
+      sheets.blocked("Boost", true);
+      await user.hot.register(referral || "");
+      sheets.dismiss("Boost");
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      sheets.blocked("Boost", false);
+      notify("Claim failed");
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -89,9 +110,9 @@ const FirstClaimHOT = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 24,
         justifyContent: "center",
         textAlign: "center",
+        gap: 24,
       }}
     >
       <img src={require("../../assets/hot-icon.png")} style={{ width: 140, height: 140, borderRadius: 12 }} />
@@ -100,18 +121,62 @@ const FirstClaimHOT = () => {
         HOT is an onchain token related to the launch of NEAR Wallet in Telegram. It's mined on the blockchain and can
         be trade or transfer via any crypto wallet. More coming after the mint is over!
       </Text>
-
-      <ActionButton style={{ marginTop: 16 }} onClick={() => sheets.dismiss("Boost")}>
+      {referral && <BoldP>Your referral: {referral}</BoldP>}
+      <ActionButton disabled={isLoading} style={{ marginTop: 16 }} onClick={() => register()}>
         Claim
       </ActionButton>
+
+      {isLoading && (
+        <ClaimingLoading
+          text="Claiming..."
+          style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }}
+        />
+      )}
+    </div>
+  );
+};
+
+const ClaimingLoading = ({ style, text }: { style?: any; text: string }) => {
+  return (
+    <div
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        display: "flex",
+        height: "100%",
+        ...(style || {}),
+      }}
+    >
+      <Lottie
+        animationData={require("../../assets/loading.json")}
+        style={{ width: 256, height: 256, marginTop: -56 }}
+        width={48}
+        height={48}
+        loop={true}
+      />
+      <H4>{text}</H4>
     </div>
   );
 };
 
 const HOT = () => {
+  const user = useWallet()!;
   useEffect(() => {
-    sheets.present({ id: "Boost", element: <FirstClaimHOT /> });
-  }, []);
+    if (user.hot.balance !== 0) return;
+    sheets.present({ id: "Boost", element: <FirstClaimHOT />, blocked: true });
+  }, [user.hot.balance]);
+
+  const claim = async () => {
+    if (user.hot.miningProgress !== 1) return;
+    sheets.present({ id: "Claiming", element: <ClaimingLoading text="Claiming..." />, fullscreen: true });
+    await user.hot.claim().catch((e) => {
+      console.log(e);
+      notify("Claim failed");
+    });
+
+    sheets.dismiss("Claiming");
+  };
 
   return (
     <Root style={{ overflow: "hidden", width: "100vw" }}>
@@ -156,8 +221,6 @@ const HOT = () => {
             <TinyText>Minted</TinyText>
             <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>1,1M / 10,000M</SmallText>
           </div>
-
-          <div></div>
         </Card>
 
         <div
@@ -177,7 +240,7 @@ const HOT = () => {
               style={{ width: 60, height: 60, marginTop: -8, marginLeft: -16 }}
               src={require("../../assets/hot.png")}
             />
-            <H0>1000</H0>
+            <H0>{Math.max(0, user.hot.balance)}</H0>
           </div>
 
           <div
@@ -188,22 +251,29 @@ const HOT = () => {
               borderRadius: 8,
             }}
           >
-            <Text>+1 per hour</Text>
+            <Text>+{user.hot.hotPerHour} per hour</Text>
           </div>
         </div>
 
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <H3>Storage</H3>
-            <Text style={{ color: colors.blackSecondary }}>• ≈5h left</Text>
+            <Text style={{ color: colors.blackSecondary }}>• ≈{user.hot.remainingMiningHours}h left</Text>
 
-            <Button style={{ marginLeft: "auto" }}>
+            <Button disabled={user.hot.miningProgress !== 1} onClick={() => claim()} style={{ marginLeft: "auto" }}>
               <BoldP style={{ color: "#0258F7" }}>Claim HOT</BoldP>
             </Button>
           </div>
 
-          <div style={{ marginTop: 16, background: "#FFFFFF66", borderRadius: 8, height: 12, width: "10)%" }}>
-            <div style={{ background: colors.blackPrimary, borderRadius: 8, height: 12, width: "40%" }} />
+          <div style={{ marginTop: 16, background: "#FFFFFF66", borderRadius: 8, height: 12, width: "100%" }}>
+            <div
+              style={{
+                width: `${user.hot.miningProgress * 100}%`,
+                background: colors.blackPrimary,
+                borderRadius: 8,
+                height: 12,
+              }}
+            />
           </div>
         </div>
 
@@ -226,19 +296,17 @@ const HOT = () => {
               gap: 24,
             }}
           >
-            {Object.values(boosters).map((boost) => (
+            {Object.values(user.hot.currentBoosters).map((boost) => (
               <div
                 key={boost.id}
                 style={{ display: "flex", gap: 12, alignItems: "center" }}
                 onClick={() =>
-                  sheets.present({
-                    id: "Boost",
-                    element: <BoostPopup boost={boost} />,
-                  })
+                  user.hot.getBooster(boost.id + 1) &&
+                  sheets.present({ id: "Boost", element: <BoostPopup id={boost.id} /> })
                 }
               >
                 <img
-                  src={boost.levels[boost.level].image}
+                  src={boost.icon}
                   style={{
                     width: 64,
                     height: 64,
@@ -251,9 +319,14 @@ const HOT = () => {
                 <div>
                   <BoldP>{boost.title}</BoldP>
                   <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -4 }}>
-                    <img style={{ width: 24, height: 24 }} src={require("../../assets/hot.png")} />
-                    <BoldP>100</BoldP>
-                    <Text style={{ color: colors.blackSecondary }}> • L{boost.level + 1}</Text>
+                    {boost.hot_price ? (
+                      <img style={{ width: 24, height: 24 }} src={require("../../assets/hot.png")} />
+                    ) : (
+                      <Icon name="mission" />
+                    )}
+
+                    <BoldP>{boost.hot_price || "Mission"}</BoldP>
+                    <Text style={{ color: colors.blackSecondary }}> • L{(boost.id % 10) + 1}</Text>
                   </div>
                 </div>
 
@@ -267,4 +340,4 @@ const HOT = () => {
   );
 };
 
-export default HOT;
+export default observer(HOT);

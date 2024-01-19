@@ -2,8 +2,6 @@ import { action, makeObservable, observable } from "mobx";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
-import { setupModal } from "@near-wallet-selector/modal-ui";
 import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { HereWallet, SignedMessageNEP0413, WidgetStrategy } from "@here-wallet/core";
 import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
@@ -13,7 +11,7 @@ import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
 import { InMemorySigner } from "near-api-js";
 import { NearSnap } from "@near-snap/sdk";
 
-import { SignPayload, signPayloadSchema } from "./near-chain/signMessage";
+import { SignPayload } from "./near-chain/signMessage";
 import { generateMnemonic } from "./near-chain/passphrase/bip39";
 import { parseSeedPhrase } from "./near-chain/passphrase";
 import { HereError } from "./network/types";
@@ -36,6 +34,7 @@ class Accounts {
   readonly snap = new NearSnap();
 
   readonly selector = setupWalletSelector({
+    network: "mainnet",
     modules: [
       setupSender(),
       setupMeteorWallet(),
@@ -50,7 +49,6 @@ class Accounts {
         },
       }),
     ],
-    network: "mainnet",
   });
 
   readonly wallet = new HereWallet({
@@ -145,9 +143,7 @@ class Accounts {
           device_name: navigator.userAgent,
           near_account_id: sign.accountId,
           public_key: sign.publicKey.toString(),
-          wallet_type: cred.type as any,
           nonce: sign.nonce,
-          web_auth: true,
         })
         .catch(() => null);
 
@@ -189,7 +185,12 @@ class Accounts {
     const signer = new InMemorySigner(keystore);
 
     const nonce = [...crypto.getRandomValues(new Uint8Array(32))];
-    const payload = new SignPayload({ message: "web_wallet", nonce: Array.from(nonce), recipient: "HERE Wallet" });
+    const payload = new SignPayload({
+      message: "web_wallet",
+      nonce: Array.from(nonce),
+      recipient: "HERE Wallet",
+    });
+
     const borshPayload = serialize(authPayloadSchema, payload);
     const signature = await signer.signMessage(borshPayload, accountId, "mainnet");
     const publicKey = await signer.getPublicKey(accountId, "mainnet");

@@ -17,6 +17,11 @@ export const Button = styled.button<{ $active?: boolean }>`
   &:hover {
     opacity: 0.6;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
 `;
 
 export const ActionButton = styled.button<{ big?: boolean; stroke?: boolean }>`
