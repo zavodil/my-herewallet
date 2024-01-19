@@ -48,15 +48,13 @@ const Popup = ({ children, onClose, isOpen }: { children: React.ReactNode; isOpe
       const timer = setTimeout(() => {
         if (!bodyRef.current || !overlayRef.current) return;
         bodyRef.current.style.transform = `translateY(0)`;
-        overlayRef.current.style.backdropFilter = "blur(10px)";
-        overlayRef.current.style.backgroundColor = "#00000044";
-      }, 50);
+        overlayRef.current.style.backgroundColor = "#00000066";
+      }, 150);
       return () => clearTimeout(timer);
     }
 
     if (!bodyRef.current || !overlayRef.current) return;
     bodyRef.current.style.transform = `translateY(100%)`;
-    overlayRef.current.style.backdropFilter = "blur(0)";
     overlayRef.current.style.backgroundColor = "#00000000";
   }, [isOpen]);
 
@@ -100,11 +98,11 @@ const PopupBody = styled.div`
   background: var(--Elevation-0, #f3ebea);
   position: relative;
   transform: translateY(100%);
-  transition: 0.2s transform;
+  transition: 0.3s transform;
 `;
 
 const PopupOverlay = styled.div`
-  transition: 0.2s backdrop-filter, 0.2s background-color;
+  transition: 0.3s backdrop-filter, 0.2s background-color;
   backdrop-filter: blur(0px);
   background-color: #00000000;
   position: fixed;
