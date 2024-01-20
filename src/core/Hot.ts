@@ -1,5 +1,4 @@
 import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
-import { WebAppUser } from "@vkruglikov/react-telegram-web-app";
 import { BN } from "bn.js";
 
 import UserAccount from "./UserAccount";
@@ -238,7 +237,8 @@ class Hot {
     }
   }
 
-  async register(inviter: string, user?: WebAppUser) {
+  async register(inviter: string) {
+    const user = window.Telegram.WebApp?.initDataUnsafe?.user;
     await this.account.api.request("/api/v1/user/hot", {
       method: "POST",
       body: JSON.stringify({

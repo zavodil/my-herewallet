@@ -1,5 +1,4 @@
 import React from "react";
-import { useInitData } from "@vkruglikov/react-telegram-web-app";
 import Lottie from "lottie-react";
 import { useState } from "react";
 
@@ -44,7 +43,6 @@ export const InviteFriend = () => {
 };
 
 export const FirstClaimHOT = () => {
-  const [data] = useInitData();
   const user = useWallet()!;
   const [isLoading, setLoading] = useState(false);
   const referral = new URLSearchParams(location.search).get("referral");
@@ -53,7 +51,7 @@ export const FirstClaimHOT = () => {
     try {
       setLoading(true);
       sheets.blocked("Register", true);
-      await user.hot.register(referral || "", data?.user);
+      await user.hot.register(referral || "");
       sheets.dismiss("Boost");
       setLoading(false);
     } catch (e) {

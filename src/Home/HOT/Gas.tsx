@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useWebApp } from "@vkruglikov/react-telegram-web-app";
 import styled from "styled-components";
 
 import { useWallet } from "../../core/Accounts";
@@ -15,7 +14,6 @@ import MyAddress from "../MyAddress";
 const Gas = () => {
   const user = useWallet()!;
   const navigate = useNavigate();
-  const app = useWebApp();
 
   const depositNear = () => {
     sheets.present({ id: "MyQR", element: <MyAddress /> });
@@ -97,7 +95,7 @@ const Gas = () => {
         <Options>
           <div
             style={{ display: "flex", gap: 12, alignItems: "center" }}
-            onClick={() => app.openLink("https://download.herewallet.app")}
+            onClick={() => window.Telegram.WebApp.openLink("https://download.herewallet.app")}
           >
             <img
               src={require("../../assets/here.svg")}
@@ -131,7 +129,7 @@ const Gas = () => {
 
           <div
             style={{ display: "flex", gap: 12, alignItems: "center" }}
-            onClick={() => app.openLink("https://download.herewallet.app")}
+            onClick={() => window.Telegram.WebApp.openLink("https://download.herewallet.app")}
           >
             <img
               src={require("../../assets/hot/band.png")}

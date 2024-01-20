@@ -1,7 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { WebAppProvider } from "@vkruglikov/react-telegram-web-app";
 
 import { Staking } from "./Staking";
 import { accounts } from "./core/Accounts";
@@ -28,11 +27,24 @@ import Boosters from "./Home/HOT/Boosters";
 import Band from "./Home/HOT/Band";
 import HOT from "./Home/HOT";
 import Gas from "./Home/HOT/Gas";
+import { colors } from "./uikit/theme";
+
+declare global {
+  interface Window {
+    Telegram: { WebApp: any };
+  }
+}
+
+if (isTgMobile()) {
+  window.Telegram.WebApp.setBackgroundColor?.(colors.elevation0);
+  window.Telegram.WebApp.setHeaderColor?.(colors.elevation0);
+  window.Telegram.WebApp.expend?.();
+}
 
 function App() {
   if (isTgMobile()) {
     return (
-      <WebAppProvider options={{ smoothButtonsTransition: true }}>
+      <>
         <PopupsProvider />
         <BrowserRouter>
           <Routes>
@@ -56,7 +68,7 @@ function App() {
             <Route path="*" element={<AuthMobile />} />
           </Routes>
         </BrowserRouter>
-      </WebAppProvider>
+      </>
     );
   }
 
