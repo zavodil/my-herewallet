@@ -16,9 +16,9 @@ interface HotState {
   last_claim: number;
   boost_ts_left: number;
   has_refferals: boolean;
-  firespace: { id: number; value: number };
-  storage: { id: number; hot_price: number; value: number };
-  boost: { id: number; value: number };
+  firespace: number;
+  storage: number;
+  boost: number;
 }
 
 const boosters = [
@@ -127,34 +127,28 @@ const boosters = [
 ];
 
 class Hot {
-  public state: HotState | null = null;
   public currentTime = Date.now();
+  public state: HotState | null = null;
   public referrals: HotReferral[] = [];
+  public missions: Record<string, boolean> = {};
   public balance = -1;
-  public missions: Record<string, boolean> = {
-    telegram_follow: false,
-    download_app: false,
-    deposit_1NEAR: false,
-    deposit_1USDT: false,
-    follow_twitter: false,
-  };
 
   public levels = [
-    { id: 0, hot_price: 100, value: 3600000000 },
-    { id: 1, hot_price: 500, value: 3600000000 },
-    { id: 2, hot_price: 1000, value: 36000000003 },
-    { id: 3, hot_price: 2000, value: 3600000000 },
-    { id: 4, hot_price: 5000, value: 3600000000 },
-    { id: 10, mission: "deposit_1NEAR", value: 1 },
-    { id: 11, mission: "deposit_1NEAR", value: 2 },
-    { id: 12, mission: "deposit_1NEAR", value: 3 },
-    { id: 13, mission: "deposit_1NEAR", value: 4 },
-    { id: 14, mission: "deposit_1NEAR", value: 5 },
-    { id: 20, mission: "deposit_1NEAR", value: 5 },
-    { id: 21, mission: "deposit_1NEAR", value: 5 },
-    { id: 22, mission: "deposit_1NEAR", value: 5 },
-    { id: 23, mission: "deposit_1NEAR", value: 5 },
-    { id: 24, mission: "deposit_1NEAR", value: 5 },
+    { id: 0, hot_price: 0, value: 0 },
+    { id: 1, hot_price: 0, value: 0 },
+    { id: 2, hot_price: 0, value: 0 },
+    { id: 3, hot_price: 0, value: 0 },
+    { id: 4, hot_price: 0, value: 0 },
+    { id: 10, mission: "", value: 0 },
+    { id: 11, mission: "", value: 0 },
+    { id: 12, mission: "", value: 0 },
+    { id: 13, mission: "", value: 0 },
+    { id: 14, mission: "", value: 0 },
+    { id: 20, mission: "", value: 0 },
+    { id: 21, mission: "", value: 0 },
+    { id: 22, mission: "", value: 0 },
+    { id: 23, mission: "", value: 0 },
+    { id: 24, mission: "", value: 0 },
   ];
 
   constructor(readonly account: UserAccount) {
@@ -164,10 +158,11 @@ class Hot {
       referrals: observable,
       balance: observable,
       missions: observable,
+      levels: observable,
       miningProgress: computed,
-      earned: computed,
       remainingMiningHours: computed,
       hotPerHour: computed,
+      earned: computed,
     });
 
     setInterval(
@@ -178,6 +173,7 @@ class Hot {
     this.updateStatus().then(() => this.fetchReferrals());
     this.fetchMissions();
     this.fetchBalance();
+    this.fetchLevels();
   }
 
   async register(inviter: string) {
@@ -207,14 +203,21 @@ class Hot {
     const balance = await this.account.near.viewMethod(HOT_ID, "ft_balance_of", {
       account_id: this.account.near.accountId,
     });
+
     runInAction(() => {
       this.balance = +balance;
     });
   }
 
+  async fetchLevels() {
+    const state = await this.account.near.viewMethod(GAME_ID, "get_assets", {
+      account_id: this.account.near.accountId,
+    });
+    runInAction(() => (this.levels = state));
+  }
+
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
-    console.log(state);
     runInAction(() => (this.state = state));
   }
 
@@ -235,9 +238,9 @@ class Hot {
   get currentBoosters() {
     if (!this.state) return [];
     return [
-      this.getBooster(this.state.storage.id || 0)!,
-      this.getBooster(this.state.firespace.id || 10)!,
-      this.getBooster(this.state.boost.id || 20)!,
+      this.getBooster(this.state.storage)!,
+      this.getBooster(this.state.firespace)!,
+      this.getBooster(this.state.boost)!,
     ];
   }
 
@@ -294,7 +297,7 @@ class Hot {
   }
 
   get storageCapacityMs() {
-    return Math.floor((this.state?.storage.value || 0) / 1_000_000);
+    return Math.floor((this.getBooster(this.state?.storage || -1)?.value || 0) / 1_000_000);
   }
 
   get remainingMiningHours() {
@@ -305,7 +308,7 @@ class Hot {
 
   get hotPerHour() {
     if (!this.state) return 0;
-    return +this.state.firespace.value;
+    return +this.getBooster(this.state.firespace)!.value * Math.max(1, +this.getBooster(this.state.boost)!.value);
   }
 
   get earned() {
