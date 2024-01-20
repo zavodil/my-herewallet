@@ -5,6 +5,7 @@ import { InMemorySigner, Signer } from "near-api-js";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapStatus } from "@near-snap/sdk";
 
+import { isTgMobile } from "../Mobile";
 import { Storage, storage } from "./Storage";
 import { HereApi } from "./network/api";
 import { NearAccount } from "./near-chain/NearAccount";
@@ -13,11 +14,11 @@ import { TransactionsStorage } from "./transactions";
 import { ConnectType, TransferParams, UserCred } from "./types";
 import { NFTModel, RecentlyApps, UserContact, UserData } from "./network/types";
 import { recaptchaToken, wait } from "./helpers";
+import { NETWORK } from "./constants";
 import { accounts } from "./Accounts";
 import { Chain } from "./token/types";
 import { notify } from "./toast";
 import Hot from "./Hot";
-import { NETWORK } from "./constants";
 
 class UserAccount {
   readonly api: HereApi;
@@ -25,7 +26,7 @@ class UserAccount {
   readonly near: NearAccount;
   readonly transactions: TransactionsStorage;
   readonly localStorage: Storage;
-  readonly hot: Hot;
+  readonly hot!: Hot;
 
   readonly path?: string;
   readonly type: ConnectType;
@@ -69,10 +70,9 @@ class UserAccount {
 
     this.transactions = new TransactionsStorage(this);
     this.tokens = new TokensStorage(this);
-    this.hot = new Hot(this);
 
+    if (isTgMobile()) this.hot = new Hot(this);
     this.transactions.refresh().catch(() => {});
-    this.tokens.refreshTokens().catch(() => {});
     this.loadRecentlyApps().catch(() => {});
     this.fetchUser().catch(() => {});
 
@@ -116,11 +116,13 @@ class UserAccount {
   }
 
   async fetchUser() {
+    if (isTgMobile()) return;
     const user = await this.api.getUser();
     runInAction(() => (this.user = user));
   }
 
   async fetchNfts() {
+    if (isTgMobile()) return;
     try {
       runInAction(() => (this.nfts = JSON.parse(this.localStorage.get("nfts")!)));
     } catch {}
@@ -131,11 +133,13 @@ class UserAccount {
   }
 
   async loadRecentlyApps() {
+    if (isTgMobile()) return;
     const apps = await this.api.getRecentlyApps();
     runInAction(() => (this.recentlyApps = apps));
   }
 
   async loadContacts() {
+    if (isTgMobile()) return;
     const contacts = await this.api.getContacts();
     runInAction(() => (this.contacts = contacts));
   }

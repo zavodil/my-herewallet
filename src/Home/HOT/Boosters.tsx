@@ -1,22 +1,23 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
 import { notify } from "../../core/toast";
 import { useWallet } from "../../core/Accounts";
-
 import { ActionButton, Button } from "../../uikit";
-import { BoldP, H0, H1, H2, H3, LargeP, Text } from "../../uikit/typographic";
+import { BoldP, H1, H2, LargeP, Text } from "../../uikit/typographic";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
 import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
 import { ClaimingLoading } from "./modals";
-import { useNavigate } from "react-router-dom";
 
-const BoostPopup = ({ id }: { id: number }) => {
+const BoostPopup = observer(({ id }: { id: number }) => {
   const user = useWallet()!;
   const next = user.hot.getBooster(id + 1);
   const [isLoading, setLoading] = useState(false);
+  const [isChecking, setChecking] = useState(false);
   if (!next) return null;
 
   const upgrade = async () => {
@@ -32,6 +33,12 @@ const BoostPopup = ({ id }: { id: number }) => {
       notify("Upgrade failed");
       setLoading(false);
     }
+  };
+
+  const updateMissions = async () => {
+    setChecking(true);
+    await user.hot.fetchMissions().catch(() => {});
+    setChecking(false);
   };
 
   return (
@@ -53,19 +60,25 @@ const BoostPopup = ({ id }: { id: number }) => {
 
       <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
         {!next.mission && (
-          <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot.png")} />
+          <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />
         )}
 
         <LargeP style={{ fontWeight: "bold" }}>{next.mission || next.hot_price}</LargeP>
       </div>
 
-      <ActionButton
-        style={{ marginTop: 16 }}
-        disabled={!user.hot.canUpgrade(id + 1) || isLoading}
-        onClick={() => upgrade()}
-      >
-        Upgrade
-      </ActionButton>
+      {next.mission && !user.hot.canUpgrade(id + 1) ? (
+        <ActionButton disabled={isChecking} style={{ marginTop: 16 }} onClick={updateMissions}>
+          Check mission
+        </ActionButton>
+      ) : (
+        <ActionButton
+          style={{ marginTop: 16 }}
+          disabled={!user.hot.canUpgrade(id + 1) || isLoading}
+          onClick={() => upgrade()}
+        >
+          Upgrade
+        </ActionButton>
+      )}
 
       {isLoading && (
         <ClaimingLoading
@@ -75,7 +88,7 @@ const BoostPopup = ({ id }: { id: number }) => {
       )}
     </div>
   );
-};
+});
 
 const BoostItem = ({ boost }: { boost: any }) => {
   const user = useWallet()!;
@@ -103,7 +116,7 @@ const BoostItem = ({ boost }: { boost: any }) => {
         <BoldP>{boost.title}</BoldP>
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -4 }}>
           {user.hot.getBooster(boost.id + 1)?.hot_price ? (
-            <img style={{ width: 24, height: 24 }} src={require("../../assets/hot.png")} />
+            <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
           ) : (
             <Icon name="mission" />
           )}
@@ -163,7 +176,7 @@ const Boosters = () => {
           <Icon name="arrow-left" />
         </Button>
 
-        <BoldP>Your cave</BoldP>
+        <BoldP>My cave</BoldP>
       </div>
 
       <Container style={{ zIndex: 10 }}>
@@ -182,7 +195,7 @@ const Boosters = () => {
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <img
                 style={{ width: 40, height: 40, marginTop: -8, marginLeft: -16 }}
-                src={require("../../assets/hot.png")}
+                src={require("../../assets/hot/hot.png")}
               />
               <H1>{Math.max(0, user.hot.balance)}</H1>
             </div>
@@ -226,4 +239,4 @@ const Boosters = () => {
   );
 };
 
-export default Boosters;
+export default observer(Boosters);

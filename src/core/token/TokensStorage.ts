@@ -1,67 +1,88 @@
-import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
-import { keyBy } from "lodash";
+import { computed, makeObservable, observable, runInAction, toJS } from "mobx";
 import { BN } from "bn.js";
 
 import { NOT_STAKABLE_NEAR } from "../near-chain/constants";
 import { formatAmount } from "../helpers";
 import UserAccount from "../UserAccount";
 
-import { FtAsset, FtModel, FtGroup, Chain } from "./types";
-import { createToken, ft, tokenId } from "./utils";
-import * as defaults from "./defaults";
-import Currencies from "./Currencies";
+import { NETWORK } from "../constants";
 import { isTgMobile } from "../../Mobile";
 
+import * as defaults from "./defaults";
+import { FtModel, Chain } from "./types";
+import { createToken, ft } from "./utils";
+import Currencies from "./Currencies";
+import tokens from "./tokens";
+
 export class TokensStorage {
-  public groupsData: Record<string, FtGroup> = {};
   public tokens: Record<string, FtModel> = {};
-  public isLoading = false;
 
   constructor(private readonly user: UserAccount) {
     makeObservable(this, {
-      stats: computed,
-      groupsData: observable,
-      isLoading: observable,
       tokens: observable,
-      registerToken: action,
-      setTokens: action,
+      stats: computed,
     });
 
-    try {
-      const fts = JSON.parse(user.localStorage.get("tokens")!);
-      this.setTokens(fts, []);
-    } catch (e) {}
+    this.tokens = user.localStorage.get(
+      "tokens:cache2",
+      user.isProduction
+        ? { [defaults.near.id]: createToken(defaults.near) }
+        : { [defaults.testnetNear.id]: createToken(defaults.testnetNear) }
+    );
 
+    this.updateNative();
     if (user.isProduction) {
-      this.registerToken([defaults.near, defaults.wnear, defaults.near, defaults.hnear, defaults.usdt]);
+      this.addContracts([
+        defaults.wnear.contract_address,
+        defaults.hnear.contract_address,
+        defaults.usdt.contract_address,
+      ]);
     } else {
-      this.registerToken([defaults.testnetNear, defaults.testnetWnear, defaults.testnetHot]);
+      this.addContracts([defaults.testnetWnear.contract_address, defaults.testnetHot.contract_address]);
     }
 
-    console.log(toJS(this.tokens));
-    Object.values(this.tokens).forEach(async (ft) => {
-      if (!ft.contract) {
-        const balance = await this.user.near.getNativeBalance();
-        const storage = balance.total.sub(balance.available);
-        return runInAction(() => {
-          ft.amount = balance.total.toString();
-          ft.amountFloat = formatAmount(ft.amount, ft.decimal);
-          ft.freeze = new BN(ft.freeze ?? "0").add(storage).toString();
-          ft.safe = balance.available.toString();
-          ft.safeFloat = formatAmount(ft.safe, ft.decimal);
-          ft.viewBalance = formatAmount(balance.available.toString(), 24, 4);
-        });
-      }
-
-      const value = await this.user.near.viewMethod(ft.contract, "ft_balance_of", {
-        account_id: this.user.near.accountId,
+    if (!isTgMobile()) {
+      this.user.api.getTokens().then((data) => {
+        this.addContracts(Object.keys(data.token_contracts));
       });
+    }
+  }
+
+  cacheTokens() {
+    this.user.localStorage.set("tokens:cache2", toJS(this.tokens));
+  }
+
+  async addContracts(ids: string[]) {
+    const list = Object.values(this.tokens);
+    ids.forEach(async (id) => {
+      const token = list.find((t) => t.contract === id);
+      if (token) return await this.updateBalance(token);
+      const meta = await this.user.near.viewMethod(id, "ft_metadata");
       runInAction(() => {
-        ft.amount = value;
-        ft.amountFloat = formatAmount(value, ft.decimal);
-        ft.safe = ft.amount;
-        ft.safeFloat = ft.amountFloat;
-        ft.viewBalance = ft.amountFloat;
+        this.tokens[ft(this.nearChain, meta.symbol)] = {
+          amount: "0",
+          amountFloat: 0,
+          asset: meta.symbol,
+          chain: this.nearChain,
+          // @ts-ignore
+          icon: tokens[meta.symbol]?.icon || meta.icon,
+          coingeckoId: "",
+          contract: id,
+          decimal: meta.decimals,
+          freeze: "0",
+          gasFree: false,
+          id: ft(this.nearChain, meta.symbol),
+          isStable: false,
+          name: meta.symbol,
+          pending: "0",
+          safe: "0",
+          safeFloat: 0,
+          symbol: meta.symbol,
+          viewBalance: 0,
+        };
+
+        this.cacheTokens();
+        this.updateBalance(this.tokens[ft(this.nearChain, meta.symbol)]);
       });
     });
   }
@@ -84,72 +105,56 @@ export class TokensStorage {
     return { nears, all, chains, stables };
   }
 
+  get nearChain() {
+    return NETWORK === "mainnet" ? Chain.NEAR : Chain.NEAR_TESTNET;
+  }
+
   /*** Predefined tokens always available */
   get near() {
-    return this.tokens[ft(Chain.NEAR, "NEAR")]!;
+    return this.tokens[ft(this.nearChain, "NEAR")]!;
+  }
+
+  get hnear() {
+    return this.tokens[ft(this.nearChain, "hNEAR")]!;
   }
 
   get stakableNear() {
     return formatAmount(BN.max(new BN(0), new BN(this.near.safe).sub(NOT_STAKABLE_NEAR)).toString());
   }
 
-  get hnear() {
-    return this.tokens[ft(Chain.NEAR, "hNEAR")]!;
-  }
+  async updateNative() {
+    const balance = await this.user.near.getNativeBalance();
+    const storage = balance.total.sub(balance.available);
+    const ft = this.near;
+    if (!ft) return;
 
-  get bnear() {
-    return this.tokens[ft(Chain.BINANCE, "NEAR")]!;
-  }
-
-  registerToken(assets: FtAsset[]) {
-    assets.forEach((asset) => {
-      if (this.tokens[tokenId(asset)]) return;
-      const ft = createToken(asset);
-      this.tokens[ft.id] = ft;
+    runInAction(() => {
+      ft.amount = balance.total.toString();
+      ft.amountFloat = formatAmount(ft.amount, ft.decimal);
+      ft.freeze = new BN(ft.freeze ?? "0").add(storage).toString();
+      ft.safe = balance.available.toString();
+      ft.safeFloat = formatAmount(ft.safe, ft.decimal);
+      ft.viewBalance = formatAmount(balance.available.toString(), 24, 4);
     });
+
+    this.cacheTokens();
   }
 
-  setTokens(fts: FtAsset[], groups: FtGroup[]) {
-    this.groupsData = keyBy(groups, (g) => g.asset);
+  async updateBalance(id: string | FtModel) {
+    const ft = typeof id === "string" ? this.find((t) => t.contract === id) : id;
+    const value = await this.user.near.viewMethod(ft.contract, "ft_balance_of", {
+      account_id: this.user.near.accountId,
+    });
 
-    const newTokens = fts.reduce<Record<string, FtAsset>>((acc, asset) => {
-      try {
-        const token = createToken(asset);
-        this.tokens[token.id] = token;
-        acc[token.id] = asset;
-        return acc;
-      } catch (e) {
-        console.error(e);
-        return acc;
-      }
-    }, {});
+    runInAction(() => {
+      this.tokens[ft.id].amount = value;
+      this.tokens[ft.id].amountFloat = formatAmount(value, ft.decimal);
+      this.tokens[ft.id].safe = this.tokens[ft.id].amount;
+      this.tokens[ft.id].safeFloat = this.tokens[ft.id].amountFloat;
+      this.tokens[ft.id].viewBalance = this.tokens[ft.id].amountFloat;
+    });
 
-    for (const id in this.tokens) {
-      if (newTokens[id] == null) {
-        this.tokens[id].viewBalance = 0;
-        this.tokens[id].amountFloat = 0;
-        this.tokens[id].safeFloat = 0;
-        this.tokens[id].safe = "0";
-        this.tokens[id].amount = "0";
-        this.tokens[id].freeze = "0";
-        this.tokens[id].pending = "0";
-      }
-    }
-
-    // TODO: Remove it
-    const usdt = this.tokens[Chain.NEAR + "_USDT"];
-    if (usdt) usdt.gasFree = true;
-  }
-
-  private _lastRefresh = 0;
-  async refreshTokens() {
-    if (Date.now() - this._lastRefresh < 3000) return;
-    this._lastRefresh = Date.now();
-
-    if (isTgMobile()) return;
-    const { tokens, groups } = await this.user.api.getAssets();
-    this.user.localStorage.set("tokens", JSON.stringify(tokens));
-    this.setTokens(tokens, groups);
+    this.cacheTokens();
   }
 
   find(ids: string[]): FtModel[];
@@ -161,7 +166,7 @@ export class TokensStorage {
 
   head(fts: FtModel | FtModel[]): FtModel {
     if (!Array.isArray(fts)) return fts;
-    if (fts.every((t) => t.id === ft(Chain.NEAR, "NEAR") || t.id === ft(Chain.NEAR, "hNEAR"))) {
+    if (fts.every((t) => t.id === ft(this.nearChain, "NEAR") || t.id === ft(this.nearChain, "hNEAR"))) {
       return this.near;
     }
 
@@ -199,16 +204,6 @@ export class TokensStorage {
     if (chain >= 2000) {
       return this.user.isProduction ? this.tokens[ft(chain, id)] || null : null;
     }
-
-    // mainnet tokens available only on mainnet, search some token on testnet (01-09)
-    // if (chain % 10 === 0 && this.user.target.network !== "mainnet") {
-    //   for (let i = 1; i <= 9; i++) {
-    //     const asset = this.tokens[ft(chain + i, id)];
-    //     if (asset) return asset;
-    //   }
-
-    //   return null;
-    // }
 
     return this.tokens[ft(chain, id)] || null;
   }

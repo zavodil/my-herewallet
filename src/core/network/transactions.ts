@@ -1,5 +1,6 @@
 import { HereApi } from "./api";
 import { CashbackData, TransactionModel } from "../transactions/types";
+import { isTgMobile } from "../../Mobile";
 
 export interface TransactionsQuery {
   currency?: string;
@@ -25,7 +26,7 @@ class TransactionsApi {
     if (data.start) q.set("start", data.start.toString());
     if (data.account) q.set("account_id", data.account);
 
-    const url = `/api/v1/transactions/t?${q}`;
+    const url = isTgMobile() ? `/api/v1/user/hot/transactions` : `/api/v1/transactions/t?${q}`;
     const res = await this.api.request(url);
     const { transactions } = await res.json();
     return transactions;

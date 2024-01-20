@@ -1,14 +1,50 @@
 import React from "react";
+import { useInitData } from "@vkruglikov/react-telegram-web-app";
+import Lottie from "lottie-react";
 import { useState } from "react";
+
 import { useWallet } from "../../core/Accounts";
 import { sheets } from "../../uikit/Popup";
-import { ActionButton, H2, H4, Text } from "../../uikit";
-import Lottie from "lottie-react";
 import { notify } from "../../core/toast";
 import { colors } from "../../uikit/theme";
 import { BoldP } from "../../uikit/typographic";
+import { ActionButton, H2, H4, Text } from "../../uikit";
+
+export const InviteFriend = () => {
+  const user = useWallet()!;
+  return (
+    <div
+      style={{
+        padding: 24,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        gap: 24,
+      }}
+    >
+      <img src={require("../../assets/hot/band.png")} style={{ width: 140, height: 140 }} />
+      <H2>Friendship bonus</H2>
+      <Text style={{ color: colors.blackSecondary }}>
+        Friends amplify your power! Earn <b>20% HOT</b> from all your friends' income - no limits, no boundaries. Let's
+        go wild!
+      </Text>
+      <ActionButton
+        style={{ marginTop: 16 }}
+        onClick={() => {
+          navigator.clipboard.writeText(user.hot.referralLink);
+          notify("Referral link has been copied");
+        }}
+      >
+        Copy referral link
+      </ActionButton>
+    </div>
+  );
+};
 
 export const FirstClaimHOT = () => {
+  const [data] = useInitData();
   const user = useWallet()!;
   const [isLoading, setLoading] = useState(false);
   const referral = new URLSearchParams(location.search).get("referral");
@@ -16,13 +52,13 @@ export const FirstClaimHOT = () => {
   const register = async () => {
     try {
       setLoading(true);
-      sheets.blocked("Boost", true);
-      await user.hot.register(referral || "");
+      sheets.blocked("Register", true);
+      await user.hot.register(referral || "", data?.user);
       sheets.dismiss("Boost");
       setLoading(false);
     } catch (e) {
       console.log(e);
-      sheets.blocked("Boost", false);
+      sheets.blocked("Register", false);
       notify("Claim failed");
       setLoading(false);
     }
@@ -40,7 +76,7 @@ export const FirstClaimHOT = () => {
         gap: 24,
       }}
     >
-      <img src={require("../../assets/hot-icon.png")} style={{ width: 140, height: 140, borderRadius: 12 }} />
+      <img src={require("../../assets/hot/hot-icon.png")} style={{ width: 140, height: 140, borderRadius: 12 }} />
       <H2>+ 1000 HOT</H2>
       <Text style={{ color: colors.blackSecondary }}>
         HOT is an onchain token related to the launch of NEAR Wallet in Telegram. It's mined on the blockchain and can

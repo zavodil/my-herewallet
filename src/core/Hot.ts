@@ -1,7 +1,10 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import UserAccount from "./UserAccount";
+import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
+import { WebAppUser } from "@vkruglikov/react-telegram-web-app";
 import { BN } from "bn.js";
+
+import UserAccount from "./UserAccount";
 import { TGAS } from "./constants";
+import { wait } from "./helpers";
 
 const GAME_ID = "game.hot-token.testnet";
 const HOT_ID = "ft.hot-token.testnet";
@@ -133,7 +136,15 @@ class Hot {
   public state: HotState | null = null;
   public referrals: HotReferral[] = [];
   public missions: Record<string, boolean> = {};
-  public balance = -1;
+
+  public userData = {
+    user_id: 0,
+    gas_free_transactions: 0,
+    near_rpc: "rpc.herewallet.app",
+    ft_contracts: [],
+  };
+
+  public totalMinted = 0;
 
   public levels = [
     { id: 0, hot_price: 0, value: 0 },
@@ -158,9 +169,9 @@ class Hot {
       state: observable,
       currentTime: observable,
       referrals: observable,
-      balance: observable,
       missions: observable,
       levels: observable,
+      balance: computed,
       miningProgress: computed,
       remainingMiningHours: computed,
       hotPerHour: computed,
@@ -172,55 +183,97 @@ class Hot {
       1000
     );
 
-    this.updateStatus().then(() => this.fetchReferrals());
+    const cache = this.account.localStorage.get("hot:cache", this.cacheData());
+    this.levels = cache.levels;
+    this.userData = cache.userData;
+    this.missions = cache.missions;
+    this.referrals = cache.referrals;
+    this.state = cache.state;
+
+    this.updateStatus();
     this.fetchMissions();
-    this.fetchBalance();
     this.fetchLevels();
+    this.fetchReferrals();
+    this.getUserData();
+    this.getTotalMinted();
   }
 
-  async register(inviter: string) {
-    await this.account.api.request("/api/v1/user/hot", {
-      body: JSON.stringify({ inviter_id: inviter }),
-      method: "POST",
+  cacheData() {
+    return toJS({
+      levels: this.levels,
+      userData: this.userData,
+      missions: this.missions,
+      referrals: this.referrals,
+      totalMinted: this.totalMinted,
+      state: this.state,
     });
+  }
+
+  updateCache() {
+    this.account.localStorage.set("hot:cache", this.cacheData());
+  }
+
+  async getTotalMinted() {
+    const balance = await this.account.near.viewMethod(HOT_ID, "ft_total_supply").catch(() => this.totalMinted);
+    runInAction(() => (this.totalMinted = balance));
+    this.updateCache();
+    await wait(10000);
+    await this.getTotalMinted();
+  }
+
+  async getUserData() {
+    const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHour}`);
+    const data = await resp.json();
+    runInAction(() => (this.userData = data));
+    this.updateCache();
+
+    this.account.tokens.addContracts(this.userData.ft_contracts);
+  }
+
+  async register(inviter: string, user?: WebAppUser) {
+    await this.account.api.request("/api/v1/user/hot", {
+      method: "POST",
+      body: JSON.stringify({
+        inviter_id: inviter,
+        telegram_username: user?.username,
+        telegram_name: `${user?.first_name || ""} ${user?.last_name || ""}`,
+        telegram_avatar: user?.photo_url,
+        telegram_id: user?.id,
+      }),
+    });
+
     await this.fetchBalance();
   }
 
   async fetchMissions() {
     const resp = await this.account.api.request("/api/v1/user/hot/missions");
     const data = await resp.json();
-    runInAction(() => {
-      this.missions = data;
-    });
+    runInAction(() => (this.missions = data));
+    this.updateCache();
   }
 
   async fetchReferrals() {
-    if (!this.state?.has_refferals) return;
     const resp = await this.account.api.request("/api/v1/user/hot/referrals");
     const data = await resp.json();
     runInAction(() => (this.referrals = data.referrals));
+    this.updateCache();
   }
 
   async fetchBalance() {
-    const balance = await this.account.near.viewMethod(HOT_ID, "ft_balance_of", {
-      account_id: this.account.near.accountId,
-    });
-
-    runInAction(() => {
-      this.balance = +balance;
-    });
+    await this.account.tokens.updateBalance(HOT_ID);
   }
 
   async fetchLevels() {
-    const state = await this.account.near.viewMethod(GAME_ID, "get_assets", {
-      account_id: this.account.near.accountId,
-    });
+    const near = this.account.near;
+    const state = await near.viewMethod(GAME_ID, "get_assets", { account_id: near.accountId });
     runInAction(() => (this.levels = state));
+    this.updateCache();
   }
 
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
     runInAction(() => (this.state = state));
+    this.updateCache();
   }
 
   async claim() {
@@ -298,6 +351,11 @@ class Hot {
     await this.updateStatus();
   }
 
+  get balance() {
+    const tokens = this.account.tokens;
+    return +(tokens.token(tokens.nearChain, "HOT")?.amount || 0);
+  }
+
   get miningProgress() {
     if (!this.state) return 0;
     const spend_ms = this.currentTime - Math.floor(this.state.last_claim / 1000_000);
@@ -321,6 +379,14 @@ class Hot {
 
   get earned() {
     return ((this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(2);
+  }
+
+  get referralsEarnPerHour() {
+    return this.referrals.reduce((acc, r) => acc + r.earn_per_hour, 0);
+  }
+
+  get referralLink() {
+    return `https://t.me/herewalletbot?referral_id=${this.userData.user_id}`;
   }
 }
 

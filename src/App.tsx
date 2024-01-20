@@ -24,8 +24,10 @@ import CreateAccountMobile from "./AuthMobile/CreateAccountMobile";
 import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
 import AuthMobile from "./AuthMobile/AuthMobile";
 import PopupsProvider from "./uikit/Popup";
-import HOT from "./Home/HOT";
 import Boosters from "./Home/HOT/Boosters";
+import Band from "./Home/HOT/Band";
+import HOT from "./Home/HOT";
+import Gas from "./Home/HOT/Gas";
 
 function App() {
   if (isTgMobile()) {
@@ -37,12 +39,14 @@ function App() {
             {accounts.account && (
               <>
                 <Route path="/" element={<Home />} />
-                <Route path="/boosters" element={<Boosters />} />
                 <Route path="/stake/*" element={<Staking />} />
                 <Route path="/transfer/success" element={<TransferSuccess />} />
                 <Route path="/transfer/*" element={<Transfer />} />
                 <Route path="/apps/:id?" element={<Apps />} />
                 <Route path="/settings/*" element={<Settings />} />
+                <Route path="/hot/cave" element={<Boosters />} />
+                <Route path="/hot/band" element={<Band />} />
+                <Route path="/hot/gas" element={<Gas />} />
                 <Route path="/hot/*" element={<HOT />} />
               </>
             )}
