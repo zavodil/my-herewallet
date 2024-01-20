@@ -139,7 +139,7 @@ export class HereApi {
     return token;
   }
 
-  async getTokens(): Promise<{ tokens: FtAsset[]; token_contracts: string[]; balance_usd: number }> {
+  async getTokens(): Promise<{ tokens: FtAsset[]; token_contracts: Record<string, string[]>; balance_usd: number }> {
     const res = await this.request(`/api/v1/user/tokens`);
     return await res.json();
   }

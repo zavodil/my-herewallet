@@ -43,7 +43,7 @@ export class TokensStorage {
 
     if (!isTgMobile()) {
       this.user.api.getTokens().then((data) => {
-        this.addContracts(Object.keys(data.token_contracts));
+        this.addContracts(data.token_contracts["ChainEnum.NEAR"]);
       });
     }
   }
