@@ -35,11 +35,10 @@ class SheetsManager {
       element,
       blocked,
       fullscreen,
-      isOpen: true,
+      isOpen: false,
       onClose: action(() => {
         const popup = this.popups.find((t) => t.id === id);
         if (!popup) return;
-
         popup.isOpen = false;
         setTimeout(
           action(() => {
@@ -50,6 +49,14 @@ class SheetsManager {
         );
       }),
     });
+
+    setTimeout(
+      action(() => {
+        const p = this.popups.find((p) => p.id === id);
+        if (p) p.isOpen = true;
+      }),
+      100
+    );
   };
 
   dismiss = (id: string) => {
@@ -70,13 +77,21 @@ const Popup = ({
   onClose?: () => void;
   fullscreen?: boolean;
 }) => {
+  const first = useRef(true);
   const bodyRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!bodyRef.current || !overlayRef.current) return;
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+
     bodyRef.current.classList.toggle("hide", !isOpen);
     overlayRef.current.classList.toggle("hide", !isOpen);
+    bodyRef.current.classList.toggle("show", isOpen);
+    overlayRef.current.classList.toggle("show", isOpen);
   }, [isOpen]);
 
   return (
@@ -134,8 +149,6 @@ const PopupWrap = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: flex-end;
   z-index: 100000;
 `;
 
@@ -147,13 +160,19 @@ const PopupBody = styled.div`
   position: relative;
   will-change: transform;
   overflow: hidden;
+  position: absolute;
+  bottom: 0;
 
-  animation: ${slideUp} 0.2s;
-  animation-fill-mode: backwards;
+  transform: translateY(100%);
+
+  &.show {
+    animation: ${slideUp} 0.2s;
+    animation-fill-mode: forwards;
+  }
 
   &.hide {
     animation: ${slideDown} 0.2s;
-    animation-fill-mode: forwards;
+    animation-fill-mode: backwards;
   }
 `;
 
@@ -164,12 +183,14 @@ const PopupOverlay = styled.div`
   right: 0;
   bottom: 0;
 
-  animation: ${show} 0.4s;
-  animation-fill-mode: forwards;
+  &.show {
+    animation: ${show} 0.4s;
+    animation-fill-mode: forwards;
+  }
 
   &.hide {
     animation: ${hide} 0.4s;
-    animation-fill-mode: forwards;
+    animation-fill-mode: backwards;
   }
 `;
 

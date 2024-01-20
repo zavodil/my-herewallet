@@ -1,5 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import UserAccount from "./UserAccount";
+import { BN } from "bn.js";
+import { TGAS } from "./constants";
 
 const GAME_ID = "game.hot-token.testnet";
 const HOT_ID = "ft.hot-token.testnet";
@@ -275,7 +277,13 @@ class Hot {
       await this.account.near.functionCall({
         contractId: HOT_ID,
         methodName: "ft_transfer_call",
-        args: { receiver_id: GAME_ID, amount: booster.hot_price.toString(), msg: { asset_id: id } },
+        attachedDeposit: new BN("1"),
+        gas: new BN(TGAS * 50),
+        args: {
+          receiver_id: GAME_ID,
+          amount: booster.hot_price.toString(),
+          msg: JSON.stringify({ asset_id: id }),
+        },
       });
 
       await this.updateStatus();
