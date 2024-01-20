@@ -6,10 +6,10 @@ import styled from "styled-components";
 import { useWallet } from "../../core/Accounts";
 import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
-import Icon from "../../uikit/Icon";
-import { Button } from "../../uikit";
 import { Container, Root } from "../styled";
 import { sheets } from "../../uikit/Popup";
+import { Button } from "../../uikit";
+import Icon from "../../uikit/Icon";
 import MyAddress from "../MyAddress";
 
 const Gas = () => {
