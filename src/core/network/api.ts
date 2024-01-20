@@ -132,10 +132,9 @@ export class HereApi {
     return token;
   }
 
-  async getTokens(): Promise<{ tokens: FtAsset[]; balance_usd: number }> {
+  async getTokens(): Promise<{ tokens: FtAsset[]; token_contracts: string[]; balance_usd: number }> {
     const res = await this.request(`/api/v1/user/tokens`);
-    const { tokens, balance_usd } = await res.json();
-    return { tokens, balance_usd };
+    return await res.json();
   }
 
   async getTransactions(): Promise<TransactionModel[]> {

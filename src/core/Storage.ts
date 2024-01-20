@@ -19,8 +19,8 @@ export class Storage {
     localStorage.setItem(this.key, JSON.stringify({ ...data, [key]: value }));
   }
 
-  get(key: string): string | null {
-    return getStorageJson(this.key, {})[key] || null;
+  get(key: string, def: any = null): any | null {
+    return getStorageJson(this.key, {})[key] || def;
   }
 }
 

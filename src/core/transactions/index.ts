@@ -19,12 +19,8 @@ export class TransactionsStorage {
     });
 
     this.remote = new TransactionApi(user.api);
-
-    try {
-      this.list = JSON.parse(user.localStorage.get("transactions") ?? "");
-    } catch {
-      this.isLoading = true;
-    }
+    this.list = user.localStorage.get("transactionsList", []);
+    this.isLoading = !this.list.length;
   }
 
   async bindComment(tx: string, comment: string) {
@@ -57,7 +53,7 @@ export class TransactionsStorage {
       ],
     });
 
-    this.user.localStorage.set("transactions", JSON.stringify(trxs));
+    this.user.localStorage.set("transactionsList", trxs);
     runInAction(() => {
       this.isLoading = false;
       this.list = trxs;

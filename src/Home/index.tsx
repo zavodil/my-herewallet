@@ -213,7 +213,7 @@ const Home = () => {
               <Card style={{ marginTop: -8, padding: "0" }}>
                 <TokenCard style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => navigate("/hot")}>
                   <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 12 }}>
-                    <TokenIcon src={require("../assets/hot-icon.png")} />
+                    <TokenIcon src={require("../assets/hot/hot-icon.png")} />
 
                     <div style={{ flex: 1 }}>
                       <Text style={{ fontWeight: "bold" }}>HOT</Text>

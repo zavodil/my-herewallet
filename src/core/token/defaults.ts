@@ -70,7 +70,7 @@ export const testnetHot = {
   decimal: 0,
   freeze: "0",
   pending: "0",
-  image_url: require("../../assets/hot-icon.png"),
+  image_url: require("../../assets/hot/hot-icon.png"),
   asset: "HOT",
   name: "HOT",
   is_stable: false,

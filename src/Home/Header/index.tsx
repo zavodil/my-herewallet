@@ -4,59 +4,17 @@ import { observer } from "mobx-react-lite";
 
 import hereWebLogo from "../../assets/here-web.svg?url";
 import { useAnalyticsTrack } from "../../core/analytics";
-import { accounts, useWallet } from "../../core/Accounts";
+import { accounts } from "../../core/Accounts";
 
 import { Button } from "../../uikit";
-import { H2, SmallText, Text } from "../../uikit/typographic";
+import { H2 } from "../../uikit/typographic";
+import { sheets } from "../../uikit/Popup";
 import Icon from "../../uikit/Icon";
-import { isTgMobile } from "../../Mobile";
 
+import { isTgMobile } from "../../Mobile";
 import AccountManager from "./AccountsManager";
 import * as S from "./styled";
-import { sheets } from "../../uikit/Popup";
-import HereQRCode from "../../uikit/HereQRCode";
-import { colors } from "../../uikit/theme";
-import { HereButton } from "../../uikit/button";
-import { notify } from "../../core/toast";
-
-const MyQRPopup = () => {
-  const wallet = useWallet();
-  if (!wallet) return null;
-
-  return (
-    <div style={{ padding: 24, paddingBottom: 48 }}>
-      <div
-        style={{
-          width: "fit-content",
-          borderRadius: 16,
-          background: colors.elevation1,
-          padding: 12,
-          border: "1px solid var(--Stroke)",
-          margin: "auto",
-        }}
-      >
-        <HereQRCode value={wallet.id} />
-      </div>
-
-      <div style={{ display: "flex", gap: 32, marginTop: 32 }}>
-        <div>
-          <SmallText>Your address</SmallText>
-          <Text style={{ lineBreak: "anywhere" }}>{wallet.id}</Text>
-        </div>
-
-        <HereButton
-          onClick={() => {
-            navigator.clipboard.writeText(wallet.id);
-            notify("Address has been copied");
-          }}
-        >
-          <Icon name="copy" />
-          Copy
-        </HereButton>
-      </div>
-    </div>
-  );
-};
+import MyAddress from "../MyAddress";
 
 const Header = observer(() => {
   const location = useLocation();
@@ -76,7 +34,7 @@ const Header = observer(() => {
         </div>
 
         <div style={{ marginLeft: "auto", display: "flex", gap: 16 }}>
-          <Button onClick={() => sheets.present({ id: "MyQR", element: <MyQRPopup /> })}>
+          <Button onClick={() => sheets.present({ id: "MyQR", element: <MyAddress /> })}>
             <Icon name="qr" />
           </Button>
 

@@ -3,6 +3,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
+import { colors } from "../theme";
 
 interface PopupConfig {
   id: string;
@@ -30,6 +31,9 @@ class SheetsManager {
   };
 
   present = ({ id, element, blocked, fullscreen, onClose }: PopupConfig) => {
+    const popup = this.popups.find((t) => t.id === id);
+    if (popup) return;
+
     this.popups.push({
       id,
       element,
@@ -109,6 +113,8 @@ export const sheets = new SheetsManager();
 const PopupsProvider = observer(() => {
   const app = useWebApp();
   useEffect(() => {
+    app?.setBackgroundColor?.(colors.elevation0);
+    app?.setHeaderColor?.(colors.elevation0);
     app?.expend?.();
   }, []);
 

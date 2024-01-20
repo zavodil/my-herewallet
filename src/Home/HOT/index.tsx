@@ -32,8 +32,13 @@ const HOT = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user.hot.balance !== 0) return;
-    sheets.present({ id: "Boost", element: <FirstClaimHOT />, blocked: true });
+    console.log(user.hot.balance);
+    if (user.hot.balance > 0) {
+      sheets.dismiss("Register");
+      return;
+    }
+
+    sheets.present({ id: "Register", element: <FirstClaimHOT />, blocked: true });
   }, [user.hot.balance]);
 
   const claim = async () => {
@@ -51,7 +56,7 @@ const HOT = () => {
     <Root style={{ overflow: "hidden", width: "100vw" }}>
       <img
         src={require("../../assets/hot/hot-blur.png")}
-        style={{ position: "fixed", width: "100vw", top: 0, height: "100vh", objectFit: "contain" }}
+        style={{ position: "fixed", width: "100vw", top: -100, height: "100vh", objectFit: "contain" }}
       />
 
       <Header />
@@ -60,10 +65,12 @@ const HOT = () => {
         style={{ zIndex: 10, justifyContent: "space-between", minHeight: "calc(var(--vh, 1vh) * 100 - 56px)" }}
       >
         <Card style={{ padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
-          <TokenIcon src={require("../../assets/hot-icon.png")} />
+          <TokenIcon src={require("../../assets/hot/hot-icon.png")} />
           <div>
             <TinyText>Minted</TinyText>
-            <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>1,1M / 10,000M</SmallText>
+            <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>
+              {user.hot.totalMinted} / 10,000M
+            </SmallText>
           </div>
         </Card>
 
@@ -80,7 +87,7 @@ const HOT = () => {
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <img
               style={{ width: 60, height: 60, marginTop: -8, marginLeft: -16 }}
-              src={require("../../assets/hot.png")}
+              src={require("../../assets/hot/hot.png")}
             />
             <H0>{Math.max(0, user.hot.balance)}</H0>
           </div>
@@ -115,9 +122,13 @@ const HOT = () => {
 
             <div style={{ textAlign: "left" }}>
               <BoldP>Storage</BoldP>
-              <Text style={{ color: colors.blackSecondary }}>
-                ≈{formatHours(+user.hot.remainingMiningHours)} to fill
-              </Text>
+              {user.hot.miningProgress !== 1 ? (
+                <Text style={{ color: colors.blackSecondary }}>
+                  ≈{formatHours(+user.hot.remainingMiningHours)} to fill
+                </Text>
+              ) : (
+                <Text style={{ color: colors.blackSecondary }}>Filled</Text>
+              )}
             </div>
 
             <HereButton disabled={user.hot.miningProgress !== 1} onClick={() => claim()} style={{ marginLeft: "auto" }}>
@@ -151,19 +162,21 @@ const HOT = () => {
               gap: 8,
             }}
           >
-            <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }}>
+            <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }} onClick={() => navigate("/hot/gas")}>
               <img src={require("../../assets/hot/gas.png")} style={{ width: 32, height: 32 }} />
               <TinyText>Gas</TinyText>
             </div>
+
             <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
 
-            <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }} onClick={() => navigate("/boosters")}>
+            <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }} onClick={() => navigate("/hot/cave")}>
               <img src={user.hot.getBooster(user.hot.state?.boost || 0)?.icon} style={{ width: 32, height: 32 }} />
               <TinyText>Cave</TinyText>
             </div>
 
             <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
-            <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }}>
+
+            <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }} onClick={() => navigate("/hot/band")}>
               <img src={require("../../assets/hot/band.png")} style={{ width: 32, height: 32 }} />
               <TinyText>Band</TinyText>
             </div>
