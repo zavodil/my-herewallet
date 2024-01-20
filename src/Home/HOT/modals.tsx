@@ -51,7 +51,7 @@ export const FirstClaimHOT = () => {
     try {
       setLoading(true);
       sheets.blocked("Register", true);
-      await user.hot.register(referral || "");
+      await user.hot.register(referral != null ? +referral : undefined);
       sheets.dismiss("Boost");
       setLoading(false);
     } catch (e) {
