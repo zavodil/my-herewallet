@@ -2,7 +2,7 @@ import { useWebApp } from "@vkruglikov/react-telegram-web-app";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 interface PopupConfig {
   id: string;
@@ -74,18 +74,9 @@ const Popup = ({
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        if (!bodyRef.current || !overlayRef.current) return;
-        bodyRef.current.style.transform = `translateY(0)`;
-        overlayRef.current.style.backgroundColor = "#00000066";
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-
     if (!bodyRef.current || !overlayRef.current) return;
-    bodyRef.current.style.transform = `translateY(100%)`;
-    overlayRef.current.style.backgroundColor = "#00000000";
+    bodyRef.current.classList.toggle("hide", !isOpen);
+    overlayRef.current.classList.toggle("hide", !isOpen);
   }, [isOpen]);
 
   return (
@@ -117,6 +108,26 @@ const PopupsProvider = observer(() => {
   );
 });
 
+const slideUp = keyframes`
+    0% { transform: translateY(100%);}
+    100% { transform: translateY(0%); }
+`;
+
+const slideDown = keyframes`
+    0% { transform: translateY(0%);}
+    100% { transform: translateY(100%); }
+`;
+
+const show = keyframes`
+    0% { background-color: #00000000 }
+    100% { background-color: #00000066 }
+`;
+
+const hide = keyframes`
+    100% { background-color: #00000000 }
+    0% { background-color: #00000066 }
+`;
+
 const PopupWrap = styled.div`
   position: fixed;
   top: 0;
@@ -134,21 +145,32 @@ const PopupBody = styled.div`
   border-radius: 20px 20px 0px 0px;
   background: var(--Elevation-0, #f3ebea);
   position: relative;
-  transform: translateY(100%);
-  transition: 0.3s transform;
   will-change: transform;
   overflow: hidden;
+
+  animation: ${slideUp} 0.2s;
+  animation-fill-mode: backwards;
+
+  &.hide {
+    animation: ${slideDown} 0.2s;
+    animation-fill-mode: forwards;
+  }
 `;
 
 const PopupOverlay = styled.div`
-  transition: 0.6s backdrop-filter, 0.2s background-color;
-  backdrop-filter: blur(0px);
-  background-color: #00000000;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+
+  animation: ${show} 0.4s;
+  animation-fill-mode: forwards;
+
+  &.hide {
+    animation: ${hide} 0.4s;
+    animation-fill-mode: forwards;
+  }
 `;
 
 export default PopupsProvider;

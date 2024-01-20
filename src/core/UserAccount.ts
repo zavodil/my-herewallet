@@ -56,9 +56,6 @@ class UserAccount {
     this.api = new HereApi(creds.jwt);
     this.localStorage = new Storage(creds.accountId);
 
-    this.tokens = new TokensStorage(this);
-    this.transactions = new TransactionsStorage(this);
-
     if (creds.privateKey) {
       const keyPair = KeyPair.fromString(creds.privateKey!);
       const keyStore = new InMemoryKeyStore();
@@ -70,6 +67,8 @@ class UserAccount {
       this.near = new NearAccount(creds.accountId, this.type, signer, creds.jwt);
     }
 
+    this.transactions = new TransactionsStorage(this);
+    this.tokens = new TokensStorage(this);
     this.hot = new Hot(this);
 
     this.transactions.refresh().catch(() => {});
@@ -158,7 +157,7 @@ class UserAccount {
   }
 
   get isProduction() {
-    return true;
+    return NETWORK === "mainnet";
   }
 }
 

@@ -217,11 +217,17 @@ const Home = () => {
 
                     <div style={{ flex: 1 }}>
                       <Text style={{ fontWeight: "bold" }}>HOT</Text>
-                      <SmallText>0.00</SmallText>
+                      <SmallText>{Math.max(0, account.hot.balance).toFixed(2)}</SmallText>
                     </div>
 
-                    <BoldP>Claim 1000 (free)</BoldP>
-                    <Icon name="arrow-right" />
+                    {account.hot.balance === 0 ? (
+                      <>
+                        <BoldP>Claim 1000 (free)</BoldP>
+                        <Icon name="arrow-right" />
+                      </>
+                    ) : (
+                      <Icon name="arrow-right" />
+                    )}
                   </div>
                 </TokenCard>
 
@@ -229,6 +235,7 @@ const Home = () => {
                   .filter((t) => t.amountFloat > 0 || t.symbol === "NEAR")
                   .sort((a, b) => account.tokens.fiat(b) - account.tokens.fiat(a))
                   .map((ft) => {
+                    if (ft.symbol === "HOT") return null;
                     // const cur = account.tokens.cur(ft);
                     // const diff = Formatter.round(cur.usd_24h_change - 1);
                     // const diffColor = diff === 0 ? colors.blackSecondary : diff > 0 ? colors.green : colors.red;

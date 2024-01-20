@@ -65,6 +65,22 @@ export const near = {
   id: ft(Chain.NEAR, AssetSymbol.NEAR),
 };
 
+export const testnetHot = {
+  amount: "0",
+  decimal: 0,
+  freeze: "0",
+  pending: "0",
+  image_url: require("../../assets/hot-icon.png"),
+  asset: "HOT",
+  name: "HOT",
+  is_stable: false,
+  coingecko_id: "???",
+  symbol: "HOT",
+  chain: Chain.NEAR,
+  contract_address: "ft.hot-token.testnet",
+  id: ft(Chain.NEAR, "HOT"),
+};
+
 export const testnetNear = {
   amount: "0",
   decimal: 24,

@@ -26,6 +26,8 @@ const BoostPopup = ({ id }: { id: number }) => {
   const [isLoading, setLoading] = useState(false);
   if (!next) return null;
 
+  console.log(next);
+
   const upgrade = async () => {
     try {
       setLoading(true);
@@ -59,10 +61,11 @@ const BoostPopup = ({ id }: { id: number }) => {
       <Text style={{ color: colors.blackSecondary }}>{next.text}</Text>
 
       <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
-        {next.hot_price && (
+        {!next.mission && (
           <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot.png")} />
         )}
-        <LargeP style={{ fontWeight: "bold" }}>{next.hot_price || next.mission_text}</LargeP>
+
+        <LargeP style={{ fontWeight: "bold" }}>{next.mission || next.hot_price}</LargeP>
       </div>
 
       <ActionButton
@@ -158,6 +161,11 @@ const ClaimingLoading = ({ style, text }: { style?: any; text: string }) => {
       <H4>{text}</H4>
     </div>
   );
+};
+
+const formatHours = (hh: number) => {
+  const mm = `${Math.round((hh * 60) % 60)}m`;
+  return Math.floor(hh) ? `${Math.floor(hh)}h ${mm}` : mm;
 };
 
 const HOT = () => {
@@ -258,7 +266,7 @@ const HOT = () => {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <H3>Storage</H3>
-            <Text style={{ color: colors.blackSecondary }}>• ≈{user.hot.remainingMiningHours}h left</Text>
+            <Text style={{ color: colors.blackSecondary }}>• ≈{formatHours(+user.hot.remainingMiningHours)} left</Text>
 
             <Button disabled={user.hot.miningProgress !== 1} onClick={() => claim()} style={{ marginLeft: "auto" }}>
               <BoldP style={{ color: "#0258F7" }}>Claim HOT</BoldP>
@@ -319,13 +327,13 @@ const HOT = () => {
                 <div>
                   <BoldP>{boost.title}</BoldP>
                   <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -4 }}>
-                    {boost.hot_price ? (
+                    {user.hot.getBooster(boost.id + 1)?.hot_price ? (
                       <img style={{ width: 24, height: 24 }} src={require("../../assets/hot.png")} />
                     ) : (
                       <Icon name="mission" />
                     )}
 
-                    <BoldP>{boost.hot_price || "Mission"}</BoldP>
+                    <BoldP>{user.hot.getBooster(boost.id + 1)?.hot_price || "Mission"}</BoldP>
                     <Text style={{ color: colors.blackSecondary }}> • L{(boost.id % 10) + 1}</Text>
                   </div>
                 </div>

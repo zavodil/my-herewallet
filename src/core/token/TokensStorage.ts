@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
 import { keyBy } from "lodash";
 import { BN } from "bn.js";
 
@@ -10,6 +10,7 @@ import { FtAsset, FtModel, FtGroup, Chain } from "./types";
 import { createToken, ft, tokenId } from "./utils";
 import * as defaults from "./defaults";
 import Currencies from "./Currencies";
+import { isTgMobile } from "../../Mobile";
 
 export class TokensStorage {
   public groupsData: Record<string, FtGroup> = {};
@@ -31,13 +32,38 @@ export class TokensStorage {
       this.setTokens(fts, []);
     } catch (e) {}
 
-    const isMain = user.isProduction;
-    this.registerToken([
-      isMain ? defaults.near : defaults.testnetNear,
-      isMain ? defaults.wnear : defaults.testnetWnear,
-      defaults.hnear,
-      defaults.usdt,
-    ]);
+    if (user.isProduction) {
+      this.registerToken([defaults.near, defaults.wnear, defaults.near, defaults.hnear, defaults.usdt]);
+    } else {
+      this.registerToken([defaults.testnetNear, defaults.testnetWnear, defaults.testnetHot]);
+    }
+
+    console.log(toJS(this.tokens));
+    Object.values(this.tokens).forEach(async (ft) => {
+      if (!ft.contract) {
+        const balance = await this.user.near.getNativeBalance();
+        const storage = balance.total.sub(balance.available);
+        return runInAction(() => {
+          ft.amount = balance.total.toString();
+          ft.amountFloat = formatAmount(ft.amount, ft.decimal);
+          ft.freeze = new BN(ft.freeze ?? "0").add(storage).toString();
+          ft.safe = balance.available.toString();
+          ft.safeFloat = formatAmount(ft.safe, ft.decimal);
+          ft.viewBalance = formatAmount(balance.available.toString(), 24, 4);
+        });
+      }
+
+      const value = await this.user.near.viewMethod(ft.contract, "ft_balance_of", {
+        account_id: this.user.near.accountId,
+      });
+      runInAction(() => {
+        ft.amount = value;
+        ft.amountFloat = formatAmount(value, ft.decimal);
+        ft.safe = ft.amount;
+        ft.safeFloat = ft.amountFloat;
+        ft.viewBalance = ft.amountFloat;
+      });
+    });
   }
 
   get stats() {
@@ -120,21 +146,8 @@ export class TokensStorage {
     if (Date.now() - this._lastRefresh < 3000) return;
     this._lastRefresh = Date.now();
 
+    if (isTgMobile()) return;
     const { tokens, groups } = await this.user.api.getAssets();
-
-    // Костыль под NEAR
-    const balance = await this.user.near.getNativeBalance().catch(() => null);
-    const nearIndex = tokens.findIndex(
-      (t) => [Chain.NEAR, Chain.NEAR_TESTNET].includes(t.chain) && t.symbol === "NEAR"
-    );
-    if (nearIndex !== -1 && balance != null) {
-      const is = false; // this.user.preferences.isHideStorage;
-      const storage = balance.total.sub(balance.available);
-      tokens[nearIndex].amount = balance.total.toString();
-      tokens[nearIndex].freeze = new BN(tokens[nearIndex].freeze ?? "0").add(storage).toString();
-      tokens[nearIndex].viewBalance = formatAmount((is ? balance.available : balance.total).toString(), 24, 4);
-    }
-
     this.user.localStorage.set("tokens", JSON.stringify(tokens));
     this.setTokens(tokens, groups);
   }
