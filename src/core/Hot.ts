@@ -237,7 +237,7 @@ class Hot {
     }
   }
 
-  async register(inviter: string) {
+  async register(inviter?: number) {
     const user = window.Telegram.WebApp?.initDataUnsafe?.user;
     await this.account.api.request("/api/v1/user/hot", {
       method: "POST",
