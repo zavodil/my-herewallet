@@ -32,14 +32,9 @@ const HOT = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(user.hot.balance);
-    if (user.hot.balance > 0) {
-      sheets.dismiss("Register");
-      return;
-    }
-
+    if (!user.hot.needRegister) return;
     sheets.present({ id: "Register", element: <FirstClaimHOT />, blocked: true });
-  }, [user.hot.balance]);
+  }, [user.hot.needRegister]);
 
   const claim = async () => {
     if (user.hot.miningProgress !== 1) return;

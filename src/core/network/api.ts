@@ -15,6 +15,13 @@ export class HereError extends Error {
   }
 }
 
+export class NetworkError extends Error {
+  name = "NetworkError";
+  constructor(readonly status: number, readonly title: string, readonly body: string) {
+    super(body);
+  }
+}
+
 export class HereApi {
   public readonly endpoint = isTgMobile() ? "https://dev.herewallet.app" : "https://api.herewallet.app";
   public readonly storage = new Storage("");
@@ -52,7 +59,7 @@ export class HereApi {
         error = { readable_body: msg ?? `Unknown error (${res.status})` };
       }
 
-      throw new HereError(error.readable_title, error.readable_body ?? msg);
+      throw new NetworkError(res.status, error.readable_title, error.readable_body ?? msg);
     }
 
     return res;

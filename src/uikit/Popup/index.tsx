@@ -1,9 +1,7 @@
-import { useWebApp } from "@vkruglikov/react-telegram-web-app";
 import { action, makeObservable, observable } from "mobx";
-import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
-import { colors } from "../theme";
+import React, { useEffect, useRef } from "react";
+import { observer } from "mobx-react-lite";
 
 interface PopupConfig {
   id: string;
@@ -111,13 +109,6 @@ const Popup = ({
 export const sheets = new SheetsManager();
 
 const PopupsProvider = observer(() => {
-  const app = useWebApp();
-  useEffect(() => {
-    app?.setBackgroundColor?.(colors.elevation0);
-    app?.setHeaderColor?.(colors.elevation0);
-    app?.expend?.();
-  }, []);
-
   return (
     <div>
       {sheets.popups.map(({ id, element, isOpen, fullscreen, onClose, blocked }) => (

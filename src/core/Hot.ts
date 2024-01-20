@@ -1,10 +1,10 @@
 import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
-import { WebAppUser } from "@vkruglikov/react-telegram-web-app";
 import { BN } from "bn.js";
 
 import UserAccount from "./UserAccount";
 import { TGAS } from "./constants";
 import { wait } from "./helpers";
+import { NetworkError } from "./network/api";
 
 const GAME_ID = "game.hot-token.testnet";
 const HOT_ID = "ft.hot-token.testnet";
@@ -145,6 +145,7 @@ class Hot {
   };
 
   public totalMinted = 0;
+  public needRegister = false;
 
   public levels = [
     { id: 0, hot_price: 0, value: 0 },
@@ -222,15 +223,22 @@ class Hot {
   }
 
   async getUserData() {
-    const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHour}`);
-    const data = await resp.json();
-    runInAction(() => (this.userData = data));
-    this.updateCache();
-
-    this.account.tokens.addContracts(this.userData.ft_contracts);
+    try {
+      const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHour}`);
+      const data = await resp.json();
+      runInAction(() => (this.userData = data));
+      runInAction(() => (this.needRegister = false));
+      this.updateCache();
+      this.account.tokens.addContracts(this.userData.ft_contracts);
+    } catch (e) {
+      if (!(e instanceof NetworkError)) return;
+      if (e.status !== 404 && e.status !== 400) return;
+      runInAction(() => (this.needRegister = true));
+    }
   }
 
-  async register(inviter: string, user?: WebAppUser) {
+  async register(inviter: string) {
+    const user = window.Telegram.WebApp?.initDataUnsafe?.user;
     await this.account.api.request("/api/v1/user/hot", {
       method: "POST",
       body: JSON.stringify({
@@ -242,7 +250,7 @@ class Hot {
       }),
     });
 
-    await this.fetchBalance();
+    await Promise.all([this.fetchBalance(), this.getUserData(), this.fetchMissions()]);
   }
 
   async fetchMissions() {
