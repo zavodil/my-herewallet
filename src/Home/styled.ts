@@ -1,11 +1,9 @@
 import styled from "styled-components";
 import { Button } from "../uikit";
-import { isTgMobile } from "../Mobile";
 
 export const Root = styled.div`
   width: 100%;
   margin: auto;
-  min-height: calc(var(--vh, 1vh) * 100);
   display: flex;
   flex-direction: column;
 `;
