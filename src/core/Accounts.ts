@@ -24,6 +24,7 @@ import { ReceiverFetcher } from "./Receiver";
 import { HereApi } from "./network/api";
 import { storage } from "./Storage";
 import { notify } from "./toast";
+import { isTgMobile } from "../Mobile";
 
 class Accounts {
   static shared = new Accounts();
@@ -132,7 +133,7 @@ class Accounts {
 
   async addAccount(cred: UserCred, sign: SignedMessageNEP0413 & { nonce: number[] }) {
     try {
-      notify("Authorization...");
+      if (!isTgMobile()) notify("Authorization...");
       const captcha = await recaptchaToken();
       const token = await this.api
         .auth({
@@ -203,7 +204,7 @@ class Accounts {
     const { defaultAddress, publicKey, secretKey } = parseSeedPhrase(seed);
     const accountId = nickname || defaultAddress;
 
-    notify("Activating account...");
+    if (!isTgMobile()) notify("Activating account...");
     const api = new HereApi();
     const captcha = await recaptchaToken();
     await api.allocateNickname({

@@ -8,6 +8,8 @@ import { ActionButton, ActivityIndicator, Button } from "../uikit";
 import HereInput from "../uikit/Input";
 import { Root } from "./styled";
 import Icon from "../uikit/Icon";
+import { ClaimingLoading } from "../Home/HOT/modals";
+import { sheets } from "../uikit/Popup";
 
 const ImportAccountMobile = () => {
   const navigate = useNavigate();
@@ -47,10 +49,14 @@ const ImportAccountMobile = () => {
           onClick={() => {
             if (isCreating) return;
             setCreating(true);
+            sheets.present({ id: "Loading", fullscreen: true, element: <ClaimingLoading text="Importing..." /> });
             accounts
               .importAccount(value)
               .then(() => navigate("/"))
-              .finally(() => setCreating(false));
+              .finally(() => {
+                sheets.dismiss("Loading");
+                setCreating(false);
+              });
           }}
         >
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}

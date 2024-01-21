@@ -22,7 +22,7 @@ const Auth = () => {
       </IntroImage>
 
       <H1 style={{ marginTop: 56 }}>NEAR Wallet</H1>
-      <LargeP style={{ marginTop: 24 }}>Secure telegram wallet for NEAR Protocol</LargeP>
+      <LargeP style={{ marginTop: 24, textAlign: "center" }}>Secure telegram wallet for NEAR Protocol</LargeP>
 
       <ActionButton big style={{ marginTop: "auto" }} onClick={() => navigate("/auth/create")}>
         Create new account

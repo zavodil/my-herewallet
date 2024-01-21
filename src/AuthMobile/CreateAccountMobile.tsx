@@ -13,6 +13,8 @@ import { colors } from "../uikit/theme";
 
 import { Root } from "./styled";
 import Icon from "../uikit/Icon";
+import { sheets } from "../uikit/Popup";
+import { ClaimingLoading } from "../Home/HOT/modals";
 
 const CreateAccountMobile = () => {
   const user = useWallet();
@@ -22,7 +24,9 @@ const CreateAccountMobile = () => {
   const [isCreating, setCreating] = useState(false);
 
   const onCreate = async (nick?: string) => {
+    sheets.present({ id: "Loading", fullscreen: true, element: <ClaimingLoading text="Creating..." /> });
     await accounts.connectWeb(generateMnemonic(), nick);
+    sheets.dismiss("Loading");
   };
 
   useEffect(() => {

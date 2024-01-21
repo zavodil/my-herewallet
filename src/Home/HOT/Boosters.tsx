@@ -216,7 +216,7 @@ const Boosters = () => {
               gap: 24,
             }}
           >
-            <BoostItem boost={user.hot.getBooster(user.hot.state?.storage || 0)} />
+            <BoostItem boost={user.hot.storageBooster} />
           </div>
 
           <div
@@ -230,8 +230,8 @@ const Boosters = () => {
               gap: 24,
             }}
           >
-            <BoostItem boost={user.hot.getBooster(user.hot.state?.firespace || 0)} />
-            <BoostItem boost={user.hot.getBooster(user.hot.state?.boost || 0)} />
+            <BoostItem boost={user.hot.fireplaceBooster} />
+            <BoostItem boost={user.hot.woodBoster} />
           </div>
         </div>
       </Container>
