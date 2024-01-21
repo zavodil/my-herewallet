@@ -7,7 +7,6 @@ import { wait } from "./helpers";
 import { NetworkError } from "./network/api";
 
 const GAME_ID = "game.hot-token.testnet";
-const HOT_ID = "ft.hot-token.testnet";
 
 interface HotReferral {
   avatar: string;
@@ -215,7 +214,7 @@ class Hot {
   }
 
   async getTotalMinted() {
-    const balance = await this.account.near.viewMethod(HOT_ID, "ft_total_supply").catch(() => this.totalMinted);
+    const balance = await this.account.near.viewMethod(GAME_ID, "ft_total_supply").catch(() => this.totalMinted);
     runInAction(() => (this.totalMinted = balance));
     this.updateCache();
     await wait(10000);
@@ -237,14 +236,14 @@ class Hot {
     }
   }
 
-  async register(inviter?: number) {
-    const user = window.Telegram.WebApp?.initDataUnsafe?.user;
+  async register() {
+    const { user, start_param } = window.Telegram.WebApp?.initDataUnsafe || {};
     await this.account.api.request("/api/v1/user/hot", {
       method: "POST",
       body: JSON.stringify({
-        inviter_id: inviter,
+        inviter_id: +start_param,
         telegram_username: user?.username,
-        telegram_name: `${user?.first_name || ""} ${user?.last_name || ""}`,
+        telegram_name: [user?.first_name, user?.last_name].filter((t) => t).join(" "),
         telegram_avatar: user?.photo_url,
         telegram_id: user?.id,
       }),
@@ -268,7 +267,7 @@ class Hot {
   }
 
   async fetchBalance() {
-    await this.account.tokens.updateBalance(HOT_ID);
+    await this.account.tokens.updateBalance(GAME_ID);
   }
 
   async fetchLevels() {
@@ -336,15 +335,10 @@ class Hot {
 
     if (booster.hot_price) {
       await this.account.near.functionCall({
-        contractId: HOT_ID,
-        methodName: "ft_transfer_call",
-        attachedDeposit: new BN("1"),
+        contractId: GAME_ID,
+        methodName: "buy_asset",
         gas: new BN(TGAS * 50),
-        args: {
-          receiver_id: GAME_ID,
-          amount: booster.hot_price.toString(),
-          msg: JSON.stringify({ asset_id: id }),
-        },
+        args: { asset_id: id },
       });
 
       await this.updateStatus();
@@ -394,7 +388,7 @@ class Hot {
   }
 
   get referralLink() {
-    return `https://t.me/herewalletbot?referral_id=${this.userData.user_id}`;
+    return `t.me/hotisnearbot/app?startapp=${this.userData.user_id}`;
   }
 }
 
