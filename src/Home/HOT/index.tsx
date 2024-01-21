@@ -5,22 +5,15 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 import { Card, Container, Root, TokenIcon } from "../styled";
 import { useWallet } from "../../core/Accounts";
+import { notify } from "../../core/toast";
 
 import { BoldP, H0, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
+import { HereButton } from "../../uikit/button";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
 import { Button } from "../../uikit";
 
-import { notify } from "../../core/toast";
-import { HereButton } from "../../uikit/button";
 import { ClaimingLoading, FirstClaimHOT } from "./modals";
-
-const referrals = {
-  level: 0,
-  title: "Friends bonus",
-  text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
-  levels: [{ image: require("../../assets/hot/referral.png") }],
-};
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;

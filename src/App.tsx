@@ -36,9 +36,15 @@ declare global {
 }
 
 if (isTgMobile()) {
-  window.Telegram.WebApp.setBackgroundColor?.(colors.elevation0);
+  window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
   window.Telegram.WebApp.setHeaderColor?.(colors.elevation0);
   window.Telegram.WebApp.expend?.();
+} else {
+  window.Telegram = {
+    WebApp: {
+      openLink: (url: string) => window.open(url, "_blank"),
+    },
+  };
 }
 
 function App() {

@@ -57,7 +57,7 @@ class SheetsManager {
         const p = this.popups.find((p) => p.id === id);
         if (p) p.isOpen = true;
       }),
-      100
+      250
     );
   };
 

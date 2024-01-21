@@ -15,6 +15,7 @@ import { colors } from "../uikit/theme";
 import { storage } from "../core/Storage";
 import { ConnectType } from "../core/types";
 import { notify } from "../core/toast";
+import { isTgMobile } from "../Mobile";
 
 const Settings = () => {
   const user = useWallet()!;
@@ -42,10 +43,13 @@ const Settings = () => {
         </div>
 
         <Menu>
-          <Button $active={location.pathname === "/settings/general"} onClick={() => navigate("/settings/general")}>
-            <Icon name="user" />
-            <Text>General</Text>
-          </Button>
+          {!isTgMobile() && (
+            <Button $active={location.pathname === "/settings/general"} onClick={() => navigate("/settings/general")}>
+              <Icon name="user" />
+              <Text>General</Text>
+            </Button>
+          )}
+
           {user.type === ConnectType.Web && (
             <>
               <Button
@@ -72,69 +76,73 @@ const Settings = () => {
         </Menu>
 
         <Routes>
-          <Route path="/" element={<Navigate to="/settings/general" replace />} />
-          <Route
-            path="/general"
-            element={
-              <Card style={{ gridArea: "content", gap: 40, height: "fit-content" }}>
-                <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
-                  <AvatarImage
-                    as={avatar ? "img" : "div"}
-                    src={avatar}
-                    style={{ flexShrink: 0, width: 80, height: 80, borderRadius: 16 }}
-                  />
+          {isTgMobile() ? (
+            <Route path="/" element={<Navigate to="/settings/passphrase" replace />} />
+          ) : (
+            <>
+              <Route path="/" element={<Navigate to="/settings/general" replace />} />
+              <Route
+                path="/general"
+                element={
+                  <Card style={{ gridArea: "content", gap: 40, height: "fit-content" }}>
+                    <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
+                      <AvatarImage
+                        as={avatar ? "img" : "div"}
+                        src={avatar}
+                        style={{ flexShrink: 0, width: 80, height: 80, borderRadius: 16 }}
+                      />
 
-                  <div
-                    style={{
-                      maxWidth: 360,
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text style={{ lineBreak: "anywhere" }}>{user.id}</Text>
-                    <TinyText style={{ marginTop: 4, lineHeight: "16px" }}>
-                      You can change your avatar in the app.{" "}
-                      <a style={{ color: colors.blackSecondary }} href="https://download.herewallet.app">
-                        <TinyText as="span">Download HERE</TinyText>
-                      </a>
-                    </TinyText>
-                  </div>
+                      <div
+                        style={{
+                          maxWidth: 360,
+                          height: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text style={{ lineBreak: "anywhere" }}>{user.id}</Text>
+                        <TinyText style={{ marginTop: 4, lineHeight: "16px" }}>
+                          You can change your avatar in the app.{" "}
+                          <a style={{ color: colors.blackSecondary }} href="https://download.herewallet.app">
+                            <TinyText as="span">Download HERE</TinyText>
+                          </a>
+                        </TinyText>
+                      </div>
+                    </div>
+
+                    {/* {user.id.endsWith(".near") && (
+              <div>
+                <H2>Nickname</H2>
+                <Text>Nickname is an alternative to the long wallet address. Send tokens only to this address</Text>
+                <HereInput disabled value={user.id} />
+
+                <TinyText>
+                  To change nickname you will need to create new account. If you also want to transfer score to your new
+                  account, please contact support.
+                </TinyText>
+              </div>)}
+
+               <div style={{ display: "flex", flexDirection: "column", width: 343, gap: 16 }}>
+                <div>
+                  <H3>NEAR Social</H3>
+                  <Text>Adjust your info on NEAR Social straight from HERE Web</Text>
                 </div>
 
-                <Button onClick={() => accounts.disconnect(user.id)}>Logout</Button>
-
-                {/* {user.id.endsWith(".near") && (
-                <div>
-                  <H2>Nickname</H2>
-                  <Text>Nickname is an alternative to the long wallet address. Send tokens only to this address</Text>
-                  <HereInput disabled value={user.id} />
-
-                  <TinyText>
-                    To change nickname you will need to create new account. If you also want to transfer score to your new
-                    account, please contact support.
-                  </TinyText>
-                </div>)}
-
-                 <div style={{ display: "flex", flexDirection: "column", width: 343, gap: 16 }}>
-                  <div>
-                    <H3>NEAR Social</H3>
-                    <Text>Adjust your info on NEAR Social straight from HERE Web</Text>
-                  </div>
-
-                  <HereInput value={name} onChange={(e) => setName(e.target.value)} label="Name" />
-                  <HereInput
-                    style={{ height: 100 }}
-                    value={about}
-                    onChange={(e) => setAbout(e.target.value)}
-                    multiline
-                    label="About"
-                  />
-                </div> */}
-              </Card>
-            }
-          />
+                <HereInput value={name} onChange={(e) => setName(e.target.value)} label="Name" />
+                <HereInput
+                  style={{ height: 100 }}
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  multiline
+                  label="About"
+                />
+              </div> */}
+                  </Card>
+                }
+              />
+            </>
+          )}
 
           <Route
             path="/passphrase"
@@ -174,23 +182,26 @@ const Settings = () => {
                   </SensitiveCard>
                 </div>
 
-                <div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <H3>Passphrase</H3>
-                    <Button
-                      onClick={async () => {
-                        await navigator.clipboard.writeText(storage.getAccount(user.id)?.seed || "");
-                        notify("Passphrase has beed copied");
-                      }}
-                    >
-                      <Icon name="copy" />
-                    </Button>
+                {!!storage.getAccount(user.id)?.seed && (
+                  <div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <H3>Passphrase</H3>
+                      <Button
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(storage.getAccount(user.id)?.seed || "");
+                          notify("Passphrase has beed copied");
+                        }}
+                      >
+                        <Icon name="copy" />
+                      </Button>
+                    </div>
+                    <SensitiveCard>{storage.getAccount(user.id)?.seed}</SensitiveCard>
                   </div>
-                  <SensitiveCard>{storage.getAccount(user.id)?.seed}</SensitiveCard>
-                </div>
+                )}
               </Card>
             }
           />
+
           <Route path="/password" element={<Card style={{ gridArea: "content", gap: 40 }}></Card>} />
           <Route
             path="/support"
@@ -202,10 +213,16 @@ const Settings = () => {
                 </div>
 
                 <div style={{ display: "flex", gap: 16 }}>
-                  <ActionButton style={{ flex: 1 }} as="a" href="https://t.me/heresupport">
+                  <ActionButton
+                    style={{ flex: 1 }}
+                    onClick={() => window.Telegram.WebApp.openLink("https://t.me/heresupport")}
+                  >
                     Telegram
                   </ActionButton>
-                  <ActionButton style={{ flex: 1 }} as="a" href="https://discord.com/invite/8Q3gw3gsD2">
+                  <ActionButton
+                    style={{ flex: 1 }}
+                    onClick={() => window.Telegram.WebApp.openLink("https://discord.com/invite/8Q3gw3gsD2")}
+                  >
                     Discord
                   </ActionButton>
                 </div>
@@ -213,6 +230,22 @@ const Settings = () => {
             }
           />
         </Routes>
+
+        <Menu>
+          <Button
+            style={{ background: "rgba(214, 62, 62, 0.15)" }}
+            $active={location.pathname === "/settings/support"}
+            onClick={() => {
+              window.Telegram.WebApp.showConfirm(
+                "Are you sure you want to log out of your account? Make sure you save the seed phrase, otherwise you will lose access to your account!",
+                (is: boolean) => is && accounts.disconnect(user.id)
+              );
+            }}
+          >
+            <Icon style={{ background: "rgba(214, 62, 62, 0.15)" }} name="logout" />
+            <Text style={{ color: "rgba(214, 62, 62, 1)" }}>Logout</Text>
+          </Button>
+        </Menu>
       </Container>
     </Root>
   );

@@ -77,7 +77,7 @@ export const testnetHot = {
   coingecko_id: "???",
   symbol: "HOT",
   chain: Chain.NEAR,
-  contract_address: "ft.hot-token.testnet",
+  contract_address: "game.hot-token.testnet",
   id: ft(Chain.NEAR, "HOT"),
 };
 

@@ -45,18 +45,16 @@ export const InviteFriend = () => {
 export const FirstClaimHOT = () => {
   const user = useWallet()!;
   const [isLoading, setLoading] = useState(false);
-  const referral = new URLSearchParams(location.search).get("referral");
 
   const register = async () => {
     try {
       setLoading(true);
       sheets.blocked("Register", true);
-      await user.hot.register(referral != null ? +referral : undefined);
+      await user.hot.register();
       sheets.dismiss("Boost");
       setLoading(false);
     } catch (e) {
       console.log(e);
-      sheets.blocked("Register", false);
       notify("Claim failed");
       setLoading(false);
     }
@@ -80,7 +78,6 @@ export const FirstClaimHOT = () => {
         HOT is an onchain token related to the launch of NEAR Wallet in Telegram. It's mined on the blockchain and can
         be trade or transfer via any crypto wallet. More coming after the mint is over!
       </Text>
-      {referral && <BoldP>Your referral: {referral}</BoldP>}
       <ActionButton disabled={isLoading} style={{ marginTop: 16 }} onClick={() => register()}>
         Claim
       </ActionButton>
