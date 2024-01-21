@@ -6,7 +6,6 @@ import { useWallet } from "../../core/Accounts";
 import { sheets } from "../../uikit/Popup";
 import { notify } from "../../core/toast";
 import { colors } from "../../uikit/theme";
-import { BoldP } from "../../uikit/typographic";
 import { ActionButton, H2, H4, Text } from "../../uikit";
 
 export const InviteFriend = () => {

@@ -27,106 +27,99 @@ interface HotState {
 
 const boosters = [
   {
-    id: 0,
-    title: "Storage",
+    id: 20,
+    title: "Wooden Storage",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/storage/1.png"),
   },
   {
-    id: 1,
-    title: "Storage",
-
+    id: 21,
+    title: "Metal Storage",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/storage/2.png"),
   },
   {
-    id: 2,
-    title: "Storage",
+    id: 22,
+    title: "Modular Storage",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/storage/3.png"),
   },
   {
-    id: 3,
-    title: "Storage",
+    id: 23,
+    title: "Liquid Storage",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/storage/4.png"),
   },
   {
-    id: 4,
-    title: "Storage",
+    id: 24,
+    title: "Titanium Storage",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/storage/5.png"),
   },
   {
     id: 10,
-    title: "Wood",
+    title: "Basic Wood",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/wood/1.png"),
-    mission_text: "Deposit 1 NEAR to account",
+    mission_text: "Download the mobile app and import your account",
   },
   {
     id: 11,
-    title: "Wood",
+    title: "Neon Wood",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/wood/2.png"),
-    mission_text: "Deposit 1 NEAR to account",
+    mission_text: "Deposit 1+ NEAR on your account",
   },
   {
     id: 12,
-    title: "Wood",
+    title: "Titanium Wood",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/wood/3.png"),
-    mission_text: "Deposit 1 NEAR to account",
+    mission_text: "Deposit 1 USDT on your account",
   },
   {
     id: 13,
-    title: "Wood",
+    title: "Jedi Wood",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/wood/4.png"),
-    mission_text: "Deposit 1 NEAR to account",
+    mission_text: "Buy any NFT on NEAR Protocol",
   },
   {
     id: 14,
-    title: "Wood",
+    title: "Uranium Boxes",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/wood/5.png"),
-    mission_text: "Deposit 1 NEAR to account",
+    mission_text: "Earn 1000+ score in the mobile app",
   },
-
   {
-    id: 20,
+    id: 0,
     title: "Fireplace",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/fire/1.png"),
-    mission_text: "Deposit 1 NEAR to account",
   },
   {
-    id: 21,
-    title: "Fireplace",
+    id: 1,
+    title: "Stone Fireplace",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/fire/2.png"),
-    mission_text: "Deposit 1 NEAR to account",
   },
   {
-    id: 22,
-    title: "Fireplace",
+    id: 2,
+    title: "Gas Fireplace",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/fire/3.png"),
-    mission_text: "Deposit 1 NEAR to account",
   },
   {
-    id: 23,
-    title: "Fireplace",
+    id: 3,
+    title: "Neon Fireplace",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/fire/4.png"),
-    mission_text: "Deposit 1 NEAR to account",
   },
   {
-    id: 24,
-    title: "Fireplace",
+    id: 4,
+    title: "Neon Multy-fireplace",
     text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
     icon: require("../assets/hot/fire/5.png"),
-    mission_text: "Deposit 1 NEAR to account",
   },
 ];
 
@@ -157,11 +150,11 @@ class Hot {
     { id: 12, mission: "", value: 0 },
     { id: 13, mission: "", value: 0 },
     { id: 14, mission: "", value: 0 },
-    { id: 20, mission: "", value: 0 },
-    { id: 21, mission: "", value: 0 },
-    { id: 22, mission: "", value: 0 },
-    { id: 23, mission: "", value: 0 },
-    { id: 24, mission: "", value: 0 },
+    { id: 20, hot_price: 0, value: 0 },
+    { id: 21, hot_price: 0, value: 0 },
+    { id: 22, hot_price: 0, value: 0 },
+    { id: 23, hot_price: 0, value: 0 },
+    { id: 24, hot_price: 0, value: 0 },
   ];
 
   constructor(readonly account: UserAccount) {
@@ -250,7 +243,7 @@ class Hot {
     });
 
     window.Telegram.WebApp.requestWriteAccess();
-    await Promise.all([this.fetchBalance(), this.getUserData(), this.fetchMissions()]);
+    await Promise.all([this.fetchBalance(), this.getUserData(), this.updateStatus(), this.fetchMissions()]);
   }
 
   async fetchMissions() {
@@ -290,21 +283,16 @@ class Hot {
     this.fetchBalance();
   }
 
-  async completeMission(id: number) {
-    await this.account.api.request("/api/v1/user/hot/mission", {
-      body: JSON.stringify({ mission_id: id }),
-      method: "POST",
-    });
-    await this.updateStatus();
+  get fireplaceBooster() {
+    return this.getBooster(this.state?.firespace || 0);
   }
 
-  get currentBoosters() {
-    if (!this.state) return [];
-    return [
-      this.getBooster(this.state.storage)!,
-      this.getBooster(this.state.firespace)!,
-      this.getBooster(this.state.boost)!,
-    ];
+  get storageBooster() {
+    return this.getBooster(this.state?.boost || 20);
+  }
+
+  get woodBoster() {
+    return this.getBooster(this.state?.boost || 10);
   }
 
   getBooster(id: number) {
@@ -366,7 +354,7 @@ class Hot {
   }
 
   get storageCapacityMs() {
-    return Math.floor((this.getBooster(this.state?.storage || -1)?.value || 0) / 1_000_000);
+    return Math.floor((this.storageBooster?.value || 0) / 1_000_000);
   }
 
   get remainingMiningHours() {
@@ -377,7 +365,7 @@ class Hot {
 
   get hotPerHour() {
     if (!this.state) return 0;
-    return +this.getBooster(this.state.firespace)!.value * Math.max(1, +this.getBooster(this.state.boost)!.value);
+    return +this.fireplaceBooster!.value * Math.max(1, +this.woodBoster!.value);
   }
 
   get earned() {

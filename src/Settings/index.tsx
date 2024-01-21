@@ -151,15 +151,15 @@ const Settings = () => {
                 <div
                   style={{
                     background: "#EFDCCC",
-                    padding: 8,
-                    borderRadius: 12,
                     border: "1px solid #fff",
                     borderColor: "#DB8520",
+                    borderRadius: 12,
                     display: "flex",
+                    padding: 8,
                     gap: 8,
                   }}
                 >
-                  <Icon name="warning" />
+                  <Icon style={{ flexShrink: 0 }} name="warning" />
                   <Text style={{ color: "#DB8520" }}>
                     Do not share your passphrase or private key with anyone, even with us!
                   </Text>
