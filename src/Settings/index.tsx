@@ -231,21 +231,23 @@ const Settings = () => {
           />
         </Routes>
 
-        <Menu>
-          <Button
-            style={{ background: "rgba(214, 62, 62, 0.15)" }}
-            $active={location.pathname === "/settings/support"}
-            onClick={() => {
-              window.Telegram.WebApp.showConfirm(
-                "Are you sure you want to log out of your account? Make sure you save the seed phrase, otherwise you will lose access to your account!",
-                (is: boolean) => is && accounts.disconnect(user.id)
-              );
-            }}
-          >
-            <Icon style={{ background: "rgba(214, 62, 62, 0.15)" }} name="logout" />
-            <Text style={{ color: "rgba(214, 62, 62, 1)" }}>Logout</Text>
-          </Button>
-        </Menu>
+        {isTgMobile() && (
+          <Menu>
+            <Button
+              style={{ background: "rgba(214, 62, 62, 0.15)" }}
+              $active={location.pathname === "/settings/support"}
+              onClick={() => {
+                window.Telegram.WebApp.showConfirm(
+                  "Are you sure you want to log out of your account? Make sure you save the seed phrase, otherwise you will lose access to your account!",
+                  (is: boolean) => is && accounts.disconnect(user.id)
+                );
+              }}
+            >
+              <Icon style={{ background: "rgba(214, 62, 62, 0.15)" }} name="logout" />
+              <Text style={{ color: "rgba(214, 62, 62, 1)" }}>Logout</Text>
+            </Button>
+          </Menu>
+        )}
       </Container>
     </Root>
   );

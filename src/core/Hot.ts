@@ -249,6 +249,7 @@ class Hot {
       }),
     });
 
+    window.Telegram.WebApp.requestWriteAccess();
     await Promise.all([this.fetchBalance(), this.getUserData(), this.fetchMissions()]);
   }
 
