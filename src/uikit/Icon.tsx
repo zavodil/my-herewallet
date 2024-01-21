@@ -1,97 +1,97 @@
 import React, { Component } from "react";
 
-import add_circle from "../icons/add-circle.svg?url";
-import arrow_left from "../icons/arrow-left.svg?url";
-import arrow_down from "../icons/arrow-down.svg?url";
-import arrow_right from "../icons/arrow-right.svg?url";
-import cross_circle from "../icons/cross-circle.svg?url";
-import cursor_down from "../icons/cursor-down.svg?url";
-import cursor_left from "../icons/cursor-left.svg?url";
-import cursor_right from "../icons/cursor-right.svg?url";
-import earn_stroke from "../icons/earn-stroke.svg?url";
-import switch_horizontal from "../icons/switch-horizontal.svg?url";
-import switch_vertical from "../icons/switch-vertical.svg?url";
-import warning_green from "../icons/warning-green.svg?url";
-import gas_green from "../icons/gas-green.svg?url";
-import stroke_favorite from "../icons/stroke-favorite.svg?url";
-import social_sent from "../icons/social-sent.svg?url";
-import tick_circle from "../icons/tick-circle.svg?url";
-import play_player from "../icons/play-player.svg?url";
-import lost_wifi from "../icons/lost-wifi.svg?url";
-import nft_in from "../icons/nft-in.svg?url";
-import nft_out from "../icons/nft-out.svg?url";
-import refresh from "../icons/refresh.svg?url";
-import copy from "../icons/copy.svg?url";
-import add from "../icons/add.svg?url";
-import bell from "../icons/bell.svg?url";
-import book from "../icons/book.svg?url";
-import cross from "../icons/cross.svg?url";
-import crypto from "../icons/crypto.svg?url";
-import del from "../icons/del.svg?url";
-import earn from "../icons/earn.svg?url";
-import technical from "../icons/technical.svg?url";
-import tick from "../icons/tick.svg?url";
-import tourch from "../icons/tourch.svg?url";
-import unstake from "../icons/unstake.svg?url";
-import web from "../icons/web.svg?url";
-import binance from "../icons/binance.svg?url";
-import touchid from "../icons/touchid.svg?url";
-import lock from "../icons/lock.svg?url";
-import card from "../icons/card.svg?url";
-import question from "../icons/question.svg?url";
-import near from "../icons/near.svg?url";
-import download from "../icons/download.svg?url";
-import keys from "../icons/keys.svg?url";
-import clock from "../icons/clock.svg?url";
-import score from "../icons/score.svg?url";
-import warning from "../icons/warning.svg?url";
-import edit from "../icons/edit.svg?url";
-import link from "../icons/link.svg?url";
-import social from "../icons/social.svg?url";
-import options from "../icons/options.svg?url";
-import plus from "../icons/plus.svg?url";
-import orderly from "../icons/orderly.svg?url";
-import search from "../icons/search.svg?url";
-import verified from "../icons/verified.svg?url";
-import star from "../icons/star.svg?url";
-import trash from "../icons/trash.svg?url";
-import idea from "../icons/idea.svg?url";
-import gas from "../icons/gas.svg?url";
-import percent from "../icons/percent.svg?url";
-import phone from "../icons/phone.svg?url";
-import faceid from "../icons/faceid.svg?url";
-import key from "../icons/key.svg?url";
-import logout from "../icons/logout.svg?url";
-import support from "../icons/support.svg?url";
-import user from "../icons/user.svg?url";
-import document from "../icons/document.svg?url";
-import settings from "../icons/settings.svg?url";
-import favorite from "../icons/favorite.svg?url";
-import qr from "../icons/qr.svg?url";
-import mission from "../icons/mission.svg?url";
+import add_circle from "jsx:../icons/add-circle.svg";
+import arrow_left from "jsx:../icons/arrow-left.svg";
+import arrow_down from "jsx:../icons/arrow-down.svg";
+import arrow_right from "jsx:../icons/arrow-right.svg";
+import cross_circle from "jsx:../icons/cross-circle.svg";
+import cursor_down from "jsx:../icons/cursor-down.svg";
+import cursor_left from "jsx:../icons/cursor-left.svg";
+import cursor_right from "jsx:../icons/cursor-right.svg";
+import earn_stroke from "jsx:../icons/earn-stroke.svg";
+import switch_horizontal from "jsx:../icons/switch-horizontal.svg";
+import switch_vertical from "jsx:../icons/switch-vertical.svg";
+import warning_green from "jsx:../icons/warning-green.svg";
+import gas_green from "jsx:../icons/gas-green.svg";
+import stroke_favorite from "jsx:../icons/stroke-favorite.svg";
+import social_sent from "jsx:../icons/social-sent.svg";
+import tick_circle from "jsx:../icons/tick-circle.svg";
+import play_player from "jsx:../icons/play-player.svg";
+import lost_wifi from "jsx:../icons/lost-wifi.svg";
+import nft_in from "jsx:../icons/nft-in.svg";
+import nft_out from "jsx:../icons/nft-out.svg";
+import refresh from "jsx:../icons/refresh.svg";
+import copy from "jsx:../icons/copy.svg";
+import add from "jsx:../icons/add.svg";
+import bell from "jsx:../icons/bell.svg";
+import book from "jsx:../icons/book.svg";
+import cross from "jsx:../icons/cross.svg";
+import crypto from "jsx:../icons/crypto.svg";
+import del from "jsx:../icons/del.svg";
+import earn from "jsx:../icons/earn.svg";
+import technical from "jsx:../icons/technical.svg";
+import tick from "jsx:../icons/tick.svg";
+import tourch from "jsx:../icons/tourch.svg";
+import unstake from "jsx:../icons/unstake.svg";
+import web from "jsx:../icons/web.svg";
+import binance from "jsx:../icons/binance.svg";
+import touchid from "jsx:../icons/touchid.svg";
+import lock from "jsx:../icons/lock.svg";
+import card from "jsx:../icons/card.svg";
+import question from "jsx:../icons/question.svg";
+import near from "jsx:../icons/near.svg";
+import download from "jsx:../icons/download.svg";
+import keys from "jsx:../icons/keys.svg";
+import clock from "jsx:../icons/clock.svg";
+import score from "jsx:../icons/score.svg";
+import warning from "jsx:../icons/warning.svg";
+import edit from "jsx:../icons/edit.svg";
+import link from "jsx:../icons/link.svg";
+import social from "jsx:../icons/social.svg";
+import options from "jsx:../icons/options.svg";
+import plus from "jsx:../icons/plus.svg";
+import orderly from "jsx:../icons/orderly.svg";
+import search from "jsx:../icons/search.svg";
+import verified from "jsx:../icons/verified.svg";
+import star from "jsx:../icons/star.svg";
+import trash from "jsx:../icons/trash.svg";
+import idea from "jsx:../icons/idea.svg";
+import gas from "jsx:../icons/gas.svg";
+import percent from "jsx:../icons/percent.svg";
+import phone from "jsx:../icons/phone.svg";
+import faceid from "jsx:../icons/faceid.svg";
+import key from "jsx:../icons/key.svg";
+import logout from "jsx:../icons/logout.svg";
+import support from "jsx:../icons/support.svg";
+import user from "jsx:../icons/user.svg";
+import document from "jsx:../icons/document.svg";
+import settings from "jsx:../icons/settings.svg";
+import favorite from "jsx:../icons/favorite.svg";
+import qr from "jsx:../icons/qr.svg";
+import mission from "jsx:../icons/mission.svg";
 
 export const icons = {
   mission,
-  arrow_left,
-  add_circle,
-  arrow_down,
-  arrow_right,
-  cross_circle,
-  cursor_down,
-  cursor_left,
-  cursor_right,
-  earn_stroke,
-  switch_horizontal,
-  switch_vertical,
-  warning_green,
-  gas_green,
-  stroke_favorite,
-  social_sent,
-  tick_circle,
-  play_player,
-  lost_wifi,
-  nft_in,
-  nft_out,
+  "arrow-left": arrow_left,
+  "add-circle": add_circle,
+  "arrow-down": arrow_down,
+  "arrow-right": arrow_right,
+  "cross-circle": cross_circle,
+  "cursor-down": cursor_down,
+  "cursor-left": cursor_left,
+  "cursor-right": cursor_right,
+  "earn-stroke": earn_stroke,
+  "switch-horizontal": switch_horizontal,
+  "switch-vertical": switch_vertical,
+  "warning-green": warning_green,
+  "gas-green": gas_green,
+  "stroke-favorite": stroke_favorite,
+  "social-sent": social_sent,
+  "tick-circle": tick_circle,
+  "play-player": play_player,
+  "lost-wifi": lost_wifi,
+  "nft-in": nft_in,
+  "nft-out": nft_out,
   refresh,
   copy,
   add,
@@ -140,7 +140,7 @@ export const icons = {
   settings,
   favorite,
   qr,
-} as Record<string, string>;
+};
 
 interface Props {
   name: keyof typeof icons;
@@ -149,7 +149,6 @@ interface Props {
   stroke?: string;
   fill?: string;
   strokeWidth?: number;
-  rotate?: boolean;
   color?: string;
   style?: any;
 }
@@ -161,9 +160,9 @@ class Icon extends Component<Props> {
 
   render() {
     const { name, style, ...props } = this.props;
-    const icon = icons[name.replaceAll("-", "_")];
-    if (icon == null) return null;
-    return <img {...props} style={style} src={icon} />;
+    const Icon = icons[name];
+    if (Icon == null) return null;
+    return <Icon {...props} style={style} />;
   }
 }
 
