@@ -1,0 +1,129 @@
+﻿{
+  "hot_assets": [
+    {
+      "name": "Basic Wood",
+      "asset_id": 10,
+      "hot_price": 0,
+      "value": 10,
+      "icon": "https://storage.herewallet.app/dapps/wood_1-min.png",
+      "mission": "download_app",
+      "description": "Download the mobile app"
+    },
+    {
+      "name": "Neon Wood",
+      "asset_id": 11,
+      "hot_price": 0,
+      "value": 12,
+      "icon": "https://storage.herewallet.app/dapps/wood_2-min.png",
+      "mission": "deposit_1NEAR",
+      "description": "Deposit 1+ NEAR on your account"
+    },
+    {
+      "name": "Titanium Wood",
+      "asset_id": 12,
+      "hot_price": 0,
+      "value": 15,
+      "icon": "https://storage.herewallet.app/dapps/wood_3-min.png",
+      "mission": "deposit_1USDT",
+      "description": "Deposit 1 USDT on your account"
+    },
+    {
+      "name": "Jedi Wood",
+      "asset_id": 13,
+      "hot_price": 0,
+      "value": 20,
+      "icon": "https://storage.herewallet.app/dapps/wood_4-min.png",
+      "mission": "deposit_NFT",
+      "description": "Buy any NFT on NEAR Protocol"
+    },
+    {
+      "name": "Uranium Boxes",
+      "asset_id": 14,
+      "hot_price": 0,
+      "value": 30,
+      "icon": "https://storage.herewallet.app/dapps/wood_5-min.png",
+      "mission": "earn_app_score",
+      "description": "Earn 1000+ score in the mobile app"
+    },
+    {
+      "name": "Wooden Storage",
+      "asset_id": 20,
+      "hot_price": 0,
+      "value": 7200000000000,
+      "icon": "https://storage.herewallet.app/dapps/storage_5-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Metal Storage",
+      "asset_id": 21,
+      "hot_price": 6000,
+      "value": 21600000000000,
+      "icon": "https://storage.herewallet.app/dapps/storage_5-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Modular Storage",
+      "asset_id": 22,
+      "hot_price": 20000,
+      "value": 28800000000000,
+      "icon": "https://storage.herewallet.app/dapps/storage_5-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Liquid Storage",
+      "asset_id": 23,
+      "hot_price": 80000,
+      "value": 43200000000000,
+      "icon": "https://storage.herewallet.app/dapps/storage_5-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Titanium Storage",
+      "asset_id": 24,
+      "hot_price": 500000,
+      "value": 86400000000000,
+      "icon": "https://storage.herewallet.app/dapps/storage_5-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Fireplace",
+      "asset_id": 0,
+      "hot_price": 0,
+      "value": 1000,
+      "icon": "https://storage.herewallet.app/dapps/firespace_1-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Stone Fireplace",
+      "asset_id": 1,
+      "hot_price": 0,
+      "value": 4500,
+      "icon": "https://storage.herewallet.app/dapps/firespace_1-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Gas Fireplace",
+      "asset_id": 2,
+      "hot_price": 0,
+      "value": 40000,
+      "icon": "https://storage.herewallet.app/dapps/firespace_1-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Neon Fireplace",
+      "asset_id": 3,
+      "hot_price": 0,
+      "value": 200000,
+      "icon": "https://storage.herewallet.app/dapps/firespace_1-min.png",
+      "mission": ""
+    },
+    {
+      "name": "Neon Multy-fireplace",
+      "asset_id": 4,
+      "hot_price": 2000000,
+      "value": 10000,
+      "icon": "https://storage.herewallet.app/dapps/firespace_1-min.png",
+      "mission": ""
+    }
+  ]
+}

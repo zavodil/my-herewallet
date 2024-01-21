@@ -32,13 +32,9 @@ export class TokensStorage {
 
     this.updateNative();
     if (user.isProduction) {
-      this.addContracts([
-        defaults.wnear.contract_address,
-        defaults.hnear.contract_address,
-        defaults.usdt.contract_address,
-      ]);
+      this.addContracts(["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", "game.hot-token.near"]);
     } else {
-      this.addContracts([defaults.testnetWnear.contract_address, defaults.testnetHot.contract_address]);
+      this.addContracts(["wrap.testnet", "game.hot-token.testnet"]);
     }
 
     if (!isTgMobile()) {

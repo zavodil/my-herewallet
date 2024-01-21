@@ -8,4 +8,4 @@ export const TGAS = Math.pow(10, 12);
 export const DEFAULT_APY = 0.096;
 export const SAFE_NEAR = 0.1;
 
-export const NETWORK = isTgMobile() ? "testnet" : "mainnet";
+export const NETWORK = "mainnet";
