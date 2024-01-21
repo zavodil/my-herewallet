@@ -6,7 +6,7 @@ import { TGAS } from "./constants";
 import { wait } from "./helpers";
 import { NetworkError } from "./network/api";
 
-const GAME_ID = "game.hot-token.testnet";
+const GAME_ID = "game.hot-token.near";
 
 interface HotReferral {
   avatar: string;
