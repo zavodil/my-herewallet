@@ -9,7 +9,7 @@ import { CustomRequestResolver, ImportAccountsResolver, KeypomResolver } from ".
 import TransferSuccess from "./Transfer/Success";
 import CreateAccount from "./Auth/CreateAccount";
 import ImportAccount from "./Auth/ImportAccount";
-import ImportSeed from "./Auth/ImportAccount";
+import ImportSeed from "./Auth/ImportSeed";
 import OpenInApp from "./OpenInApp";
 import Transfer from "./Transfer";
 import Settings from "./Settings";
