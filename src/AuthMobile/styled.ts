@@ -9,6 +9,7 @@ export const Root = styled.div`
   align-items: center;
   display: flex;
   padding: 24px 16px;
+  height: var(--tg-viewport-height);
 `;
 
 export const Page = styled.div`

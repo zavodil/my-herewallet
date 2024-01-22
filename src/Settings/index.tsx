@@ -16,8 +16,10 @@ import { storage } from "../core/Storage";
 import { ConnectType } from "../core/types";
 import { notify } from "../core/toast";
 import { isTgMobile } from "../Mobile";
+import { useNavigateBack } from "../useNavigateBack";
 
 const Settings = () => {
+  useNavigateBack();
   const user = useWallet()!;
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState("");
@@ -30,17 +32,19 @@ const Settings = () => {
 
   return (
     <Root>
-      <Header />
+      {!isTgMobile() && <Header />}
 
       <Container>
-        <div style={{ gridArea: "navigation" }}>
-          <Link to="/" replace style={{ textDecoration: "none", display: "inline-block" }}>
-            <Button style={{ gap: 8 }}>
-              <Icon name="arrow-left" />
-              <H2>Settings</H2>
-            </Button>
-          </Link>
-        </div>
+        {!isTgMobile() && (
+          <div style={{ gridArea: "navigation" }}>
+            <Link to="/" replace style={{ textDecoration: "none", display: "inline-block" }}>
+              <Button style={{ gap: 8 }}>
+                <Icon name="arrow-left" />
+                <H2>Settings</H2>
+              </Button>
+            </Link>
+          </div>
+        )}
 
         <Menu>
           {!isTgMobile() && (

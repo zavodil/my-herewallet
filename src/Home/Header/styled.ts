@@ -11,6 +11,7 @@ export const Header = styled.header`
   background-color: var(--Elevation-0);
   height: 68px;
   position: relative;
+  flex-shrink: 0;
 
   .header-right {
     position: absolute;

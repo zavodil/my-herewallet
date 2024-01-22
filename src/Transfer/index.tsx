@@ -23,8 +23,10 @@ import { colors } from "../uikit/theme";
 import { Container, InputButton, TokenOption } from "./styled";
 import { notify } from "../core/toast";
 import { isTgMobile } from "../Mobile";
+import { useNavigateBack } from "../useNavigateBack";
 
 const Transfer = () => {
+  useNavigateBack();
   const user = useWallet()!;
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -91,17 +93,19 @@ const Transfer = () => {
 
   return (
     <Root>
-      <Header />
+      {!isTgMobile() && <Header />}
 
       <Container>
-        <div style={{ gridArea: "navigation" }}>
-          <Link to="/" replace style={{ textDecoration: "none", display: "inline-block" }}>
-            <Button style={{ gap: 8 }}>
-              <Icon name="arrow-left" />
-              <H2>Transfer</H2>
-            </Button>
-          </Link>
-        </div>
+        {!isTgMobile() && (
+          <div style={{ gridArea: "navigation" }}>
+            <Link to="/" replace style={{ textDecoration: "none", display: "inline-block" }}>
+              <Button style={{ gap: 8 }}>
+                <Icon name="arrow-left" />
+                <H2>Transfer</H2>
+              </Button>
+            </Link>
+          </div>
+        )}
 
         <Card style={{ gridArea: "recipient", gap: 12, position: "relative" }}>
           <H4>Recipient</H4>
