@@ -197,3 +197,16 @@ export const RecentlyApp = styled(Button)`
     margin-top: 12px;
   }
 `;
+
+export const WarningBadge = styled.div`
+  display: flex;
+  border-radius: 8px;
+  border: 1px solid #db8520;
+  display: flex;
+  padding: 0 4px;
+  justify-content: center;
+  height: 26px;
+  align-items: center;
+  gap: 4px;
+  background: #f1e1d6;
+`;

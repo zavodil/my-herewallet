@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import { notify } from "../../core/toast";
 import { useWallet } from "../../core/Accounts";
 import { ActionButton, Button } from "../../uikit";
 import { BoldP, H1, H2, LargeP, Text } from "../../uikit/typographic";
+import { useNavigateBack } from "../../useNavigateBack";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
 import Icon from "../../uikit/Icon";
@@ -133,7 +133,7 @@ const BoostItem = ({ boost }: { boost: any }) => {
 
 const Boosters = () => {
   const user = useWallet()!;
-  const navigate = useNavigate();
+  useNavigateBack();
 
   return (
     <Root>
@@ -170,14 +170,6 @@ const Boosters = () => {
       />
 
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
-
-      <div style={{ width: "100%", padding: "16px 20px", background: colors.elevation0, textAlign: "center" }}>
-        <Button style={{ position: "absolute" }} onClick={() => navigate("/hot", { replace: true })}>
-          <Icon name="arrow-left" />
-        </Button>
-
-        <BoldP>My cave</BoldP>
-      </div>
 
       <Container style={{ zIndex: 10 }}>
         <div>

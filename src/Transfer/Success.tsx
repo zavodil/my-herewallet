@@ -9,8 +9,11 @@ import { useWallet } from "../core/Accounts";
 import { Chain } from "../core/token/types";
 import { colors } from "../uikit/theme";
 import { BoldP } from "../uikit/typographic";
+import { isTgMobile } from "../Mobile";
+import { useNavigateBack } from "../useNavigateBack";
 
 const TransferSuccess = () => {
+  useNavigateBack();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const user = useWallet()!;
@@ -20,7 +23,7 @@ const TransferSuccess = () => {
 
   return (
     <Root>
-      <Header />
+      {!isTgMobile() && <Header />}
 
       <Container style={{ paddingTop: 72, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Card style={{ flexDirection: "row", maxWidth: 700, width: "100%", padding: "64px 48px", gap: 48 }}>

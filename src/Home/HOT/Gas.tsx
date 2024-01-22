@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { useWallet } from "../../core/Accounts";
+import { useNavigateBack } from "../../useNavigateBack";
 import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
 import { Container, Root } from "../styled";
@@ -12,6 +13,7 @@ import Icon from "../../uikit/Icon";
 import MyAddress from "../MyAddress";
 
 const Gas = () => {
+  useNavigateBack();
   const user = useWallet()!;
   const navigate = useNavigate();
 
@@ -58,14 +60,6 @@ const Gas = () => {
       />
 
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
-
-      <div style={{ width: "100%", padding: "16px 20px", background: colors.elevation0, textAlign: "center" }}>
-        <Button style={{ position: "absolute" }} onClick={() => navigate("/hot", { replace: true })}>
-          <Icon name="arrow-left" />
-        </Button>
-
-        <BoldP>Gas-Free Transactions</BoldP>
-      </div>
 
       <Container style={{ zIndex: 10 }}>
         <div

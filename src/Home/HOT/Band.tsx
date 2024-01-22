@@ -1,22 +1,19 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
-import { notify } from "../../core/toast";
 import { useWallet } from "../../core/Accounts";
-
 import { ActionButton, Button } from "../../uikit";
-import { BoldP, H0, H1, H2, H3, LargeP, SmallText, Text } from "../../uikit/typographic";
+import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
+import { useNavigateBack } from "../../useNavigateBack";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
-import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
-import { observer } from "mobx-react-lite";
 import { InviteFriend } from "./modals";
 
 const Band = () => {
+  useNavigateBack();
   const user = useWallet()!;
-  const navigate = useNavigate();
 
   return (
     <Root>
@@ -53,14 +50,6 @@ const Band = () => {
       />
 
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
-
-      <div style={{ width: "100%", padding: "16px 20px", background: colors.elevation0, textAlign: "center" }}>
-        <Button style={{ position: "absolute" }} onClick={() => navigate("/hot", { replace: true })}>
-          <Icon name="arrow-left" />
-        </Button>
-
-        <BoldP>My Band</BoldP>
-      </div>
 
       <Container style={{ zIndex: 10 }}>
         <div

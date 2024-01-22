@@ -8,9 +8,3 @@ import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(<App />);
-
-window.addEventListener("message", (e) => {
-  if (e.data.password != null && e.origin === location.origin) {
-    window.parent.postMessage({ storage: { ...localStorage } }, location.origin);
-  }
-});

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Text } from "./typographic";
+import { isIOS } from "../core/helpers";
 
 type TextareaProps = React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>;
 type InputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
@@ -44,6 +45,7 @@ const HereInput = ({ multiline, postfix = "", postfixStyle, label, ...props }: P
 const Label = styled.p``;
 const Postfix = styled(Text)`
   margin-left: 8px;
+  margin-top: ${isIOS() ? 4 : 0}px;
 `;
 
 const InputWrap = styled.label`

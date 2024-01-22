@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { isMobile } from "is-mobile";
 
-import hereLogo from "../assets/here-logo2.svg?url";
-import metamaskIcon from "../assets/metamask.svg?url";
 import introImage from "../assets/intro.png";
-
-import { accounts } from "../core/Accounts";
-import { BoldP, H1, H3, SmallText, Text } from "../uikit/typographic";
-import { ButtonCard, Card, IntroImage, Page, Root } from "./styled";
+import { H1, H3, Text } from "../uikit/typographic";
+import { Card, IntroImage, Page, Root } from "./styled";
 import Header from "../Home/Header";
-import CreateNickname from "./CreateNickname";
 import { colors } from "../uikit/theme";
 
 const Auth = () => {

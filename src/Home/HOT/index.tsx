@@ -14,6 +14,7 @@ import { colors } from "../../uikit/theme";
 import { Button } from "../../uikit";
 
 import { ClaimingLoading, FirstClaimHOT } from "./modals";
+import { useScrollLock } from "../../useNavigateBack";
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;
@@ -21,6 +22,7 @@ const formatHours = (hh: number) => {
 };
 
 const HOT = () => {
+  useScrollLock();
   const user = useWallet()!;
   const navigate = useNavigate();
 
