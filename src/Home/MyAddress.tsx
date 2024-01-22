@@ -28,7 +28,7 @@ const MyAddress = () => {
         <HereQRCode value={wallet.id} />
       </div>
 
-      <div style={{ display: "flex", gap: 32, marginTop: 32 }}>
+      <div style={{ display: "flex", gap: 32, justifyContent: "space-between", marginTop: 32 }}>
         <div>
           <SmallText>Your address</SmallText>
           <Text style={{ lineBreak: "anywhere" }}>{wallet.id}</Text>

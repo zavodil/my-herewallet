@@ -31,6 +31,8 @@ import {
 import { Transaction } from "./Transactions";
 import Header from "./Header";
 import { isTgMobile } from "../Mobile";
+import { sheets } from "../uikit/Popup";
+import { NeedMoreGas } from "./NeedGas";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
 
@@ -49,6 +51,10 @@ const Home = () => {
     await account.fetchNfts().catch(() => {});
     setNftsLoading(false);
   };
+
+  // useEffect(() => {
+  //   sheets.present({ id: "NeedGas", element: <NeedMoreGas onSelectHot={() => {}} /> });
+  // }, []);
 
   return (
     <Root>

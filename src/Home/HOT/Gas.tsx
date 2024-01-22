@@ -61,14 +61,6 @@ const Gas = () => {
 
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
 
-      <div style={{ width: "100%", padding: "16px 20px", background: colors.elevation0, textAlign: "center" }}>
-        <Button style={{ position: "absolute" }} onClick={() => navigate("/hot", { replace: true })}>
-          <Icon name="arrow-left" />
-        </Button>
-
-        <BoldP>Gas-Free Transactions</BoldP>
-      </div>
-
       <Container style={{ zIndex: 10 }}>
         <div
           style={{
