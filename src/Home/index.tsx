@@ -41,8 +41,8 @@ const Home = () => {
   const account = useWallet()!;
   const [showAll, setShowAll] = useState(false);
   const [showTokens, toggleTokens] = useState(true);
-
   const [isNftsLoading, setNftsLoading] = useState(false);
+
   const selectNfts = async () => {
     toggleTokens(false);
     if (isNftsLoading) return;
