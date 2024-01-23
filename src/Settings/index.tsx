@@ -219,7 +219,7 @@ const Settings = () => {
                 <div style={{ display: "flex", gap: 16 }}>
                   <ActionButton
                     style={{ flex: 1 }}
-                    onClick={() => window.Telegram.WebApp.openLink("https://t.me/heresupport")}
+                    onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/heresupport")}
                   >
                     Telegram
                   </ActionButton>

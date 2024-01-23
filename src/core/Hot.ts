@@ -3,10 +3,11 @@ import { BN } from "bn.js";
 
 import UserAccount from "./UserAccount";
 import { TGAS } from "./constants";
-import { wait } from "./helpers";
+import { formatAmount, wait } from "./helpers";
 import { NetworkError } from "./network/api";
 
 export const GAME_ID = "game.hot-token.near";
+export const GAME_TESTNET_ID = "game.hot-token.testnet";
 
 export interface HotReferral {
   avatar: string;
@@ -156,21 +157,21 @@ class Hot {
   public needRegister = false;
 
   public levels = [
-    { id: 0, hot_price: 0, value: 0 },
-    { id: 1, hot_price: 0, value: 0 },
-    { id: 2, hot_price: 0, value: 0 },
-    { id: 3, hot_price: 0, value: 0 },
-    { id: 4, hot_price: 0, value: 0 },
-    { id: 10, mission: "", value: 0 },
-    { id: 11, mission: "", value: 0 },
-    { id: 12, mission: "", value: 0 },
-    { id: 13, mission: "", value: 0 },
-    { id: 14, mission: "", value: 0 },
-    { id: 20, hot_price: 0, value: 0 },
-    { id: 21, hot_price: 0, value: 0 },
-    { id: 22, hot_price: 0, value: 0 },
-    { id: 23, hot_price: 0, value: 0 },
-    { id: 24, hot_price: 0, value: 0 },
+    { id: 0, hot_price: 0, value: "0" },
+    { id: 1, hot_price: 0, value: "0" },
+    { id: 2, hot_price: 0, value: "0" },
+    { id: 3, hot_price: 0, value: "0" },
+    { id: 4, hot_price: 0, value: "0" },
+    { id: 10, mission: "", value: "0" },
+    { id: 11, mission: "", value: "0" },
+    { id: 12, mission: "", value: "0" },
+    { id: 13, mission: "", value: "0" },
+    { id: 14, mission: "", value: "0" },
+    { id: 20, hot_price: 0, value: "0" },
+    { id: 21, hot_price: 0, value: "0" },
+    { id: 22, hot_price: 0, value: "0" },
+    { id: 23, hot_price: 0, value: "0" },
+    { id: 24, hot_price: 0, value: "0" },
   ];
 
   constructor(readonly account: UserAccount) {
@@ -196,7 +197,7 @@ class Hot {
     this.levels = cache.levels;
     this.userData = cache.userData;
     this.missions = cache.missions;
-    // this.referrals = cache.referrals;
+    this.referrals = cache.referrals;
     this.state = cache.state;
 
     this.updateStatus();
@@ -272,7 +273,7 @@ class Hot {
   async fetchReferrals() {
     const resp = await this.account.api.request("/api/v1/user/hot/referrals");
     const data = await resp.json();
-    //runInAction(() => (this.referrals = data.referrals));
+    runInAction(() => (this.referrals = data.referrals));
     this.updateCache();
   }
 
@@ -299,6 +300,18 @@ class Hot {
     this.fetchBalance();
   }
 
+  isFireplace(id: number) {
+    return id < 10 && id >= 0;
+  }
+
+  isWood(id: number) {
+    return id < 20 && id >= 10;
+  }
+
+  isStorage(id: number) {
+    return id < 30 && id >= 20;
+  }
+
   get fireplaceBooster() {
     return this.getBooster(this.state?.firespace || 0);
   }
@@ -323,36 +336,29 @@ class Hot {
     const booster = this.getBooster(id);
     if (!booster) return false;
 
-    if (booster.hot_price) {
-      return this.balance >= booster.hot_price;
-    }
-
     if (booster.mission) {
       return this.missions[booster.mission] || false;
     }
 
-    return false;
+    return this.intBalance.gte(new BN(booster.hot_price || 0));
   }
 
   async upgradeBooster(id: number) {
     const booster = this.getBooster(id);
     if (!booster || !this.canUpgrade(id)) return;
 
-    if (booster.hot_price) {
-      await this.account.near.functionCall({
-        contractId: GAME_ID,
-        methodName: "buy_asset",
-        gas: new BN(TGAS * 50),
-        args: { asset_id: id },
-      });
-
+    if (booster.mission) {
+      const body = JSON.stringify({ asset_id: id });
+      await this.account.api.request("/api/v1/user/hot/booster", { body, method: "POST" });
       await this.updateStatus();
       return;
     }
 
-    await this.account.api.request("/api/v1/user/hot/booster", {
-      body: JSON.stringify({ asset_id: id }),
-      method: "POST",
+    await this.account.near.functionCall({
+      contractId: GAME_ID,
+      methodName: "buy_asset",
+      gas: new BN(TGAS * 50),
+      args: { asset_id: id },
     });
 
     await this.updateStatus();
@@ -360,7 +366,12 @@ class Hot {
 
   get balance() {
     const tokens = this.account.tokens;
-    return +(tokens.token(tokens.nearChain, "HOT")?.amount || 0);
+    return +(tokens.token(tokens.nearChain, "HOT")?.amountFloat || 0);
+  }
+
+  get intBalance() {
+    const tokens = this.account.tokens;
+    return new BN(tokens.token(tokens.nearChain, "HOT")?.amount || 0);
   }
 
   get miningProgress() {
@@ -369,8 +380,12 @@ class Hot {
     return Math.min(1, spend_ms / this.storageCapacityMs);
   }
 
+  storageCapacityHours(id: number) {
+    return +(+(this.getBooster(id)?.value || 0) / 3600_000_000_000).toFixed(2);
+  }
+
   get storageCapacityMs() {
-    return Math.floor((this.storageBooster?.value || 0) / 1_000_000);
+    return Math.floor(+(this.storageBooster?.value || 0) / 1_000_000);
   }
 
   get remainingMiningHours() {
@@ -381,11 +396,13 @@ class Hot {
 
   get hotPerHour() {
     if (!this.state) return 0;
-    return +this.fireplaceBooster!.value * Math.max(1, +this.woodBoster!.value);
+    const firplace = +formatAmount(this.fireplaceBooster!.value, 6);
+    const wood = +this.woodBoster!.value;
+    return +(firplace * Math.max(1, wood)).toFixed(6);
   }
 
   get earned() {
-    return +((this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(2);
+    return +((this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(6);
   }
 
   get referralsEarnPerHour() {

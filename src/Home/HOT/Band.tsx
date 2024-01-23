@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 
 import { HotReferral } from "../../core/Hot";
@@ -52,6 +52,10 @@ const FriendItem = ({ item }: { item: HotReferral }) => {
 const Band = () => {
   useNavigateBack();
   const user = useWallet()!;
+  useEffect(() => {
+    window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
+    return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
+  }, []);
 
   return (
     <Root>

@@ -18,9 +18,10 @@ export const useScrollLock = () => {
 
 export const useNavigateBack = () => {
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!window.Telegram?.WebApp?.BackButton) return;
-    const handler = () => navigate("/", { replace: true });
+    const handler = () => navigate(-1);
     window.Telegram.WebApp.BackButton.onClick(handler);
     window.Telegram.WebApp.BackButton.show();
     return () => {

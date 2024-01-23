@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import { notify } from "../../core/toast";
@@ -12,6 +12,7 @@ import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
 import { ClaimingLoading } from "./modals";
+import { formatAmount } from "../../core/helpers";
 
 const BoostPopup = observer(({ id }: { id: number }) => {
   const user = useWallet()!;
@@ -41,6 +42,8 @@ const BoostPopup = observer(({ id }: { id: number }) => {
     await user.hot.fetchMissions().catch(() => {});
     setChecking(false);
   };
+
+  console.log(next);
 
   return (
     <div
@@ -73,7 +76,9 @@ const BoostPopup = observer(({ id }: { id: number }) => {
           <img src={next.icon} style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }} />
           <div style={{ textAlign: "left" }}>
             <SmallText>{(next.id % 10) + 1} level</SmallText>
-            <BoldP>+{next.value} per hour</BoldP>
+            {user.hot.isWood(next.id) && <BoldP>×{next.value} per hour</BoldP>}
+            {user.hot.isStorage(next.id) && <BoldP>Claim every {user.hot.storageCapacityHours(next.id)}h</BoldP>}
+            {user.hot.isFireplace(next.id) && <BoldP>+{formatAmount(next.value, 6)} per hour</BoldP>}
           </div>
         </div>
 
@@ -96,7 +101,9 @@ const BoostPopup = observer(({ id }: { id: number }) => {
           />
           <div style={{ textAlign: "left" }}>
             <SmallText>{(current.id % 10) + 1} level</SmallText>
-            <BoldP>+{current.value} per hour</BoldP>
+            {user.hot.isWood(current.id) && <BoldP>×{current.value} per hour</BoldP>}
+            {user.hot.isStorage(current.id) && <BoldP>Claim every {user.hot.storageCapacityHours(current.id)}h</BoldP>}
+            {user.hot.isFireplace(current.id) && <BoldP>+{formatAmount(current.value, 6)} per hour</BoldP>}
           </div>
         </div>
       </div>
@@ -107,7 +114,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         )}
 
         <LargeP style={{ fontWeight: "bold" }}>
-          {next.mission ? next.mission_text || next.mission : next.hot_price}
+          {next.mission ? next.mission_text || next.mission : formatAmount(next.hot_price || 0, 6)}
         </LargeP>
       </div>
 
@@ -137,14 +144,13 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
 const BoostItem = ({ boost }: { boost: any }) => {
   const user = useWallet()!;
+  const nextBoost = user.hot.getBooster(boost.id + 1);
 
   return (
     <div
       key={boost.id}
       style={{ display: "flex", gap: 12, alignItems: "center" }}
-      onClick={() =>
-        user.hot.getBooster(boost.id + 1) && sheets.present({ id: "Boost", element: <BoostPopup id={boost.id} /> })
-      }
+      onClick={() => nextBoost && sheets.present({ id: "Boost", element: <BoostPopup id={boost.id} /> })}
     >
       <img
         src={boost.icon}
@@ -160,13 +166,13 @@ const BoostItem = ({ boost }: { boost: any }) => {
       <div>
         <BoldP>{boost.title}</BoldP>
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -4 }}>
-          {user.hot.getBooster(boost.id + 1)?.hot_price ? (
-            <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
-          ) : (
+          {nextBoost?.mission ? (
             <Icon name="mission" />
+          ) : (
+            <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
           )}
 
-          <BoldP>{user.hot.getBooster(boost.id + 1)?.hot_price || "Mission"}</BoldP>
+          <BoldP>{nextBoost?.mission ? "Mission" : formatAmount(nextBoost?.hot_price || 0, 6)}</BoldP>
           <Text style={{ color: colors.blackSecondary }}> • L{(boost.id % 10) + 1}</Text>
         </div>
       </div>
@@ -179,6 +185,11 @@ const BoostItem = ({ boost }: { boost: any }) => {
 const Boosters = () => {
   const user = useWallet()!;
   useNavigateBack();
+
+  useEffect(() => {
+    window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
+    return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
+  }, []);
 
   return (
     <Root>
@@ -221,11 +232,11 @@ const Boosters = () => {
           <div
             style={{
               display: "flex",
-              gap: 8,
               padding: "36px 0",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              gap: 8,
             }}
           >
             <Text style={{ color: colors.blackSecondary }}>Your balance</Text>

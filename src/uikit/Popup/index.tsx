@@ -168,15 +168,18 @@ const PopupBody = styled.div`
   bottom: 0;
 
   transform: translateY(100%);
+  opacity: 0;
 
   &.show {
     animation: ${slideUp} 0.2s;
     animation-fill-mode: forwards;
+    opacity: 1;
   }
 
   &.hide {
     animation: ${slideDown} 0.2s;
     animation-fill-mode: backwards;
+    opacity: 1;
   }
 `;
 

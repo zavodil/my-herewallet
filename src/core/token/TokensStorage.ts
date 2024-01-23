@@ -148,6 +148,11 @@ export class TokensStorage {
       this.tokens[ft.id].safe = this.tokens[ft.id].amount;
       this.tokens[ft.id].safeFloat = this.tokens[ft.id].amountFloat;
       this.tokens[ft.id].viewBalance = this.tokens[ft.id].amountFloat;
+
+      // TODO: force change decimal to avoid cache
+      if (ft.symbol === "HOT") {
+        this.tokens[ft.id].decimal = 6;
+      }
     });
 
     this.cacheTokens();

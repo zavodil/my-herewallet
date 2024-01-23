@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Button } from "../uikit";
+import { Card } from "../Home/styled";
 
 export const Container = styled.div`
   padding: 40px 120px;
@@ -18,6 +19,38 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     padding: 16px;
+  }
+`;
+
+export const ContainerSuccess = styled(Container)`
+  padding-top: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 640px) {
+    height: 100%;
+    background-color: var(--Elevation-0);
+    justify-content: center;
+    padding-top: 0;
+    padding: 24px;
+  }
+`;
+
+export const CardSuccess = styled(Card)`
+  flex-direction: row;
+  max-width: 700px;
+  width: 100%;
+  padding: 64px 48px;
+  gap: 48px;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    height: fit-content;
+    padding: 0;
   }
 `;
 

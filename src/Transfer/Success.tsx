@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "./styled";
+import { CardSuccess, Container, ContainerSuccess } from "./styled";
 import Header from "../Home/Header";
 import { Card, Root } from "../Home/styled";
 import { ActionButton, Button, H0, H2, H3, Text } from "../uikit";
@@ -25,8 +25,8 @@ const TransferSuccess = () => {
     <Root>
       {!isTgMobile() && <Header />}
 
-      <Container style={{ paddingTop: 72, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Card style={{ flexDirection: "row", maxWidth: 700, width: "100%", padding: "64px 48px", gap: 48 }}>
+      <ContainerSuccess>
+        <CardSuccess>
           <img style={{ width: 200, height: 290, objectFit: "cover" }} src={require("../assets/rock.png")} />
           <div
             style={{
@@ -43,12 +43,12 @@ const TransferSuccess = () => {
                 <H2 style={{ marginTop: 28 }}>{token.symbol}</H2>
               </div>
 
-              <H3 style={{ color: colors.blackSecondary }}>
+              <H3 style={{ color: colors.blackSecondary, marginTop: -8 }}>
                 {Formatter.usd(user.tokens.usd(token) * +params.get("amount")!)}
               </H3>
             </div>
 
-            <Text style={{ textAlign: "center" }}>
+            <Text style={{ textAlign: "center", marginTop: 12 }}>
               You have successfully <br />
               transfered money to {params.get("receiver")}
             </Text>
@@ -62,12 +62,16 @@ const TransferSuccess = () => {
               <BoldP>Transaction link</BoldP>
             </Button>
           </div>
-        </Card>
+        </CardSuccess>
 
-        <ActionButton style={{ marginTop: 32, width: 386 }} onClick={() => navigate("/", { replace: true })} big>
+        <ActionButton
+          style={{ marginTop: 32, width: "100%", maxWidth: 386 }}
+          onClick={() => navigate("/", { replace: true })}
+          big
+        >
           Back to home page
         </ActionButton>
-      </Container>
+      </ContainerSuccess>
     </Root>
   );
 };

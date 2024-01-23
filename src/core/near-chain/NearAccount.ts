@@ -30,6 +30,7 @@ import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
 import HereToken from "./HereToken";
+import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
 
 export class NearAccount extends Account {
   readonly native: NearToken;
@@ -132,11 +133,11 @@ export class NearAccount extends Account {
     if (!delegate) throw new DelegateNotAllowed();
 
     const base64 = Buffer.from(encodeDelegateAction(delegate.delegateAction)).toString("base64");
-    const isAllowed = await this.api.isCanDelegate(base64).catch(() => false);
-    if (!isAllowed) throw new DelegateNotAllowed();
-
     const signature = base_encode(delegate.signature.data);
-    const hash = await this.api.sendDelegate(base64, signature);
+    const auth = await this.api.isCanDelegate(base64, signature).catch(() => null);
+    if (!auth) throw new DelegateNotAllowed();
+
+    const hash = await this.api.sendDelegate(this.accountId, base64, signature, auth);
     if (!hash) throw Error("empty hash from delegated");
 
     return await this.processingTx(hash);
@@ -219,6 +220,7 @@ export class NearAccount extends Account {
       return await this.executeTransaction(actions, receiverId);
     }
 
+    // TODO: GLOBAL NONCE
     try {
       return await this.executeDelegate(actions, receiverId);
     } catch (e) {
@@ -343,6 +345,7 @@ export class NearAccount extends Account {
 
   async getRegisterTokenTrx(token: string, address = this.accountId): Promise<HereCall | null> {
     if (token === "") return null;
+    if (token === GAME_ID || token == GAME_TESTNET_ID) return null;
 
     const storage = await ref.ftGetStorageBalance(token, address).catch(() => null);
     if (storage != null) return null;
