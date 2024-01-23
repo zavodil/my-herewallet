@@ -7,6 +7,8 @@
 /* v2.0.0
 /* ----------------------------------------------- */
 
+import { extend } from "lodash";
+
 var pJS = function (tag_id, params) {
   var canvas_el = document.querySelector("#" + tag_id + " > .particles-js-canvas-el");
 
@@ -1245,7 +1247,7 @@ Object.deepExtend = function (destination, source) {
   for (var property in source) {
     if (source[property] && source[property].constructor && source[property].constructor === Object) {
       destination[property] = destination[property] || {};
-      arguments.callee(destination[property], source[property]);
+      Object.deepExtend(destination[property], source[property]);
     } else {
       destination[property] = source[property];
     }
