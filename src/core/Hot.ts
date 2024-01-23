@@ -8,7 +8,7 @@ import { NetworkError } from "./network/api";
 
 export const GAME_ID = "game.hot-token.near";
 
-interface HotReferral {
+export interface HotReferral {
   avatar: string;
   account_id: string;
   telegram_username: string;
@@ -16,7 +16,7 @@ interface HotReferral {
   earn_per_hour: number;
 }
 
-interface HotState {
+export interface HotState {
   last_claim: number;
   boost_ts_left: number;
   has_refferals: boolean;
@@ -126,8 +126,24 @@ const boosters = [
 class Hot {
   public currentTime = Date.now();
   public state: HotState | null = null;
-  public referrals: HotReferral[] = [];
-  public missions: Record<string, boolean> = {};
+  public referrals: HotReferral[] = [
+    {
+      account_id: "azbang.near",
+      avatar: "",
+      earn_per_hour: 20,
+      hot_balance: 1000,
+      telegram_username: "Andrey Zhevlakov",
+    },
+  ];
+
+  public missions: Record<string, boolean> = {
+    deposit_1NEAR: false,
+    deposit_1USDT: false,
+    download_app: false,
+    follow_twitter: false,
+    telegram_follow: false,
+    send_69_hot: false,
+  };
 
   public userData = {
     user_id: 0,
@@ -180,7 +196,7 @@ class Hot {
     this.levels = cache.levels;
     this.userData = cache.userData;
     this.missions = cache.missions;
-    this.referrals = cache.referrals;
+    // this.referrals = cache.referrals;
     this.state = cache.state;
 
     this.updateStatus();
@@ -256,7 +272,7 @@ class Hot {
   async fetchReferrals() {
     const resp = await this.account.api.request("/api/v1/user/hot/referrals");
     const data = await resp.json();
-    runInAction(() => (this.referrals = data.referrals));
+    //runInAction(() => (this.referrals = data.referrals));
     this.updateCache();
   }
 
@@ -288,7 +304,7 @@ class Hot {
   }
 
   get storageBooster() {
-    return this.getBooster(this.state?.boost || 20);
+    return this.getBooster(this.state?.storage || 20);
   }
 
   get woodBoster() {
@@ -369,11 +385,11 @@ class Hot {
   }
 
   get earned() {
-    return ((this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(2);
+    return +((this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(2);
   }
 
   get referralsEarnPerHour() {
-    return this.referrals.reduce((acc, r) => acc + r.earn_per_hour, 0);
+    return this.referrals.reduce((acc, r) => acc + r.earn_per_hour * 0.2, 0);
   }
 
   get referralLink() {

@@ -54,25 +54,9 @@ function App() {
   useEffect(() => {
     if (!isTgMobile() || !accounts.account) return;
     accounts.account.near.events.on("transaction:error", ({ error, actions, receiverId }) => {
-      if (error?.toString()?.includes("does not have enough balance")) {
-        let onSelectHot;
-
-        if (receiverId === GAME_ID && actions.length === 1 && actions[0].functionCall?.methodName === "claim") {
-          let isTriggered = false;
-          onSelectHot = async () => {
-            if (isTriggered) return;
-            isTriggered = true;
-
-            sheets.dismiss("NeedGas");
-            if (!accounts.account) return;
-            sheets.present({ id: "Claiming", fullscreen: true, element: <ClaimingLoading text="Claiming..." /> });
-            await accounts.account.hot.claim(true).catch(() => {});
-            sheets.dismiss("Claiming");
-          };
-        }
-
-        sheets.present({ id: "NeedGas", element: <NeedMoreGas onSelectHot={onSelectHot} /> });
-      }
+      if (!error?.toString()?.includes("does not have enough balance")) return;
+      if (receiverId === GAME_ID && actions.length === 1 && actions[0].functionCall?.methodName === "claim") return;
+      sheets.present({ id: "NeedGas", element: <NeedMoreGas /> });
     });
   }, [accounts.account]);
 

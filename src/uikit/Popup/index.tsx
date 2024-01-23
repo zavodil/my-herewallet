@@ -98,12 +98,13 @@ const Popup = ({
 
   return (
     <PopupWrap>
-      <PopupOverlay ref={overlayRef} onClick={() => !blocked && onClose?.()} />
+      <PopupOverlay ref={overlayRef} onClick={() => isOpen && !blocked && onClose?.()} />
       <PopupBody
         ref={bodyRef}
         style={{
           borderRadius: fullscreen ? "0" : "20px 20px 0px 0px",
           height: fullscreen ? "100%" : "fit-content",
+          maxHeight: fullscreen ? "100%" : "80%",
         }}
       >
         {children}
@@ -163,6 +164,7 @@ const PopupBody = styled.div`
   will-change: transform;
   overflow: hidden;
   position: absolute;
+  overflow-y: auto;
   bottom: 0;
 
   transform: translateY(100%);

@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 
+import { HotReferral } from "../../core/Hot";
 import { useWallet } from "../../core/Accounts";
 import { ActionButton, Button } from "../../uikit";
 import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
@@ -10,6 +11,43 @@ import { colors } from "../../uikit/theme";
 
 import { Container, Root } from "../styled";
 import { InviteFriend } from "./modals";
+
+const FriendItem = ({ item }: { item: HotReferral }) => {
+  return (
+    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "#F3EBEA",
+          borderRadius: 12,
+          width: 64,
+          height: 64,
+        }}
+      >
+        {item.avatar ? (
+          <img src={item.avatar} style={{ width: 64, height: 64, objectFit: "cover" }} />
+        ) : (
+          <H3>{item.telegram_username.charAt(0).toUpperCase()}</H3>
+        )}
+      </div>
+
+      <div>
+        <BoldP>{item.telegram_username}</BoldP>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -4 }}>
+          <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
+          <BoldP>{item.hot_balance}</BoldP>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+        <BoldP style={{ marginLeft: "auto" }}>+{+(item.earn_per_hour * 0.2).toFixed(2)}</BoldP>
+        <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
+      </div>
+    </div>
+  );
+};
 
 const Band = () => {
   useNavigateBack();
@@ -66,7 +104,7 @@ const Band = () => {
           <H3>{user.hot.referrals.length} Friend</H3>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <img style={{ width: 24, height: 24, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />
-            <BoldP>≈{user.hot.referralsEarnPerHour} per hour</BoldP>
+            <BoldP>≈{+user.hot.referralsEarnPerHour.toFixed(2)} per hour</BoldP>
           </div>
 
           <Text style={{ color: colors.blackSecondary }}>
@@ -81,7 +119,7 @@ const Band = () => {
         </div>
 
         {user.hot.referrals.length > 0 && (
-          <>
+          <div style={{ width: "100%" }}>
             <H3>My friend</H3>
             <div
               style={{
@@ -93,8 +131,12 @@ const Band = () => {
                 padding: 16,
                 gap: 24,
               }}
-            ></div>
-          </>
+            >
+              {user.hot.referrals.map((item) => (
+                <FriendItem key={item.account_id} item={item} />
+              ))}
+            </div>
+          </div>
         )}
 
         <ActionButton

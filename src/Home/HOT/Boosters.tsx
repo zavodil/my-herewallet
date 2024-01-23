@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { notify } from "../../core/toast";
 import { useWallet } from "../../core/Accounts";
 import { ActionButton, Button } from "../../uikit";
-import { BoldP, H1, H2, LargeP, Text } from "../../uikit/typographic";
+import { BoldP, H1, H2, LargeP, SmallText, Text } from "../../uikit/typographic";
 import { useNavigateBack } from "../../useNavigateBack";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
@@ -15,10 +15,11 @@ import { ClaimingLoading } from "./modals";
 
 const BoostPopup = observer(({ id }: { id: number }) => {
   const user = useWallet()!;
+  const current = user.hot.getBooster(id);
   const next = user.hot.getBooster(id + 1);
   const [isLoading, setLoading] = useState(false);
   const [isChecking, setChecking] = useState(false);
-  if (!next) return null;
+  if (!next || !current) return null;
 
   const upgrade = async () => {
     try {
@@ -53,17 +54,61 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         gap: 24,
       }}
     >
-      <img src={next.icon} style={{ width: 140, height: 140, borderRadius: 12 }} />
-
       <H2>{next.title}</H2>
       <Text style={{ color: colors.blackSecondary }}>{next.text}</Text>
+
+      <div style={{ padding: 24, width: "100%" }}>
+        <div
+          style={{
+            borderRadius: 12,
+            width: "100%",
+            alignItems: "center",
+            gap: 12,
+            overflow: "hidden",
+            border: "1px solid var(--border-low, #C7BAB8)",
+            background: "linear-gradient(45deg, #FDBF1C55, transparent)",
+            display: "flex",
+          }}
+        >
+          <img src={next.icon} style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }} />
+          <div style={{ textAlign: "left" }}>
+            <SmallText>{(next.id % 10) + 1} level</SmallText>
+            <BoldP>+{next.value} per hour</BoldP>
+          </div>
+        </div>
+
+        <Icon style={{ margin: "12px 0", transform: "rotate(-90deg)" }} name="arrow-right" />
+
+        <div
+          style={{
+            borderRadius: 12,
+            width: "100%",
+            alignItems: "center",
+            gap: 12,
+            overflow: "hidden",
+            border: "1px solid var(--border-low, #C7BAB8)",
+            display: "flex",
+          }}
+        >
+          <img
+            src={current.icon}
+            style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }}
+          />
+          <div style={{ textAlign: "left" }}>
+            <SmallText>{(current.id % 10) + 1} level</SmallText>
+            <BoldP>+{current.value} per hour</BoldP>
+          </div>
+        </div>
+      </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
         {!next.mission && (
           <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />
         )}
 
-        <LargeP style={{ fontWeight: "bold" }}>{next.mission || next.hot_price}</LargeP>
+        <LargeP style={{ fontWeight: "bold" }}>
+          {next.mission ? next.mission_text || next.mission : next.hot_price}
+        </LargeP>
       </div>
 
       {next.mission && !user.hot.canUpgrade(id + 1) ? (
