@@ -18,6 +18,11 @@ html {
   background: var(--Elevation-1)
 }
 
+
+#root {
+  height: 100%;
+}
+
 * {
   box-sizing: border-box;
   --Stroke: #c7bab8;

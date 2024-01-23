@@ -1,3 +1,4 @@
+import React from "react";
 import styled, { css } from "styled-components";
 
 export const Button = styled.button<{ $active?: boolean }>`
@@ -97,7 +98,7 @@ export const LinkButton = styled.button`
   color: #fd84e3;
 `;
 
-export const HereButton = styled.button`
+export const SHereButton = styled.button`
   box-sizing: border-box;
 
   display: flex;
@@ -131,7 +132,7 @@ export const HereButton = styled.button`
   color: #2c3034;
   text-decoration: none;
 
-  &:hover {
+  &.pressed {
     box-shadow: 0 0 0 #2c3034;
     transform: translate(4px, 4px);
   }
@@ -144,3 +145,16 @@ export const HereButton = styled.button`
     pointer-events: none;
   }
 `;
+
+export const HereButton = (p: any) => {
+  return (
+    <SHereButton
+      {...p}
+      onPointerDown={(e) => e.currentTarget.classList.add("pressed")}
+      onPointerOver={(e) => e.currentTarget.classList.remove("pressed")}
+      onPointerUp={(e) => e.currentTarget.classList.remove("pressed")}
+      onPointerCancel={(e) => e.currentTarget.classList.remove("pressed")}
+      onPointerLeave={(e) => e.currentTarget.classList.remove("pressed")}
+    />
+  );
+};
