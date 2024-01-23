@@ -142,15 +142,8 @@ export const icons = {
   qr,
 };
 
-interface Props {
+interface Props extends React.SVGAttributes<SVGElement> {
   name: keyof typeof icons;
-  width?: number;
-  height?: number;
-  stroke?: string;
-  fill?: string;
-  strokeWidth?: number;
-  color?: string;
-  style?: any;
 }
 
 class Icon extends Component<Props> {

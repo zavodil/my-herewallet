@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
@@ -22,12 +22,15 @@ import Home from "./Home";
 import CreateAccountMobile from "./AuthMobile/CreateAccountMobile";
 import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
 import AuthMobile from "./AuthMobile/AuthMobile";
-import PopupsProvider from "./uikit/Popup";
+import PopupsProvider, { sheets } from "./uikit/Popup";
 import Boosters from "./Home/HOT/Boosters";
 import Band from "./Home/HOT/Band";
 import HOT from "./Home/HOT";
 import Gas from "./Home/HOT/Gas";
 import { colors } from "./uikit/theme";
+import { NeedMoreGas } from "./Home/NeedGas";
+import { GAME_ID } from "./core/Hot";
+import { ClaimingLoading } from "./Home/HOT/modals";
 
 declare global {
   interface Window {
@@ -48,6 +51,31 @@ if (isTgMobile()) {
 }
 
 function App() {
+  useEffect(() => {
+    if (!isTgMobile() || !accounts.account) return;
+    accounts.account.near.events.on("transaction:error", ({ error, actions, receiverId }) => {
+      if (error?.toString()?.includes("does not have enough balance")) {
+        let onSelectHot;
+
+        if (receiverId === GAME_ID && actions.length === 1 && actions[0].functionCall?.methodName === "claim") {
+          let isTriggered = false;
+          onSelectHot = async () => {
+            if (isTriggered) return;
+            isTriggered = true;
+
+            sheets.dismiss("NeedGas");
+            if (!accounts.account) return;
+            sheets.present({ id: "Claiming", fullscreen: true, element: <ClaimingLoading text="Claiming..." /> });
+            await accounts.account.hot.claim(true).catch(() => {});
+            sheets.dismiss("Claiming");
+          };
+        }
+
+        sheets.present({ id: "NeedGas", element: <NeedMoreGas onSelectHot={onSelectHot} /> });
+      }
+    });
+  }, [accounts.account]);
+
   if (isTgMobile()) {
     return (
       <>

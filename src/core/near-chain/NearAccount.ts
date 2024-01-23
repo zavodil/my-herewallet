@@ -5,9 +5,9 @@ import { Action, HereCall, SignMessageOptionsNEP0413, createAction } from "@here
 import { AccessKeyView, AccessKeyViewRaw, FinalExecutionOutcome } from "near-api-js/lib/providers/provider";
 import { Account, Connection, InMemorySigner, KeyPair, Signer, providers, transactions } from "near-api-js";
 import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
-import { ChangeFunctionCallOptions } from "near-api-js/lib/account";
+import { ChangeFunctionCallOptions, SignAndSendTransactionOptions } from "near-api-js/lib/account";
 import { encodeDelegateAction } from "@near-js/transactions";
-import { Transaction } from "@near-wallet-selector/core";
+import { EventEmitter, Transaction } from "@near-wallet-selector/core";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapAccount } from "@near-snap/sdk";
 import * as ref from "@ref-finance/ref-sdk";
@@ -24,7 +24,7 @@ import { accounts } from "../Accounts";
 import { HereApi } from "../network/api";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getNodeUrl, getWrapNear } from "./constants";
-import { SAFE_NEAR, parseNearOfActions, waitTransactionResult } from "./utils";
+import { SAFE_NEAR, actionsToHereCall, parseNearOfActions, waitTransactionResult } from "./utils";
 import { SignPayload } from "./signMessage";
 import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
@@ -37,6 +37,10 @@ export class NearAccount extends Account {
   readonly wnear: WrapToken;
   readonly neat: NeatToken;
   readonly api: NearApi;
+
+  readonly events = new EventEmitter<{
+    "transaction:error": { actions: transactions.Action[]; error: any; receiverId: string };
+  }>();
 
   constructor(id: string, readonly type: ConnectType, signer: Signer, jwt?: string) {
     super(
@@ -54,6 +58,11 @@ export class NearAccount extends Account {
     this.hnear = new HereToken(this);
     this.wnear = new WrapToken(this);
     this.neat = new NeatToken(this);
+  }
+
+  async signAndSendTransaction({ receiverId, actions }: SignAndSendTransactionOptions) {
+    const tx = await this.callTransaction({ receiverId, actions: actionsToHereCall(actions) });
+    return await this.connection.provider.txStatus(tx, this.accountId);
   }
 
   protected async signTransaction(
@@ -102,31 +111,34 @@ export class NearAccount extends Account {
   }
 
   async executeTransaction(actions: transactions.Action[], receiverId: string): Promise<FinalExecutionOutcome> {
-    console.log("executeTransaction");
     let [tx, signedTx] = await this.signTransaction(receiverId, actions);
     return new Promise(async (resolve, reject) => {
       const abort = new AbortController();
-      this.connection.provider.sendTransaction(signedTx).catch((err) => {
+      const errorHandler = (error: any) => {
+        this.events.emit("transaction:error", { error, actions, receiverId });
         abort.abort();
-        reject(err);
-      });
+        reject(error);
+      };
 
-      console.log("processingTx", base_encode(tx));
-      this.processingTx(base_encode(tx), abort.signal).then(resolve).catch(reject);
+      this.connection.provider.sendTransaction(signedTx).catch(errorHandler);
+      this.processingTx(base_encode(tx), abort.signal).then(resolve).catch(errorHandler);
     });
   }
 
   async executeDelegate(actions: transactions.Action[], receiverId: string) {
     if (this.connection.networkId !== "mainnet") throw new DelegateNotAllowed();
 
-    const delegate = await this.signedDelegate({ actions, receiverId, blockHeightTtl: 100 });
+    const delegate = await this.signedDelegate({ actions, receiverId, blockHeightTtl: 100 }).catch(() => null);
+    if (!delegate) throw new DelegateNotAllowed();
+
     const base64 = Buffer.from(encodeDelegateAction(delegate.delegateAction)).toString("base64");
-    const isAllowed = await this.api.isCanDelegate(base64);
+    const isAllowed = await this.api.isCanDelegate(base64).catch(() => false);
     if (!isAllowed) throw new DelegateNotAllowed();
 
     const signature = base_encode(delegate.signature.data);
     const hash = await this.api.sendDelegate(base64, signature);
     if (!hash) throw Error("empty hash from delegated");
+
     return await this.processingTx(hash);
   }
 
