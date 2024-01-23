@@ -39,7 +39,7 @@ export const NeedMoreGas = ({ onSelectHot }: { onSelectHot?: () => void }) => {
             </WarningBadge>
 
             <Text>We can cover your transaction costs on the blockchain and charge fee in HOT tokens</Text>
-            <ActionButton style={{ width: "100%", marginTop: 20 }} stroke>
+            <ActionButton style={{ width: "100%", marginTop: 20 }} stroke onClick={() => onSelectHot()}>
               Continue with HOT
             </ActionButton>
           </Card>

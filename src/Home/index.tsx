@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { groupBy } from "lodash";
@@ -11,6 +11,7 @@ import Icon from "../uikit/Icon";
 
 import { useWallet } from "../core/Accounts";
 import { Formatter } from "../core/helpers";
+import { GAME_ID } from "../core/Hot";
 
 import {
   Root,
@@ -33,6 +34,7 @@ import Header from "./Header";
 import { isTgMobile } from "../Mobile";
 import { sheets } from "../uikit/Popup";
 import { NeedMoreGas } from "./NeedGas";
+import { BN } from "bn.js";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
 
@@ -51,10 +53,6 @@ const Home = () => {
     await account.fetchNfts().catch(() => {});
     setNftsLoading(false);
   };
-
-  // useEffect(() => {
-  //   sheets.present({ id: "NeedGas", element: <NeedMoreGas onSelectHot={() => {}} /> });
-  // }, []);
 
   return (
     <Root>

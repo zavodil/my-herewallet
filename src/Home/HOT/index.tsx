@@ -34,11 +34,7 @@ const HOT = () => {
   const claim = async () => {
     if (user.hot.miningProgress !== 1) return;
     sheets.present({ id: "Claiming", element: <ClaimingLoading text="Claiming..." />, fullscreen: true });
-    await user.hot.claim().catch((e) => {
-      console.log(e);
-      notify("Claim failed");
-    });
-
+    await user.hot.claim().catch((e) => notify("Claim failed"));
     sheets.dismiss("Claiming");
   };
 
@@ -52,7 +48,11 @@ const HOT = () => {
       <Header />
 
       <Container
-        style={{ zIndex: 10, justifyContent: "space-between", minHeight: "calc(var(--vh, 1vh) * 100 - 56px)" }}
+        style={{
+          zIndex: 10,
+          justifyContent: "space-between",
+          minHeight: "calc(var(--vh, 1vh) * 100 - 56px - env(safe-area-inset-bottom))",
+        }}
       >
         <Card style={{ padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
           <TokenIcon src={require("../../assets/hot/hot-icon.png")} />

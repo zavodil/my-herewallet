@@ -6,7 +6,7 @@ import { TGAS } from "./constants";
 import { wait } from "./helpers";
 import { NetworkError } from "./network/api";
 
-const GAME_ID = "game.hot-token.near";
+export const GAME_ID = "game.hot-token.near";
 
 interface HotReferral {
   avatar: string;
@@ -277,8 +277,8 @@ class Hot {
     this.updateCache();
   }
 
-  async claim() {
-    await this.account.near.functionCall({ contractId: GAME_ID, methodName: "claim" });
+  async claim(charge_gas_fee?: boolean) {
+    await this.account.near.functionCall({ contractId: GAME_ID, methodName: "claim", args: { charge_gas_fee } });
     this.updateStatus();
     this.fetchBalance();
   }

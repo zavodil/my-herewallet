@@ -48,13 +48,12 @@ export const FirstClaimHOT = () => {
   const register = async () => {
     try {
       setLoading(true);
-      sheets.blocked("Register", true);
       await user.hot.register();
-      sheets.dismiss("Boost");
+      sheets.dismiss("Register");
       setLoading(false);
     } catch (e) {
       console.log(e);
-      notify("Claim failed");
+      notify("Your Telegram account already registered");
       setLoading(false);
     }
   };
