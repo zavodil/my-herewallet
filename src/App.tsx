@@ -30,7 +30,6 @@ import Gas from "./Home/HOT/Gas";
 import { colors } from "./uikit/theme";
 import { NeedMoreGas } from "./Home/NeedGas";
 import { GAME_ID } from "./core/Hot";
-import { ClaimingLoading } from "./Home/HOT/modals";
 
 declare global {
   interface Window {
@@ -46,6 +45,7 @@ if (isTgMobile()) {
   window.Telegram = {
     WebApp: {
       openLink: (url: string) => window.open(url, "_blank"),
+      openTelegramLink: (url: string) => window.open(url, "_blank"),
     },
   };
 }

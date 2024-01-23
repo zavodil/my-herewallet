@@ -27,7 +27,7 @@ for (let i = 0, offset = new BN(5); i < 30; i++, offset = offset.mul(BN10)) {
   ROUNDING_OFFSETS[i] = offset;
 }
 
-export function formatAmount(balance: string, nominal = 24, fracDigits = 6) {
+export function formatAmount(balance: string | number, nominal = 24, fracDigits = 6) {
   try {
     const balanceBN = new BN(balance, 10);
     if (fracDigits !== nominal) {

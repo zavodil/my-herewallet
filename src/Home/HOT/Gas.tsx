@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -16,6 +16,11 @@ const Gas = () => {
   useNavigateBack();
   const user = useWallet()!;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
+    return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
+  }, []);
 
   const depositNear = () => {
     sheets.present({ id: "MyQR", element: <MyAddress /> });
@@ -97,7 +102,7 @@ const Gas = () => {
             />
             <div>
               <BoldP>Download mobile App</BoldP>
-              {!user.hot.missions.download_app ? (
+              {user.hot.missions.download_app ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                   <Icon color={colors.green} name="tick" />
                   <BoldP style={{ color: colors.green }}>Completed</BoldP>
@@ -120,7 +125,7 @@ const Gas = () => {
             />
             <div>
               <BoldP>Send 69 $HOT to a friend</BoldP>
-              {!user.hot.missions.send_69_hot ? (
+              {user.hot.missions.send_69_hot ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                   <Icon color={colors.green} name="tick" />
                   <BoldP>Completed</BoldP>
@@ -137,7 +142,7 @@ const Gas = () => {
 
           <div
             style={{ display: "flex", gap: 12, alignItems: "center" }}
-            onClick={() => window.Telegram.WebApp.openLink("https://t.me/herewallet")}
+            onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/herewallet")}
           >
             <img
               src={require("../../assets/hot/band.png")}
@@ -146,7 +151,7 @@ const Gas = () => {
             <div>
               <BoldP>Follow us on Telegram</BoldP>
 
-              {!user.hot.missions.telegram_follow ? (
+              {user.hot.missions.telegram_follow ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                   <Icon color={colors.green} name="tick" />
                   <BoldP>Completed</BoldP>

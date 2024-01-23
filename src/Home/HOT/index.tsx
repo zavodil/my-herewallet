@@ -119,10 +119,17 @@ const HOT = () => {
 
             <div style={{ display: "flex", width: "80%", alignItems: "center", justifyContent: "center" }}>
               <img
-                style={{ width: 60, maxWidth: "60px", height: "60px", objectFit: "contain" }}
+                style={{
+                  width: 60,
+                  maxWidth: "60px",
+                  height: "60px",
+                  objectFit: "contain",
+                  marginTop: -6,
+                  marginLeft: -32,
+                }}
                 src={require("../../assets/hot/hot.png")}
               />
-              <H0 id="balance">{Math.max(0, user.hot.balance)}</H0>
+              <H0 id="balance">{Math.max(0, user.hot.balance + user.hot.earned)}</H0>
             </div>
 
             <div

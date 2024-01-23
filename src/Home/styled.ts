@@ -6,6 +6,7 @@ export const Root = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 export const Container = styled.div`

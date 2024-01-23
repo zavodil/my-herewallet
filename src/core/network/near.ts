@@ -36,20 +36,21 @@ class NearApi {
     return await response.json();
   }
 
-  async isCanDelegate(action: string) {
-    const response = await this.api.request("/api/v1/transactions/is_delegate", {
-      body: JSON.stringify({ transaction: action }),
+  async isCanDelegate(transaction: string, signature: string): Promise<string> {
+    const response = await this.api.request("/api/v1/transactions/auth_delegate", {
+      body: JSON.stringify({ transaction, signature }),
       method: "POST",
     });
 
-    const { allowed } = await response.json();
-    return allowed;
+    const { authorization } = await response.json();
+    return authorization;
   }
 
-  async sendDelegate(action: string, signature: string) {
-    const response = await this.api.request("/api/v1/transactions/call_delegate", {
+  async sendDelegate(sender_id: string, transaction: string, signature: string, authorisation: string) {
+    const response = await fetch("https://relay.herewallet.app/execute", {
+      body: JSON.stringify({ sender_id, authorisation, actions: [{ transaction, signature }] }),
+      headers: { "Content-Type": "application/json" },
       method: "POST",
-      body: JSON.stringify({ signature, transaction: action }),
     });
 
     const { hash } = await response.json();
