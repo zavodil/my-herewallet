@@ -10,7 +10,7 @@ import { colors } from "../uikit/theme";
 import Icon from "../uikit/Icon";
 
 import { useWallet } from "../core/Accounts";
-import { Formatter } from "../core/helpers";
+import { Formatter, truncateAddress } from "../core/helpers";
 import { isTgMobile } from "../Mobile";
 
 import {
@@ -62,25 +62,27 @@ const Home = () => {
 
       <Container>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
-          <div
-            style={{
-              marginTop: 4,
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-            }}
-          >
-            <BoldP>{account.near.accountId}</BoldP>
-            <Icon
-              name="copy"
-              onClick={async () => {
-                await navigator.clipboard.writeText(account.near.accountId);
-                notify("Account address has beed copied");
+          {isTgMobile() && (
+            <div
+              style={{
+                marginTop: 4,
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
               }}
-            />
-          </div>
+            >
+              <BoldP>{truncateAddress(account.near.accountId)}</BoldP>
+              <Icon
+                name="copy"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(account.near.accountId);
+                  notify("Account address has beed copied");
+                }}
+              />
+            </div>
+          )}
 
           <Card style={{ gap: 16 }}>
             <div
