@@ -200,12 +200,13 @@ class Hot {
     this.referrals = cache.referrals;
     this.state = cache.state;
 
-    this.updateStatus();
-    this.fetchMissions();
-    this.fetchLevels();
-    this.fetchReferrals();
-    this.getUserData();
-    this.getTotalMinted();
+    this.getUserData().then(() => {
+      this.getTotalMinted();
+      this.updateStatus();
+      this.fetchMissions();
+      this.fetchLevels();
+      this.fetchReferrals();
+    });
   }
 
   cacheData() {
@@ -233,16 +234,17 @@ class Hot {
 
   async getUserData() {
     try {
-      const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHour}`);
+      const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}`);
       const data = await resp.json();
       runInAction(() => (this.userData = data));
       runInAction(() => (this.needRegister = false));
       this.updateCache();
       this.account.tokens.addContracts(this.userData.ft_contracts);
     } catch (e) {
-      if (!(e instanceof NetworkError)) return;
-      if (e.status !== 404 && e.status !== 400) return;
+      if (!(e instanceof NetworkError)) throw e;
+      if (e.status !== 404 && e.status !== 400) throw e;
       runInAction(() => (this.needRegister = true));
+      throw e;
     }
   }
 
@@ -253,7 +255,7 @@ class Hot {
     });
 
     window.Telegram.WebApp.requestWriteAccess();
-    await Promise.all([this.fetchBalance(), this.getUserData(), this.updateStatus(), this.fetchMissions()]);
+    await Promise.allSettled([this.fetchBalance(), this.getUserData(), this.updateStatus(), this.fetchMissions()]);
   }
 
   async fetchMissions() {
@@ -387,11 +389,14 @@ class Hot {
     return Math.max(0, (this.storageCapacityMs - spend_ms) / 3600_000).toFixed(2);
   }
 
+  get hotPerHourInt() {
+    if (!this.state) return "0";
+    return new BN(this.fireplaceBooster!.value || 0).muln(Math.max(1, +this.woodBoster!.value)).toString();
+  }
+
   get hotPerHour() {
     if (!this.state) return 0;
-    const firplace = +formatAmount(this.fireplaceBooster!.value, 6);
-    const wood = +this.woodBoster!.value;
-    return +(firplace * Math.max(1, wood)).toFixed(6);
+    return +formatAmount(this.hotPerHourInt.toString(), 6).toFixed(6);
   }
 
   get earned() {
@@ -399,11 +404,11 @@ class Hot {
   }
 
   get referralsEarnPerHour() {
-    return this.referrals.reduce((acc, r) => acc + r.earn_per_hour * 0.2, 0);
+    return this.referrals.reduce((acc, r) => acc + formatAmount(r.earn_per_hour, 6) * 0.2, 0);
   }
 
   get referralLink() {
-    return `t.me/hotisnearbot/app?startapp=${this.userData.user_id}`;
+    return `t.me/herewalletbot/app?startapp=${this.userData.user_id}`;
   }
 }
 

@@ -27,7 +27,7 @@ const Gas = () => {
   };
 
   const send69Hot = () => {
-    navigate("/transfer?asset=HOT&amount=69");
+    navigate("/transfer?asset=HOT&amount=0.69");
   };
 
   return (
@@ -124,7 +124,7 @@ const Gas = () => {
               style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }}
             />
             <div>
-              <BoldP>Send 69 $HOT to a friend</BoldP>
+              <BoldP>Send 0.69 $HOT to a friend</BoldP>
               {user.hot.missions.send_69_hot ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                   <Icon color={colors.green} name="tick" />

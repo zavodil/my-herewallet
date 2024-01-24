@@ -30,6 +30,7 @@ import Gas from "./Home/HOT/Gas";
 import { colors } from "./uikit/theme";
 import { NeedMoreGas } from "./Home/NeedGas";
 import { GAME_ID } from "./core/Hot";
+import Onboard from "./Home/HOT/Onboard";
 
 declare global {
   interface Window {
@@ -77,6 +78,7 @@ function App() {
                 <Route path="/hot/cave" element={<Boosters />} />
                 <Route path="/hot/band" element={<Band />} />
                 <Route path="/hot/gas" element={<Gas />} />
+                <Route path="/hot/onboard" element={<Onboard />} />
                 <Route path="/hot/*" element={<HOT />} />
               </>
             )}

@@ -7,6 +7,7 @@ import { sheets } from "../../uikit/Popup";
 import { notify } from "../../core/toast";
 import { colors } from "../../uikit/theme";
 import { ActionButton, H2, H4, Text } from "../../uikit";
+import { NetworkError } from "../../core/network/api";
 
 export const InviteFriend = () => {
   const user = useWallet()!;
@@ -53,7 +54,8 @@ export const FirstClaimHOT = () => {
       setLoading(false);
     } catch (e) {
       console.log(e);
-      notify("Your Telegram account already registered");
+      if (e instanceof NetworkError) notify(e.body);
+      else notify("Register failed");
       setLoading(false);
     }
   };
@@ -71,7 +73,7 @@ export const FirstClaimHOT = () => {
       }}
     >
       <img src={require("../../assets/hot/hot-icon.png")} style={{ width: 140, height: 140, borderRadius: 12 }} />
-      <H2>+ 1000 HOT</H2>
+      <H2>+0.01 HOT</H2>
       <Text style={{ color: colors.blackSecondary }}>
         HOT is an onchain token related to the launch of NEAR Wallet in Telegram. It's mined on the blockchain and can
         be trade or transfer via any crypto wallet. More coming after the mint is over!

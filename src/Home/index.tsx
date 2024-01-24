@@ -5,13 +5,13 @@ import { groupBy } from "lodash";
 
 import { H3, Text } from "../uikit";
 import { SmallText, H2, BoldP } from "../uikit/typographic";
-import { Button, HereButton } from "../uikit/button";
+import { ActionButton, Button, HereButton } from "../uikit/button";
 import { colors } from "../uikit/theme";
 import Icon from "../uikit/Icon";
 
 import { useWallet } from "../core/Accounts";
 import { Formatter } from "../core/helpers";
-import { GAME_ID } from "../core/Hot";
+import { isTgMobile } from "../Mobile";
 
 import {
   Root,
@@ -31,10 +31,8 @@ import {
 } from "./styled";
 import { Transaction } from "./Transactions";
 import Header from "./Header";
-import { isTgMobile } from "../Mobile";
 import { sheets } from "../uikit/Popup";
-import { NeedMoreGas } from "./NeedGas";
-import { BN } from "bn.js";
+import { notify } from "../core/toast";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
 
@@ -44,6 +42,10 @@ const Home = () => {
   const [showAll, setShowAll] = useState(false);
   const [showTokens, toggleTokens] = useState(true);
   const [isNftsLoading, setNftsLoading] = useState(false);
+
+  useEffect(() => {
+    sheets.dismiss("Register");
+  }, []);
 
   const selectNfts = async () => {
     toggleTokens(false);
@@ -60,6 +62,17 @@ const Home = () => {
 
       <Container>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
+          <div style={{ width: "100%", display: "flex", gap: 8, alignItems: "center", justifyContent: "center" }}>
+            <BoldP>{account.near.accountId}</BoldP>
+            <Icon
+              name="copy"
+              onClick={async () => {
+                await navigator.clipboard.writeText(account.near.accountId);
+                notify("Account address has beed copied");
+              }}
+            />
+          </div>
+
           <Card style={{ gap: 16 }}>
             <div
               style={{
@@ -118,6 +131,55 @@ const Home = () => {
               </div>
             )}
           </Card>
+
+          {isTgMobile() && account.hot.needRegister && (
+            <div
+              style={{
+                borderRadius: 20,
+                backgroundImage: `url(${require("../assets/hot/hot-banner-bg.png")})`,
+                backgroundSize: "cover",
+                backgroundPosition: "100% 100%",
+                border: "1px solid var(--Black-Primary, #2C3034)",
+                backgroundColor: "#101112",
+                flexDirection: "column",
+                position: "relative",
+                overflow: "hidden",
+                display: "flex",
+                width: "100%",
+                padding: 16,
+                height: 173,
+              }}
+            >
+              <BoldP style={{ color: "#fff", fontSize: 20, lineHeight: "26px" }}>
+                Claim your
+                <br />
+                First Hot Token!
+              </BoldP>
+
+              <ActionButton
+                onClick={() => navigate("/hot/onboard")}
+                style={{
+                  marginTop: "auto",
+                  background: "#fff",
+                  borderRadius: 16,
+                  color: colors.blackPrimary,
+                  width: 160,
+                  height: 40,
+                }}
+              >
+                Claim
+              </ActionButton>
+
+              <img
+                style={{ position: "absolute", bottom: 0, right: 0, width: 133, height: 133 }}
+                src={require("../assets/hot/hot-banner-img.png")}
+              />
+
+              {/* <Button style={{ position: "absolute", top: 10, right: 10 }}>
+                <Icon color={colors.blackSecondary} name="cross" />
+              </Button> */}
+            </div>
+          )}
 
           {!isTgMobile() && (
             <Card>
@@ -215,7 +277,10 @@ const Home = () => {
             <>
               <BoldP style={{ color: colors.blackSecondary }}>Portfolio</BoldP>
               <Card style={{ marginTop: -8, padding: "0" }}>
-                <TokenCard style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => navigate("/hot")}>
+                <TokenCard
+                  style={{ height: 72, padding: "0 16px", display: "flex" }}
+                  onClick={() => (account.hot.needRegister ? navigate("/hot/onboard") : navigate("/hot"))}
+                >
                   <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 12 }}>
                     <TokenIcon src={require("../assets/hot/hot-icon.png")} />
 
@@ -224,9 +289,9 @@ const Home = () => {
                       <SmallText>{Math.max(0, account.hot.balance).toFixed(2)}</SmallText>
                     </div>
 
-                    {account.hot.balance === 0 ? (
+                    {account.hot.needRegister ? (
                       <>
-                        <BoldP>Claim 1000 (free)</BoldP>
+                        <BoldP>Claim 0.01 (free)</BoldP>
                         <Icon name="arrow-right" />
                       </>
                     ) : (
