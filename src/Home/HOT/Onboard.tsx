@@ -59,7 +59,13 @@ const Onboard = () => {
       </div>
 
       <div
-        style={{ display: "flex", alignItems: "center", width: "100%", padding: 24, justifyContent: "space-between" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          padding: 24,
+          justifyContent: "space-between",
+        }}
       >
         <div style={{ display: "flex", gap: 4 }}>
           <Dot $active={currentPage === 0} />

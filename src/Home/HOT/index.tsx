@@ -44,8 +44,6 @@ const HOT = () => {
     };
   }, []);
 
-  useEffect(() => {}, [user.hot.balance]);
-
   useEffect(() => {
     if (!user.hot.needRegister) return;
     sheets.present({ id: "Register", element: <FirstClaimHOT />, blocked: true });
@@ -116,8 +114,7 @@ const HOT = () => {
               animationData={require("../../assets/sparks.json")}
             />
 
-            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your balance</LargeP>
-
+            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your earnings</LargeP>
             <div style={{ display: "flex", width: "80%", alignItems: "center", justifyContent: "center" }}>
               <img
                 style={{

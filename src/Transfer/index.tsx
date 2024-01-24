@@ -110,12 +110,6 @@ const Transfer = () => {
         <Card style={{ gridArea: "recipient", gap: 12, position: "relative" }}>
           <H4>Recipient</H4>
 
-          {!receiver.isLoading && receiver.input.length > 0 && (
-            <Text style={{ color: colors.red, position: "absolute", right: 24 }}>
-              {!receiver.isExist ? "This account is not exist" : receiver.validateError}
-            </Text>
-          )}
-
           <div style={{ position: "relative" }}>
             <HereInput
               label="Wallet address"
@@ -137,6 +131,12 @@ const Transfer = () => {
               <AvatarImage style={{ position: "absolute", top: 8, right: 12 }} src={receiver.avatar} />
             )}
           </div>
+
+          {!receiver.isLoading && receiver.input.length > 0 && (
+            <TinyText style={{ marginTop: -4, color: colors.red, fontWeight: "bold" }}>
+              {!receiver.isExist ? "This account is not exist" : receiver.validateError}
+            </TinyText>
+          )}
         </Card>
 
         <Card style={{ gridArea: "asset", gap: 12 }}>
@@ -194,9 +194,6 @@ const Transfer = () => {
         </Card>
 
         <Card style={{ gridArea: "amount", gap: 12, position: "relative" }}>
-          {isTooMuch && <Text style={{ color: colors.red, position: "absolute", right: 24 }}>Not enough balance</Text>}
-          {!token && <Text style={{ color: colors.red, position: "absolute", right: 24 }}>Please select asset</Text>}
-
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <H4>Amount</H4>
 
@@ -211,21 +208,34 @@ const Transfer = () => {
             <HereInput
               label="Amount"
               value={(isFiat ? "$" : "") + amount}
-              postfix={isFiat ? `${tokenAmount} ${token?.symbol ?? ""}` : Formatter.usd(fiatAmount)}
+              postfix={
+                isFiat ? `${tokenAmount} ${token?.symbol ?? ""}` : fiatAmount > 0 ? Formatter.usd(fiatAmount) : ""
+              }
               onChange={(e) => setAmount(formatNumber(e.target.value))}
             />
 
             <InputButton style={{ position: "absolute", top: 10, right: 12 }} onClick={selectMax}>
               <SmallText>MAX</SmallText>
             </InputButton>
-            <InputButton
-              $active={isFiat}
-              style={{ position: "absolute", top: 10, right: 78 }}
-              onClick={() => setFiat((t) => !t)}
-            >
-              <SmallText>USD</SmallText>
-            </InputButton>
+
+            {user.tokens.fiat(token) > 0.01 && (
+              <InputButton
+                $active={isFiat}
+                style={{ position: "absolute", top: 10, right: 78 }}
+                onClick={() => setFiat((t) => !t)}
+              >
+                <SmallText>USD</SmallText>
+              </InputButton>
+            )}
           </div>
+
+          {isTooMuch && (
+            <TinyText style={{ marginTop: -4, fontWeight: "bold", color: colors.red }}>Not enough balance</TinyText>
+          )}
+
+          {!token && (
+            <TinyText style={{ marginTop: -4, fontWeight: "bold", color: colors.red }}>Please select asset</TinyText>
+          )}
 
           <HereInput
             multiline

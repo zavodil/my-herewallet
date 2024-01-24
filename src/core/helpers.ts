@@ -5,7 +5,7 @@ export const wait = (timeout: number) => {
 };
 
 export const truncateAddress = (id: string) => {
-  return id.length > 16 ? id.slice(0, 8) + ".." + id.slice(-8) : id;
+  return id.length > 24 ? id.slice(0, 12) + ".." + id.slice(-12) : id;
 };
 
 export const chunk = (array: any[], chunkSize: number) => {

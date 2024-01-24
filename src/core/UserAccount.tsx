@@ -155,6 +155,7 @@ class UserAccount {
 
     if (ft.chain === Chain.NEAR || ft.chain === Chain.NEAR_TESTNET) {
       const hash = await this.near.transfer(ft, amount, receiver);
+      if (ft.symbol === "HOT") this.hot.action("transfer", { hash, amount: amount.toString(), receiver });
       this.bindComment(hash, comment);
       return hash;
     }

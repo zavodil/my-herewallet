@@ -19,9 +19,9 @@ import { NETWORK, TGAS } from "../constants";
 
 import { ConnectType } from "../types";
 import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
-import { HereError, ResponseError, TransactionError } from "../network/types";
+import { HereError, TransactionError } from "../network/types";
 import { accounts } from "../Accounts";
-import { HereApi } from "../network/api";
+import { HereApi, NetworkError } from "../network/api";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getNodeUrl, getWrapNear } from "./constants";
 import { SAFE_NEAR, actionsToHereCall, parseNearOfActions, waitTransactionResult } from "./utils";
@@ -105,7 +105,8 @@ export class NearAccount extends Account {
       return await this.connection.provider.txStatus(tx, this.accountId);
     } catch (e) {
       if (signal?.aborted) throw e;
-      if (!(e instanceof ResponseError)) throw e;
+      if (e instanceof NetworkError && e.status !== 404) throw e;
+
       // Use fallback for processing tx, it backend down
       return await waitTransactionResult(tx, this.accountId, this.connection.provider, 0, signal);
     }
