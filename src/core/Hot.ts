@@ -247,16 +247,9 @@ class Hot {
   }
 
   async register() {
-    const { user, start_param } = window.Telegram.WebApp?.initDataUnsafe || {};
     await this.account.api.request("/api/v1/user/hot", {
+      body: JSON.stringify({ telegram_data: window.Telegram.WebApp?.initData }),
       method: "POST",
-      body: JSON.stringify({
-        inviter_id: +start_param,
-        telegram_username: user?.username,
-        telegram_name: [user?.first_name, user?.last_name].filter((t) => t).join(" "),
-        telegram_avatar: user?.photo_url,
-        telegram_id: user?.id,
-      }),
     });
 
     window.Telegram.WebApp.requestWriteAccess();
