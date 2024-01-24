@@ -193,11 +193,11 @@ class Hot {
     this.referrals = cache.referrals;
     this.state = cache.state;
 
+    this.fetchLevels();
     this.getTotalMinted();
     this.getUserData().then(() => {
       this.updateStatus();
       this.fetchMissions();
-      this.fetchLevels();
       this.fetchReferrals();
     });
   }
