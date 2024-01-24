@@ -408,7 +408,7 @@ class Hot {
   }
 
   get referralLink() {
-    return `t.me/hotisnearbot/app?startapp=${this.userData.user_id}`;
+    return `t.me/herewalletbot/app?startapp=${this.userData.user_id}`;
   }
 }
 
