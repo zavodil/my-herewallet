@@ -117,7 +117,14 @@ const Transfer = () => {
           )}
 
           <div style={{ position: "relative" }}>
-            <HereInput label="Wallet address" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
+            <HereInput
+              label="Wallet address"
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoComplete="off"
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+            />
 
             {receiver.isLoading && (
               <ActivityIndicator

@@ -150,7 +150,7 @@ const AccountManager = observer((props: Props) => {
               setToggleExport(true);
             }}
           >
-            <Icon name="switch_horizontal" />
+            <Icon name="switch-horizontal" />
             <Text>Export wallet</Text>
           </S.AccountButton>
 

@@ -9,8 +9,8 @@ import { useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
 
-import { useScrollLock } from "../../useNavigateBack";
-import { BoldP, H0, H1, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
+import { useNavigateBack, useScrollLock } from "../../useNavigateBack";
+import { BoldP, H0, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
 import { ActivityIndicator, Button } from "../../uikit";
 import { HereButton } from "../../uikit/button";
 import { sheets } from "../../uikit/Popup";
@@ -27,6 +27,7 @@ const formatHours = (hh: number) => {
 
 const HOT = () => {
   useScrollLock();
+  useNavigateBack();
   const sparksRef = useRef<LottieRefCurrentProps>();
   const user = useWallet()!;
   const navigate = useNavigate();
@@ -129,7 +130,7 @@ const HOT = () => {
                 }}
                 src={require("../../assets/hot/hot.png")}
               />
-              <H0 id="balance">{Math.max(0, user.hot.balance + user.hot.earned)}</H0>
+              <H0 id="balance">{Math.max(0, user.hot.balance + user.hot.earned).toFixed(5)}</H0>
             </div>
 
             <div
