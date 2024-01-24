@@ -3,8 +3,10 @@ import { BN } from "bn.js";
 
 import UserAccount from "./UserAccount";
 import { TGAS } from "./constants";
-import { formatAmount, wait } from "./helpers";
+import { formatAmount, parseAmount, wait } from "./helpers";
 import { NetworkError } from "./network/api";
+import { Chain } from "./token/types";
+import { ft } from "./token/utils";
 
 export const GAME_ID = "game.hot-token.near";
 export const GAME_TESTNET_ID = "game.hot-token.testnet";
@@ -127,16 +129,7 @@ const boosters = [
 class Hot {
   public currentTime = Date.now();
   public state: HotState | null = null;
-  public referrals: HotReferral[] = [
-    {
-      account_id: "azbang.near",
-      avatar: "",
-      earn_per_hour: 20,
-      hot_balance: 1000,
-      telegram_username: "Andrey Zhevlakov",
-    },
-  ];
-
+  public referrals: HotReferral[] = [];
   public missions: Record<string, boolean> = {
     deposit_1NEAR: false,
     deposit_1USDT: false,
@@ -200,8 +193,8 @@ class Hot {
     this.referrals = cache.referrals;
     this.state = cache.state;
 
+    this.getTotalMinted();
     this.getUserData().then(() => {
-      this.getTotalMinted();
       this.updateStatus();
       this.fetchMissions();
       this.fetchLevels();
@@ -225,8 +218,8 @@ class Hot {
   }
 
   async getTotalMinted() {
-    const balance = await this.account.near.viewMethod(GAME_ID, "ft_total_supply").catch(() => this.totalMinted);
-    runInAction(() => (this.totalMinted = balance));
+    const balance = await this.account.near.viewMethod(GAME_ID, "ft_total_supply");
+    runInAction(() => (this.totalMinted = +formatAmount(balance, 6)));
     this.updateCache();
     await wait(10000);
     await this.getTotalMinted();
@@ -258,6 +251,61 @@ class Hot {
     await Promise.allSettled([this.fetchBalance(), this.getUserData(), this.updateStatus(), this.fetchMissions()]);
   }
 
+  action(type: "transfer", data: { hash: string; amount: string; receiver: string }): Promise<void>;
+  action(type: "claim", data: { hash: string; amount: string; charge_gas_fee?: boolean }): Promise<void>;
+  async action(type: string, data: Record<string, any>) {
+    if (type === "transfer" && data.amount === parseAmount(0.69, 6)) {
+      this.completeMission("send_69_hot");
+    }
+
+    await this.account.api.request(`/api/v1/user/hot/action`, {
+      body: JSON.stringify({ type, data }),
+      method: "POST",
+    });
+  }
+
+  async completeMission(mission: string) {
+    let type = "gas-free";
+
+    switch (mission) {
+      case "deposit_1NEAR": {
+        type = "booster";
+        await this.account.tokens.updateNative();
+        if (this.account.tokens.near.amountFloat >= 1) break;
+        throw Error("Your NEAR balance has not yet updated.");
+      }
+
+      case "deposit_1USDT": {
+        type = "booster";
+        await this.account.tokens.updateBalance(ft(Chain.NEAR, "USDT"));
+        if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 1) break;
+        throw Error("Your USDT balance has not yet updated.");
+      }
+
+      case "deposit_NFT":
+      case "install_app":
+      case "earn_app_score":
+        type = "booster";
+        break;
+
+      case "send_69_hot":
+      case "telegram_follow":
+      case "follow_twitter":
+        type = "gas-free";
+        break;
+
+      default:
+        throw Error(`Unknown mission: ${mission}`);
+    }
+
+    await this.account.api.request(`/api/v1/user/hot/mission/${type}`, {
+      body: JSON.stringify({ mission_id: mission }),
+      method: "POST",
+    });
+
+    await this.fetchMissions();
+  }
+
   async fetchMissions() {
     const resp = await this.account.api.request("/api/v1/user/hot/missions");
     const data = await resp.json();
@@ -279,20 +327,32 @@ class Hot {
   async fetchLevels() {
     const near = this.account.near;
     const state = await near.viewMethod(GAME_ID, "get_assets", { account_id: near.accountId });
+    console.log(state);
     runInAction(() => (this.levels = state));
     this.updateCache();
   }
 
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
+    console.log(state);
     runInAction(() => (this.state = state));
     this.updateCache();
   }
 
   async claim(charge_gas_fee?: boolean) {
-    await this.account.near.functionCall({ contractId: GAME_ID, methodName: "claim", args: { charge_gas_fee } });
+    const tx = await this.account.near.functionCall({
+      contractId: GAME_ID,
+      methodName: "claim",
+      args: { charge_gas_fee },
+    });
+
     this.updateStatus();
     this.fetchBalance();
+    this.action("claim", {
+      hash: tx.transaction_outcome.id,
+      amount: formatAmount(this.earned, 6).toString(),
+      charge_gas_fee,
+    });
   }
 
   isFireplace(id: number) {

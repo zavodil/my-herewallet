@@ -19,6 +19,7 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     padding: 16px;
+    padding-bottom: 400px;
   }
 `;
 
@@ -27,6 +28,10 @@ export const ContainerSuccess = styled(Container)`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 920px) {
+    padding-bottom: 24px;
+  }
 
   @media (max-width: 640px) {
     height: 100%;

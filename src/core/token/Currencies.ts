@@ -45,13 +45,13 @@ class Currencies {
   }
 
   usd(asset: string) {
-    return this.prices[asset]?.usd || 0;
+    return this.prices[asset.toUpperCase()]?.usd || 0;
   }
 
   getCurrency(ft: FtModel | FtAsset | null) {
     const empty = { usd: 0, usd_yesterday: 0, usd_24h_change: 0, precision: 2 };
     if (ft == null) return empty;
-    return this.prices[ft.asset] || empty;
+    return this.prices[ft.symbol.toUpperCase()] || empty;
   }
 
   getPrecision(price: number) {
@@ -88,7 +88,7 @@ class Currencies {
     runInAction(() => {
       Object.entries(prices).forEach(([symbol, prices]) => {
         const [yest = 0, now = yest] = prices as any;
-        this.prices[symbol] = {
+        this.prices[symbol.toUpperCase()] = {
           precision: this.getPrecision(now),
           usd_24h_change: ((now - yest) / yest) * 100,
           usd_yesterday: yest,

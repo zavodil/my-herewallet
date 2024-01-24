@@ -62,7 +62,16 @@ const Home = () => {
 
       <Container>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
-          <div style={{ width: "100%", display: "flex", gap: 8, alignItems: "center", justifyContent: "center" }}>
+          <div
+            style={{
+              marginTop: 4,
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+            }}
+          >
             <BoldP>{account.near.accountId}</BoldP>
             <Icon
               name="copy"
