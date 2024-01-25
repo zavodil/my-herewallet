@@ -36,7 +36,7 @@ const Gas = () => {
   };
 
   const followTelegram = () => {
-    window.Telegram.WebApp.openLink("https://t.me/herewallet");
+    window.Telegram.WebApp.openTelegramLink("https://t.me/herewallet");
     setTimeout(() => {
       user.hot.completeMission("telegram_follow");
     }, 5000);
