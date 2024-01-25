@@ -31,10 +31,18 @@ const Widgets = () => {
       >
         <Lottie
           animationData={require("../../assets/hot/fire.json")}
-          style={{ width: "100%", position: "absolute", bottom: -8, pointerEvents: "none" }}
+          style={{
+            width: "100%",
+            position: "absolute",
+            pointerEvents: "none",
+            overflow: "hidden",
+            borderRadius: 20,
+            bottom: -8,
+          }}
           loop
         />
-        <div style={{ background: colors.elevation0, borderRadius: 16, padding: 16, position: "relative" }}>
+
+        <div style={{ background: colors.elevation0, borderRadius: 16, padding: 14, position: "relative" }}>
           <div style={{ width: "100%" }}>
             <H4 style={{ lineHeight: "1em" }} className="fitted">
               HOT Balance
