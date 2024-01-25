@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { formatNearAmount } from "near-api-js/lib/utils/format";
-import { HereProviderRequest, getRequest, createRequest } from "@here-wallet/core";
-import { base_decode } from "near-api-js/lib/utils/serialize";
-import { useParams } from "react-router-dom";
+import { HereProviderRequest } from "@here-wallet/core";
 import { observer } from "mobx-react-lite";
 import Lottie from "lottie-react";
 import isMobile from "is-mobile";
@@ -25,25 +23,35 @@ import { connectMetamask, connectLedger, connectWeb } from "./utils";
 import HereQrcode from "./here";
 import * as S from "./styled";
 
+window.addEventListener("message", (e) => {
+  try {
+    const data = JSON.parse(e.data);
+    if (data.type !== "request") return;
+    // @ts-ignore
+    window.hereRequest = data.payload.request;
+    // @ts-ignore
+    window.requestId = data.payload.id;
+  } catch {}
+});
+
 const useRequest = () => {
-  // @ts-ignore
-  const input = window.hereRequestId || useParams().id;
   const [request, setRequest] = useState<HereProviderRequest>();
-  const [id, setId] = useState(input);
+  const [id, setId] = useState("");
 
   useEffect(() => {
-    try {
-      const request = JSON.parse(Buffer.from(base_decode(input)).toString("utf8"));
-      createRequest(request).then((id) => {
-        setRequest(request);
-        setId(id);
-      });
-    } catch {
-      // @ts-ignore
-      if (window.hereRequest) setRequest(window.hereRequest);
-      else getRequest(id).then(setRequest);
-    }
-  }, [input]);
+    // @ts-ignore
+    if (window.hereRequest) setRequest(window.hereRequest); // @ts-ignore
+    if (window.requestId) setId(window.requestId);
+    window.addEventListener("message", (e) => {
+      try {
+        console.log(e.data);
+        const data = JSON.parse(e.data);
+        if (data.type !== "request") return;
+        setRequest(data.payload.request);
+        setId(data.payload.id);
+      } catch {}
+    });
+  }, []);
 
   return { request, id };
 };
@@ -57,13 +65,13 @@ const Widget = () => {
   const [password, setPassword] = useState("");
   const [isInit, setInit] = useState(true);
 
+  const desktop = [
+    { id: "", type: ConnectType.Snap },
+    { id: "", type: ConnectType.Ledger },
+  ];
+
   const accountsList = toJS(accounts.accounts)
-    .concat([
-      { id: "", type: ConnectType.Here },
-      { id: "", type: ConnectType.Snap },
-      { id: "", path: "44'/397'/0'/0'/0'", type: ConnectType.Ledger } as any,
-      { id: "", path: "44'/397'/0'/0'/1'", type: ConnectType.Ledger } as any,
-    ])
+    .concat([{ id: "", type: ConnectType.Here }], isMobile() ? [] : desktop)
     .filter((t) => {
       const selector = request?.selector || {};
       if (t.type === ConnectType.WalletConnect) return false;
@@ -84,7 +92,7 @@ const Widget = () => {
 
   const rejectButton = () => {
     if (isApproving) return;
-    window.close();
+    top?.postMessage(JSON.stringify({ type: "reject" }));
   };
 
   if (request == null) {
@@ -103,7 +111,7 @@ const Widget = () => {
         onlySwitch
         account={account}
         accounts={accountsList}
-        style={{ position: "absolute", top: 24 }}
+        style={{ position: "absolute", top: isMobile() ? 16 : 24 }}
         onSelect={(acc) => {
           setAccount(acc);
           setNeedActivate("");

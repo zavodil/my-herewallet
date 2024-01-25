@@ -1,4 +1,4 @@
-import { computed, makeObservable, observable, runInAction, toJS } from "mobx";
+import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
 import { BN } from "bn.js";
 
 import { NOT_STAKABLE_NEAR } from "../near-chain/constants";
@@ -30,7 +30,9 @@ export class TokensStorage {
         : { [defaults.testnetNear.id]: createToken(defaults.testnetNear) }
     );
 
+    const defaultsTokens = ["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", "game.hot-token.near"];
     this.updateNative();
+
     if (user.isProduction) {
       this.addContracts(["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", "game.hot-token.near"]);
     } else {
@@ -38,9 +40,45 @@ export class TokensStorage {
     }
 
     if (!isTgMobile()) {
-      this.user.api.getTokens().then((data) => {
-        this.addContracts(data.token_contracts["ChainEnum.NEAR"] || []);
-      });
+      this.user.api.getTokens().then(
+        action((data) => {
+          const keys = new Set<string>();
+          data.tokens.forEach((t) => {
+            const id = ft(t.chain, t.symbol);
+            const safe = new BN(t.amount || "0").sub(new BN(t.pending || "")).sub(new BN(t.freeze || "0"));
+            keys.add(id);
+
+            this.tokens[ft(t.chain, t.symbol)] = {
+              amount: t.amount || "0",
+              amountFloat: formatAmount(t.amount || "0", t.decimal),
+              asset: t.asset,
+              chain: t.chain,
+              coingeckoId: t.coingecko_id,
+              contract: t.contract_address,
+              decimal: t.decimal,
+              freeze: t.freeze || "0",
+              gasFree: t.gas_free || false,
+              icon: t.image_url,
+              isStable: t.is_stable,
+              name: t.name,
+              pending: t.pending || "0",
+              safe: safe.toString(),
+              safeFloat: formatAmount(safe.toString(), t.decimal),
+              viewBalance: formatAmount(safe.toString(), t.decimal),
+              symbol: t.symbol,
+              id,
+            };
+          });
+
+          for (let id in this.tokens) {
+            if (!keys.has(id) && !defaultsTokens.includes(this.tokens[id].contract)) {
+              delete this.tokens[id];
+            }
+          }
+
+          this.cacheTokens();
+        })
+      );
     }
   }
 

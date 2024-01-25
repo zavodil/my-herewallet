@@ -5,7 +5,7 @@ export const GlobalStyles = createGlobalStyle`
   html {
     margin: 0;
     padding: 0;
-    background: #f3ebea;
+    background: transparent;
   }
 
   a {
@@ -25,6 +25,17 @@ export const GlobalStyles = createGlobalStyle`
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  #root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0000001f;
+    
+    @media (max-width: 640px) {
+      align-items: flex-end;
+    }
   }
 
   .here-connector-wrap {
@@ -259,6 +270,11 @@ export const CloseButton = styled.div`
   &:hover {
     opacity: 0.7;
   }
+
+  @media (max-width: 640px) {
+    right: 16px;
+    top: 16px;
+  }
 `;
 
 export const HereModal = styled.div`
@@ -291,6 +307,20 @@ export const HereModal = styled.div`
   background: #f3ebea;
   font-size: 16px;
   line-height: 1.6;
+
+  max-width: 720px;
+  margin: auto;
+  max-height: 520px;
+  border-radius: 24px;
+  border: 1px solid #2c3034;
+
+  @media (max-width: 640px) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-top: 82px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 `;
 
 export const SwitchersWrap = styled.div`
