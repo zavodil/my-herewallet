@@ -6,7 +6,7 @@ import { AccessKeyView, AccessKeyViewRaw, FinalExecutionOutcome } from "near-api
 import { Account, Connection, InMemorySigner, KeyPair, Signer, providers, transactions } from "near-api-js";
 import { authPayloadSchema } from "@here-wallet/core/src/nep0314";
 import { ChangeFunctionCallOptions, SignAndSendTransactionOptions } from "near-api-js/lib/account";
-import { encodeDelegateAction } from "@near-js/transactions";
+import { encodeDelegateAction, buildDelegateAction, signDelegateAction } from "@near-js/transactions";
 import { EventEmitter, Transaction } from "@near-wallet-selector/core";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapAccount } from "@near-snap/sdk";
@@ -65,11 +65,7 @@ export class NearAccount extends Account {
     const tx = await this.callTransaction({ receiverId, actions: actionsToHereCall(actions) });
     return await this.connection.provider.txStatus(tx, this.accountId);
   }
-
-  protected async signTransaction(
-    receiverId: string,
-    actions: transactions.Action[]
-  ): Promise<[Uint8Array, transactions.SignedTransaction]> {
+  async getActualNonce() {
     const publicKey = await this.connection.signer.getPublicKey(this.accountId, this.connection.networkId);
     const rawAccessKey = await this.connection.provider.query<AccessKeyViewRaw>({
       request_type: "view_access_key",
@@ -79,10 +75,18 @@ export class NearAccount extends Account {
     });
 
     const accessKey = { ...rawAccessKey, nonce: new BN(rawAccessKey.nonce) };
+    return accessKey.nonce.add(new BN(1));
+  }
+
+  protected async signTransaction(
+    receiverId: string,
+    actions: transactions.Action[],
+    nonce?: BN
+  ): Promise<[Uint8Array, transactions.SignedTransaction]> {
+    if (nonce == null) nonce = await this.getActualNonce();
     const block = await this.connection.provider.block({ finality: "final" });
     const blockHash = block.header.hash;
 
-    const nonce = accessKey.nonce.add(new BN(1));
     const trx = await transactions.signTransaction(
       receiverId,
       nonce,
@@ -112,8 +116,12 @@ export class NearAccount extends Account {
     }
   }
 
-  async executeTransaction(actions: transactions.Action[], receiverId: string): Promise<FinalExecutionOutcome> {
-    let [tx, signedTx] = await this.signTransaction(receiverId, actions);
+  async executeTransaction(
+    actions: transactions.Action[],
+    receiverId: string,
+    nonce?: BN
+  ): Promise<FinalExecutionOutcome> {
+    let [tx, signedTx] = await this.signTransaction(receiverId, actions, nonce);
     return new Promise(async (resolve, reject) => {
       const abort = new AbortController();
       const errorHandler = (error: any) => {
@@ -127,10 +135,10 @@ export class NearAccount extends Account {
     });
   }
 
-  async executeDelegate(actions: transactions.Action[], receiverId: string) {
+  async executeDelegate(actions: transactions.Action[], receiverId: string, nonce?: BN) {
     if (this.connection.networkId !== "mainnet") throw new DelegateNotAllowed();
 
-    const delegate = await this.signedDelegate({ actions, receiverId, blockHeightTtl: 100 }).catch(() => null);
+    const delegate = await this.signedDelegate({ actions, receiverId, blockHeightTtl: 100, nonce }).catch(() => null);
     if (!delegate) throw new DelegateNotAllowed();
 
     const base64 = Buffer.from(encodeDelegateAction(delegate.delegateAction)).toString("base64");
@@ -142,6 +150,32 @@ export class NearAccount extends Account {
     if (!hash) throw Error("empty hash from delegated");
 
     return await this.processingTx(hash);
+  }
+
+  async signedDelegate({ actions, blockHeightTtl, receiverId, nonce }: any) {
+    const { provider, signer } = this.connection;
+    const { header } = await provider.block({ finality: "final" });
+
+    if (nonce == null) nonce = await this.getActualNonce();
+    const delegateAction = buildDelegateAction({
+      actions,
+      maxBlockHeight: new BN(header.height).add(new BN(blockHeightTtl)),
+      nonce: nonce,
+      publicKey: await this.getPublicKey(),
+      receiverId,
+      senderId: this.accountId,
+    });
+
+    const { signedDelegateAction } = await signDelegateAction({
+      delegateAction,
+      signer: {
+        sign: async (message: any) => {
+          const { signature } = await signer.signMessage(message, delegateAction.senderId, this.connection.networkId);
+          return signature;
+        },
+      },
+    });
+    return signedDelegateAction;
   }
 
   async callTransactions(
@@ -216,20 +250,15 @@ export class NearAccount extends Account {
   async sendLocalCall(tx: HereCall, disableDelegate?: boolean) {
     const receiverId = tx.receiverId ?? this.accountId;
     const actions: transactions.Action[] = tx.actions.map((act) => createAction(act));
-
     if (disableDelegate) {
       return await this.executeTransaction(actions, receiverId);
     }
 
-    // TODO: GLOBAL NONCE
+    const nonce = await this.getActualNonce();
     try {
-      return await this.executeDelegate(actions, receiverId);
+      return await this.executeDelegate(actions, receiverId, nonce);
     } catch (e) {
-      console.log(e);
-      const isInternalError = e instanceof DelegateNotAllowed || e instanceof HereError;
-      if (!isInternalError) throw e;
-
-      return await this.executeTransaction(actions, receiverId);
+      return await this.executeTransaction(actions, receiverId, nonce);
     }
   }
 

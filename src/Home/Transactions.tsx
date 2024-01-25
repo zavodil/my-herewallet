@@ -12,12 +12,14 @@ export const Transaction = ({ trx }: { trx: TransactionModel }) => {
   return (
     <TransactionItem key={trx.metadata.id + "i"}>
       <TransactionIcon>
-        <Icon name={trx.badge.icon as any} />
+        <Icon style={{ width: 24, height: 24 }} name={trx.badge.icon as any} />
       </TransactionIcon>
 
       <Flex style={{ gap: 0 }}>
-        <Text style={{ fontWeight: "bolder" }}>{trx.badge.title}</Text>
-        <SmallText>
+        <Text style={{ fontWeight: "bolder", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
+          {trx.badge.title}
+        </Text>
+        <SmallText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
           {new Date(trx.timestamp * 1000).toLocaleDateString("en", {
             month: "short",
             day: "numeric",
@@ -29,9 +31,13 @@ export const Transaction = ({ trx }: { trx: TransactionModel }) => {
         </SmallText>
       </Flex>
 
-      <Flex style={{ gap: 0, textAlign: isTgMobile() ? "right" : "left" }}>
-        <Text style={{ fontWeight: "bolder" }}>{trx.badge.info}</Text>
-        <SmallText>{trx.badge.sub_info}</SmallText>
+      <Flex style={{ gap: 0, flex: 2, textAlign: isTgMobile() ? "right" : "left" }}>
+        <Text style={{ fontWeight: "bolder", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
+          {trx.badge.info}
+        </Text>
+        <SmallText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
+          {trx.badge.sub_info}
+        </SmallText>
       </Flex>
 
       {!isTgMobile() && (
@@ -77,12 +83,12 @@ const TransactionIcon = styled.div`
 const TransactionItem = styled.div`
   width: calc(100% + 48px);
   display: grid;
-  grid-template-columns: 40px 1fr 1fr ${isTgMobile() ? "" : "68px"};
+  grid-template-columns: 40px 1fr 1.5fr ${isTgMobile() ? "" : "68px"};
   align-items: center;
   transition: 0.2s background;
   padding: 8px 24px;
   margin-left: -24px;
-  grid-gap: 16px;
+  grid-gap: 12px;
 
   cursor: pointer;
   text-decoration: none;

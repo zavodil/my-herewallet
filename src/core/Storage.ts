@@ -14,6 +14,14 @@ export class Storage {
     return this.id + ":cache";
   }
 
+  read() {
+    return getStorageJson(this.key, {});
+  }
+
+  write(data: any) {
+    return localStorage.setItem(this.key, JSON.stringify(data));
+  }
+
   set(key: string, value: any) {
     const data = getStorageJson(this.key, {});
     localStorage.setItem(this.key, JSON.stringify({ ...data, [key]: value }));

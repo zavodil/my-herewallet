@@ -57,6 +57,16 @@ class UserAccount {
     this.api = new HereApi(creds.jwt);
     this.localStorage = new Storage(creds.accountId);
 
+    if (window.Telegram.WebApp.initDataUnsafe?.user) {
+      const key = `${window.Telegram.WebApp.initDataUnsafe.user.id}:${creds.accountId}`;
+      this.localStorage = new Storage(key);
+
+      // Migrate from global storage
+      if (window.localStorage.getItem(key) == null) {
+        this.localStorage.write(new Storage(creds.accountId).read());
+      }
+    }
+
     if (creds.privateKey) {
       const keyPair = KeyPair.fromString(creds.privateKey!);
       const keyStore = new InMemoryKeyStore();

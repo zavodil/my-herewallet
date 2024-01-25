@@ -37,10 +37,10 @@ const HOT = () => {
     runParticles();
     sparksRef.current?.stop();
     // @ts-ignore
-    const [fit] = fitty("#balance", { maxSize: 48 });
+    const fits = fitty(".balance", { maxSize: 48 });
     return () => {
       stopParticles();
-      fit.unsubscribe();
+      fits.forEach((w: any) => w.unsubscribe());
     };
   }, []);
 
@@ -75,6 +75,10 @@ const HOT = () => {
     }
   };
 
+  const [left, right] = Math.max(0, user.hot.balance + user.hot.earned)
+    .toFixed(6)
+    .split(".");
+
   return (
     <Root style={{ overflow: "hidden", width: "100vw", height: "100%" }}>
       <img
@@ -92,7 +96,7 @@ const HOT = () => {
             <div>
               <TinyText>Minted</TinyText>
               <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>
-                {user.hot.totalMinted} / 10,000M
+                {user.hot.totalMinted} / 1,000,000
               </SmallText>
             </div>
           </Card>
@@ -111,14 +115,23 @@ const HOT = () => {
               loop={false}
               lottieRef={sparksRef as any}
               style={{ position: "absolute", transform: "scale(1.5)", top: 0, pointerEvents: "none" }}
-              animationData={require("../../assets/sparks.json")}
+              animationData={require("../../assets/hot/sparks.json")}
             />
 
             <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your earnings</LargeP>
-            <div style={{ display: "flex", width: "80%", alignItems: "center", justifyContent: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                width: "80%",
+                alignItems: "center",
+                marginRight: -16,
+                justifyContent: "center",
+              }}
+            >
               <img
                 style={{
                   width: 60,
+                  flexShrink: 0,
                   maxWidth: "60px",
                   height: "60px",
                   objectFit: "contain",
@@ -127,12 +140,18 @@ const HOT = () => {
                 }}
                 src={require("../../assets/hot/hot.png")}
               />
-              <H0 id="balance">{Math.max(0, user.hot.balance + user.hot.earned).toFixed(5)}</H0>
+
+              <H0 style={{ fontFamily: "'SF Mono', sans-serif", fontWeight: "900" }} className="balance">
+                {left}
+                <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
+                {right}
+              </H0>
             </div>
 
             <div
               style={{
                 background: colors.orange,
+                opacity: user.hot.miningProgress === 1 ? 0.5 : 1,
                 border: "1px solid var(--Black-Primary)",
                 padding: "4px 12px",
                 borderRadius: 8,
@@ -143,41 +162,16 @@ const HOT = () => {
 
             <Card
               style={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "row",
-                padding: "24px 16px",
-                paddingRight: 20,
-                paddingTop: 32,
                 marginTop: 64,
+                display: "flex",
+                flexDirection: "column",
                 position: "relative",
                 overflow: "hidden",
-                width: "100%",
-                gap: 12,
+                paddingTop: 0,
+                padding: 0,
               }}
             >
-              <img style={{ width: 48, height: 48 }} src={user.hot.getBooster(user.hot.state?.storage || 0)?.icon} />
-
-              <div style={{ textAlign: "left" }}>
-                <BoldP>Storage</BoldP>
-                {user.hot.miningProgress !== 1 ? (
-                  <Text style={{ color: colors.blackSecondary }}>
-                    ≈{formatHours(+user.hot.remainingMiningHours)} to fill
-                  </Text>
-                ) : (
-                  <Text style={{ color: colors.blackSecondary }}>Filled</Text>
-                )}
-              </div>
-
-              <HereButton
-                onClick={() => claim()}
-                style={{ marginLeft: "auto" }}
-                disabled={isClaiming || user.hot.miningProgress !== 1}
-              >
-                {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
-              </HereButton>
-
-              <div style={{ background: "#D9CDCB", height: 8, width: "100%", position: "absolute", top: 0, left: 0 }}>
+              <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
                 <div
                   style={{
                     width: `${user.hot.miningProgress * 100}%`,
@@ -185,6 +179,38 @@ const HOT = () => {
                     height: 8,
                   }}
                 />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  padding: "24px 16px",
+                  paddingRight: 20,
+                  paddingTop: 24,
+                  width: "100%",
+                  gap: 12,
+                }}
+              >
+                <img style={{ width: 48, height: 48 }} src={user.hot.getBooster(user.hot.state?.storage || 0)?.icon} />
+                <div style={{ textAlign: "left" }}>
+                  <BoldP>Storage</BoldP>
+                  {user.hot.miningProgress !== 1 ? (
+                    <Text style={{ color: colors.blackSecondary }}>
+                      ≈{formatHours(+user.hot.remainingMiningHours)} to fill
+                    </Text>
+                  ) : (
+                    <Text style={{ color: colors.blackSecondary }}>Filled</Text>
+                  )}
+                </div>
+                <HereButton
+                  onClick={() => claim()}
+                  style={{ marginLeft: "auto" }}
+                  disabled={isClaiming || user.hot.miningProgress !== 1}
+                >
+                  {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
+                </HereButton>
               </div>
             </Card>
           </div>
@@ -204,7 +230,10 @@ const HOT = () => {
                 gap: 8,
               }}
             >
-              <div style={{ padding: "8px 12px", width: 65, textAlign: "center" }} onClick={() => navigate("/hot/gas")}>
+              <div
+                style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }}
+                onClick={() => navigate("/hot/gas")}
+              >
                 <img src={require("../../assets/hot/gas.png")} style={{ width: 32, height: 32 }} />
                 <TinyText>Gas</TinyText>
               </div>
@@ -212,7 +241,7 @@ const HOT = () => {
               <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
 
               <div
-                style={{ padding: "8px 12px", width: 65, textAlign: "center" }}
+                style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }}
                 onClick={() => navigate("/hot/cave")}
               >
                 <img src={user.hot.getBooster(user.hot.state?.boost || 0)?.icon} style={{ width: 32, height: 32 }} />
@@ -222,7 +251,7 @@ const HOT = () => {
               <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
 
               <div
-                style={{ padding: "8px 12px", width: 65, textAlign: "center" }}
+                style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }}
                 onClick={() => navigate("/hot/band")}
               >
                 <img src={require("../../assets/hot/band.png")} style={{ width: 32, height: 32 }} />

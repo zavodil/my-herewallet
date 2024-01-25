@@ -33,6 +33,8 @@ import { Transaction } from "./Transactions";
 import Header from "./Header";
 import { sheets } from "../uikit/Popup";
 import { notify } from "../core/toast";
+import fittext from "./HOT/effects/fittext";
+import Widgets from "./HOT/Widgets";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
 
@@ -45,6 +47,8 @@ const Home = () => {
 
   useEffect(() => {
     sheets.dismiss("Register");
+    const els = fittext(".fitted", { maxSize: 18, minSize: 0 });
+    return () => els.forEach((t: any) => t.unsubscribe());
   }, []);
 
   const selectNfts = async () => {
@@ -59,7 +63,6 @@ const Home = () => {
   return (
     <Root>
       <Header />
-
       <Container>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
           {isTgMobile() && (
@@ -99,17 +102,29 @@ const Home = () => {
                 <H2>${Formatter.round(account.tokens.stats.all, 2)}</H2>
               </div>
 
-              <HereButton
-                onClick={() => navigate("/transfer")}
+              <div
                 style={{
-                  ...LinkButtonStyle,
-                  marginLeft: "auto",
-                  width: isTgMobile() ? "100%" : 150,
                   marginTop: isTgMobile() ? 16 : 0,
+                  width: "100%",
+                  marginLeft: "auto",
+                  display: "flex",
+                  gap: 16,
                 }}
               >
-                Transfer
-              </HereButton>
+                <HereButton
+                  onClick={() => window.Telegram.WebApp.openLink("https://onramp.money/experience/near/")}
+                  style={{ ...LinkButtonStyle, flex: 1, width: isTgMobile() ? "" : 150 }}
+                >
+                  Buy NEAR
+                </HereButton>
+
+                <HereButton
+                  onClick={() => navigate("/transfer")}
+                  style={{ ...LinkButtonStyle, flex: 1, width: isTgMobile() ? "" : 150 }}
+                >
+                  Transfer
+                </HereButton>
+              </div>
             </div>
 
             {account.transactions.list.length > 0 && (
@@ -143,6 +158,7 @@ const Home = () => {
             )}
           </Card>
 
+          {isTgMobile() && !account.hot.needRegister && <Widgets />}
           {isTgMobile() && account.hot.needRegister && (
             <div
               style={{
@@ -185,10 +201,6 @@ const Home = () => {
                 style={{ position: "absolute", bottom: 0, right: 0, width: 133, height: 133 }}
                 src={require("../assets/hot/hot-banner-img.png")}
               />
-
-              {/* <Button style={{ position: "absolute", top: 10, right: 10 }}>
-                <Icon color={colors.blackSecondary} name="cross" />
-              </Button> */}
             </div>
           )}
 
