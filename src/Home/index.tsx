@@ -276,13 +276,15 @@ const Home = () => {
                       <NftsGrid style={{ marginTop: 18 }}>
                         {group.map((nft) => (
                           <a
-                            style={{ textDecoration: "none" }}
+                            style={{ textDecoration: "none", overflow: "hidden" }}
                             rel="noopener noreferrer"
                             href={`https://www.tradeport.xyz/near/collection/${nft.contract_id}`}
                             target="_blank"
                           >
                             <NftCard key={nft.nft_id} src={nft.media_url} />
-                            <BoldP style={{ marginTop: 4 }}>{nft.nft_title}</BoldP>
+                            <BoldP style={{ marginTop: 4, textOverflow: "ellipsis", overflow: "hidden" }}>
+                              {nft.nft_title}
+                            </BoldP>
                           </a>
                         ))}
                       </NftsGrid>
