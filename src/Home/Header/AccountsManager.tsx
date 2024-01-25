@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
 
-import { accounts } from "../../core/Accounts";
+import { ReceiverFetcher } from "../../core/Receiver";
 import { ConnectType } from "../../core/types";
 import { notify } from "../../core/toast";
 
@@ -20,6 +20,9 @@ interface Props {
   left?: boolean;
   onlySwitch?: boolean;
   className?: string;
+  onSettings?: () => void;
+  onAddAccount?: () => void;
+  onDisconnect?: (id: string) => void;
   accounts: { id: string; path?: string; type: ConnectType }[];
   account: { id: string; type: ConnectType; path?: string };
   onSelect?: (t: { id: string; type: ConnectType }) => void;
@@ -34,8 +37,7 @@ export const walletName = (type: ConnectType) => {
 };
 
 const AccountManager = observer((props: Props) => {
-  const { style = {}, className, onlySwitch, left, account, onSelect } = props;
-  const navigate = useNavigate();
+  const { style = {}, className, onlySwitch, left, account, onSelect, onDisconnect, onSettings, onAddAccount } = props;
   const [openMenu, setOpenMenu] = useState(false);
   const [openManager, setOpenManager] = useState(false);
   const [isExportOpen, setToggleExport] = useState(false);
@@ -52,7 +54,7 @@ const AccountManager = observer((props: Props) => {
     () => {
       setAvatars({});
       props.accounts.forEach((acc) => {
-        accounts.getAvatar(acc.id, acc.type).then((url) => {
+        ReceiverFetcher.shared.getAvatar(acc.id, acc.type).then((url) => {
           setAvatars((t) => ({ ...t, [acc.id || acc.type]: url }));
         });
       });
@@ -136,7 +138,7 @@ const AccountManager = observer((props: Props) => {
           <S.AccountButton
             onClick={(e) => {
               e.stopPropagation();
-              navigate("/settings");
+              onSettings?.();
             }}
           >
             <Icon name="settings" />
@@ -158,7 +160,7 @@ const AccountManager = observer((props: Props) => {
             onClick={(e) => {
               e.stopPropagation();
               setOpenMenu(false);
-              accounts.disconnect(account.id);
+              onDisconnect?.(account.id);
             }}
           >
             <Icon name="logout" />
@@ -275,7 +277,7 @@ const AccountManager = observer((props: Props) => {
                 e.stopPropagation();
                 setOpenMenu(false);
                 setOpenManager(false);
-                navigate("/auth");
+                onAddAccount?.();
               }}
             >
               <Icon viewBox="0 0 24 24" width={16} name="add" />

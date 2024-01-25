@@ -1,0 +1,95 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+a {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 22px;
+  text-decoration-line: underline;
+  color: #fd84e3;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+box-sizing: border-box;
+--Stroke: #c7bab8;
+--Elevation-0: #f3ebea;
+--Elevation-1: #ebdedc;
+--Black-Primary: #2c3034;
+--Black-Secondary: #6B6661;
+font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+  "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+
+-webkit-tap-highlight-color: rgba(0,0,0,0);
+-webkit-tap-highlight-color: transparent;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0000001f;
+  height: 100vh;
+}
+
+@media (max-width: 640px) {
+  #root {
+  align-items: flex-end;
+  }
+}
+
+.here-connector-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  aspect-ratio: 1 / 1;
+  height: 100%;
+  position: relative;
+}
+
+.here-connector-card {
+  max-height: 256px;
+  max-width: 256px;
+  width: 100% !important;
+  height: 100% !important;
+  background: #ebdedc;
+  border: 1px solid #2c3034;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  padding: 16px;
+  display: flex;
+  position: absolute;
+  box-shadow: 8px 8px #2c3034;
+}
+
+.snap-card {
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.snap-card img {
+  transition: 0.2s transform;
+}
+
+.snap-card:hover img {
+  transform: scale(1.1);
+}

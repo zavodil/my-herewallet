@@ -12,9 +12,10 @@ import { sheets } from "../../uikit/Popup";
 import Icon from "../../uikit/Icon";
 
 import { isTgMobile } from "../../Mobile";
+import MyAddress from "../MyAddress";
+
 import AccountManager from "./AccountsManager";
 import * as S from "./styled";
-import MyAddress from "../MyAddress";
 
 const Header = observer(() => {
   const location = useLocation();
@@ -71,6 +72,9 @@ const Header = observer(() => {
       {accounts.account && (
         <AccountManager
           onSelect={({ id }) => accounts.select(id)}
+          onDisconnect={(id) => accounts.disconnect(id)}
+          onAddAccount={() => navigate("/auth")}
+          onSettings={() => navigate("/settings")}
           accounts={accounts.accounts}
           account={accounts.account}
           className="header-right"

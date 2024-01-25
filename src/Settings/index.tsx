@@ -17,6 +17,7 @@ import { ConnectType } from "../core/types";
 import { notify } from "../core/toast";
 import { isTgMobile } from "../Mobile";
 import { useNavigateBack } from "../useNavigateBack";
+import { ReceiverFetcher } from "../core/Receiver";
 
 const Settings = () => {
   useNavigateBack();
@@ -27,7 +28,7 @@ const Settings = () => {
   const [about, setAbout] = useState("");
 
   useEffect(() => {
-    accounts.getAvatar(user.id, user.type).then(setAvatar);
+    ReceiverFetcher.shared.getAvatar(user.id, user.type).then(setAvatar);
   }, [user.id]);
 
   return (
