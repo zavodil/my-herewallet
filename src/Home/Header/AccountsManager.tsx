@@ -278,7 +278,7 @@ const AccountManager = observer((props: Props) => {
                 navigate("/auth");
               }}
             >
-              <Icon width={16} name="add" />
+              <Icon viewBox="0 0 24 24" width={16} name="add" />
               <Text>Add wallet</Text>
             </S.AccountButton>
           )}
