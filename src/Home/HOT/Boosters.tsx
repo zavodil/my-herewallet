@@ -108,7 +108,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
           <img src={next.icon} style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }} />
           <div style={{ textAlign: "left" }}>
             <SmallText>{(next.id % 10) + 1} level</SmallText>
-            {user.hot.isWood(next.id) && <BoldP>×{next.value} per hour</BoldP>}
+            {user.hot.isWood(next.id) && <BoldP>×{formatAmount(next.value, 1)} per hour</BoldP>}
             {user.hot.isStorage(next.id) && <BoldP>Claim every {user.hot.storageCapacityHours(next.id)}h</BoldP>}
             {user.hot.isFireplace(next.id) && <BoldP>+{formatAmount(next.value, 6)} per hour</BoldP>}
           </div>
@@ -133,7 +133,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
           />
           <div style={{ textAlign: "left" }}>
             <SmallText>{(current.id % 10) + 1} level</SmallText>
-            {user.hot.isWood(current.id) && <BoldP>×{current.value} per hour</BoldP>}
+            {user.hot.isWood(current.id) && <BoldP>×{formatAmount(current.value, 1)} per hour</BoldP>}
             {user.hot.isStorage(current.id) && <BoldP>Claim every {user.hot.storageCapacityHours(current.id)}h</BoldP>}
             {user.hot.isFireplace(current.id) && <BoldP>+{formatAmount(current.value, 6)} per hour</BoldP>}
           </div>
@@ -276,12 +276,12 @@ const Boosters = () => {
             }}
           >
             <Text style={{ color: colors.blackSecondary }}>Your balance</Text>
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8 }}>
               <img
-                style={{ width: 40, height: 40, marginTop: -8, marginLeft: -16 }}
+                style={{ width: 40, height: 40, marginTop: -2, marginLeft: -16 }}
                 src={require("../../assets/hot/hot.png")}
               />
-              <H1>{Math.max(0, user.hot.balance)}</H1>
+              <H1 style={{ fontFamily: "SF Mono" }}>{Math.max(0, user.hot.balance)}</H1>
             </div>
 
             <Button style={{ marginTop: 4 }}>

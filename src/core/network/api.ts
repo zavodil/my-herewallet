@@ -23,10 +23,9 @@ export class NetworkError extends Error {
 }
 
 export class HereApi {
-  public readonly endpoint = "https://dev.herewallet.app";
   public readonly storage = new Storage("");
 
-  constructor(readonly jwt = "") {}
+  constructor(readonly jwt = "", readonly endpoint = "https://dev.herewallet.app") {}
 
   get deviceId() {
     const id = this.storage.get("_deviceid");

@@ -112,9 +112,8 @@ const Band = () => {
           </div>
 
           <Text style={{ color: colors.blackSecondary }}>
-            Every time your friend claims
-            <br />
-            HOT you get 20% cashback
+            Every time your friend claims HOT you get <b>20%</b> cashback. And <b>5%</b> every time his referrals claim
+            it
           </Text>
 
           <Button>

@@ -29,10 +29,7 @@ const Onboard = () => {
             src={require("../../assets/hot/hot1.png")}
           />
           <H1>What is HOT?</H1>
-          <Text>
-            HOT - native token on NEAR Blockchain. It will be used as the main currency in Telegram games and apps on
-            NEAR.
-          </Text>
+          <Text>HOT - native token on NEAR Blockchain. First allocation of HOT will be distributed to early users</Text>
         </Screen>
         <Screen>
           <img
@@ -41,8 +38,8 @@ const Onboard = () => {
           />
           <H1>Mining</H1>
           <Text>
-            7% of the total token allocation will be distributed to the community. To start mining HOT you just need to
-            create a wallet.
+            Until the entire stock is distributed everyone can get HOT. Create a wallet to start mining HOT and boost
+            your “cave” to mine faster
           </Text>
         </Screen>
         <Screen>
@@ -50,10 +47,10 @@ const Onboard = () => {
             style={{ width: "100%", height: "50vh", objectFit: "contain" }}
             src={require("../../assets/hot/hot3.png")}
           />
-          <H1>Is it free?</H1>
+          <H1>Why HOT?</H1>
           <Text>
-            Yes - first allocation of HOT token will be free and given to early users. The earlier you create account,
-            the more you will earn.
+            HOT will be used as the main currency in build-in Telegram games and apps on NEAR. Main announcements are
+            coming soon.
           </Text>
         </Screen>
       </div>

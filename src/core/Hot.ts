@@ -32,96 +32,96 @@ const boosters = [
   {
     id: 20,
     title: "Wooden Storage",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better storage holds more HOT and you can claim it less often",
     icon: require("../assets/hot/storage/1.png"),
   },
   {
     id: 21,
     title: "Metal Storage",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better storage holds more HOT and you can claim it less often",
     icon: require("../assets/hot/storage/2.png"),
   },
   {
     id: 22,
     title: "Modular Storage",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better storage holds more HOT and you can claim it less often",
     icon: require("../assets/hot/storage/3.png"),
   },
   {
     id: 23,
     title: "Liquid Storage",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better storage holds more HOT and you can claim it less often",
     icon: require("../assets/hot/storage/4.png"),
   },
   {
     id: 24,
     title: "Titanium Storage",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better storage holds more HOT and you can claim it less often",
     icon: require("../assets/hot/storage/5.png"),
   },
   {
     id: 10,
     title: "Basic Wood",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     icon: require("../assets/hot/wood/1.png"),
     mission_text: "Download the mobile app and import your account",
   },
   {
     id: 11,
     title: "Neon Wood",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     icon: require("../assets/hot/wood/2.png"),
     mission_text: "Deposit 1+ NEAR on your account",
   },
   {
     id: 12,
     title: "Titanium Wood",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     icon: require("../assets/hot/wood/3.png"),
     mission_text: "Deposit 1 USDT on your account",
   },
   {
     id: 13,
     title: "Jedi Wood",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     icon: require("../assets/hot/wood/4.png"),
     mission_text: "Buy any NFT on NEAR Protocol",
   },
   {
     id: 14,
     title: "Uranium Boxes",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     icon: require("../assets/hot/wood/5.png"),
     mission_text: "Earn 1000+ score in the mobile app",
   },
   {
     id: 0,
     title: "Fireplace",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better Fireplace boosts mining speed",
     icon: require("../assets/hot/fire/1.png"),
   },
   {
     id: 1,
     title: "Stone Fireplace",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better Fireplace boosts mining speed",
     icon: require("../assets/hot/fire/2.png"),
   },
   {
     id: 2,
     title: "Gas Fireplace",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better Fireplace boosts mining speed",
     icon: require("../assets/hot/fire/3.png"),
   },
   {
     id: 3,
     title: "Neon Fireplace",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better Fireplace boosts mining speed",
     icon: require("../assets/hot/fire/4.png"),
   },
   {
     id: 4,
     title: "Neon Multy-fireplace",
-    text: "A stronger, higher-level vault is needed to keep the fire alive... As it holds HOT longer, you need collect HOT less often",
+    text: "Better Fireplace boosts mining speed",
     icon: require("../assets/hot/fire/5.png"),
   },
 ];
@@ -183,7 +183,7 @@ class Hot {
 
     setInterval(
       action(() => (this.currentTime = Date.now())),
-      1000
+      100
     );
 
     const cache = this.account.localStorage.get("hot:cache", this.cacheData());
@@ -451,7 +451,9 @@ class Hot {
 
   get hotPerHourInt() {
     if (!this.state) return "0";
-    return new BN(this.fireplaceBooster!.value || 0).muln(Math.max(1, +this.woodBoster!.value)).toString();
+    return new BN(this.fireplaceBooster!.value || 0)
+      .muln(Math.max(1, +formatAmount(this.woodBoster!.value, 1)))
+      .toString();
   }
 
   get hotPerHour() {

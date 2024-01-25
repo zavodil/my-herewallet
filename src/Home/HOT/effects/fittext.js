@@ -1,7 +1,4 @@
 export default ((w) => {
-  // no window, early exit
-  if (!w) return;
-
   // node list to array helper method
   const toArray = (nl) => [].slice.call(nl);
 

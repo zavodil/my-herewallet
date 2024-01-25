@@ -72,6 +72,7 @@ import mission from "jsx:../icons/mission.svg";
 
 export const icons = {
   mission,
+  "hot-coin": require("../icons/hot-icon.png"),
   "arrow-left": arrow_left,
   "add-circle": add_circle,
   "arrow-down": arrow_down,
@@ -152,10 +153,11 @@ class Icon extends Component<Props> {
   }
 
   render() {
-    const { name, style, ...props } = this.props;
+    const { name, ...props } = this.props;
     const Icon = icons[name];
     if (Icon == null) return null;
-    return <Icon {...props} style={style} />;
+    if (typeof Icon === "string") return <img {...(props as any)} src={Icon} />;
+    return <Icon {...props} />;
   }
 }
 
