@@ -298,7 +298,7 @@ class Hot {
         throw Error(`Unknown mission: ${mission}`);
     }
 
-    await this.account.api.request(`/api/v1/user/hot/mission/${type}`, {
+    await this.account.api.request(`/api/v1/user/hot/mission`, {
       body: JSON.stringify({ mission_id: mission }),
       method: "POST",
     });
