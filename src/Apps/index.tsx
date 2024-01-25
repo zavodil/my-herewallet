@@ -34,26 +34,29 @@ const Apps = () => {
     <Root>
       <Header />
       <Container style={{ flexDirection: "column" }}>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <Tab $active={!id} onClick={() => navigate("/apps")}>
-            <BoldP>All</BoldP>
-          </Tab>
-          {groups
-            .map((t) => t[0].type)
-            .sort()
-            .map((type) => (
-              <Tab
-                key={type}
-                $active={type.replaceAll(" ", "_").toLowerCase() === id}
-                onClick={() => navigate("/apps/" + type.replaceAll(" ", "_").toLowerCase())}
-              >
-                <BoldP>{type}</BoldP>
-              </Tab>
-            ))}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 32 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <Tab $active={!id} onClick={() => navigate("/apps")}>
+              <BoldP>All</BoldP>
+            </Tab>
+
+            {groups
+              .map((t) => t[0].type)
+              .sort()
+              .map((type) => (
+                <Tab
+                  key={type}
+                  $active={type.replaceAll(" ", "_").toLowerCase() === id}
+                  onClick={() => navigate("/apps/" + type.replaceAll(" ", "_").toLowerCase())}
+                >
+                  <BoldP>{type}</BoldP>
+                </Tab>
+              ))}
+          </div>
 
           <SearchInput>
-            <Icon name="search" />
-            <input value={search} onChange={(e) => setSearch(e.target.value.toLowerCase())} />
+            <Icon style={{ flexShrink: 0 }} name="search" />
+            <input value={search} placeholder="Search app" onChange={(e) => setSearch(e.target.value.toLowerCase())} />
           </SearchInput>
         </div>
 
@@ -80,7 +83,18 @@ const Apps = () => {
                         <img style={{ zIndex: 10, position: "relative" }} src={app.image} />
                       </div>
 
-                      <div style={{ display: "flex", gap: 8, position: "absolute", top: 16, right: 16 }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          justifyContent: "flex-end",
+                          position: "absolute",
+                          width: "32%",
+                          top: 16,
+                          right: 16,
+                          flexWrap: "wrap",
+                        }}
+                      >
                         {[
                           { url: app.twitter, img: require("../assets/twitter.svg") },
                           { url: app.discord, img: require("../assets/discord.svg") },

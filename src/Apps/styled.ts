@@ -39,7 +39,7 @@ export const AppsGrid = styled.div`
 export const Tab = styled(Button)<{ $active?: boolean }>`
   border-radius: 12px;
   background: var(--Elevation-1);
-  border: 1px solid var(--Elevation-1);
+  border: 1px solid var(--Stroke);
 
   display: flex;
   padding: 8px 16px;
