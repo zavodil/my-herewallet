@@ -27,29 +27,9 @@ import Boosters from "./Home/HOT/Boosters";
 import Band from "./Home/HOT/Band";
 import HOT from "./Home/HOT";
 import Gas from "./Home/HOT/Gas";
-import { colors } from "./uikit/theme";
 import { NeedMoreGas } from "./Home/NeedGas";
-import { GAME_ID } from "./core/Hot";
 import Onboard from "./Home/HOT/Onboard";
-
-declare global {
-  interface Window {
-    Telegram: { WebApp: any };
-  }
-}
-
-if (isTgMobile()) {
-  window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
-  window.Telegram.WebApp.setHeaderColor?.(colors.elevation0);
-  window.Telegram.WebApp.expend?.();
-} else {
-  window.Telegram = {
-    WebApp: {
-      openLink: (url: string) => window.open(url, "_blank"),
-      openTelegramLink: (url: string) => window.open(url, "_blank"),
-    },
-  };
-}
+import { GAME_ID } from "./core/Hot";
 
 function App() {
   useEffect(() => {

@@ -1,9 +1,11 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { JsonRpcProvider } from "near-api-js/lib/providers";
+import { generateFromString } from "generate-avatar";
+
 import UserAccount from "./UserAccount";
 import { Chain } from "./token/types";
-import { NearAccount } from "./near-chain/NearAccount";
-import { JsonRpcProvider } from "near-api-js/lib/providers";
-import { accounts } from "./Accounts";
+import { ConnectType } from "./types";
+import { HereApi } from "./network/api";
 
 export const MinAccountIdLen = 2;
 export const MaxAccountIdLen = 64;
@@ -39,6 +41,19 @@ export class ReceiverFetcher {
   //   }
 
   private provider = new JsonRpcProvider({ url: "https://rpc.herewallet.app" });
+  private api = new HereApi();
+
+  async getAvatar(id: string, type: ConnectType) {
+    if (id) {
+      const user = await ReceiverFetcher.shared.getUser(id).catch(() => null);
+      return user?.avatar || `data:image/svg+xml;utf8,${generateFromString(id)}`;
+    }
+
+    if (type === ConnectType.Here) return require("../assets/here.svg");
+    if (type === ConnectType.Ledger) return require("../assets/ledger.png");
+    if (type === ConnectType.Snap) return require("../assets/metamask.svg");
+    return require("../assets/here.svg");
+  }
 
   async getUser(address: string, useCache = true): Promise<{ avatar?: string; isHere?: boolean; name?: string }> {
     if (useCache && this.cached[address]) {
@@ -48,7 +63,7 @@ export class ReceiverFetcher {
     }
 
     await this.provider.query({ request_type: "view_account", finality: "optimistic", account_id: address });
-    const user = await accounts.api.isExist(address).catch(() => null);
+    const user = await this.api.isExist(address).catch(() => null);
 
     this.cached[address] = { avatar: user?.avatar_url, isHere: user?.exist, time: Date.now() };
     // this.setCache(this.cached);
