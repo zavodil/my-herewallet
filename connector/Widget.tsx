@@ -76,11 +76,11 @@ const Widget = () => {
 
   const rejectButton = () => {
     if (isApproving) return;
-    top?.postMessage(JSON.stringify({ type: "reject" }));
+    top?.postMessage(JSON.stringify({ type: "reject" }), "*");
   };
 
   if (request == null) {
-    return <S.HereModal></S.HereModal>;
+    return <S.HereModal />;
   }
 
   return (

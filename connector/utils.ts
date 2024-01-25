@@ -3,7 +3,6 @@ import { NearSnap, NearSnapAccount, TransactionSignRejected } from "@near-snap/s
 
 import { NearAccount } from "../src/core/near-chain/NearAccount";
 import { ConnectType } from "../src/core/types";
-import { storage } from "../src/core/Storage";
 import LedgerSigner from "./ledger";
 
 const snap = new NearSnap();
@@ -27,8 +26,7 @@ export const connectLedger = async (
   onNeedActivate: (v: string) => void
 ) => {
   try {
-    const creds = storage.getAccount(account.id);
-    const path = creds?.path || account.path;
+    const path = account.path;
     const ledger = new LedgerSigner(path, onConnected, onSigned);
 
     if (request.type === "sign") {
@@ -46,8 +44,7 @@ export const connectLedger = async (
 
     if (request.type === "call") {
       const { address, publicKey } = await ledger.getAddress();
-      const creds = storage.getAccount(address);
-      const account = new NearAccount(address, ConnectType.Ledger, ledger, creds?.jwt);
+      const account = new NearAccount(address, ConnectType.Ledger, ledger);
       const isAccess = await account.getAccessKeyInfo(address, publicKey).catch(() => null);
 
       if (!isAccess) {
@@ -103,20 +100,16 @@ export const connectMetamask = async (accountId: string, requestId: string, requ
     }
 
     if (request.type === "call") {
-      await sendResponse(requestId, {
-        type: ConnectType.Snap,
-        status: HereProviderStatus.APPROVING,
-      }).catch(() => {});
-
+      await sendResponse(requestId, { status: HereProviderStatus.APPROVING, type: ConnectType.Snap }).catch(() => {});
       const network = (request.network as any) || "mainnet";
-      const account = await NearSnapAccount.restore({ snap, network }).catch(async () => {
-        return await NearSnapAccount.connect({ snap, network });
-      });
 
+      let account = await NearSnapAccount.restore({ snap, network });
+      if (!account) account = await NearSnapAccount.connect({ snap, network });
       if (account == null) throw Error();
+
       const trxs = request.transactions.map((t) => ({
-        receiverId: t.receiverId || account.accountId,
-        signerId: account.accountId,
+        receiverId: t.receiverId || account!.accountId,
+        signerId: account!.accountId,
         actions: t.actions,
       }));
 
@@ -129,9 +122,12 @@ export const connectMetamask = async (accountId: string, requestId: string, requ
         type: ConnectType.Snap,
       });
     }
-  } catch (e) {
+  } catch (e: any) {
     if (e instanceof TransactionSignRejected) throw e;
-    window.close();
-    throw e;
+    await sendResponse(requestId, {
+      status: HereProviderStatus.FAILED,
+      payload: e?.toString?.(),
+      type: ConnectType.Snap,
+    });
   }
 };
