@@ -36,7 +36,7 @@ import { notify } from "../core/toast";
 import fittext from "./HOT/effects/fittext";
 import Widgets from "./HOT/Widgets";
 
-const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4 };
+const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
 
 const Home = () => {
   const navigate = useNavigate();
@@ -105,7 +105,7 @@ const Home = () => {
               <div
                 style={{
                   marginTop: isTgMobile() ? 16 : 0,
-                  width: "100%",
+                  width: isTgMobile() ? "100%" : 300,
                   marginLeft: "auto",
                   display: "flex",
                   gap: 16,
@@ -113,15 +113,12 @@ const Home = () => {
               >
                 <HereButton
                   onClick={() => window.Telegram.WebApp.openLink("https://onramp.money/experience/near/")}
-                  style={{ ...LinkButtonStyle, flex: 1, width: isTgMobile() ? "" : 150 }}
+                  style={LinkButtonStyle}
                 >
                   Buy NEAR
                 </HereButton>
 
-                <HereButton
-                  onClick={() => navigate("/transfer")}
-                  style={{ ...LinkButtonStyle, flex: 1, width: isTgMobile() ? "" : 150 }}
-                >
+                <HereButton onClick={() => navigate("/transfer")} style={LinkButtonStyle}>
                   Transfer
                 </HereButton>
               </div>

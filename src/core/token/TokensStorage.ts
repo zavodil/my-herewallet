@@ -39,7 +39,7 @@ export class TokensStorage {
 
     if (!isTgMobile()) {
       this.user.api.getTokens().then((data) => {
-        this.addContracts(data.token_contracts["ChainEnum.NEAR"]);
+        this.addContracts(data.token_contracts["ChainEnum.NEAR"] || []);
       });
     }
   }
