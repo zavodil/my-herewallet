@@ -148,7 +148,7 @@ const HOT = () => {
                     )}
                   </div>
 
-                  <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming || isOverload}>
+                  <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming || !isOverload}>
                     {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
                   </HereButton>
                 </div>
