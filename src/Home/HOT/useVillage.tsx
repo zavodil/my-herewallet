@@ -23,9 +23,7 @@ export const JoinVillage = ({ id }: { id: number }) => {
         </div>
       )}
 
-      <Text style={{ marginTop: 8, marginBottom: 32 }}>
-        Village members can earn +5% HOT. Best villages receive daily USDT giveaways
-      </Text>
+      <Text style={{ marginTop: 8, marginBottom: 32 }}>Village members can earn +5% HOT. Best villages receive daily USDT giveaways</Text>
 
       <ActionButton
         disabled={isLoading}
@@ -44,7 +42,8 @@ export const JoinVillage = ({ id }: { id: number }) => {
 export const useHOTVillage = () => {
   const user = useWallet();
   useEffect(() => {
-    const id = -9; // +window.Telegram.WebApp.initDataUnsafe.start_param;
+    if (!user?.hot) return;
+    const id = +window.Telegram.WebApp.initDataUnsafe.start_param;
     if (isNumber(id) && id < 0) {
       user?.hot.updateStatus().then(() => {
         if (user?.hot.state?.village === `${Math.abs(id)}.village.hot-token.near`) return;

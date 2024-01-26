@@ -5,7 +5,7 @@ import { Root } from "./Home/styled";
 import { colors } from "./uikit/theme";
 
 export const isTgMobile = () => {
-  if (process.env.NODE_ENV === "development") return true;
+  //if (process.env.NODE_ENV === "development") return true;
   return location.origin === "https://tgapp.herewallet.app";
 };
 
