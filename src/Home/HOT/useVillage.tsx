@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { isNumber } from "lodash";
 
-import { ActionButton, H2, Text } from "../../uikit";
+import { ActionButton, ActivityIndicator, H2, Text } from "../../uikit";
 import { useWallet } from "../../core/Accounts";
 import { sheets } from "../../uikit/Popup";
+import { notify } from "../../core/toast";
 
 export const JoinVillage = ({ id }: { id: number }) => {
   const user = useWallet()!;
@@ -28,12 +29,19 @@ export const JoinVillage = ({ id }: { id: number }) => {
       <ActionButton
         disabled={isLoading}
         onClick={async () => {
-          setLoading(true);
-          await user.hot.joinVillage(id);
-          setLoading(false);
+          try {
+            setLoading(true);
+            await user.hot.joinVillage(id);
+            sheets.dismiss("JoinVillage");
+            notify("You have joined the village");
+            setLoading(false);
+          } catch {
+            notify("Join failed");
+            setLoading(false);
+          }
         }}
       >
-        Join
+        {isLoading ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Join"}
       </ActionButton>
     </div>
   );
