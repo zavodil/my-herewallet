@@ -9,7 +9,7 @@ import { useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
 
-import { useNavigateBack, useScrollLock } from "../../useNavigateBack";
+import { useNavigateBack } from "../../useNavigateBack";
 import { BoldP, H0, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
 import { ActivityIndicator, Button } from "../../uikit";
 import { HereButton } from "../../uikit/button";
@@ -26,7 +26,6 @@ const formatHours = (hh: number) => {
 };
 
 const HOT = () => {
-  useScrollLock();
   useNavigateBack();
   const sparksRef = useRef<LottieRefCurrentProps>();
   const user = useWallet()!;

@@ -19,9 +19,11 @@ import { NETWORK, TGAS } from "../constants";
 
 import { ConnectType } from "../types";
 import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
-import { HereError, TransactionError } from "../network/types";
-import { accounts } from "../Accounts";
+import { TransactionError } from "../network/types";
 import { HereApi, NetworkError } from "../network/api";
+import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
+
+import { accounts } from "../Accounts";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getNodeUrl, getWrapNear } from "./constants";
 import { SAFE_NEAR, actionsToHereCall, parseNearOfActions, waitTransactionResult } from "./utils";
@@ -30,7 +32,6 @@ import NearToken from "./NearToken";
 import WrapToken from "./WrapToken";
 import NeatToken from "./NeatToken";
 import HereToken from "./HereToken";
-import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
 
 export class NearAccount extends Account {
   readonly native: NearToken;
@@ -78,24 +79,12 @@ export class NearAccount extends Account {
     return accessKey.nonce.add(new BN(1));
   }
 
-  protected async signTransaction(
-    receiverId: string,
-    actions: transactions.Action[],
-    nonce?: BN
-  ): Promise<[Uint8Array, transactions.SignedTransaction]> {
+  protected async signTransaction(receiverId: string, actions: transactions.Action[], nonce?: BN): Promise<[Uint8Array, transactions.SignedTransaction]> {
     if (nonce == null) nonce = await this.getActualNonce();
     const block = await this.connection.provider.block({ finality: "final" });
     const blockHash = block.header.hash;
 
-    const trx = await transactions.signTransaction(
-      receiverId,
-      nonce,
-      actions,
-      base_decode(blockHash),
-      this.connection.signer,
-      this.accountId,
-      this.connection.networkId
-    );
+    const trx = await transactions.signTransaction(receiverId, nonce, actions, base_decode(blockHash), this.connection.signer, this.accountId, this.connection.networkId);
 
     return trx;
   }
@@ -116,11 +105,7 @@ export class NearAccount extends Account {
     }
   }
 
-  async executeTransaction(
-    actions: transactions.Action[],
-    receiverId: string,
-    nonce?: BN
-  ): Promise<FinalExecutionOutcome> {
+  async executeTransaction(actions: transactions.Action[], receiverId: string, nonce?: BN): Promise<FinalExecutionOutcome> {
     let [tx, signedTx] = await this.signTransaction(receiverId, actions, nonce);
     return new Promise(async (resolve, reject) => {
       const abort = new AbortController();
@@ -178,10 +163,7 @@ export class NearAccount extends Account {
     return signedDelegateAction;
   }
 
-  async callTransactions(
-    transactions: (HereCall | null)[],
-    options?: { disableUnstake?: boolean; disableDelegate?: boolean }
-  ): Promise<string[]> {
+  async callTransactions(transactions: (HereCall | null)[], options?: { disableUnstake?: boolean; disableDelegate?: boolean }): Promise<string[]> {
     const results: string[] = [];
     let snapAccount: NearSnapAccount | null = null;
 
@@ -424,10 +406,7 @@ export class NearAccount extends Account {
         create_ts: infoDict[key.public_key] ? create_ts : Math.floor(Date.now() / 1000),
         dapp_name,
         public_key: key.public_key,
-        receiver_id:
-          key.access_key.permission === "FullAccess"
-            ? null
-            : receiver_id ?? key.access_key.permission.FunctionCall.receiver_id,
+        receiver_id: key.access_key.permission === "FullAccess" ? null : receiver_id ?? key.access_key.permission.FunctionCall.receiver_id,
       };
     });
 
@@ -509,12 +488,9 @@ export class NearAccount extends Account {
 
   async findAccessKey() {
     const publicKey = await this.connection.signer.getPublicKey(this.accountId, this.connection.networkId);
-    if (!publicKey)
-      throw new TypedError(`no matching key pair found in ${this.connection.signer}`, "PublicKeyNotFound");
+    if (!publicKey) throw new TypedError(`no matching key pair found in ${this.connection.signer}`, "PublicKeyNotFound");
 
-    const rawAccessKey = await this.connection.provider.query<
-      { block_height: number; block_hash: string } & AccessKeyView
-    >({
+    const rawAccessKey = await this.connection.provider.query<{ block_height: number; block_hash: string } & AccessKeyView>({
       request_type: "view_access_key",
       account_id: this.accountId,
       public_key: publicKey.toString(),

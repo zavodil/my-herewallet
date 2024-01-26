@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+// @ts-ignore
+import * as bodyScrollLock from "body-scroll-lock";
 
 import { Staking } from "./Staking";
 import { accounts } from "./core/Accounts";
@@ -33,6 +35,12 @@ import { GAME_ID } from "./core/Hot";
 import { useHOTVillage } from "./Home/HOT/useVillage";
 
 function App() {
+  useEffect(() => {
+    if (!isTgMobile()) return;
+    const targetElement = document.querySelector("#root");
+    bodyScrollLock.disableBodyScroll(targetElement);
+  }, []);
+
   useHOTVillage();
   useEffect(() => {
     if (!isTgMobile() || !accounts.account) return;
