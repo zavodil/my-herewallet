@@ -48,7 +48,9 @@ const FriendItem = ({ item }: { item: HotReferral }) => {
 const Band = () => {
   useNavigateBack();
   const user = useWallet()!;
+
   useEffect(() => {
+    user.hot.fetchReferrals();
     window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
     return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
   }, []);
@@ -91,7 +93,7 @@ const Band = () => {
         <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
 
         <Container style={{ zIndex: 10 }}>
-          <div style={{ display: "flex", padding: "36px 0", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 12 }}>
+          <div style={{ display: "flex", padding: "36px", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 12 }}>
             <H3>{user.hot.referrals.length} Friend</H3>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <img style={{ width: 24, height: 24, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />

@@ -147,7 +147,6 @@ class Hot {
     ft_contracts: [],
   };
 
-  public totalMinted = 0;
   public needRegister = false;
   public village: { name: string; avatar: string; hot_balance: number } | null = null;
 
@@ -198,9 +197,8 @@ class Hot {
     this.village = cache.village;
 
     this.fetchLevels();
-    this.getTotalMinted();
-    this.getUserData().then(() => {
-      this.updateStatus();
+    this.updateStatus().then(() => {
+      this.getUserData();
       this.fetchMissions();
       this.fetchReferrals();
     });
@@ -212,7 +210,6 @@ class Hot {
       userData: this.userData,
       missions: this.missions,
       referrals: this.referrals,
-      totalMinted: this.totalMinted,
       village: this.village,
       state: this.state,
     });
@@ -250,26 +247,16 @@ class Hot {
     });
   }
 
-  async getTotalMinted() {
-    const balance = await this.account.near.viewMethod(GAME_ID, "ft_total_supply");
-    runInAction(() => (this.totalMinted = +formatAmount(balance, 6)));
-    this.updateCache();
-    await wait(10000);
-    await this.getTotalMinted();
-  }
-
   async getUserData() {
     try {
       const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}`);
       const data = await resp.json();
       runInAction(() => (this.userData = data));
-      runInAction(() => (this.needRegister = false));
       this.updateCache();
       this.account.tokens.addContracts(this.userData.ft_contracts);
     } catch (e) {
       if (!(e instanceof NetworkError)) throw e;
       if (e.status !== 404 && e.status !== 400) throw e;
-      runInAction(() => (this.needRegister = true));
       throw e;
     }
   }
@@ -280,8 +267,9 @@ class Hot {
       method: "POST",
     });
 
+    await this.updateStatus();
     window.Telegram.WebApp.requestWriteAccess();
-    await Promise.allSettled([this.fetchBalance(), this.getUserData(), this.updateStatus(), this.fetchMissions()]);
+    await Promise.all([this.fetchBalance(), this.getUserData(), this.fetchMissions()]);
   }
 
   action(type: "village", data: { hash: string; old_village_id?: number; new_village_id: number }): Promise<void>;
@@ -299,18 +287,14 @@ class Hot {
   }
 
   async completeMission(mission: string) {
-    let type = "gas-free";
-
     switch (mission) {
       case "deposit_1NEAR": {
-        type = "booster";
         await this.account.tokens.updateNative();
         if (this.account.tokens.near.amountFloat >= 1) break;
         throw Error("Your NEAR balance has not yet updated.");
       }
 
       case "deposit_1USDT": {
-        type = "booster";
         await this.account.tokens.updateBalance(ft(Chain.NEAR, "USDT"));
         if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 1) break;
         throw Error("Your USDT balance has not yet updated.");
@@ -319,13 +303,9 @@ class Hot {
       case "deposit_NFT":
       case "install_app":
       case "earn_app_score":
-        type = "booster";
-        break;
-
       case "send_69_hot":
       case "telegram_follow":
       case "follow_twitter":
-        type = "gas-free";
         break;
 
       default:
@@ -361,17 +341,23 @@ class Hot {
   async fetchLevels() {
     const near = this.account.near;
     const state = await near.viewMethod(GAME_ID, "get_assets", { account_id: near.accountId });
-    console.log(state);
     runInAction(() => (this.levels = state));
     this.updateCache();
   }
 
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
-    console.log(state);
-    runInAction(() => (this.state = state));
+    if (state == null) {
+      runInAction(() => (this.needRegister = true));
+      throw Error();
+    }
+
     this.updateCache();
     this.updateMyVillage();
+    runInAction(() => {
+      this.state = state;
+      this.needRegister = false;
+    });
   }
 
   async claim(charge_gas_fee?: boolean) {
@@ -456,7 +442,7 @@ class Hot {
 
   get balance() {
     const tokens = this.account.tokens;
-    return +(tokens.token(tokens.nearChain, "HOT")?.amountFloat || 0);
+    return Math.max(0, +(tokens.token(tokens.nearChain, "HOT")?.amountFloat || 0) + this.earned);
   }
 
   get intBalance() {
