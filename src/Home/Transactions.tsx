@@ -16,41 +16,22 @@ export const Transaction = ({ trx }: { trx: TransactionModel }) => {
       </TransactionIcon>
 
       <Flex style={{ gap: 0 }}>
-        <Text style={{ fontWeight: "bolder", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
-          {trx.badge.title}
-        </Text>
+        <Text style={{ fontWeight: "bolder", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>{trx.badge.title}</Text>
         <SmallText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
-          {new Date(trx.timestamp * 1000).toLocaleDateString("en", {
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-            hourCycle: "h24",
-          })}
+          {new Date(trx.timestamp * 1000).toLocaleDateString("en", { month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hourCycle: "h24" })}
         </SmallText>
       </Flex>
 
       <Flex style={{ gap: 0, flex: 2, textAlign: isTgMobile() ? "right" : "left" }}>
-        <Text style={{ fontWeight: "bolder", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
-          {trx.badge.info}
-        </Text>
-        <SmallText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
-          {trx.badge.sub_info}
-        </SmallText>
+        <Text style={{ fontWeight: "bolder", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>{trx.badge.info}</Text>
+        <SmallText style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>{trx.badge.sub_info}</SmallText>
       </Flex>
 
       {!isTgMobile() && (
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginRight: -4, paddingRight: 8 }}>
           {trx.metadata.link && (
             <>
-              <BoldP
-                style={{ textDecoration: "underline" }}
-                rel="noopener noreferrer"
-                href={trx.metadata.link}
-                target="_blank"
-                as="a"
-              >
+              <BoldP style={{ textDecoration: "underline" }} rel="noopener noreferrer" href={trx.metadata.link} target="_blank" as="a">
                 Link
               </BoldP>
               <Button

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { groupBy } from "lodash";
@@ -13,27 +13,10 @@ import { useWallet } from "../core/Accounts";
 import { Formatter, truncateAddress } from "../core/helpers";
 import { isTgMobile } from "../Mobile";
 
-import {
-  Root,
-  Container,
-  Card,
-  TokenCard,
-  Tabs,
-  Tab,
-  TokensRow,
-  TokenIcon,
-  TokenAction,
-  NftCard,
-  NftsGrid,
-  RightContainer,
-  AppIcon,
-  RecentlyApp,
-} from "./styled";
+import { Root, Container, Card, TokenCard, Tabs, Tab, TokensRow, TokenIcon, TokenAction, NftCard, NftsGrid, RightContainer, AppIcon, RecentlyApp } from "./styled";
 import { Transaction } from "./Transactions";
 import Header from "./Header";
-import { sheets } from "../uikit/Popup";
 import { notify } from "../core/toast";
-import fittext from "./HOT/effects/fittext";
 import Widgets from "./HOT/Widgets";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
@@ -44,12 +27,6 @@ const Home = () => {
   const [showAll, setShowAll] = useState(false);
   const [showTokens, toggleTokens] = useState(true);
   const [isNftsLoading, setNftsLoading] = useState(false);
-
-  useEffect(() => {
-    sheets.dismiss("Register");
-    const els = fittext(".fitted", { maxSize: 18, minSize: 0 });
-    return () => els.forEach((t: any) => t.unsubscribe());
-  }, []);
 
   const selectNfts = async () => {
     toggleTokens(false);
@@ -66,16 +43,7 @@ const Home = () => {
       <Container>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
           {isTgMobile() && (
-            <div
-              style={{
-                marginTop: 4,
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-              }}
-            >
+            <div style={{ marginTop: 4, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
               <BoldP>{truncateAddress(account.near.accountId)}</BoldP>
               <Icon
                 name="copy"
@@ -88,33 +56,14 @@ const Home = () => {
           )}
 
           <Card style={{ gap: 16 }}>
-            <div
-              style={{
-                display: "flex",
-                width: "100%",
-                justifyContent: "space-between",
-                alignItems: isTgMobile() ? "flex-start" : "flex-end",
-                flexDirection: isTgMobile() ? "column" : "row",
-              }}
-            >
+            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: isTgMobile() ? "flex-start" : "flex-end", flexDirection: isTgMobile() ? "column" : "row" }}>
               <div>
                 <SmallText style={{ color: colors.blackSecondary }}>Total Balance</SmallText>
                 <H2>${Formatter.round(account.tokens.stats.all, 2)}</H2>
               </div>
 
-              <div
-                style={{
-                  marginTop: isTgMobile() ? 16 : 0,
-                  width: isTgMobile() ? "100%" : 300,
-                  marginLeft: "auto",
-                  display: "flex",
-                  gap: 16,
-                }}
-              >
-                <HereButton
-                  onClick={() => window.Telegram.WebApp.openLink("https://onramp.money/experience/near/")}
-                  style={LinkButtonStyle}
-                >
+              <div style={{ marginTop: isTgMobile() ? 16 : 0, width: isTgMobile() ? "100%" : 300, marginLeft: "auto", display: "flex", gap: 16 }}>
+                <HereButton onClick={() => window.Telegram.WebApp.openLink("https://onramp.money/experience/near/")} style={LinkButtonStyle}>
                   Buy NEAR
                 </HereButton>
 
@@ -126,9 +75,7 @@ const Home = () => {
 
             {account.transactions.list.length > 0 && (
               <div>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}
-                >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                   <SmallText style={{ color: colors.blackSecondary }}>Recent transactions</SmallText>
 
                   {account.transactions.list.length > 2 && (
@@ -180,24 +127,11 @@ const Home = () => {
                 First Hot Token!
               </BoldP>
 
-              <ActionButton
-                onClick={() => navigate("/hot/onboard")}
-                style={{
-                  marginTop: "auto",
-                  background: "#fff",
-                  borderRadius: 16,
-                  color: colors.blackPrimary,
-                  width: 160,
-                  height: 40,
-                }}
-              >
+              <ActionButton onClick={() => navigate("/hot/onboard")} style={{ marginTop: "auto", background: "#fff", borderRadius: 16, color: colors.blackPrimary, width: 160, height: 40 }}>
                 Claim
               </ActionButton>
 
-              <img
-                style={{ position: "absolute", bottom: 0, right: 0, width: 133, height: 133 }}
-                src={require("../assets/hot/hot-banner-img.png")}
-              />
+              <img style={{ position: "absolute", bottom: 0, right: 0, width: 133, height: 133 }} src={require("../assets/hot/hot-banner-img.png")} />
             </div>
           )}
 
@@ -275,16 +209,9 @@ const Home = () => {
                       <BoldP style={{ width: "100%" }}> {group[0].collection_name}</BoldP>
                       <NftsGrid style={{ marginTop: 18 }}>
                         {group.map((nft) => (
-                          <a
-                            style={{ textDecoration: "none", overflow: "hidden" }}
-                            rel="noopener noreferrer"
-                            href={`https://www.tradeport.xyz/near/collection/${nft.contract_id}`}
-                            target="_blank"
-                          >
+                          <a style={{ textDecoration: "none", overflow: "hidden" }} rel="noopener noreferrer" href={`https://www.tradeport.xyz/near/collection/${nft.contract_id}`} target="_blank">
                             <NftCard key={nft.nft_id} src={nft.media_url} />
-                            <BoldP style={{ marginTop: 4, textOverflow: "ellipsis", overflow: "hidden" }}>
-                              {nft.nft_title}
-                            </BoldP>
+                            <BoldP style={{ marginTop: 4, textOverflow: "ellipsis", overflow: "hidden" }}>{nft.nft_title}</BoldP>
                           </a>
                         ))}
                       </NftsGrid>
@@ -299,10 +226,7 @@ const Home = () => {
             <>
               <BoldP style={{ color: colors.blackSecondary }}>Portfolio</BoldP>
               <Card style={{ marginTop: -8, padding: "0" }}>
-                <TokenCard
-                  style={{ height: 72, padding: "0 16px", display: "flex" }}
-                  onClick={() => (account.hot.needRegister ? navigate("/hot/onboard") : navigate("/hot"))}
-                >
+                <TokenCard style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => (account.hot.needRegister ? navigate("/hot/onboard") : navigate("/hot"))}>
                   <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 12 }}>
                     <TokenIcon src={require("../assets/hot/hot-icon.png")} />
 
@@ -370,15 +294,7 @@ const Home = () => {
             </Card>
 
             <Card style={{ width: "100%" }}>
-              <div
-                style={{
-                  display: "flex",
-                  marginBottom: 12,
-                  width: "100%",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
+              <div style={{ display: "flex", marginBottom: 12, width: "100%", justifyContent: "space-between", alignItems: "center" }}>
                 <H3>Recent Apps</H3>
                 <Button onClick={() => navigate("/apps")}>
                   <Text style={{ fontWeight: "bold", color: "var(--Black-Secondary)" }}>See all</Text>
@@ -387,12 +303,7 @@ const Home = () => {
               </div>
 
               {account.recentlyApps.slice(0, 6).map((app) => (
-                <RecentlyApp
-                  as="a"
-                  rel="noopener noreferrer"
-                  href={`https://nearblocks.io/address/${app.contract_id}`}
-                  target="_blank"
-                >
+                <RecentlyApp as="a" rel="noopener noreferrer" href={`https://nearblocks.io/address/${app.contract_id}`} target="_blank">
                   <AppIcon src={app.image} />
                   <BoldP style={{ overflowX: "hidden" }}>{app.name}</BoldP>
                   <Icon style={{ marginLeft: "auto" }} name="cursor-right" />

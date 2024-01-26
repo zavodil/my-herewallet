@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -7,10 +7,18 @@ import { useWallet } from "../../core/Accounts";
 import { BoldP, H4, TinyText } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
 import Icon from "../../uikit/Icon";
+import { sheets } from "../../uikit/Popup";
+import fittext from "./effects/fittext";
 
 const Widgets = () => {
   const navigate = useNavigate();
   const account = useWallet()!;
+
+  useEffect(() => {
+    sheets.dismiss("Register");
+    const els = fittext(".fitted", { maxSize: 18, minSize: 0 });
+    return () => els.forEach((t: any) => t.unsubscribe());
+  }, []);
 
   return (
     <div style={{ display: "flex", width: "100%", gap: 16 }}>
@@ -29,18 +37,7 @@ const Widgets = () => {
           cursor: "pointer",
         }}
       >
-        <Lottie
-          animationData={require("../../assets/hot/fire.json")}
-          style={{
-            width: "100%",
-            position: "absolute",
-            pointerEvents: "none",
-            overflow: "hidden",
-            borderRadius: 20,
-            bottom: -8,
-          }}
-          loop
-        />
+        <Lottie animationData={require("../../assets/hot/fire.json")} style={{ width: "100%", position: "absolute", pointerEvents: "none", overflow: "hidden", borderRadius: 20, bottom: -8 }} loop />
 
         <div style={{ background: colors.elevation0, borderRadius: 16, padding: 14, position: "relative" }}>
           <div style={{ width: "100%" }}>
@@ -75,26 +72,8 @@ const Widgets = () => {
         <H4>Storage</H4>
 
         <div style={{ display: "flex", gap: 8, flex: 1 }}>
-          <div
-            style={{
-              borderRadius: 4,
-              backgroundColor: "#D9CDCB",
-              width: 32,
-              height: "100%",
-              display: "flex",
-              alignItems: "flex-end",
-              overflow: "hidden",
-              flexShrink: 0,
-            }}
-          >
-            <div
-              style={{
-                borderRadius: 4,
-                width: "100%",
-                height: `calc(${account.hot.miningProgress} * 100%)`,
-                background: "linear-gradient(0deg, #FBC56A 0%, #FE910F 100%)",
-              }}
-            />
+          <div style={{ borderRadius: 4, backgroundColor: "#D9CDCB", width: 32, height: "100%", display: "flex", alignItems: "flex-end", overflow: "hidden", flexShrink: 0 }}>
+            <div style={{ borderRadius: 4, width: "100%", height: `calc(${account.hot.miningProgress} * 100%)`, background: "linear-gradient(0deg, #FBC56A 0%, #FE910F 100%)" }} />
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" }}>

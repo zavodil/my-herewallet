@@ -53,18 +53,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
   if (isSuccess) {
     return (
-      <div
-        style={{
-          height: "100%",
-          padding: 24,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          gap: 8,
-        }}
-      >
+      <div style={{ height: "100%", padding: 24, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", gap: 8 }}>
         <img src={next.icon} style={{ height: 200, objectFit: "cover" }} />
 
         <H2 style={{ marginTop: 16 }}>{next.title}</H2>
@@ -78,17 +67,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
   }
 
   return (
-    <div
-      style={{
-        padding: 24,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        gap: 24,
-      }}
-    >
+    <div style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 24 }}>
       <H2>{next.title}</H2>
       <Text style={{ marginTop: -16, color: colors.blackSecondary }}>{next.text}</Text>
 
@@ -116,21 +95,8 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
         <Icon style={{ margin: "12px 0", transform: "rotate(-90deg)" }} name="arrow-right" />
 
-        <div
-          style={{
-            borderRadius: 12,
-            width: "100%",
-            alignItems: "center",
-            gap: 12,
-            overflow: "hidden",
-            border: "1px solid var(--border-low, #C7BAB8)",
-            display: "flex",
-          }}
-        >
-          <img
-            src={current.icon}
-            style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }}
-          />
+        <div style={{ borderRadius: 12, width: "100%", alignItems: "center", gap: 12, overflow: "hidden", border: "1px solid var(--border-low, #C7BAB8)", display: "flex" }}>
+          <img src={current.icon} style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }} />
           <div style={{ textAlign: "left" }}>
             <SmallText>{(current.id % 10) + 1} level</SmallText>
             {user.hot.isWood(current.id) && <BoldP>×{formatAmount(current.value, 1)} per hour</BoldP>}
@@ -141,13 +107,9 @@ const BoostPopup = observer(({ id }: { id: number }) => {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
-        {!next.mission && (
-          <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />
-        )}
+        {!next.mission && <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />}
 
-        <LargeP style={{ fontWeight: "bold" }}>
-          {next.mission ? next.mission_text || next.mission : formatAmount(next.hot_price || 0, 6)}
-        </LargeP>
+        <LargeP style={{ fontWeight: "bold" }}>{next.mission ? next.mission_text || next.mission : formatAmount(next.hot_price || 0, 6)}</LargeP>
       </div>
 
       {next.mission && !user.hot.canUpgrade(id + 1) ? (
@@ -160,12 +122,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         </ActionButton>
       )}
 
-      {isLoading && (
-        <ClaimingLoading
-          text="Upgrading..."
-          style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }}
-        />
-      )}
+      {isLoading && <ClaimingLoading text="Upgrading..." style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
     </div>
   );
 });
@@ -175,11 +132,7 @@ const BoostItem = ({ boost }: { boost: any }) => {
   const nextBoost = user.hot.getBooster(boost.id + 1);
 
   return (
-    <div
-      key={boost.id}
-      style={{ display: "flex", gap: 12, alignItems: "center" }}
-      onClick={() => nextBoost && sheets.present({ id: "Boost", element: <BoostPopup id={boost.id} /> })}
-    >
+    <div key={boost.id} style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => nextBoost && sheets.present({ id: "Boost", element: <BoostPopup id={boost.id} /> })}>
       <img
         src={boost.icon}
         style={{
@@ -195,11 +148,7 @@ const BoostItem = ({ boost }: { boost: any }) => {
         <BoldP>{boost.title}</BoldP>
         {nextBoost ? (
           <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -2 }}>
-            {nextBoost?.mission ? (
-              <Icon name="mission" />
-            ) : (
-              <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
-            )}
+            {nextBoost?.mission ? <Icon name="mission" /> : <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />}
 
             <BoldP>{nextBoost?.mission ? "Mission" : formatAmount(nextBoost?.hot_price || 0, 6)}</BoldP>
             <Text style={{ color: colors.blackSecondary }}> • L{(boost.id % 10) + 1}</Text>
@@ -265,22 +214,10 @@ const Boosters = () => {
 
       <Container style={{ zIndex: 10 }}>
         <div>
-          <div
-            style={{
-              display: "flex",
-              padding: "36px 0",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-            }}
-          >
+          <div style={{ display: "flex", padding: "36px 0", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <Text style={{ color: colors.blackSecondary }}>Your balance</Text>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8 }}>
-              <img
-                style={{ width: 40, height: 40, marginTop: -2, marginLeft: -16 }}
-                src={require("../../assets/hot/hot.png")}
-              />
+              <img style={{ width: 40, height: 40, marginTop: -2, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />
               <H1 style={{ fontFamily: "SF Mono" }}>{Math.max(0, user.hot.balance)}</H1>
             </div>
 
@@ -289,31 +226,11 @@ const Boosters = () => {
             </Button>
           </div>
 
-          <div
-            style={{
-              marginTop: 16,
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: 16,
-              background: "rgba(243, 235, 234, 0.60)",
-              padding: 16,
-              gap: 24,
-            }}
-          >
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", borderRadius: 16, background: "rgba(243, 235, 234, 0.60)", padding: 16, gap: 24 }}>
             <BoostItem boost={user.hot.storageBooster} />
           </div>
 
-          <div
-            style={{
-              marginTop: 16,
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: 16,
-              background: "rgba(243, 235, 234, 0.60)",
-              padding: 16,
-              gap: 24,
-            }}
-          >
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", borderRadius: 16, background: "rgba(243, 235, 234, 0.60)", padding: 16, gap: 24 }}>
             <BoostItem boost={user.hot.fireplaceBooster} />
             <BoostItem boost={user.hot.woodBoster} />
           </div>

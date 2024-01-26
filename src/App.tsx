@@ -30,8 +30,10 @@ import Gas from "./Home/HOT/Gas";
 import { NeedMoreGas } from "./Home/NeedGas";
 import Onboard from "./Home/HOT/Onboard";
 import { GAME_ID } from "./core/Hot";
+import { useHOTVillage } from "./Home/HOT/useVillage";
 
 function App() {
+  useHOTVillage();
   useEffect(() => {
     if (!isTgMobile() || !accounts.account) return;
     accounts.account.near.events.on("transaction:error", ({ error, actions, receiverId }) => {

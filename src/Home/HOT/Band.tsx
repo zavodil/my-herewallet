@@ -26,11 +26,7 @@ const FriendItem = ({ item }: { item: HotReferral }) => {
           height: 64,
         }}
       >
-        {item.avatar ? (
-          <img src={item.avatar} style={{ width: 64, height: 64, objectFit: "cover" }} />
-        ) : (
-          <H3>{item.telegram_username.charAt(0).toUpperCase()}</H3>
-        )}
+        {item.avatar ? <img src={item.avatar} style={{ width: 64, height: 64, objectFit: "cover" }} /> : <H3>{item.telegram_username.charAt(0).toUpperCase()}</H3>}
       </div>
 
       <div>
@@ -94,17 +90,7 @@ const Band = () => {
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
 
       <Container style={{ zIndex: 10 }}>
-        <div
-          style={{
-            display: "flex",
-            padding: "36px 0",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            gap: 12,
-          }}
-        >
+        <div style={{ display: "flex", padding: "36px 0", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 12 }}>
           <H3>{user.hot.referrals.length} Friend</H3>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <img style={{ width: 24, height: 24, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />
@@ -112,8 +98,7 @@ const Band = () => {
           </div>
 
           <Text style={{ color: colors.blackSecondary }}>
-            Every time your friend claims HOT you get <b>20%</b> cashback. And <b>5%</b> every time his referrals claim
-            it
+            Every time your friend claims HOT you get <b>20%</b> cashback. And <b>5%</b> every time his referrals claim it
           </Text>
 
           <Button>
@@ -124,17 +109,7 @@ const Band = () => {
         {user.hot.referrals.length > 0 && (
           <div style={{ width: "100%" }}>
             <H3>My friend</H3>
-            <div
-              style={{
-                marginTop: 16,
-                display: "flex",
-                flexDirection: "column",
-                borderRadius: 16,
-                background: "rgba(243, 235, 234, 0.60)",
-                padding: 16,
-                gap: 24,
-              }}
-            >
+            <div style={{ marginTop: 16, display: "flex", flexDirection: "column", borderRadius: 16, background: "rgba(243, 235, 234, 0.60)", padding: 16, gap: 24 }}>
               {user.hot.referrals.map((item) => (
                 <FriendItem key={item.account_id} item={item} />
               ))}
@@ -142,10 +117,7 @@ const Band = () => {
           </div>
         )}
 
-        <ActionButton
-          style={{ position: "fixed", bottom: 24, width: "calc(100% - 32px)" }}
-          onClick={() => sheets.present({ id: "Invite", element: <InviteFriend /> })}
-        >
+        <ActionButton style={{ position: "fixed", bottom: 24, width: "calc(100% - 32px)" }} onClick={() => sheets.present({ id: "Invite", element: <InviteFriend /> })}>
           Invite a Friend
         </ActionButton>
       </Container>

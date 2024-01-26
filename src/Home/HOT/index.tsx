@@ -81,36 +81,37 @@ const HOT = () => {
 
   return (
     <Root style={{ overflow: "hidden", width: "100vw", height: "100%" }}>
-      <img
-        src={require("../../assets/hot/hot-blur.png")}
-        style={{ position: "fixed", width: "100vw", top: -100, height: "100vh", objectFit: "contain" }}
-      />
+      <img src={require("../../assets/hot/hot-blur.png")} style={{ position: "fixed", width: "100vw", top: -100, height: "100vh", objectFit: "contain" }} />
 
       <div id="particles-js" style={{ position: "fixed", width: "100vw", height: "100vh" }} />
       <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <Header />
 
         <Container style={{ zIndex: 10, justifyContent: "space-between", height: "100%", paddingBottom: 32 }}>
-          <Card style={{ padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
-            <TokenIcon src={require("../../assets/hot/hot-icon.png")} />
-            <div>
-              <TinyText>Minted</TinyText>
-              <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>
-                {user.hot.totalMinted} / 1,000,000
-              </SmallText>
-            </div>
-          </Card>
+          <div style={{ overflowX: "auto", width: "100vw", display: "flex", marginLeft: -16, padding: "0 16px", gap: 8 }}>
+            {user.hot.village != null && (
+              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
+                <TokenIcon src={user.hot.village?.avatar} />
+                <div>
+                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
+                  <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
+                    <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
+                    <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{user.hot.village.hot_balance}</Text>
+                  </div>
+                </div>
+              </Card>
+            )}
 
-          <div
-            style={{
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              position: "relative",
-            }}
-          >
+            <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
+              <TokenIcon src={require("../../assets/hot/hot-icon.png")} />
+              <div>
+                <TinyText>Minted</TinyText>
+                <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.totalMinted} / 1,000,000</SmallText>
+              </div>
+            </Card>
+          </div>
+
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", position: "relative" }}>
             <Lottie
               loop={false}
               lottieRef={sparksRef as any}
@@ -119,28 +120,8 @@ const HOT = () => {
             />
 
             <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your earnings</LargeP>
-            <div
-              style={{
-                display: "flex",
-                width: "80%",
-                alignItems: "center",
-                marginRight: -16,
-                justifyContent: "center",
-              }}
-            >
-              <img
-                style={{
-                  width: 60,
-                  flexShrink: 0,
-                  maxWidth: "60px",
-                  height: "60px",
-                  objectFit: "contain",
-                  marginTop: -6,
-                  marginLeft: -32,
-                }}
-                src={require("../../assets/hot/hot.png")}
-              />
-
+            <div style={{ display: "flex", width: "80%", alignItems: "center", marginRight: -16, justifyContent: "center" }}>
+              <img style={{ width: 60, flexShrink: 0, maxWidth: "60px", height: "60px", objectFit: "contain", marginTop: -6, marginLeft: -32 }} src={require("../../assets/hot/hot.png")} />
               <H0 style={{ fontFamily: "'SF Mono', sans-serif", fontWeight: "900" }} className="balance">
                 {left}
                 <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
@@ -148,29 +129,11 @@ const HOT = () => {
               </H0>
             </div>
 
-            <div
-              style={{
-                background: colors.orange,
-                opacity: user.hot.miningProgress === 1 ? 0.5 : 1,
-                border: "1px solid var(--Black-Primary)",
-                padding: "4px 12px",
-                borderRadius: 8,
-              }}
-            >
+            <div style={{ background: colors.orange, opacity: user.hot.miningProgress === 1 ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
               <Text>+{user.hot.hotPerHour} per hour</Text>
             </div>
 
-            <Card
-              style={{
-                marginTop: 64,
-                display: "flex",
-                flexDirection: "column",
-                position: "relative",
-                overflow: "hidden",
-                paddingTop: 0,
-                padding: 0,
-              }}
-            >
+            <Card style={{ marginTop: 64, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", paddingTop: 0, padding: 0 }}>
               <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
                 <div
                   style={{
@@ -181,34 +144,17 @@ const HOT = () => {
                 />
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  padding: "24px 16px",
-                  paddingRight: 20,
-                  paddingTop: 24,
-                  width: "100%",
-                  gap: 12,
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", flexDirection: "row", padding: "24px 16px", paddingRight: 20, paddingTop: 24, width: "100%", gap: 12 }}>
                 <img style={{ width: 48, height: 48 }} src={user.hot.getBooster(user.hot.state?.storage || 0)?.icon} />
                 <div style={{ textAlign: "left" }}>
                   <BoldP>Storage</BoldP>
                   {user.hot.miningProgress !== 1 ? (
-                    <Text style={{ color: colors.blackSecondary }}>
-                      ≈{formatHours(+user.hot.remainingMiningHours)} to fill
-                    </Text>
+                    <Text style={{ color: colors.blackSecondary }}>≈{formatHours(+user.hot.remainingMiningHours)} to fill</Text>
                   ) : (
                     <Text style={{ color: colors.blackSecondary }}>Filled</Text>
                   )}
                 </div>
-                <HereButton
-                  onClick={() => claim()}
-                  style={{ marginLeft: "auto" }}
-                  disabled={isClaiming || user.hot.miningProgress !== 1}
-                >
+                <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming || user.hot.miningProgress !== 1}>
                   {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
                 </HereButton>
               </div>
@@ -220,40 +166,22 @@ const HOT = () => {
               <BoldP style={{ color: "#0258F7" }}>How to mine HOT Coin</BoldP>
             </Button>
 
-            <Card
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                width: "fit-content",
-                padding: "0px 16px",
-                gap: 8,
-              }}
-            >
-              <div
-                style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }}
-                onClick={() => navigate("/hot/gas")}
-              >
+            <Card style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "fit-content", padding: "0px 16px", gap: 8 }}>
+              <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/gas")}>
                 <img src={require("../../assets/hot/gas.png")} style={{ width: 32, height: 32 }} />
                 <TinyText>Gas</TinyText>
               </div>
 
               <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
 
-              <div
-                style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }}
-                onClick={() => navigate("/hot/cave")}
-              >
+              <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/cave")}>
                 <img src={user.hot.getBooster(user.hot.state?.boost || 0)?.icon} style={{ width: 32, height: 32 }} />
                 <TinyText>Cave</TinyText>
               </div>
 
               <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
 
-              <div
-                style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }}
-                onClick={() => navigate("/hot/band")}
-              >
+              <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/band")}>
                 <img src={require("../../assets/hot/band.png")} style={{ width: 32, height: 32 }} />
                 <TinyText>Band</TinyText>
               </div>

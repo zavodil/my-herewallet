@@ -79,23 +79,11 @@ const Gas = () => {
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
 
       <Container style={{ zIndex: 10 }}>
-        <div
-          style={{
-            display: "flex",
-            padding: "36px 0",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            gap: 12,
-            paddingBottom: 0,
-          }}
-        >
+        <div style={{ display: "flex", padding: "36px 0", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 12, paddingBottom: 0 }}>
           <img src={require("../../assets/hot/gas.png")} style={{ width: 80, height: 80 }} />
           <H3>{user.hot.userData.gas_free_transactions} Gas-Free</H3>
           <Text style={{ color: colors.blackSecondary, padding: "0 32px" }}>
-            Each HOT claim is a transaction on the NEAR blockchain. We will cover your gas price as long as you have
-            gas-free transactions
+            Each HOT claim is a transaction on the NEAR blockchain. We will cover your gas price as long as you have gas-free transactions
           </Text>
 
           <Button>
@@ -105,10 +93,7 @@ const Gas = () => {
 
         <Options>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => followTwitter()}>
-            <img
-              src={require("../../assets/here.svg")}
-              style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8 }}
-            />
+            <img src={require("../../assets/here.svg")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8 }} />
             <div>
               <BoldP>Follow us on Twitter</BoldP>
               {user.hot.missions.follow_twitter ? (
@@ -128,10 +113,7 @@ const Gas = () => {
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => send69Hot()}>
-            <img
-              src={require("../../assets/hot/hot.png")}
-              style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }}
-            />
+            <img src={require("../../assets/hot/hot.png")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }} />
             <div>
               <BoldP>Send 0.69 $HOT to a friend</BoldP>
               {user.hot.missions.send_69_hot ? (
@@ -150,10 +132,7 @@ const Gas = () => {
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => followTelegram()}>
-            <img
-              src={require("../../assets/hot/band.png")}
-              style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8, paddingLeft: 12 }}
-            />
+            <img src={require("../../assets/hot/band.png")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8, paddingLeft: 12 }} />
             <div>
               <BoldP>Follow us on Telegram</BoldP>
 
@@ -176,10 +155,7 @@ const Gas = () => {
 
         <Options>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={depositNear}>
-            <img
-              src={require("../../assets/near.svg")}
-              style={{ width: 64, height: 64, borderRadius: 12, background: "#fff" }}
-            />
+            <img src={require("../../assets/near.svg")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff" }} />
 
             <div>
               <BoldP>Deposit NEAR</BoldP>

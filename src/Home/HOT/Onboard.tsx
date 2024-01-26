@@ -15,66 +15,32 @@ const Onboard = () => {
 
   return (
     <Root style={{ overflowX: "hidden" }}>
-      <div
-        style={{
-          display: "flex",
-          width: "calc(100vw * 3)",
-          transform: `translateX(calc(${-currentPage} * 100vw))`,
-          transition: "0.2s transform",
-        }}
-      >
+      <div style={{ display: "flex", width: "calc(100vw * 3)", transform: `translateX(calc(${-currentPage} * 100vw))`, transition: "0.2s transform" }}>
         <Screen>
-          <img
-            style={{ width: "100%", height: "50vh", objectFit: "contain" }}
-            src={require("../../assets/hot/hot1.png")}
-          />
+          <img style={{ width: "100%", height: "50vh", objectFit: "contain" }} src={require("../../assets/hot/hot1.png")} />
           <H1>What is HOT?</H1>
           <Text>HOT - native token on NEAR Blockchain. First allocation of HOT will be distributed to early users</Text>
         </Screen>
         <Screen>
-          <img
-            style={{ width: "100%", height: "50vh", objectFit: "contain" }}
-            src={require("../../assets/hot/hot2.png")}
-          />
+          <img style={{ width: "100%", height: "50vh", objectFit: "contain" }} src={require("../../assets/hot/hot2.png")} />
           <H1>Mining</H1>
-          <Text>
-            Until the entire stock is distributed everyone can get HOT. Create a wallet to start mining HOT and boost
-            your “cave” to mine faster
-          </Text>
+          <Text>Until the entire stock is distributed everyone can get HOT. Create a wallet to start mining HOT and boost your “cave” to mine faster</Text>
         </Screen>
         <Screen>
-          <img
-            style={{ width: "100%", height: "50vh", objectFit: "contain" }}
-            src={require("../../assets/hot/hot3.png")}
-          />
+          <img style={{ width: "100%", height: "50vh", objectFit: "contain" }} src={require("../../assets/hot/hot3.png")} />
           <H1>Why HOT?</H1>
-          <Text>
-            HOT will be used as the main currency in build-in Telegram games and apps on NEAR. Main announcements are
-            coming soon.
-          </Text>
+          <Text>HOT will be used as the main currency in build-in Telegram games and apps on NEAR. Main announcements are coming soon.</Text>
         </Screen>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          padding: 24,
-          justifyContent: "space-between",
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", width: "100%", padding: 24, justifyContent: "space-between" }}>
         <div style={{ display: "flex", gap: 4 }}>
           <Dot $active={currentPage === 0} />
           <Dot $active={currentPage === 1} />
           <Dot $active={currentPage === 2} />
         </div>
 
-        {currentPage < 2 ? (
-          <HereButton onClick={() => setPage((t) => t + 1)}>Continue</HereButton>
-        ) : (
-          <HereButton onClick={() => navigate("/hot", { replace: true })}>Start mining!</HereButton>
-        )}
+        {currentPage < 2 ? <HereButton onClick={() => setPage((t) => t + 1)}>Continue</HereButton> : <HereButton onClick={() => navigate("/hot", { replace: true })}>Start mining!</HereButton>}
       </div>
     </Root>
   );

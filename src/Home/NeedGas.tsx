@@ -18,9 +18,7 @@ export const NeedMoreGas = ({ onSelectHot }: { onSelectHot?: () => void }) => {
       <img style={{ width: 80, height: 80 }} src={require("../assets/hot/gas.png")} />
       <H2 style={{ marginTop: 16 }}>More Gas needed</H2>
 
-      <Text style={{ marginTop: 16 }}>
-        You've spent all your gas-free transactions. To make transaction from now on you can do the following:
-      </Text>
+      <Text style={{ marginTop: 16 }}>You've spent all your gas-free transactions. To make transaction from now on you can do the following:</Text>
 
       <Card style={{ marginTop: 24, background: colors.elevation1, textAlign: "left" }}>
         <Text>Deposit NEAR to your account to cover gas price. Gas fee per claim ~0.002 NEAR</Text>
