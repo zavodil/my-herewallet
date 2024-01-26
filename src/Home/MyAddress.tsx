@@ -15,16 +15,7 @@ const MyAddress = () => {
 
   return (
     <div style={{ padding: 24, paddingBottom: 48 }}>
-      <div
-        style={{
-          width: "fit-content",
-          borderRadius: 16,
-          background: colors.elevation1,
-          padding: 12,
-          border: "1px solid var(--Stroke)",
-          margin: "auto",
-        }}
-      >
+      <div style={{ width: "fit-content", borderRadius: 16, background: colors.elevation1, padding: 12, border: "1px solid var(--Stroke)", margin: "auto" }}>
         <HereQRCode value={wallet.id} />
       </div>
 

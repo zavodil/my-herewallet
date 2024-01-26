@@ -20,6 +20,7 @@ export interface HotReferral {
 }
 
 export interface HotState {
+  village?: string;
   last_claim: number;
   boost_ts_left: number;
   has_refferals: boolean;
@@ -148,6 +149,7 @@ class Hot {
 
   public totalMinted = 0;
   public needRegister = false;
+  public village: { name: string; avatar: string; hot_balance: number } | null = null;
 
   public levels = [
     { id: 0, hot_price: 0, value: "0" },
@@ -174,6 +176,7 @@ class Hot {
       referrals: observable,
       missions: observable,
       levels: observable,
+      village: observable,
       balance: computed,
       miningProgress: computed,
       remainingMiningHours: computed,
@@ -192,6 +195,7 @@ class Hot {
     this.missions = cache.missions;
     this.referrals = cache.referrals;
     this.state = cache.state;
+    this.village = cache.village;
 
     this.fetchLevels();
     this.getTotalMinted();
@@ -209,12 +213,41 @@ class Hot {
       missions: this.missions,
       referrals: this.referrals,
       totalMinted: this.totalMinted,
+      village: this.village,
       state: this.state,
     });
   }
 
   updateCache() {
     this.account.localStorage.set("hot:cache", this.cacheData());
+  }
+
+  async updateMyVillage() {
+    const villageid = this.state?.village?.split(".")[0];
+    if (!villageid) return runInAction(() => (this.village = null));
+    const data = await this.getVillage(+villageid);
+    runInAction(() => (this.village = data));
+    this.updateCache();
+  }
+
+  async getVillage(id: number) {
+    const resp = await this.account.api.request(`/api/v1/user/hot/village?village_id=${Math.abs(id)}`);
+    return await resp.json();
+  }
+
+  async joinVillage(id: number) {
+    const tx = await this.account.near.functionCall({
+      contractId: GAME_ID,
+      methodName: "join_village",
+      args: { village: `${Math.abs(id)}.village.hot-token.near` },
+    });
+
+    this.updateStatus();
+    this.fetchBalance();
+    this.action("village", {
+      hash: tx.transaction_outcome.id,
+      new_village_id: Math.abs(id),
+    });
   }
 
   async getTotalMinted() {
@@ -251,6 +284,7 @@ class Hot {
     await Promise.allSettled([this.fetchBalance(), this.getUserData(), this.updateStatus(), this.fetchMissions()]);
   }
 
+  action(type: "village", data: { hash: string; old_village_id?: number; new_village_id: number }): Promise<void>;
   action(type: "transfer", data: { hash: string; amount: string; receiver: string }): Promise<void>;
   action(type: "claim", data: { hash: string; amount: string; charge_gas_fee?: boolean }): Promise<void>;
   async action(type: string, data: Record<string, any>) {
@@ -337,6 +371,7 @@ class Hot {
     console.log(state);
     runInAction(() => (this.state = state));
     this.updateCache();
+    this.updateMyVillage();
   }
 
   async claim(charge_gas_fee?: boolean) {

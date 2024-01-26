@@ -77,19 +77,14 @@ export default ((w) => {
     f.previousFontSize = f.currentFontSize;
 
     // let's calculate the new font size
-    f.currentFontSize = Math.min(
-      Math.max(f.minSize, (f.availableWidth / f.currentWidth) * f.previousFontSize),
-      f.maxSize
-    );
+    f.currentFontSize = Math.min(Math.max(f.minSize, (f.availableWidth / f.currentWidth) * f.previousFontSize), f.maxSize);
 
     // if allows wrapping, only wrap when at minimum font size (otherwise would break container)
     f.whiteSpace = f.multiLine && f.currentFontSize === f.minSize ? "normal" : "nowrap";
   };
 
   // should always redraw if is not dirty layout, if is dirty layout, only redraw if size has changed
-  const shouldRedraw = (f) =>
-    f.dirty !== DrawState.DIRTY_LAYOUT ||
-    (f.dirty === DrawState.DIRTY_LAYOUT && f.element.parentNode.clientWidth !== f.availableWidth);
+  const shouldRedraw = (f) => f.dirty !== DrawState.DIRTY_LAYOUT || (f.dirty === DrawState.DIRTY_LAYOUT && f.element.parentNode.clientWidth !== f.availableWidth);
 
   // every fitty element is tested for invalid styles
   const computeStyle = (f) => {
