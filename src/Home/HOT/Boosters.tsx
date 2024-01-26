@@ -172,6 +172,7 @@ const Boosters = () => {
   useNavigateBack();
 
   useEffect(() => {
+    user.hot.fetchMissions();
     window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
     return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
   }, []);

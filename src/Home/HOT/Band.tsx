@@ -48,7 +48,9 @@ const FriendItem = ({ item }: { item: HotReferral }) => {
 const Band = () => {
   useNavigateBack();
   const user = useWallet()!;
+
   useEffect(() => {
+    user.hot.fetchReferrals();
     window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
     return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
   }, []);

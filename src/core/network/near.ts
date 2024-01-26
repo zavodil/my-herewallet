@@ -47,7 +47,7 @@ class NearApi {
   }
 
   async sendDelegate(sender_id: string, transaction: string, signature: string, authorisation: string) {
-    const response = await fetch("https://relay.herewallet.app/execute", {
+    const response = await fetch("http://5.161.198.226:7001/execute", {
       body: JSON.stringify({ sender_id, authorisation, actions: [{ transaction, signature }] }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -68,10 +68,7 @@ class NearApi {
     return await res.json();
   }
 
-  public async getTransactionError(
-    trx: string,
-    receiver: string
-  ): Promise<{ readable_title?: string; readable_body?: string }> {
+  public async getTransactionError(trx: string, receiver: string): Promise<{ readable_title?: string; readable_body?: string }> {
     const res = await this.api.request(`/api/v1/transactions/error?trx=${trx}&receiver_id=${receiver}`);
     return await res.json();
   }

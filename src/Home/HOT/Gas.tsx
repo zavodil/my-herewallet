@@ -6,10 +6,11 @@ import { useWallet } from "../../core/Accounts";
 import { useNavigateBack } from "../../useNavigateBack";
 import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
-import { Container, Root } from "../styled";
 import { sheets } from "../../uikit/Popup";
 import { Button } from "../../uikit";
 import Icon from "../../uikit/Icon";
+
+import { Container, Root } from "../styled";
 import MyAddress from "../MyAddress";
 
 const Gas = () => {
@@ -18,6 +19,7 @@ const Gas = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    user.hot.fetchMissions();
     window.Telegram.WebApp.setBackgroundColor?.("#f6b380");
     return () => window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
   }, []);

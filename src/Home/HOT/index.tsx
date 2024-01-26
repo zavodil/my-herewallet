@@ -19,6 +19,7 @@ import { colors } from "../../uikit/theme";
 import { runParticles, stopParticles } from "./effects/flame";
 import { FirstClaimHOT } from "./modals";
 import fitty from "./effects/fittext";
+import { formatAmount } from "../../core/helpers";
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;
@@ -74,9 +75,8 @@ const HOT = () => {
     }
   };
 
-  const [left, right] = Math.max(0, user.hot.balance + user.hot.earned)
-    .toFixed(6)
-    .split(".");
+  const [left, right] = user.hot.balance.toFixed(6).split(".");
+  const isOverload = user.hot.miningProgress === 1;
 
   return (
     <Root style={{ overflow: "hidden", width: "100vw", height: "100%" }}>
@@ -95,19 +95,11 @@ const HOT = () => {
                   <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
                   <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
                     <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
-                    <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{user.hot.village.hot_balance}</Text>
+                    <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
                   </div>
                 </div>
               </Card>
             )}
-
-            <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
-              <TokenIcon src={require("../../assets/hot/hot-icon.png")} />
-              <div>
-                <TinyText>Minted</TinyText>
-                <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.totalMinted} / 1,000,000</SmallText>
-              </div>
-            </Card>
           </div>
 
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", position: "relative" }}>
@@ -128,36 +120,42 @@ const HOT = () => {
               </H0>
             </div>
 
-            <div style={{ background: colors.orange, opacity: user.hot.miningProgress === 1 ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
+            <div style={{ background: colors.orange, opacity: isOverload ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
               <Text>+{user.hot.hotPerHour} per hour</Text>
             </div>
 
-            <Card style={{ marginTop: 64, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", paddingTop: 0, padding: 0 }}>
-              <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
-                <div
-                  style={{
-                    width: `${user.hot.miningProgress * 100}%`,
-                    background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)",
-                    height: 8,
-                  }}
-                />
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", flexDirection: "row", padding: "24px 16px", paddingRight: 20, paddingTop: 24, width: "100%", gap: 12 }}>
-                <img style={{ width: 48, height: 48 }} src={user.hot.getBooster(user.hot.state?.storage || 0)?.icon} />
-                <div style={{ textAlign: "left" }}>
-                  <BoldP>Storage</BoldP>
-                  {user.hot.miningProgress !== 1 ? (
-                    <Text style={{ color: colors.blackSecondary }}>≈{formatHours(+user.hot.remainingMiningHours)} to fill</Text>
-                  ) : (
-                    <Text style={{ color: colors.blackSecondary }}>Filled</Text>
-                  )}
+            <div style={{ width: "100%", marginTop: 64, borderRadius: 24, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)" }}>
+              <Card style={{ display: "flex", flexDirection: "column", overflow: "hidden", margin: isOverload ? 1 : 0, paddingTop: 0, padding: 0, border: isOverload ? "none" : undefined }}>
+                <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
+                  <div
+                    style={{
+                      width: `${user.hot.miningProgress * 100}%`,
+                      background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)",
+                      height: 8,
+                    }}
+                  />
                 </div>
-                <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming || user.hot.miningProgress !== 1}>
-                  {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
-                </HereButton>
-              </div>
-            </Card>
+
+                <div style={{ display: "flex", alignItems: "center", flexDirection: "row", padding: "24px 16px", paddingRight: 20, paddingTop: 24, width: "100%", gap: 12 }}>
+                  <img style={{ width: 48, height: 48 }} src={user.hot.getBooster(user.hot.state?.storage || 0)?.icon} />
+
+                  <div style={{ textAlign: "left" }}>
+                    <BoldP>Storage</BoldP>
+                    {!isOverload ? (
+                      <Text style={{ color: colors.blackSecondary }}>≈{formatHours(+user.hot.remainingMiningHours)} to fill</Text>
+                    ) : (
+                      <Text style={{ color: colors.blackSecondary }}>Filled</Text>
+                    )}
+                  </div>
+
+                  <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming || isOverload}>
+                    {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
+                  </HereButton>
+                </div>
+              </Card>
+
+              {isOverload && <SmallText style={{ color: colors.blackPrimary, fontWeight: "bold", margin: "8px 0" }}>Claim hot from storage to keep minig</SmallText>}
+            </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>

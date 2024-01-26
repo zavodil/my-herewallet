@@ -22,7 +22,6 @@ import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
 import { TransactionError } from "../network/types";
 import { HereApi, NetworkError } from "../network/api";
 import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
-
 import { accounts } from "../Accounts";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getNodeUrl, getWrapNear } from "./constants";
@@ -123,7 +122,7 @@ export class NearAccount extends Account {
   async executeDelegate(actions: transactions.Action[], receiverId: string, nonce?: BN) {
     if (this.connection.networkId !== "mainnet") throw new DelegateNotAllowed();
 
-    const delegate = await this.signedDelegate({ actions, receiverId, blockHeightTtl: 100, nonce }).catch(() => null);
+    const delegate = await this.signedDelegate({ actions, receiverId, blockHeightTtl: 1000, nonce }).catch(() => null);
     if (!delegate) throw new DelegateNotAllowed();
 
     const base64 = Buffer.from(encodeDelegateAction(delegate.delegateAction)).toString("base64");
