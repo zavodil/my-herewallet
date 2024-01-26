@@ -1,0 +1,14 @@
+diff --git a/node_modules/@near-js/transactions/lib/schema.js b/node_modules/@near-js/transactions/lib/schema.js
+index 84df180..8df2659 100644
+--- a/node_modules/@near-js/transactions/lib/schema.js
++++ b/node_modules/@near-js/transactions/lib/schema.js
+@@ -164,8 +164,8 @@ exports.SCHEMA = new class BorshSchema {
+             struct: {
+                 senderId: 'string',
+                 receiverId: 'string',
+-                nonce: 'u64',
+                 actions: { array: { type: this.ClassicActions } },
++                nonce: 'u64',
+                 maxBlockHeight: 'u64',
+                 publicKey: this.PublicKey,
+             }

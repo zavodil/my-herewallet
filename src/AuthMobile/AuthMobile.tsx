@@ -4,13 +4,11 @@ import { observer } from "mobx-react-lite";
 
 import introImage from "../assets/intro.png";
 import { BoldP, H1, LargeP } from "../uikit/typographic";
-import { useScrollLock } from "../useNavigateBack";
 import { IntroImage, Root } from "./styled";
 import { ActionButton, Button } from "../uikit";
 
 const Auth = () => {
   const navigate = useNavigate();
-  useScrollLock();
 
   return (
     <Root style={{ padding: 24 }}>

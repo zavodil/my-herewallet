@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 
 import { accounts } from "../core/Accounts";
 import { H1, Text } from "../uikit/typographic";
-import { useScrollLock } from "../useNavigateBack";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import { ClaimingLoading } from "../Home/HOT/modals";
 import { useNavigateBack } from "../useNavigateBack";
@@ -13,7 +12,6 @@ import HereInput from "../uikit/Input";
 import { Root } from "./styled";
 
 const ImportAccountMobile = () => {
-  useScrollLock();
   useNavigateBack();
   const navigate = useNavigate();
   const [value, setValue] = useState("");

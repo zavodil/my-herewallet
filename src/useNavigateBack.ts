@@ -1,21 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const lockScroll = () => {
-  document.body.classList.add("scroll-locked");
-};
-
-export const unlockScroll = () => {
-  document.body.classList.remove("scroll-locked");
-};
-
-export const useScrollLock = () => {
-  useEffect(() => {
-    lockScroll();
-    return () => unlockScroll();
-  }, []);
-};
-
 export const useNavigateBack = () => {
   const navigate = useNavigate();
 

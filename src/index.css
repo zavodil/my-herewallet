@@ -8,10 +8,6 @@ body {
   overflow-x: hidden;
 }
 
-body.scroll-locked {
-  overflow-y: hidden;
-}
-
 html {
   background: var(--Elevation-1)
 }
@@ -20,6 +16,7 @@ html {
   --safe-area-inset-top: env(safe-area-inset-top);
   --safe-area-inset-bottom: env(safe-area-inset-bottom);
   height: calc(var(--tg-viewport-stable-height) - max(24px, var(--safe-area-inset-bottom)));
+  position: relative;
   overflow-y: auto;
 }
 

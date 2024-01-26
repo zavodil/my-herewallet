@@ -4,11 +4,10 @@ import { observer } from "mobx-react-lite";
 
 import { Receiver } from "../core/Receiver";
 import { accounts, useWallet } from "../core/Accounts";
-import { useScrollLock } from "../useNavigateBack";
 
 import { generateMnemonic } from "../core/near-chain/passphrase/bip39";
 import { H1, SmallText, Text } from "../uikit/typographic";
-import { ActionButton, ActivityIndicator, Button } from "../uikit";
+import { ActionButton, ActivityIndicator } from "../uikit";
 import HereInput from "../uikit/Input";
 import { colors } from "../uikit/theme";
 
@@ -18,7 +17,6 @@ import { ClaimingLoading } from "../Home/HOT/modals";
 import { useNavigateBack } from "../useNavigateBack";
 
 const CreateAccountMobile = () => {
-  useScrollLock();
   useNavigateBack();
   const user = useWallet();
   const navigate = useNavigate();
@@ -57,9 +55,7 @@ const CreateAccountMobile = () => {
           />
 
           {receiver.input !== ".near" && !receiver.isLoading && (
-            <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>
-              {receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}
-            </SmallText>
+            <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>{receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}</SmallText>
           )}
         </div>
       </div>
@@ -70,9 +66,7 @@ const CreateAccountMobile = () => {
         </ActionButton>
         <ActionButton
           style={{ flex: 1 }}
-          disabled={
-            isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError
-          }
+          disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
           onClick={() => {
             if (isCreating) return;
             setCreating(true);
