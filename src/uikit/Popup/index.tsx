@@ -66,19 +66,7 @@ class SheetsManager {
   };
 }
 
-const Popup = ({
-  children,
-  onClose,
-  isOpen,
-  fullscreen,
-  blocked,
-}: {
-  children: React.ReactNode;
-  isOpen: boolean;
-  blocked?: boolean;
-  onClose?: () => void;
-  fullscreen?: boolean;
-}) => {
+const Popup = ({ children, onClose, isOpen, fullscreen, blocked }: { children: React.ReactNode; isOpen: boolean; blocked?: boolean; onClose?: () => void; fullscreen?: boolean }) => {
   const first = useRef(true);
   const bodyRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);

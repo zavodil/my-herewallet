@@ -486,9 +486,7 @@ class Hot {
 
   get hotPerHourInt() {
     if (!this.state) return "0";
-    return new BN(this.fireplaceBooster!.value || 0)
-      .muln(Math.max(1, +formatAmount(this.woodBoster!.value, 1)))
-      .toString();
+    return new BN(this.fireplaceBooster!.value || 0).muln(Math.max(1, +formatAmount(this.woodBoster!.value, 1))).toString();
   }
 
   get hotPerHour() {
