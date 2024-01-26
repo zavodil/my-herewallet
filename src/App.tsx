@@ -35,11 +35,11 @@ import { GAME_ID } from "./core/Hot";
 import { useHOTVillage } from "./Home/HOT/useVillage";
 
 function App() {
-  useEffect(() => {
-    if (!isTgMobile()) return;
-    const targetElement = document.querySelector("#root");
-    bodyScrollLock.disableBodyScroll(targetElement);
-  }, []);
+  // useEffect(() => {
+  //   if (!isTgMobile()) return;
+  //   const targetElement = document.querySelector("#root");
+  //   bodyScrollLock.disableBodyScroll(targetElement);
+  // }, []);
 
   useHOTVillage();
   useEffect(() => {
