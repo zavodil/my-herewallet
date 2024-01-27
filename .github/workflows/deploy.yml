@@ -22,6 +22,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Fix dependencies
+        run: npm i patch-package -g
+
       - name: Build
         run: yarn build
 
