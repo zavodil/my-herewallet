@@ -16,6 +16,7 @@ import { ConnectType } from "../core/types";
 import { accounts } from "../core/Accounts";
 
 import { colors } from "../uikit/theme";
+import { BoldP } from "../uikit/typographic";
 import { ActionButton, Button, H2, H4, Text } from "../uikit";
 import HereInput from "../uikit/Input";
 import Icon from "../uikit/Icon";
@@ -65,6 +66,7 @@ const Widget = () => {
       { id: "", type: ConnectType.Ledger },
     ])
     .filter((t) => {
+      if (request?.type === "import") return t.type === ConnectType.Here;
       const selector = request?.selector || {};
       if (t.type === ConnectType.WalletConnect) return false;
       if (selector.id) return selector.id === t.id;
@@ -73,10 +75,7 @@ const Widget = () => {
     });
 
   useEffect(() => {
-    const def = accounts.account
-      ? { type: accounts.account.type, path: accounts.account.path, id: accounts.account.id }
-      : { id: "", type: ConnectType.Here };
-
+    const def = accounts.account ? { type: accounts.account.type, path: accounts.account.path, id: accounts.account.id } : { id: "", type: ConnectType.Here };
     const selected = getStorageJson("last-connect", def);
     const isExist = accountsList.find((t) => t.id === selected.id && t.type === selected.type);
     setAccount(isExist ? selected : accountsList[0]);
@@ -98,22 +97,31 @@ const Widget = () => {
   return (
     <S.HereModal>
       <S.GlobalStyles />
-      <AccountsManager
-        left
-        onlySwitch
-        account={account}
-        accounts={accountsList}
-        style={{ position: "absolute", top: 24 }}
-        onDisconnect={(id) => accounts.disconnect(id)}
-        onAddAccount={() => navigate("/auth")}
-        onSettings={() => navigate("/settings")}
-        onSelect={(acc) => {
-          setAccount(acc);
-          setNeedActivate("");
-          setLedgerConnected(false);
-          localStorage.setItem("last-connect", JSON.stringify(acc));
-        }}
-      />
+
+      {accountsList.length > 1 && (
+        <AccountsManager
+          left
+          onlySwitch
+          account={account}
+          accounts={accountsList}
+          style={{ position: "absolute", top: 24 }}
+          onDisconnect={(id) => accounts.disconnect(id)}
+          onAddAccount={() => navigate("/auth")}
+          onSettings={() => navigate("/settings")}
+          onSelect={(acc) => {
+            setAccount(acc);
+            setNeedActivate("");
+            setLedgerConnected(false);
+            localStorage.setItem("last-connect", JSON.stringify(acc));
+          }}
+        />
+      )}
+
+      {request?.type === "import" && (
+        <div style={{ position: "absolute", width: "100%", textAlign: "center", top: 24, left: 0 }}>
+          <BoldP>Import account</BoldP>
+        </div>
+      )}
 
       {account.type === ConnectType.Snap && (
         <div className="here-connector-wrap">
@@ -164,12 +172,7 @@ const Widget = () => {
                 </Button>
               </div>
 
-              <S.ButtonSwitch
-                style={{ marginTop: 16 }}
-                onClick={() =>
-                  connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)
-                }
-              >
+              <S.ButtonSwitch style={{ marginTop: 16 }} onClick={() => connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)}>
                 I did, connect again
               </S.ButtonSwitch>
             </>
@@ -178,12 +181,7 @@ const Widget = () => {
               <h2>Connect to your Ledger device</h2>
               <p>Make sure your Ledger is connected securely, and that the NEAR app is open on your device.</p>
 
-              <S.ButtonSwitch
-                style={{ marginTop: 16 }}
-                onClick={() =>
-                  connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)
-                }
-              >
+              <S.ButtonSwitch style={{ marginTop: 16 }} onClick={() => connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)}>
                 Click to connect
               </S.ButtonSwitch>
             </>
@@ -211,9 +209,7 @@ const Widget = () => {
             >
               <div style={{ textAlign: "center" }}>
                 <H2>Enter password</H2>
-                <Text style={{ color: colors.blackSecondary }}>
-                  If you don't have a password, leave this input blank
-                </Text>
+                <Text style={{ color: colors.blackSecondary }}>If you don't have a password, leave this input blank</Text>
               </div>
 
               <div style={{ width: 320 }}>
@@ -240,28 +236,14 @@ const Widget = () => {
 
         {account.type === ConnectType.Here && (
           <>
-            {isMobile() && (
-              <S.ApproveButton onClick={() => window.open(`herewallet://request/${id}`, "_top")}>
-                Tap to approve HERE
-              </S.ApproveButton>
-            )}
+            {isMobile() && <S.ApproveButton onClick={() => window.open(`herewallet://request/${id}`, "_top")}>Tap to approve HERE</S.ApproveButton>}
 
             <S.Links>
-              <a
-                target="_parent"
-                rel="noopener noreferrer"
-                className="here-connector-ios"
-                href="https://download.herewallet.app?ios"
-              >
+              <a target="_parent" rel="noopener noreferrer" className="here-connector-ios" href="https://download.herewallet.app?ios">
                 <img src={require("../assets/appstore.svg")} />
               </a>
 
-              <a
-                target="_parent"
-                rel="noopener noreferrer"
-                className="here-connector-android"
-                href="https://download.herewallet.app?android"
-              >
+              <a target="_parent" rel="noopener noreferrer" className="here-connector-android" href="https://download.herewallet.app?android">
                 <img src={require("../assets/googleplay.svg")} />
               </a>
             </S.Links>
@@ -302,11 +284,7 @@ const Widget = () => {
             }}
           >
             Approve all
-            {request.type === "call" &&
-              ` (${Formatter.usd(
-                +formatNearAmount(parseNearOfTransactions(request.transactions).toString()) *
-                  Currencies.shared.usd("NEAR")
-              )})`}
+            {request.type === "call" && ` (${Formatter.usd(+formatNearAmount(parseNearOfTransactions(request.transactions).toString()) * Currencies.shared.usd("NEAR"))})`}
           </ActionButton>
         )}
       </S.Footer>
@@ -326,13 +304,7 @@ const Widget = () => {
             bottom: 0,
           }}
         >
-          <Lottie
-            animationData={require("../assets/loading.json")}
-            style={{ width: 256, height: 256, marginTop: -56 }}
-            width={48}
-            height={48}
-            loop={true}
-          />
+          <Lottie animationData={require("../assets/loading.json")} style={{ width: 256, height: 256, marginTop: -56 }} width={48} height={48} loop={true} />
           <H4>Transaction is processing...</H4>
         </div>
       )}
