@@ -115,7 +115,7 @@
   {
     "name": "TradePort",
     "text": "Trading platform aggregating NFTs from all marketplaces across NEAR",
-    "site": "tradeport.xyz",
+    "site": "https://www.tradeport.xyz/",
     "contract": "market.tradeport.near",
     "twitter": "https://twitter.com/tradeportxyz",
     "discord": "http://discord.gg/b8qYwxTr3K",
@@ -250,7 +250,7 @@
   {
     "name": "Pulsar Finance",
     "text": "The Portfolio Manager",
-    "site": "pulsar.finance",
+    "site": "https://app.pulsar.finance/",
     "twitter": "https://twitter.com/pulsarfinance",
     "telegram": "https://t.me/pulsarfinance",
     "image": "https://storage.herewallet.app/upload/3da830fb-8d1f-4b07-a715-aff0f2fb6f5d.jpg",
