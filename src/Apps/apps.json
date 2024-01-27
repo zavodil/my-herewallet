@@ -31,16 +31,6 @@
     "type": "DeFi"
   },
   {
-    "name": "Jump DeFi",
-    "text": "NFT Staking,IDO, Launchpad platform ",
-    "site": "https://www.jumpdefi.xyz/",
-    "contract": "nftstaking.jumpfinance.near",
-    "twitter": "https://twitter.com/JumpDeFi",
-    "discord": "https://discord.gg/j9AakSzAwy",
-    "image": "https://storage.herewallet.app/upload/291e61a2-c2ae-44d8-90c3-423e556b76aa.jpg",
-    "type": "DeFi"
-  },
-  {
     "name": "HERE wallet staking",
     "text": "Liquid Staking on NEAR Protocol without unstaking fees",
     "site": "https://my.herewallet.app/stake",
@@ -62,6 +52,26 @@
     "type": "DeFi"
   },
   {
+    "name": "Orderly Network",
+    "text": "The permissionless liquidity layer for Web3 trading. A single, shared Omnichain orderbook across all blockchains.",
+    "site": "https://orderly.network/",
+    "contract": "asset-manager.orderly-network.near",
+    "twitter": "https://twitter.com/OrderlyNetwork",
+    "discord": "https://discord.com/invite/orderlynetwork",
+    "image": "https://storage.herewallet.app/upload/209b558d-69f1-4f7b-8a60-3e2aeab58d48.jpg",
+    "type": "DeFi"
+  },
+  {
+    "name": "Jump DeFi",
+    "text": "NFT Staking,IDO, Launchpad platform ",
+    "site": "https://www.jumpdefi.xyz/",
+    "contract": "nftstaking.jumpfinance.near",
+    "twitter": "https://twitter.com/JumpDeFi",
+    "discord": "https://discord.gg/j9AakSzAwy",
+    "image": "https://storage.herewallet.app/upload/291e61a2-c2ae-44d8-90c3-423e556b76aa.jpg",
+    "type": "DeFi"
+  },
+  {
     "name": "Metapool",
     "text": "Liquid Staking on NEAR Protocol",
     "site": "https://www.metapool.app/",
@@ -80,16 +90,6 @@
     "twitter": "https://twitter.com/LinearProtocol",
     "discord": "https://discord.gg/9DzPZCzzxp",
     "image": "https://storage.herewallet.app/upload/e7aaae8c-6aeb-420b-bb14-4303aaf7d9d0.jpg",
-    "type": "DeFi"
-  },
-  {
-    "name": "Orderly Network",
-    "text": "The permissionless liquidity layer for Web3 trading. A single, shared Omnichain orderbook across all blockchains.",
-    "site": "https://orderly.network/",
-    "contract": "asset-manager.orderly-network.near",
-    "twitter": "https://twitter.com/OrderlyNetwork",
-    "discord": "https://discord.com/invite/orderlynetwork",
-    "image": "https://storage.herewallet.app/upload/209b558d-69f1-4f7b-8a60-3e2aeab58d48.jpg",
     "type": "DeFi"
   },
   {
@@ -218,19 +218,34 @@
     "image": "https://storage.herewallet.app/upload/773f402e-eef9-4805-a7a9-95ab37f3d33d.jpg",
     "type": "Infrastructure"
   },
+{
+    "name": "NEAR-STAKING",
+    "text": "View all information about staking in the NEAR Protocol",
+    "site": "https://near-staking.com/",
+    "image": "https://storage.herewallet.app/upload/3b400658-9768-4769-ada0-8875870c9c30.png",
+    "type": "Infrastructure"
+  },
+  {
+    "name": "Lava Network",
+    "text": " A modular vision for blockchain data infrastructure",
+    "site": "https://www.lavanet.xyz/",
+    "discord" : "https://discord.gg/Tbk5NxTCdA", 
+    "image": "https://storage.herewallet.app/upload/babc5c1e-f2e9-4a07-afe9-753cabebe484.jpg",
+    "type": "Infrastructure"
+  },
   {
     "name": "Defillama",
     "text": "Open and transparent DeFi analytics.",
     "site": "https://defillama.com/chain/Near",
     "image": "https://storage.herewallet.app/upload/6f796257-69d7-438c-9aeb-e63835ee834e.jpg",
-    "type": "Infrastructure"
+    "type": "Analytics"
   },
   {
     "name": "Ref Analytics",
     "text": "Ref Analytics (Sodaki) is a minimal data analytics web app, built on top of Ref Finance.",
     "site": "https://stats.ref.finance/",
     "image": "https://storage.herewallet.app/upload/c853fa52-a1b6-4c34-8702-83a84122d0a2.png",
-    "type": "Infrastructure"
+    "type": "Analytics"
   },
   {
     "name": "Pulsar Finance",
@@ -239,21 +254,31 @@
     "twitter": "https://twitter.com/pulsarfinance",
     "telegram": "https://t.me/pulsarfinance",
     "image": "https://storage.herewallet.app/upload/3da830fb-8d1f-4b07-a715-aff0f2fb6f5d.jpg",
-    "type": "Infrastructure"
+    "type": "Analytics"
   },
   {
     "name": "DEX Screener",
     "text": "Realtime DEX analytics",
     "site": "https://dexscreener.com/near",
     "image": "https://storage.herewallet.app/upload/eb55b121-df04-40d0-b258-35fb4d406f8b.jpg",
-    "type": "Infrastructure"
+    "type": "Analytics"
+  },
+{
+    "name": "Nansen",
+    "text": "Nansen is a blockchain analytics platform that enriches on-chain data with millions of wallet labels",
+    "site": "https://app.nansen.ai/macro/blockchains?chain=near",
+    "twitter": "https://twitter.com/nansen_ai",
+    "image": "https://storage.herewallet.app/upload/3e998fd2-3dc5-472c-8617-4edb98d0c4ba.jpg",
+    "type": "Analytics"
   },
   {
-    "name": "NEAR-STAKING",
-    "text": "View all information about staking in the NEAR Protocol",
-    "site": "https://near-staking.com/",
-    "image": "https://storage.herewallet.app/upload/3b400658-9768-4769-ada0-8875870c9c30.png",
-    "type": "Infrastructure"
+    "name": "Xangel",
+    "text": "Сrypto data, information, and research",
+    "site": "https://xangle.io/en/analytics/Overview/CHAINS/compare",
+    "twitter": "https://twitter.com/Xangle_official",
+    "telegram": "https://t.me/xangle_disclosure",
+    "image": "https://storage.herewallet.app/upload/2d6a7f36-a67e-4c07-a4ad-b435d1d299a9.jpg",
+    "type": "Analytics"
   },
   {
     "name": "HEROES",
@@ -311,12 +336,29 @@
     "type": "Bridge"
   },
   {
+    "name": "HERE wallet inscriptions",
+    "text": "Mint inscriptions controlling gas fees.",
+    "site": "https://my.herewallet.app/inscription/tokens",
+    "image": "https://storage.herewallet.app/upload/e9567878-6ba9-44d9-b9ed-25c2d7c7f783.jpg",
+    "type": "Other"
+  },
+  {
     "name": "PotLock",
     "text": "PotLock is bringing public goods funding legos to NEAR. Direct donations & on chain referrals built on Web3 social. Quadratic funding soon.",
     "site": "https://app.potlock.org/",
     "contract": "social.near",
     "twitter": "https://twitter.com/potlock_",
     "image": "https://storage.herewallet.app/upload/8897aaf4-0ede-41b2-9bca-5460c2627bf8.jpg",
+    "type": "Other"
+  },
+  {
+    "name": "NEAT Protocol",
+    "text": "A rollup scaling solution based on inscription technology. Built by some of the earliest contributors to NEAR Protocol, NEAT pioneered NRC-20, the 1st inscription standard on the NEAR Blockchain.",
+    "site": "https://neatprotocol.ai/",
+    "contract": "inscription.near",
+    "twitter": "https://twitter.com/inscriptionneat",
+    "telegram": "https://t.me/neat_inscription",
+    "image": "https://storage.herewallet.app/upload/4a4a8599-0e7f-4b4a-897b-c8d9cc2ae687.jpg",
     "type": "Other"
   },
   {
@@ -328,14 +370,15 @@
     "image": "https://storage.herewallet.app/upload/50b824ec-ce52-471a-81d7-8a1291f02d5d.png",
     "type": "Other"
   },
-  {
-    "name": "NEAT Protocol",
-    "text": "A rollup scaling solution based on inscription technology. Built by some of the earliest contributors to NEAR Protocol, NEAT pioneered NRC-20, the 1st inscription standard on the NEAR Blockchain.",
-    "site": "https://neatprotocol.ai/",
-    "contract": "inscription.near",
-    "twitter": "https://twitter.com/inscriptionneat",
-    "telegram": "https://t.me/neat_inscription",
-    "image": "https://storage.herewallet.app/upload/4a4a8599-0e7f-4b4a-897b-c8d9cc2ae687.jpg",
+ {
+    "name": "UniFat",
+    "text": "An inscription platform based on Near Protocol",
+    "site": "https://unifat.xyz/inscribe",
+    "contract": "unifat.near",
+    "twitter": "https://twitter.com/unifat_xyz",
+    "telegram": "https://t.me/unifat",
+    "discord" : "https://discord.gg/Akg8NRSSRA",
+    "image": "https://storage.herewallet.app/upload/aa24cd6c-8bfc-4879-95df-cad6073c25f7.jpg",
     "type": "Other"
   },
   {
@@ -368,7 +411,7 @@
   {
     "name": "NEAR Vietnam Hub",
     "twitter": "https://twitter.com/NearVietnamHub",
-    "telegram": "https://storage.herewallet.app/upload/2220d542-627f-47ab-9130-bab9d0e83799.jpg",
+    "telegram": "https://t.me/nearvietnamofficial",
     "image": "https://storage.herewallet.app/upload/378c0e0b-e62d-4166-8084-cc6e25f2aa2b.jpg",
     "type": "Chats"
   },
@@ -440,6 +483,20 @@
     "twitter": "https://twitter.com/NearHausa",
     "telegram": "https://t.me/NearHausaa",
     "image": "https://storage.herewallet.app/upload/77abbcc2-0aa9-49e8-8909-0b44c6c1bf13.jpg",
+    "type": "Chats"
+  },
+   {
+    "name": "NEAR ES",
+    "twitter": "https://twitter.com/Near_ES",
+    "telegram": "https://t.me/ES_NEAR",
+    "image": "https://storage.herewallet.app/upload/221cc433-4ad8-4c74-8535-5d4e187f5893.jpg",
+    "type": "Chats"
+  },
+{
+    "name": "NEAR Media & News",
+    "twitter": "https://twitter.com/nearmedianews",
+    "telegram": "https://t.me/NearMedia",
+    "image": "https://storage.herewallet.app/upload/b1474c75-105f-4c8c-8f00-f6678314b12e.jpg",
     "type": "Chats"
   }
 ]
