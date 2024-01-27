@@ -19,11 +19,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Fix dependencies
+        run: yarn add patch-package
+
       - name: Install dependencies
         run: yarn install
-
-      - name: Fix dependencies
-        run: npm i patch-package -g
 
       - name: Build
         run: yarn build
