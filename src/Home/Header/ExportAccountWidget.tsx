@@ -1,34 +1,29 @@
-import React, { useState } from "react";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import React, { useEffect, useState } from "react";
 import { setupExportSelectorModal } from "@near-wallet-selector/account-export";
-import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupSender } from "@near-wallet-selector/sender";
-import { KeyPairEd25519 } from "near-api-js/lib/utils";
+import { KeyPair, KeyPairEd25519 } from "near-api-js/lib/utils";
 
 import "@near-wallet-selector/modal-ui/styles.css";
 import "@near-wallet-selector/account-export/styles.css";
 
-import { useWallet } from "../../core/Accounts";
+import { accounts, useWallet } from "../../core/Accounts";
 import { ActionButton, ActivityIndicator, H2, Text } from "../../uikit";
 import { notify } from "../../core/toast";
+import { storage } from "../../core/Storage";
 import * as S from "./styled";
 
 export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const user = useWallet();
-  if (user == null) return null;
 
   const [isLoading, setLoading] = useState(false);
-  const [pair, setPair] = useState<KeyPairEd25519>();
+  const [pair, setPair] = useState<KeyPair>();
 
-  const makeExport = async () => {
+  const makeExport = async (selectedPair?: KeyPair) => {
     try {
-      if (isLoading) return;
+      if (!user || isLoading) return;
       setLoading(true);
 
-      let activePair = pair;
-      if (pair == null) {
+      let activePair = selectedPair || pair;
+      if (activePair == null) {
         activePair = KeyPairEd25519.fromRandom();
         await user.near.callTransaction({
           receiverId: user.near.accountId,
@@ -36,7 +31,7 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
             {
               type: "AddKey",
               params: {
-                publicKey: activePair.publicKey.toString(),
+                publicKey: activePair.getPublicKey().toString(),
                 accessKey: { permission: "FullAccess" },
               },
             },
@@ -46,13 +41,8 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
         setPair(activePair);
       }
 
-      const selector = await setupWalletSelector({
-        network: "mainnet",
-        modules: [setupMyNearWallet(), setupSender(), setupMeteorWallet(), setupHereWallet()],
-      });
-
-      const modal = setupExportSelectorModal(selector, {
-        accounts: [{ accountId: user.near.accountId, privateKey: activePair!.secretKey }],
+      const modal = setupExportSelectorModal(await accounts.selector, {
+        accounts: [{ accountId: user.near.accountId, privateKey: activePair!.toString() }],
         onComplete: () => onClose(),
       });
 
@@ -66,6 +56,12 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
     }
   };
 
+  useEffect(() => {
+    if (!user || !isOpen) return;
+    const cred = storage.getAccount(user.id);
+    if (cred?.privateKey) makeExport(KeyPair.fromString(cred.privateKey));
+  }, [user, isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -74,16 +70,12 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
       <S.ModalContent>
         <H2>Export wallet</H2>
         <Text style={{ textAlign: "center" }}>
-          To transfer your account to another wallet, first create a new full access key, and then select the wallet
-          where you want to export the new key. Follow the instructions, it's simple and safe!
+          To transfer your account to another wallet, first create a new full access key, and then select the wallet where you want to export the new key. Follow the instructions, it's simple and
+          safe!
         </Text>
 
-        <ActionButton style={{ marginTop: 32, maxWidth: 300 }} onClick={makeExport} disabled={isLoading}>
-          {isLoading ? (
-            <ActivityIndicator style={{ transform: "scale(0.5)" }} width={5} />
-          ) : (
-            <>{pair ? "Export key" : "Create new key"}</>
-          )}
+        <ActionButton style={{ marginTop: 32, maxWidth: 300 }} onClick={() => makeExport()} disabled={isLoading}>
+          {isLoading ? <ActivityIndicator style={{ transform: "scale(0.5)" }} width={5} /> : <>{pair ? "Export key" : "Create new key"}</>}
         </ActionButton>
       </S.ModalContent>
     </S.ModalWrap>

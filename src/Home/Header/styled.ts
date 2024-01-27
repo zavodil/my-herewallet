@@ -19,6 +19,8 @@ export const Header = styled.header`
   }
 
   .header-left {
+    display: flex;
+    align-items: center;
     position: absolute;
     left: 120px;
   }
@@ -33,6 +35,23 @@ export const Header = styled.header`
     .header-right {
       right: 32px;
     }
+  }
+`;
+
+export const FollowTwitterLink = styled.a`
+  text-decoration: none;
+  background-color: rgba(29, 155, 240, 0.1);
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transform: scale(0.8);
+  gap: 8px;
+  transition: 0.2s transform;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(0.9);
   }
 `;
 
@@ -92,6 +111,7 @@ export const AccountButton = styled(Button)`
   align-items: center;
   width: 248px;
   padding: 8px;
+  gap: 8px;
 
   &:hover {
     opacity: 1;

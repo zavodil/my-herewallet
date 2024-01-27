@@ -50,17 +50,14 @@ const Settings = () => {
         <Menu>
           {!isTgMobile() && (
             <Button $active={location.pathname === "/settings/general"} onClick={() => navigate("/settings/general")}>
-              <Icon name="user" />
+              <Icon style={{ width: 24, height: 24 }} name="user" />
               <Text>General</Text>
             </Button>
           )}
 
           {user.type === ConnectType.Web && (
             <>
-              <Button
-                $active={location.pathname === "/settings/passphrase"}
-                onClick={() => navigate("/settings/passphrase")}
-              >
+              <Button $active={location.pathname === "/settings/passphrase"} onClick={() => navigate("/settings/passphrase")}>
                 <Icon name="document" />
                 <Text>Seed phrase</Text>
               </Button>
@@ -75,7 +72,7 @@ const Settings = () => {
           )}
 
           <Button $active={location.pathname === "/settings/support"} onClick={() => navigate("/settings/support")}>
-            <Icon style={{ background: "#95A7E833" }} name="support" />
+            <Icon style={{ background: "#95A7E833", borderRadius: 8 }} name="support" />
             <Text>Contact support</Text>
           </Button>
         </Menu>
@@ -91,11 +88,7 @@ const Settings = () => {
                 element={
                   <Card style={{ gridArea: "content", gap: 40, height: "fit-content" }}>
                     <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
-                      <AvatarImage
-                        as={avatar ? "img" : "div"}
-                        src={avatar}
-                        style={{ flexShrink: 0, width: 80, height: 80, borderRadius: 16 }}
-                      />
+                      <AvatarImage as={avatar ? "img" : "div"} src={avatar} style={{ flexShrink: 0, width: 80, height: 80, borderRadius: 16 }} />
 
                       <div
                         style={{
@@ -165,9 +158,7 @@ const Settings = () => {
                   }}
                 >
                   <Icon style={{ flexShrink: 0 }} name="warning" />
-                  <Text style={{ color: "#DB8520" }}>
-                    Do not share your passphrase or private key with anyone, even with us!
-                  </Text>
+                  <Text style={{ color: "#DB8520" }}>Do not share your passphrase or private key with anyone, even with us!</Text>
                 </div>
 
                 <div>
@@ -182,9 +173,7 @@ const Settings = () => {
                       <Icon name="copy" />
                     </Button>
                   </div>
-                  <SensitiveCard style={{ maxWidth: 460, width: "100%", lineBreak: "anywhere" }}>
-                    {storage.getAccount(user.id)?.privateKey}
-                  </SensitiveCard>
+                  <SensitiveCard style={{ maxWidth: 460, width: "100%", lineBreak: "anywhere" }}>{storage.getAccount(user.id)?.privateKey}</SensitiveCard>
                 </div>
 
                 {!!storage.getAccount(user.id)?.seed && (
@@ -218,17 +207,11 @@ const Settings = () => {
                 </div>
 
                 <div style={{ display: "flex", gap: 16 }}>
-                  <ActionButton
-                    style={{ flex: 1 }}
-                    onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/heresupport")}
-                  >
+                  <ActionButton style={{ flex: 1 }} onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/heresupport")}>
                     Telegram
                   </ActionButton>
-                  <ActionButton
-                    style={{ flex: 1 }}
-                    onClick={() => window.Telegram.WebApp.openLink("https://discord.com/invite/8Q3gw3gsD2")}
-                  >
-                    Discord
+                  <ActionButton style={{ flex: 1 }} onClick={() => window.Telegram.WebApp.openLink("https://twitter.com/here_wallet")}>
+                    Twitter
                   </ActionButton>
                 </div>
               </Card>

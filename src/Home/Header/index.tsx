@@ -7,7 +7,7 @@ import { useAnalyticsTrack } from "../../core/analytics";
 import { accounts } from "../../core/Accounts";
 
 import { Button } from "../../uikit";
-import { H2 } from "../../uikit/typographic";
+import { BoldP, H2 } from "../../uikit/typographic";
 import { sheets } from "../../uikit/Popup";
 import Icon from "../../uikit/Icon";
 
@@ -49,9 +49,21 @@ const Header = observer(() => {
 
   return (
     <S.Header>
-      <Link to="/" className="header-left">
-        <img style={{ width: 165, height: 22, objectFit: "contain" }} src={hereWebLogo} />
-      </Link>
+      <div className="header-left">
+        <Link to="/">
+          <img style={{ width: 165, height: 22, objectFit: "contain" }} src={hereWebLogo} />
+        </Link>
+
+        <S.FollowTwitterLink
+          href="https://twitter.com/here_wallet"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none", backgroundColor: "rgba(29, 155, 240, 0.1)", padding: "6px 12px", borderRadius: 8, display: "flex", alignItems: "center", gap: 8 }}
+        >
+          <img style={{ objectFit: "contain", width: 24 }} src={require("../../assets/twitter-blue.svg")} />
+          <BoldP>Follow us</BoldP>
+        </S.FollowTwitterLink>
+      </div>
 
       {accounts.account != null && (
         <S.NavBar>
