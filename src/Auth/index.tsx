@@ -7,6 +7,8 @@ import { H1, H3, Text } from "../uikit/typographic";
 import { Card, IntroImage, Page, Root } from "./styled";
 import Header from "../Home/Header";
 import { colors } from "../uikit/theme";
+import { Button } from "../uikit";
+import { BoldP, H1, H3, LargeP, Text } from "../uikit/typographic";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -108,7 +110,25 @@ const Auth = () => {
             )}
           </div> */}
         </div>
+        
       </Page>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          flex: 1,
+          gap: 56,
+          padding: 56,
+        }}
+      >
+      <Button style={{ marginTop: "auto" }} onClick={() => window.open("https://t.me/herewalletchat")}>
+          <BoldP>
+            Need help? <span style={{ textDecoration: "underline" }}>Contact support</span>
+          </BoldP>
+        </Button>
+        </div>
     </Root>
   );
 };
