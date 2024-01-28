@@ -34,6 +34,7 @@ import { useHOTVillage } from "./Home/HOT/useVillage";
 import Villages from "./Home/HOT/Villages";
 import { Root } from "./Home/styled";
 import { H2, H4 } from "./uikit";
+import HotGuard from "./Home/HOT/HotGuard";
 
 function App() {
   // useEffect(() => {
@@ -53,16 +54,6 @@ function App() {
   }, [accounts.account]);
 
   if (isTgMobile()) {
-    if (window.Telegram.WebApp.initDataUnsafe.start_param !== "beta") {
-      return (
-        <Root style={{ justifyContent: "center", textAlign: "center", alignItems: "center", padding: 24 }}>
-          <img style={{ width: 80 }} src={require("./assets/hot/hot.png")} />
-          <H2 style={{ marginTop: 16 }}>HOT Coin</H2>
-          <H4 style={{ marginTop: -4 }}>launches on January 31st.</H4>
-        </Root>
-      );
-    }
-
     return (
       <>
         <PopupsProvider />
@@ -76,12 +67,12 @@ function App() {
                 <Route path="/transfer/*" element={<Transfer />} />
                 <Route path="/apps/:id?" element={<Apps />} />
                 <Route path="/settings/*" element={<Settings />} />
-                <Route path="/hot/cave" element={<Boosters />} />
-                <Route path="/hot/band" element={<Band />} />
-                <Route path="/hot/gas" element={<Gas />} />
-                <Route path="/hot/onboard" element={<Onboard />} />
-                <Route path="/hot/villages" element={<Villages />} />
-                <Route path="/hot/*" element={<HOT />} />
+                <Route path="/hot/cave" element={<HotGuard Comp={Boosters} />} />
+                <Route path="/hot/band" element={<HotGuard Comp={Band} />} />
+                <Route path="/hot/gas" element={<HotGuard Comp={Gas} />} />
+                <Route path="/hot/onboard" element={<HotGuard Comp={Onboard} />} />
+                <Route path="/hot/villages" element={<HotGuard Comp={Villages} />} />
+                <Route path="/hot/*" element={<HotGuard Comp={HOT} />} />
               </>
             )}
 
