@@ -74,7 +74,7 @@ const fetchToken = async (token: string, accId?: string) => {
 };
 
 const here = new HereWallet({
-  nodeUrl: "https://rpc.herewallet.app",
+  nodeUrl: "https://rpc.mainnet.near.org",
 });
 
 export const InscriptionTokens = () => {

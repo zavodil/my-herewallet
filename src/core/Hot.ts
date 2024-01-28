@@ -143,7 +143,7 @@ class Hot {
   public userData = {
     user_id: 0,
     gas_free_transactions: 0,
-    near_rpc: "rpc.herewallet.app",
+    near_rpc: "rpc.mainnet.near.org",
     ft_contracts: [],
   };
 

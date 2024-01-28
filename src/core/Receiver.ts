@@ -40,7 +40,7 @@ export class ReceiverFetcher {
   //     }
   //   }
 
-  private provider = new JsonRpcProvider({ url: "https://rpc.herewallet.app" });
+  private provider = new JsonRpcProvider({ url: "https://rpc.mainnet.near.org" });
   private api = new HereApi();
 
   async getAvatar(id: string, type: ConnectType) {
