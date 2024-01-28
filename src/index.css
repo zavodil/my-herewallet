@@ -5,18 +5,20 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: var(--tg-viewport-height);
   overflow-x: hidden;
 }
 
 html {
-  background: var(--Elevation-1)
+  background: var(--Elevation-1);
+  height: var(--tg-viewport-height);
 }
 
 #root {
   width: 100vw;
-  height: var(--tg-viewport-height);
   position: relative;
   overflow-y: auto;
+  height: 100%;
 }
 
 * {

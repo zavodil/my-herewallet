@@ -55,7 +55,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
   if (isSuccess) {
     return (
-      <div style={{ height: "100%", padding: 24, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", gap: 8 }}>
+      <div style={{ height: "100%", minHeight: 450, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", gap: 8 }}>
         <img src={next.icon} style={{ height: 200, objectFit: "cover" }} />
 
         <H2 style={{ marginTop: 16 }}>{next.title}</H2>
