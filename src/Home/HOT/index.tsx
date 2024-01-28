@@ -18,8 +18,9 @@ import { colors } from "../../uikit/theme";
 
 import { runParticles, stopParticles } from "./effects/flame";
 import { FirstClaimHOT } from "./modals";
-import fitty from "./effects/fittext";
 import { formatAmount } from "../../core/helpers";
+import Balance from "./Balance";
+import Icon from "../../uikit/Icon";
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;
@@ -36,11 +37,8 @@ const HOT = () => {
   useEffect(() => {
     runParticles();
     sparksRef.current?.stop();
-    // @ts-ignore
-    const fits = fitty(".balance", { maxSize: 48 });
     return () => {
       stopParticles();
-      fits.forEach((w: any) => w.unsubscribe());
     };
   }, []);
 
@@ -75,7 +73,6 @@ const HOT = () => {
     }
   };
 
-  const [left, right] = user.hot.balance.toFixed(6).split(".");
   const isOverload = user.hot.miningProgress === 1;
 
   return (
@@ -89,7 +86,7 @@ const HOT = () => {
         <Container style={{ zIndex: 10, justifyContent: "space-between", height: "100%", paddingBottom: 32 }}>
           <div style={{ overflowX: "auto", width: "100vw", display: "flex", marginLeft: -16, padding: "0 16px", gap: 8 }}>
             {user.hot.village != null && (
-              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }}>
+              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
                 <TokenIcon src={user.hot.village?.avatar} />
                 <div>
                   <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
@@ -98,6 +95,20 @@ const HOT = () => {
                     <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
                   </div>
                 </div>
+
+                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
+              </Card>
+            )}
+
+            {user.hot.village == null && (
+              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
+                <TokenIcon src={require("../../assets/hot/fire/1.png")} />
+                <div>
+                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>Explore villages</SmallText>
+                  <TinyText>Join or create your own</TinyText>
+                </div>
+
+                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
               </Card>
             )}
           </div>
@@ -111,14 +122,7 @@ const HOT = () => {
             />
 
             <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your earnings</LargeP>
-            <div style={{ display: "flex", width: "80%", alignItems: "center", marginRight: -16, justifyContent: "center" }}>
-              <img style={{ width: 60, flexShrink: 0, maxWidth: "60px", height: "60px", objectFit: "contain", marginTop: -6, marginLeft: -32 }} src={require("../../assets/hot/hot.png")} />
-              <H0 style={{ fontFamily: "'SF Mono', sans-serif", fontWeight: "900" }} className="balance">
-                {left}
-                <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
-                {right}
-              </H0>
-            </div>
+            <Balance />
 
             <div style={{ background: colors.orange, opacity: isOverload ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
               <Text>+{user.hot.hotPerHour} per hour</Text>

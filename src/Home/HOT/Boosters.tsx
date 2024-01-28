@@ -5,7 +5,7 @@ import { notify } from "../../core/toast";
 import { useWallet } from "../../core/Accounts";
 import { formatAmount } from "../../core/helpers";
 import { ActionButton, ActivityIndicator, Button } from "../../uikit";
-import { BoldP, H1, H2, LargeP, SmallText, Text } from "../../uikit/typographic";
+import { BoldP, H2, LargeP, SmallText, Text } from "../../uikit/typographic";
 import { useNavigateBack } from "../../useNavigateBack";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
@@ -13,6 +13,8 @@ import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
 import { ClaimingLoading } from "./modals";
+import Balance from "./Balance";
+import BlurBackground from "./effects/BlurBackground";
 
 const BoostPopup = observer(({ id }: { id: number }) => {
   const user = useWallet()!;
@@ -179,48 +181,14 @@ const Boosters = () => {
 
   return (
     <Root>
-      <div
-        style={{
-          zIndex: 1,
-          borderRadius: "50%",
-          width: "100vw",
-          height: 788,
-          opacity: 0.5,
-          background: "#FDBF1C",
-          filter: "blur(200px)",
-          position: "fixed",
-          left: "-50vw",
-          marginLeft: "50%",
-          bottom: -788 / 2,
-        }}
-      />
-
-      <div
-        style={{
-          zIndex: 1,
-          borderRadius: "50%",
-          width: "100vw",
-          height: 582,
-          opacity: 0.5,
-          background: "#FD6D1C",
-          filter: "blur(150px)",
-          position: "fixed",
-          left: "-50vw",
-          marginLeft: "50%",
-          bottom: -582 / 2,
-        }}
-      />
-
+      <BlurBackground />
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
 
       <Container style={{ zIndex: 10 }}>
         <div>
           <div style={{ display: "flex", padding: "36px 0", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            <Text style={{ color: colors.blackSecondary }}>Your balance</Text>
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8 }}>
-              <img style={{ width: 40, height: 40, marginTop: -2, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />
-              <H1 style={{ fontFamily: "SF Mono" }}>{Math.max(0, user.hot.balance)}</H1>
-            </div>
+            <Text style={{ color: colors.blackSecondary, marginBottom: -16 }}>Your balance</Text>
+            <Balance />
 
             <Button style={{ marginTop: 4 }}>
               <BoldP style={{ color: "#0258F7" }}>How cave works</BoldP>

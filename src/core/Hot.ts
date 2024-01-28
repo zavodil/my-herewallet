@@ -29,6 +29,13 @@ export interface HotState {
   boost: number;
 }
 
+export interface HotVillage {
+  name: string;
+  avatar: string;
+  hot_balance: number;
+  total_members: number;
+}
+
 const boosters = [
   {
     id: 20,
@@ -149,6 +156,7 @@ class Hot {
 
   public needRegister = false;
   public village: { name: string; avatar: string; hot_balance: number } | null = null;
+  public villages: HotVillage[] = [];
 
   public levels = [
     { id: 0, hot_price: 0, value: "0" },
@@ -176,6 +184,7 @@ class Hot {
       missions: observable,
       levels: observable,
       village: observable,
+      villages: observable,
       balance: computed,
       miningProgress: computed,
       remainingMiningHours: computed,
@@ -203,6 +212,14 @@ class Hot {
         this.fetchReferrals();
       });
     });
+
+    this.refreshOnchain();
+  }
+
+  async refreshOnchain() {
+    await wait(5000);
+    await Promise.allSettled([this.fetchLevels(), this.fetchBalance(), this.updateStatus()]);
+    this.refreshOnchain();
   }
 
   cacheData() {
@@ -321,6 +338,12 @@ class Hot {
     await this.fetchMissions();
   }
 
+  async fetchVillages() {
+    const resp = await this.account.api.request("/api/v1/user/hot/villages/top");
+    const { villages } = await resp.json();
+    runInAction(() => (this.villages = villages));
+  }
+
   async fetchMissions() {
     const resp = await this.account.api.request("/api/v1/user/hot/missions");
     const data = await resp.json();
@@ -348,6 +371,7 @@ class Hot {
 
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
+    console.log(state);
     if (state == null) {
       runInAction(() => (this.needRegister = true));
       throw Error();
@@ -447,8 +471,7 @@ class Hot {
   }
 
   get intBalance() {
-    const tokens = this.account.tokens;
-    return new BN(tokens.token(tokens.nearChain, "HOT")?.amount || 0);
+    return new BN(parseAmount(this.balance, 6));
   }
 
   get miningProgress() {
