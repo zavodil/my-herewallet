@@ -125,7 +125,7 @@ const Auth = () => {
       >
       <Button style={{ marginTop: "auto" }} onClick={() => window.open("https://t.me/herewalletchat")}>
           <BoldP>
-            Need help? <span style={{ textDecoration: "underline" }}>Contact support</span>
+            To claim Meta-NEAR NFT create account<br/>with Metamask and <span style={{ textDecoration: "underline" }}>Follow HERE</span>
           </BoldP>
         </Button>
         </div>
