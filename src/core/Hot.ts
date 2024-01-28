@@ -198,9 +198,10 @@ class Hot {
 
     this.fetchLevels();
     this.updateStatus().then(() => {
-      this.getUserData();
-      this.fetchMissions();
-      this.fetchReferrals();
+      this.getUserData().then(() => {
+        this.fetchMissions();
+        this.fetchReferrals();
+      });
     });
   }
 
