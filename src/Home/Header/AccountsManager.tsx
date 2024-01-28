@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
 
@@ -254,7 +253,7 @@ const AccountManager = observer((props: Props) => {
         </S.AccountMenu>
       )}
 
-      <ExportAccountWidget onClose={() => setToggleExport(false)} isOpen={isExportOpen} />
+      {isExportOpen && <ExportAccountWidget onClose={() => setToggleExport(false)} />}
     </div>
   );
 });

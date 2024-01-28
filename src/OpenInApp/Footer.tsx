@@ -40,11 +40,6 @@ const Footer = () => {
 
       <S.Appstore>
         <Buttons />
-
-        <p>
-          Don’t have an account yet? Visit&nbsp;
-          <a href="https://herewallet.app">herewallet.app</a>
-        </p>
       </S.Appstore>
 
       <img src={rockImage} alt="rock" />

@@ -114,6 +114,11 @@ class SecureStorage {
     this.storage.setItem("storage", encryptText(JSON.stringify(data), pwd));
   }
 
+  updateAccount(data: UserCred) {
+    const salt = crypto.createHash("sha256").update(data.accountId).digest().toString("hex");
+    this.storage.setItem(data.accountId, encryptText(JSON.stringify(data), pwd + salt));
+  }
+
   addAccount(data: UserCred) {
     const salt = crypto.createHash("sha256").update(data.accountId).digest().toString("hex");
     this.storage.setItem(data.accountId, encryptText(JSON.stringify(data), pwd + salt));

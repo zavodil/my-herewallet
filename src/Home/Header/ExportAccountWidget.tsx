@@ -1,53 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { setupExportSelectorModal } from "@near-wallet-selector/account-export";
 import { KeyPair, KeyPairEd25519 } from "near-api-js/lib/utils";
 
 import "@near-wallet-selector/modal-ui/styles.css";
 import "@near-wallet-selector/account-export/styles.css";
 
-import { accounts, useWallet } from "../../core/Accounts";
-import { ActionButton, ActivityIndicator, H2, Text } from "../../uikit";
-import { notify } from "../../core/toast";
+import Footer from "../../OpenInApp/Footer";
+import { SensitiveCard } from "../../Settings/styled";
+
+import { generateSeedPhrase } from "../../core/near-chain/passphrase";
+import { ActionButton, ActivityIndicator, Button, H2, H3, Text } from "../../uikit";
+import { useWallet } from "../../core/Accounts";
 import { storage } from "../../core/Storage";
+import { notify } from "../../core/toast";
+import { colors } from "../../uikit/theme";
+import Icon from "../../uikit/Icon";
 import * as S from "./styled";
 
-export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+export const ExportAccountWidget = ({ onClose }: { onClose: () => void }) => {
   const user = useWallet();
 
   const [isLoading, setLoading] = useState(false);
   const [pair, setPair] = useState<KeyPair>();
+  const [seed, setSeed] = useState<string>();
 
-  const makeExport = async (selectedPair?: KeyPair) => {
+  const extractKey = async () => {
     try {
       if (!user || isLoading) return;
-      setLoading(true);
-
-      let activePair = selectedPair || pair;
-      if (activePair == null) {
-        activePair = KeyPairEd25519.fromRandom();
-        await user.near.callTransaction({
-          receiverId: user.near.accountId,
-          actions: [
-            {
-              type: "AddKey",
-              params: {
-                publicKey: activePair.getPublicKey().toString(),
-                accessKey: { permission: "FullAccess" },
-              },
-            },
-          ],
-        });
-
-        setPair(activePair);
+      let cred = storage.getAccount(user.id);
+      if (cred?.privateKey) {
+        setPair(KeyPair.fromString(cred.privateKey));
+        setSeed(cred.seed);
+        return;
       }
 
-      const modal = setupExportSelectorModal(await accounts.selector, {
-        accounts: [{ accountId: user.near.accountId, privateKey: activePair!.toString() }],
-        onComplete: () => onClose(),
+      setLoading(true);
+      const { secretKey, seedPhrase, publicKey } = generateSeedPhrase();
+      const activePair = KeyPairEd25519.fromRandom();
+      await user.near.callTransaction({
+        receiverId: user.near.accountId,
+        actions: [
+          {
+            type: "AddKey",
+            params: {
+              publicKey: publicKey,
+              accessKey: { permission: "FullAccess" },
+            },
+          },
+        ],
       });
 
-      modal.show();
-      onClose();
+      cred = storage.getAccount(user.id)!;
+      cred.privateKey = secretKey;
+      cred.seed = seedPhrase;
+      storage.updateAccount(cred);
+
+      setSeed(seedPhrase);
+      setPair(activePair);
       setLoading(false);
     } catch (e) {
       console.log(e);
@@ -57,12 +65,65 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
   };
 
   useEffect(() => {
-    if (!user || !isOpen) return;
+    if (!user) return;
     const cred = storage.getAccount(user.id);
-    if (cred?.privateKey) makeExport(KeyPair.fromString(cred.privateKey));
-  }, [user, isOpen]);
+    if (cred?.privateKey) setPair(KeyPair.fromString(cred.privateKey));
+    setSeed(cred?.seed);
+  }, [user]);
 
-  if (!isOpen) return null;
+  if (pair || seed) {
+    return (
+      <S.ModalWrap>
+        <S.ModalOverlay onClick={onClose} />
+        <S.ModalContent style={{ padding: 0, maxWidth: 800 }}>
+          <div style={{ padding: "52px 24px 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ textAlign: "center", padding: "0 64px" }}>
+              <H2>Import to HERE Wallet</H2>
+              <Text style={{ marginTop: 8, color: colors.blackSecondary }}>
+                Download HERE Wallet from App Store or Google play and import your seedphrase. <b>Do not share your passphrase or private key with anyone, even with us!</b>
+              </Text>
+            </div>
+
+            <div style={{ margin: "42px" }}>
+              {seed ? (
+                <div style={{ width: 400, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <H3>Seedphrase</H3>
+                    <Button
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(seed!);
+                        notify("Passphrase has beed copied");
+                      }}
+                    >
+                      <Icon name="copy" />
+                    </Button>
+                  </div>
+                  <SensitiveCard style={{ width: "100%", maxWidth: 400 }}>{seed}</SensitiveCard>
+                </div>
+              ) : (
+                <div style={{ width: 400, textAlign: "center" }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <H3>Private key</H3>
+                    <Button
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(pair?.toString()!);
+                        notify("Private key has beed copied");
+                      }}
+                    >
+                      <Icon name="copy" />
+                    </Button>
+                  </div>
+                  <SensitiveCard style={{ width: "100%", maxWidth: 400 }}>{pair?.toString()}</SensitiveCard>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Footer />
+        </S.ModalContent>
+      </S.ModalWrap>
+    );
+  }
 
   return (
     <S.ModalWrap>
@@ -74,7 +135,7 @@ export const ExportAccountWidget = ({ isOpen, onClose }: { isOpen: boolean; onCl
           safe!
         </Text>
 
-        <ActionButton style={{ marginTop: 32, maxWidth: 300 }} onClick={() => makeExport()} disabled={isLoading}>
+        <ActionButton style={{ marginTop: 32, maxWidth: 300 }} onClick={() => extractKey()} disabled={isLoading}>
           {isLoading ? <ActivityIndicator style={{ transform: "scale(0.5)" }} width={5} /> : <>{pair ? "Export key" : "Create new key"}</>}
         </ActionButton>
       </S.ModalContent>

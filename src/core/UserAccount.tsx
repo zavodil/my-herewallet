@@ -85,7 +85,7 @@ class UserAccount {
       }
     }
 
-    if (creds.privateKey) {
+    if (creds.type === ConnectType.Web) {
       const keyPair = KeyPair.fromString(creds.privateKey!);
       const keyStore = new InMemoryKeyStore();
       keyStore.setKey(NETWORK, creds.accountId, keyPair);
@@ -104,18 +104,14 @@ class UserAccount {
     this.loadRecentlyApps().catch(() => {});
     this.fetchUser().catch(() => {});
 
-    if (this.type === ConnectType.Snap) {
+    wait(100).then(async () => {
+      if (this.near.type !== ConnectType.Snap) return;
+
       this.near.viewMethod("metamask-nft.near", "nft_tokens_for_owner", { account_id: this.near.accountId }).then((data) => {
         if (data?.length > 0 || this.localStorage.get("metamask_nft_reserved")) return;
         if (!creds.jwt || parseJwt(creds.jwt).timestamp > 1706443363) return;
-        runInAction(() => {
-          this.metamaskNftCanReserve = true;
-        });
+        runInAction(() => (this.metamaskNftCanReserve = true));
       });
-    }
-
-    wait(100).then(async () => {
-      if (this.near.type !== ConnectType.Snap) return;
 
       const status = await accounts.snap.getStatus();
       if (status !== NearSnapStatus.INSTALLED) await accounts.snap.install();

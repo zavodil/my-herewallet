@@ -23,12 +23,7 @@ export class TokensStorage {
       stats: computed,
     });
 
-    this.tokens = user.localStorage.get(
-      "tokens:cache2",
-      user.isProduction
-        ? { [defaults.near.id]: createToken(defaults.near) }
-        : { [defaults.testnetNear.id]: createToken(defaults.testnetNear) }
-    );
+    this.tokens = user.localStorage.get("tokens:cache2", user.isProduction ? { [defaults.near.id]: createToken(defaults.near) } : { [defaults.testnetNear.id]: createToken(defaults.testnetNear) });
 
     const defaultsTokens = ["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", "game.hot-token.near"];
     this.updateNative();
@@ -76,6 +71,7 @@ export class TokensStorage {
             }
           }
 
+          delete this.tokens[ft(Chain.NEAR, "USDt")];
           this.cacheTokens();
         })
       );

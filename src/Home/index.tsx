@@ -11,14 +11,15 @@ import Icon from "../uikit/Icon";
 
 import { useWallet } from "../core/Accounts";
 import { Formatter, truncateAddress } from "../core/helpers";
+import { HereError } from "../core/network/types";
+import { notify } from "../core/toast";
 import { isTgMobile } from "../Mobile";
 
+import Widgets from "./HOT/Widgets";
+import ExportBanner from "./ExportBanner";
 import { Root, Container, Card, TokenCard, Tabs, Tab, TokensRow, TokenIcon, TokenAction, NftCard, NftsGrid, RightContainer, AppIcon, RecentlyApp } from "./styled";
 import { Transaction } from "./Transactions";
 import Header from "./Header";
-import { notify } from "../core/toast";
-import Widgets from "./HOT/Widgets";
-import { HereError } from "../core/network/types";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
 
@@ -37,6 +38,18 @@ const Home = () => {
     setNftsLoading(true);
     await account.fetchNfts().catch(() => {});
     setNftsLoading(false);
+  };
+
+  const claimMetaNft = async () => {
+    try {
+      setReserving(true);
+      await account.reserveMetaNft();
+      notify("Nft has been claimed. This will appear some time after the page is reloaded.");
+      setReserving(false);
+    } catch (e) {
+      setReserving(false);
+      notify(e instanceof HereError ? e.body : e?.toString?.() || "");
+    }
   };
 
   return (
@@ -137,6 +150,8 @@ const Home = () => {
             </div>
           )}
 
+          <ExportBanner />
+
           {!isTgMobile() && (
             <Card>
               <H3>Portfolio</H3>
@@ -209,21 +224,7 @@ const Home = () => {
                   {account.metamaskNftCanReserve && (
                     <div style={{ width: "100%", maxWidth: 400, border: "1px solid var(--Stroke)", marginBottom: 24, marginTop: 16, padding: 16, borderRadius: 16 }}>
                       <Text>Claim Meta-NFT if you didn't get it due to .near address allocation issues</Text>
-                      <ActionButton
-                        style={{ marginTop: 16, width: "100%" }}
-                        disabled={isReserving}
-                        onClick={async () => {
-                          try {
-                            setReserving(true);
-                            await account.reserveMetaNft();
-                            notify("Nft has been claimed. This will appear some time after the page is reloaded.");
-                            setReserving(false);
-                          } catch (e) {
-                            setReserving(false);
-                            notify(e instanceof HereError ? e.body : e?.toString?.() || "");
-                          }
-                        }}
-                      >
+                      <ActionButton style={{ marginTop: 16, width: "100%" }} disabled={isReserving} onClick={claimMetaNft}>
                         Claim Meta-NFT
                       </ActionButton>
                     </div>
