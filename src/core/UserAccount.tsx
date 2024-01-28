@@ -130,7 +130,7 @@ class UserAccount {
   }
 
   async reserveMetaNft() {
-    await this.api.request("/api/v1/user/meta-nft/recover");
+    await this.api.request("/api/v1/user/meta-nft/recover", { method: "POST" });
     runInAction(() => {
       this.localStorage.set("metamask_nft_reserved", true);
       this.metamaskNftCanReserve = false;
