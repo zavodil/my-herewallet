@@ -12,6 +12,8 @@ import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
 import MyAddress from "../MyAddress";
+import BlurBackground from "./effects/BlurBackground";
+import { observer } from "mobx-react-lite";
 
 const Gas = () => {
   useNavigateBack();
@@ -46,38 +48,7 @@ const Gas = () => {
 
   return (
     <Root>
-      <div
-        style={{
-          zIndex: 1,
-          borderRadius: "50%",
-          width: "100vw",
-          height: 788,
-          opacity: 0.5,
-          background: "#FDBF1C",
-          filter: "blur(200px)",
-          position: "fixed",
-          left: "-50vw",
-          marginLeft: "50%",
-          bottom: -788 / 2,
-        }}
-      />
-
-      <div
-        style={{
-          zIndex: 1,
-          borderRadius: "50%",
-          width: "100vw",
-          height: 582,
-          opacity: 0.5,
-          background: "#FD6D1C",
-          filter: "blur(150px)",
-          position: "fixed",
-          left: "-50vw",
-          marginLeft: "50%",
-          bottom: -582 / 2,
-        }}
-      />
-
+      <BlurBackground />
       <img src={require("../../assets/hot/stars.png")} style={{ position: "fixed", top: 56, width: "100vw" }} />
 
       <Container style={{ zIndex: 10 }}>
@@ -185,4 +156,4 @@ const Options = styled.div`
   gap: 24px;
 `;
 
-export default Gas;
+export default observer(Gas);

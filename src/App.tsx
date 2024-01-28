@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-// @ts-ignore
-import * as bodyScrollLock from "body-scroll-lock";
 
 import { Staking } from "./Staking";
 import { accounts } from "./core/Accounts";
@@ -33,6 +31,9 @@ import { NeedMoreGas } from "./Home/NeedGas";
 import Onboard from "./Home/HOT/Onboard";
 import { GAME_ID } from "./core/Hot";
 import { useHOTVillage } from "./Home/HOT/useVillage";
+import Villages from "./Home/HOT/Villages";
+import { Root } from "./Home/styled";
+import { H2, H4 } from "./uikit";
 
 function App() {
   // useEffect(() => {
@@ -52,6 +53,16 @@ function App() {
   }, [accounts.account]);
 
   if (isTgMobile()) {
+    if (window.Telegram.WebApp.initDataUnsafe.start_param !== "beta") {
+      return (
+        <Root style={{ justifyContent: "center", textAlign: "center", alignItems: "center", padding: 24 }}>
+          <img style={{ width: 80 }} src={require("./assets/hot/hot.png")} />
+          <H2 style={{ marginTop: 16 }}>HOT Coin</H2>
+          <H4 style={{ marginTop: -4 }}>launches on January 31st.</H4>
+        </Root>
+      );
+    }
+
     return (
       <>
         <PopupsProvider />
@@ -69,6 +80,7 @@ function App() {
                 <Route path="/hot/band" element={<Band />} />
                 <Route path="/hot/gas" element={<Gas />} />
                 <Route path="/hot/onboard" element={<Onboard />} />
+                <Route path="/hot/villages" element={<Villages />} />
                 <Route path="/hot/*" element={<HOT />} />
               </>
             )}
