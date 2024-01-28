@@ -55,20 +55,11 @@ const Settings = () => {
             </Button>
           )}
 
-          {user.type === ConnectType.Web && (
-            <>
-              <Button $active={location.pathname === "/settings/passphrase"} onClick={() => navigate("/settings/passphrase")}>
-                <Icon name="document" />
-                <Text>Seed phrase</Text>
-              </Button>
-              {/* <Button
-                $active={location.pathname === "/settings/password"}
-                onClick={() => navigate("/settings/password")}
-              >
-                <Icon name="key" />
-                <Text>Password</Text>
-              </Button> */}
-            </>
+          {!!storage.getAccount(user.id)?.privateKey && (
+            <Button $active={location.pathname === "/settings/passphrase"} onClick={() => navigate("/settings/passphrase")}>
+              <Icon name="document" />
+              <Text>Seed phrase</Text>
+            </Button>
           )}
 
           <Button $active={location.pathname === "/settings/support"} onClick={() => navigate("/settings/support")}>
