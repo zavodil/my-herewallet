@@ -6,7 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: var(--tg-viewport-height);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 html {
@@ -16,9 +16,10 @@ html {
 
 #root {
   width: 100vw;
-  position: relative;
+  position: fixed;
   overflow-y: auto;
-  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  height: var(--tg-viewport-height);
 }
 
 * {
