@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import introImage from "../assets/intro.png";
-import { H1, H3, Text } from "../uikit/typographic";
+import { H1, H3, Text, BoldP } from "../uikit/typographic";
 import { Card, IntroImage, Page, Root } from "./styled";
 import Header from "../Home/Header";
 import { colors } from "../uikit/theme";
 import { Button } from "../uikit";
-import { BoldP, H1, H3, LargeP, Text } from "../uikit/typographic";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -25,34 +24,16 @@ const Auth = () => {
         <div style={{ width: 488 }}>
           <H1>Add your first account!</H1>
 
-          <Card
-            style={{ marginTop: 32, height: 190, gap: 16, padding: "24px 28px", position: "relative" }}
-            onClick={() => navigate("/auth/create")}
-          >
+          <Card style={{ marginTop: 32, height: 190, gap: 16, padding: "24px 28px", position: "relative" }} onClick={() => navigate("/auth/create")}>
             <H3>I want to create an account</H3>
             <Text style={{ marginTop: "auto", color: colors.blackSecondary }}>Create a new HERE Account</Text>
-            <img
-              width={273}
-              height={183}
-              style={{ objectFit: "contain", position: "absolute", right: -8, bottom: 0 }}
-              src={require("../assets/here-create.png")}
-            />
+            <img width={273} height={183} style={{ objectFit: "contain", position: "absolute", right: -8, bottom: 0 }} src={require("../assets/here-create.png")} />
           </Card>
 
-          <Card
-            style={{ marginTop: 12, height: 190, gap: 16, padding: "24px 28px" }}
-            onClick={() => navigate("/auth/import")}
-          >
+          <Card style={{ marginTop: 12, height: 190, gap: 16, padding: "24px 28px" }} onClick={() => navigate("/auth/import")}>
             <H3>I already have an account</H3>
-            <img
-              width={152}
-              height={32}
-              style={{ objectFit: "contain" }}
-              src={require("../assets/import-wallets.png")}
-            />
-            <Text style={{ color: colors.blackSecondary }}>
-              Import an existing account with Wallet selector, Metamask, HERE Account or backup
-            </Text>
+            <img width={152} height={32} style={{ objectFit: "contain" }} src={require("../assets/import-wallets.png")} />
+            <Text style={{ color: colors.blackSecondary }}>Import an existing account with Wallet selector, Metamask, HERE Account or backup</Text>
           </Card>
 
           {/* <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -110,7 +91,6 @@ const Auth = () => {
             )}
           </div> */}
         </div>
-        
       </Page>
       <div
         style={{
@@ -123,12 +103,10 @@ const Auth = () => {
           padding: 56,
         }}
       >
-      <Button style={{ marginTop: "auto" }} onClick={() => window.open("https://t.me/herewalletchat")}>
-          <BoldP>
-            To claim Meta-NEAR NFT create account<br/>with Metamask and <span style={{ textDecoration: "underline" }}>send wallet address to chat</span>
-          </BoldP>
+        <Button style={{ marginTop: "auto" }} onClick={() => window.open("https://t.me/herewalletchat")}>
+          <BoldP>Mint is over. Meta-NEAR NFT: 20000/20000</BoldP>
         </Button>
-        </div>
+      </div>
     </Root>
   );
 };
