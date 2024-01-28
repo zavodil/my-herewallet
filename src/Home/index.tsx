@@ -27,6 +27,7 @@ const Home = () => {
   const [showAll, setShowAll] = useState(false);
   const [showTokens, toggleTokens] = useState(true);
   const [isNftsLoading, setNftsLoading] = useState(false);
+  const [isReserving, setReserving] = useState(false);
 
   const selectNfts = async () => {
     toggleTokens(false);
@@ -203,21 +204,46 @@ const Home = () => {
               )}
 
               {!showTokens && (
-                <NftsGrid style={{ display: "block" }}>
-                  {Object.values(groupBy(account.nfts, (t) => t.collection_name)).map((group) => (
-                    <div style={{ marginTop: 24 }}>
-                      <BoldP style={{ width: "100%" }}> {group[0].collection_name}</BoldP>
-                      <NftsGrid style={{ marginTop: 18 }}>
-                        {group.map((nft) => (
-                          <a style={{ textDecoration: "none", overflow: "hidden" }} rel="noopener noreferrer" href={`https://www.tradeport.xyz/near/collection/${nft.contract_id}`} target="_blank">
-                            <NftCard key={nft.nft_id} src={nft.media_url} />
-                            <BoldP style={{ marginTop: 4, textOverflow: "ellipsis", overflow: "hidden" }}>{nft.nft_title}</BoldP>
-                          </a>
-                        ))}
-                      </NftsGrid>
+                <div style={{ width: "100%" }}>
+                  {account.metamaskNftCanReserve && (
+                    <div style={{ width: "100%", maxWidth: 400, border: "1px solid var(--Stroke)", marginBottom: 24, marginTop: 16, padding: 16, borderRadius: 16 }}>
+                      <Text>Claim Meta-NFT if you didn't get it due to .near address allocation issues</Text>
+                      <ActionButton
+                        style={{ marginTop: 16, width: "100%" }}
+                        disabled={isReserving}
+                        onClick={async () => {
+                          try {
+                            setReserving(true);
+                            await account.reserveMetaNft();
+                            notify("Nft has been claimed. This will appear some time after the page is reloaded.");
+                            setReserving(false);
+                          } catch {
+                            notify("Claim failed, write to support please");
+                            setReserving(false);
+                          }
+                        }}
+                      >
+                        Claim Meta-NFT
+                      </ActionButton>
                     </div>
-                  ))}
-                </NftsGrid>
+                  )}
+
+                  <NftsGrid style={{ display: "block" }}>
+                    {Object.values(groupBy(account.nfts, (t) => t.collection_name)).map((group) => (
+                      <div style={{ marginTop: 24 }}>
+                        <BoldP style={{ width: "100%" }}> {group[0].collection_name}</BoldP>
+                        <NftsGrid style={{ marginTop: 18 }}>
+                          {group.map((nft) => (
+                            <a style={{ textDecoration: "none", overflow: "hidden" }} rel="noopener noreferrer" href={`https://www.tradeport.xyz/near/collection/${nft.contract_id}`} target="_blank">
+                              <NftCard key={nft.nft_id} src={nft.media_url} />
+                              <BoldP style={{ marginTop: 4, textOverflow: "ellipsis", overflow: "hidden" }}>{nft.nft_title}</BoldP>
+                            </a>
+                          ))}
+                        </NftsGrid>
+                      </div>
+                    ))}
+                  </NftsGrid>
+                </div>
               )}
             </Card>
           )}

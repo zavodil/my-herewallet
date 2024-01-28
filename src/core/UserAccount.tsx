@@ -20,6 +20,22 @@ import { Chain } from "./token/types";
 import { notify } from "./toast";
 import Hot from "./Hot";
 
+function parseJwt(token: string) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
 class UserAccount {
   readonly api: HereApi;
   readonly tokens: TokensStorage;
@@ -33,6 +49,7 @@ class UserAccount {
   readonly id: string;
 
   public nfts: NFTModel[] = [];
+  public metamaskNftCanReserve = false;
   public recentlyApps: RecentlyApps[] = [];
   public contacts: UserContact[] = [];
   public user: UserData = {
@@ -48,6 +65,7 @@ class UserAccount {
       nfts: observable,
       contacts: observable,
       recentlyApps: observable,
+      metamaskNftCanReserve: observable,
     });
 
     this.id = creds.accountId;
@@ -86,6 +104,16 @@ class UserAccount {
     this.loadRecentlyApps().catch(() => {});
     this.fetchUser().catch(() => {});
 
+    if (this.type === ConnectType.Snap) {
+      this.near.viewMethod("metamask-nft.near", "nft_tokens_for_owner", { account_id: this.near.accountId }).then((data) => {
+        if (data != null || this.localStorage.get("metamask_nft_reserved")) return;
+        if (!creds.jwt || parseJwt(creds.jwt).timestamp > 1706382923) return;
+        runInAction(() => {
+          this.metamaskNftCanReserve = true;
+        });
+      });
+    }
+
     wait(100).then(async () => {
       if (this.near.type !== ConnectType.Snap) return;
 
@@ -98,6 +126,14 @@ class UserAccount {
         accounts.disconnect(this.near.accountId);
         return;
       }
+    });
+  }
+
+  async reserveMetaNft() {
+    await this.api.request("/api/v1/user/meta-nft/recover");
+    runInAction(() => {
+      this.localStorage.set("metamask_nft_reserved", true);
+      this.metamaskNftCanReserve = false;
     });
   }
 
