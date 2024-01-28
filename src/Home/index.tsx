@@ -18,6 +18,7 @@ import { Transaction } from "./Transactions";
 import Header from "./Header";
 import { notify } from "../core/toast";
 import Widgets from "./HOT/Widgets";
+import { HereError } from "../core/network/types";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
 
@@ -217,9 +218,9 @@ const Home = () => {
                             await account.reserveMetaNft();
                             notify("Nft has been claimed. This will appear some time after the page is reloaded.");
                             setReserving(false);
-                          } catch {
-                            notify("Claim failed, write to support please");
+                          } catch (e) {
                             setReserving(false);
+                            notify(e instanceof HereError ? e.body : e?.toString?.() || "");
                           }
                         }}
                       >
