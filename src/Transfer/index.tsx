@@ -26,7 +26,7 @@ import { isTgMobile } from "../Mobile";
 import { useNavigateBack } from "../useNavigateBack";
 
 const Transfer = () => {
-  useNavigateBack();
+  useNavigateBack("/");
   const user = useWallet()!;
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -111,31 +111,15 @@ const Transfer = () => {
           <H4>Recipient</H4>
 
           <div style={{ position: "relative" }}>
-            <HereInput
-              label="Wallet address"
-              autoCapitalize="off"
-              autoCorrect="off"
-              autoComplete="off"
-              value={recipient}
-              onChange={(e) => setRecipient(e.target.value)}
-            />
+            <HereInput label="Wallet address" autoCapitalize="off" autoCorrect="off" autoComplete="off" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
 
-            {receiver.isLoading && (
-              <ActivityIndicator
-                width={6}
-                style={{ transform: "scale(0.4)", position: "absolute", top: -12, right: -8 }}
-              />
-            )}
+            {receiver.isLoading && <ActivityIndicator width={6} style={{ transform: "scale(0.4)", position: "absolute", top: -12, right: -8 }} />}
 
-            {receiver.avatar && (
-              <AvatarImage style={{ position: "absolute", top: 8, right: 12 }} src={receiver.avatar} />
-            )}
+            {receiver.avatar && <AvatarImage style={{ position: "absolute", top: 8, right: 12 }} src={receiver.avatar} />}
           </div>
 
           {!receiver.isLoading && receiver.input.length > 0 && (
-            <TinyText style={{ marginTop: -4, color: colors.red, fontWeight: "bold" }}>
-              {!receiver.isExist ? "This account is not exist" : receiver.validateError}
-            </TinyText>
+            <TinyText style={{ marginTop: -4, color: colors.red, fontWeight: "bold" }}>{!receiver.isExist ? "This account is not exist" : receiver.validateError}</TinyText>
           )}
         </Card>
 
@@ -155,9 +139,7 @@ const Transfer = () => {
                 </div>
 
                 <div style={{ marginLeft: "auto", textAlign: "right", marginTop: -4 }}>
-                  <SmallText style={{ fontWeight: 800, color: "var(--Black-Primary)" }}>
-                    {Formatter.usd(user.tokens.fiat(ft))}
-                  </SmallText>
+                  <SmallText style={{ fontWeight: 800, color: "var(--Black-Primary)" }}>{Formatter.usd(user.tokens.fiat(ft))}</SmallText>
                   <TinyText>
                     {ft.amountFloat} {ft.symbol}
                   </TinyText>
@@ -208,9 +190,7 @@ const Transfer = () => {
             <HereInput
               label="Amount"
               value={(isFiat ? "$" : "") + amount}
-              postfix={
-                isFiat ? `${tokenAmount} ${token?.symbol ?? ""}` : fiatAmount > 0 ? Formatter.usd(fiatAmount) : ""
-              }
+              postfix={isFiat ? `${tokenAmount} ${token?.symbol ?? ""}` : fiatAmount > 0 ? Formatter.usd(fiatAmount) : ""}
               onChange={(e) => setAmount(formatNumber(e.target.value))}
             />
 
@@ -219,31 +199,17 @@ const Transfer = () => {
             </InputButton>
 
             {user.tokens.fiat(token) > 0.01 && (
-              <InputButton
-                $active={isFiat}
-                style={{ position: "absolute", top: 10, right: 78 }}
-                onClick={() => setFiat((t) => !t)}
-              >
+              <InputButton $active={isFiat} style={{ position: "absolute", top: 10, right: 78 }} onClick={() => setFiat((t) => !t)}>
                 <SmallText>USD</SmallText>
               </InputButton>
             )}
           </div>
 
-          {isTooMuch && (
-            <TinyText style={{ marginTop: -4, fontWeight: "bold", color: colors.red }}>Not enough balance</TinyText>
-          )}
+          {isTooMuch && <TinyText style={{ marginTop: -4, fontWeight: "bold", color: colors.red }}>Not enough balance</TinyText>}
 
-          {!token && (
-            <TinyText style={{ marginTop: -4, fontWeight: "bold", color: colors.red }}>Please select asset</TinyText>
-          )}
+          {!token && <TinyText style={{ marginTop: -4, fontWeight: "bold", color: colors.red }}>Please select asset</TinyText>}
 
-          <HereInput
-            multiline
-            style={{ height: 100 }}
-            onChange={(e) => setComment(e.target.value)}
-            label="Note (optional)"
-            value={comment}
-          />
+          <HereInput multiline style={{ height: 100 }} onChange={(e) => setComment(e.target.value)} label="Note (optional)" value={comment} />
         </Card>
 
         {!isTgMobile() && (
@@ -252,10 +218,7 @@ const Transfer = () => {
 
             {user.contacts.map((item) => (
               <Button style={{ gap: 12 }} key={item.account_id} onClick={() => setRecipient(item.account_id)}>
-                <AvatarImage
-                  style={{ flexShrink: 0 }}
-                  src={item.avatar_url || `data:image/svg+xml;utf8,${generateFromString(item.account_id)}`}
-                />
+                <AvatarImage style={{ flexShrink: 0 }} src={item.avatar_url || `data:image/svg+xml;utf8,${generateFromString(item.account_id)}`} />
                 <Text>{truncateAddress(item.account_id)}</Text>
               </Button>
             ))}

@@ -14,7 +14,7 @@ html {
 
 #root {
   width: 100vw;
-  height: var(--tg-viewport-stable-height);
+  height: var(--tg-viewport-height);
   position: relative;
   overflow-y: auto;
 }

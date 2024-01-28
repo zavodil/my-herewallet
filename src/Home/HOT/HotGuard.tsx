@@ -2,8 +2,11 @@ import React from "react";
 import { Root } from "../styled";
 import { H2, H4 } from "../../uikit";
 import { isTgProd } from "../../Mobile";
+import { useNavigateBack } from "../../useNavigateBack";
 
 const HotGuard = ({ Comp }: { Comp: any }) => {
+  useNavigateBack();
+
   if (isTgProd()) {
     return (
       <Root style={{ justifyContent: "center", textAlign: "center", alignItems: "center", padding: 24 }}>
