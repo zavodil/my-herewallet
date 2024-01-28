@@ -107,7 +107,7 @@ class UserAccount {
     if (this.type === ConnectType.Snap) {
       this.near.viewMethod("metamask-nft.near", "nft_tokens_for_owner", { account_id: this.near.accountId }).then((data) => {
         if (data?.length > 0 || this.localStorage.get("metamask_nft_reserved")) return;
-        if (!creds.jwt || parseJwt(creds.jwt).timestamp > 1706382923) return;
+        if (!creds.jwt || parseJwt(creds.jwt).timestamp > 1706443363) return;
         runInAction(() => {
           this.metamaskNftCanReserve = true;
         });
@@ -130,7 +130,7 @@ class UserAccount {
   }
 
   async reserveMetaNft() {
-    await this.api.request("/api/v1/user/meta-nft/recover");
+    await this.api.request("/api/v1/user/meta-nft/recover", { method: "POST" });
     runInAction(() => {
       this.localStorage.set("metamask_nft_reserved", true);
       this.metamaskNftCanReserve = false;
