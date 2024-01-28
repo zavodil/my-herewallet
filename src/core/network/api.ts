@@ -1,11 +1,12 @@
 import uuid4 from "uuid4";
+import { PublicKey } from "near-api-js/lib/utils";
+
 import { AnalyticEvent } from "../analytics";
 import { Storage } from "../Storage";
 import { FtAsset, FtGroup } from "../token/types";
 import { TransactionModel } from "../transactions/types";
 import { AllocateUsername, NFTModel, RecentlyApps, RequestAccessToken } from "./types";
-import { PublicKey } from "near-api-js/lib/utils";
-import { isTgMobile } from "../../Mobile";
+import { isTgBeta, isTgMobile } from "../../Mobile";
 import { NETWORK } from "../constants";
 
 export class HereError extends Error {
@@ -25,7 +26,7 @@ export class NetworkError extends Error {
 export class HereApi {
   public readonly storage = new Storage("");
 
-  constructor(readonly jwt = "", readonly endpoint = "https://api.herewallet.app") {}
+  constructor(readonly jwt = "", readonly endpoint = isTgBeta() ? "https://dev.herewallet.app" : "https://api.herewallet.app") {}
 
   get deviceId() {
     const id = this.storage.get("_deviceid");

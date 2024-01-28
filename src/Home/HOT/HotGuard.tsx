@@ -1,9 +1,10 @@
 import React from "react";
 import { Root } from "../styled";
 import { H2, H4 } from "../../uikit";
+import { isTgProd } from "../../Mobile";
 
 const HotGuard = ({ Comp }: { Comp: any }) => {
-  if (window.Telegram.WebApp.initDataUnsafe.start_param !== "beta") {
+  if (isTgProd()) {
     return (
       <Root style={{ justifyContent: "center", textAlign: "center", alignItems: "center", padding: 24 }}>
         <img style={{ width: 80 }} src={require("../../assets/hot/hot.png")} />
