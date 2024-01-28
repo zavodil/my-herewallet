@@ -4,9 +4,11 @@ import { ActionButton, H3, Text } from "./uikit";
 import { Root } from "./Home/styled";
 import { colors } from "./uikit/theme";
 
-export const isTgMobile = () => {
+export const isTgMobile = (): boolean => isTgBeta() || isTgMobile();
+export const isTgProd = () => location.origin === "https://tgapp.herewallet.app";
+export const isTgBeta = () => {
   if (process.env.NODE_ENV === "development") return true;
-  return location.origin === "https://tgapp.herewallet.app";
+  return location.origin === "https://tgapp-dev.herewallet.app";
 };
 
 const Mobile = ({ Comp }: { Comp: any }) => {

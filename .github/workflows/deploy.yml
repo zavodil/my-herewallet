@@ -40,3 +40,4 @@ jobs:
           scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/web
           scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/my
           scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/tgapp
+          scp -o StrictHostKeyChecking=no -r ./dist/* fedor@web.herewallet.app:/var/www/here/tg_app_dev
