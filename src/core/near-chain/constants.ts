@@ -17,7 +17,7 @@ export const getNodeUrl = (network: string) => {
     case TESTNET:
       return "https://rpc.testnet.near.org";
     case MAINNET:
-      return "https://rpc.herewallet.app";
+      return "https://rpc.mainnet.near.org";
     default:
       return "https://rpc.mainnet.near.org";
   }
