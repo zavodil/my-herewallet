@@ -48,9 +48,6 @@ const HOT = () => {
   }, [user.hot.needRegister]);
 
   const claim = async (charge_gas_fee?: boolean) => {
-    sheets.present({ id: "NeedGas", element: <NeedMoreGas onSelectHot={() => {}} /> });
-    return;
-
     if (isClaiming) return;
     sheets.dismiss("NeedGas");
     window.Telegram.WebApp?.HapticFeedback?.impactOccurred?.("light");
