@@ -456,7 +456,7 @@ class Hot {
 
     if (booster.mission) {
       const body = JSON.stringify({ asset_id: id });
-      await this.account.api.request("/api/v1/user/hot/booster", { body, method: "POST" });
+      await this.account.api.request("/api/v1/user/hot/mission", { body, method: "POST" });
       await this.updateStatus();
       return;
     }
