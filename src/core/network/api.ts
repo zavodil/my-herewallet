@@ -26,7 +26,7 @@ export class NetworkError extends Error {
 export class HereApi {
   public readonly storage = new Storage("");
 
-  constructor(readonly jwt = "", readonly endpoint = isTgBeta() ? "https://dev.herewallet.app" : "https://api.herewallet.app") {}
+  constructor(readonly jwt = "", readonly endpoint = "https://api.herewallet.app") {}
 
   get deviceId() {
     const id = this.storage.get("_deviceid");
