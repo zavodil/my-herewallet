@@ -32,10 +32,9 @@ const BoostPopup = observer(({ id }: { id: number }) => {
       await user.hot.upgradeBooster(id + 1);
       setLoading(false);
       setSuccess(true);
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
       sheets.blocked("Boost", false);
-      notify("Upgrade failed");
+      notify(e?.message || e?.toString?.());
       setLoading(false);
     }
   };
