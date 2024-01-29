@@ -4,8 +4,8 @@ import { observer } from "mobx-react-lite";
 
 import introImage from "../assets/intro.png";
 import { BoldP, H1, LargeP } from "../uikit/typographic";
-import { IntroImage, Root } from "./styled";
 import { ActionButton, Button } from "../uikit";
+import { IntroImage, Root } from "./styled";
 
 const Auth = () => {
   const navigate = useNavigate();

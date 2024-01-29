@@ -68,7 +68,7 @@ class Currencies {
     return 2;
   }
 
-  private rpc = new JsonRpcProvider({ url: "https://rpc.herewallet.app" });
+  private rpc = new JsonRpcProvider({ url: "https://rpc.mainnet.near.org" });
   async updateNearGas() {
     const { gas_price } = await this.rpc.gasPrice(null);
     runInAction(() => {

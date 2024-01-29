@@ -76,6 +76,13 @@ export class HereApi {
     return nfts;
   }
 
+  public async allocateHotNickname(data: { telegram_data: string; public_key: string; near_account_id: string }) {
+    await this.request("/api/v1/user/hot/create_account", {
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+  }
+
   public async allocateNickname(data: AllocateUsername) {
     await this.request("/api/v1/user/create_near_username", {
       body: JSON.stringify(data),
