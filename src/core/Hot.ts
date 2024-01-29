@@ -148,10 +148,10 @@ class Hot {
   };
 
   public userData = {
-    user_id: 0,
     gas_free_transactions: 0,
     near_rpc: "rpc.mainnet.near.org",
     ft_contracts: [],
+    user_id: 0,
   };
 
   public needRegister = false;
@@ -204,8 +204,8 @@ class Hot {
     this.userData = cache.userData;
     this.missions = cache.missions;
     this.referrals = cache.referrals;
-    this.state = cache.state;
     this.village = cache.village;
+    this.state = cache.state;
 
     this.fetchLevels();
     this.refreshOnchain();
@@ -315,7 +315,7 @@ class Hot {
 
       case "deposit_1USDT": {
         await this.account.tokens.updateBalance(ft(Chain.NEAR, "USDT"));
-        if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 1) break;
+        if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 0.95) break;
         throw Error("Your USDT balance has not yet updated.");
       }
 
@@ -400,6 +400,11 @@ class Hot {
       amount: formatAmount(this.earned, 6).toString(),
       charge_gas_fee,
     });
+
+    runInAction(() => {
+      if (!this.userData.gas_free_transactions) return;
+      this.userData.gas_free_transactions -= 1;
+    });
   }
 
   isFireplace(id: number) {
@@ -461,6 +466,11 @@ class Hot {
       methodName: "buy_asset",
       gas: new BN(TGAS * 50),
       args: { asset_id: id },
+    });
+
+    runInAction(() => {
+      if (!this.userData.gas_free_transactions) return;
+      this.userData.gas_free_transactions -= 1;
     });
 
     await this.updateStatus();
