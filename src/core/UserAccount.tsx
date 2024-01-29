@@ -49,6 +49,7 @@ class UserAccount {
   readonly id: string;
 
   public nfts: NFTModel[] = [];
+  public telegramAccountId?: string;
   public metamaskNftCanReserve = false;
   public recentlyApps: RecentlyApps[] = [];
   public contacts: UserContact[] = [];
@@ -68,6 +69,7 @@ class UserAccount {
       metamaskNftCanReserve: observable,
     });
 
+    this.telegramAccountId = creds.telegramAccountId;
     this.id = creds.accountId;
     this.type = creds.type;
     this.path = creds.path;

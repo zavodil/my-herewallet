@@ -20,6 +20,7 @@ html {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   height: var(--tg-viewport-height);
+  background: var(--Elevation-1);
 }
 
 * {
