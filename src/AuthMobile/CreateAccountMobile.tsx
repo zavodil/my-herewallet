@@ -4,17 +4,15 @@ import { observer } from "mobx-react-lite";
 
 import { Receiver } from "../core/Receiver";
 import { accounts, useWallet } from "../core/Accounts";
-
 import { generateMnemonic } from "../core/near-chain/passphrase/bip39";
+
 import { H1, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
-import HereInput from "../uikit/Input";
-import { colors } from "../uikit/theme";
-
-import { Root } from "./styled";
-import { sheets } from "../uikit/Popup";
 import { ClaimingLoading } from "../Home/HOT/modals";
 import { useNavigateBack } from "../useNavigateBack";
+import { colors } from "../uikit/theme";
+import HereInput from "../uikit/Input";
+import { Root } from "./styled";
 
 const CreateAccountMobile = () => {
   useNavigateBack();
@@ -25,15 +23,24 @@ const CreateAccountMobile = () => {
   const [isCreating, setCreating] = useState(false);
 
   const onCreate = async (nick?: string) => {
-    sheets.present({ id: "Loading", fullscreen: true, element: <ClaimingLoading text="Creating..." /> });
-    await accounts.connectWeb(generateMnemonic(), nick);
-    sheets.dismiss("Loading");
+    try {
+      setCreating(true);
+      await accounts.connectWeb(generateMnemonic(), nick);
+      setCreating(false);
+      navigate("/");
+    } catch {
+      setCreating(false);
+    }
   };
 
   useEffect(() => {
     receiver.setInput(nickname + ".near");
     receiver.load();
   }, [nickname]);
+
+  if (isCreating) {
+    return <ClaimingLoading time={20} text="Creating an account" />;
+  }
 
   return (
     <Root>
@@ -50,7 +57,7 @@ const CreateAccountMobile = () => {
             autoCapitalize="off"
             autoCorrect="off"
             autoComplete="off"
-            postfix=".near"
+            postfix=".hot.near"
             autoFocus
           />
 
@@ -69,10 +76,7 @@ const CreateAccountMobile = () => {
           disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
           onClick={() => {
             if (isCreating) return;
-            setCreating(true);
-            onCreate(receiver.input)
-              .then(() => navigate("/"))
-              .finally(() => setCreating(false));
+            onCreate(receiver.input);
           }}
         >
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}

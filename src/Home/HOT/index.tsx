@@ -29,9 +29,9 @@ const formatHours = (hh: number) => {
 
 const HOT = () => {
   useNavigateBack();
-  const sparksRef = useRef<LottieRefCurrentProps>();
   const user = useWallet()!;
   const navigate = useNavigate();
+  const sparksRef = useRef<LottieRefCurrentProps>();
   const [isClaiming, setClaiming] = useState(false);
 
   useEffect(() => {
