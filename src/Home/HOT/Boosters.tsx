@@ -147,6 +147,8 @@ const BoostItem = ({ boost }: { boost: any }) => {
 
       <div>
         <BoldP>{boost.title}</BoldP>
+        <SmallText style={{ fontWeight: "bold", lineHeight: "18px", whiteSpace: "pre-wrap", marginBottom: 8 }}>{boost.description}</SmallText>
+
         {nextBoost ? (
           <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -2 }}>
             {nextBoost?.mission ? <Icon name="mission" /> : <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />}

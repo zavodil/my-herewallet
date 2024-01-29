@@ -123,6 +123,7 @@ class Accounts {
       type: ConnectType.Web,
       seed: seedPhrase,
     };
+
     await this.addAccount(cred, sign);
   };
 
@@ -130,23 +131,16 @@ class Accounts {
     try {
       if (!isTgMobile()) notify("Authorization...");
       const captcha = await recaptchaToken();
-      const token = await this.api
-        .auth({
-          msg: "web_wallet",
-          device_id: this.api.deviceId,
-          recapcha_response: captcha,
-          account_sign: base_encode(Buffer.from(sign.signature, "base64")),
-          device_name: navigator.userAgent,
-          near_account_id: sign.accountId,
-          public_key: sign.publicKey.toString(),
-          nonce: sign.nonce,
-        })
-        .catch(() => null);
-
-      if (token == null) {
-        notify("Authorization failed");
-        return;
-      }
+      const token = await this.api.auth({
+        msg: "web_wallet",
+        device_id: this.api.deviceId,
+        recapcha_response: captcha,
+        account_sign: base_encode(Buffer.from(sign.signature, "base64")),
+        device_name: navigator.userAgent,
+        near_account_id: sign.accountId,
+        public_key: sign.publicKey.toString(),
+        nonce: sign.nonce,
+      });
 
       if (this.accounts.find((t) => t.id === cred.accountId)) {
         notify("Account already exist...");
@@ -178,7 +172,7 @@ class Accounts {
 
       addAccount();
     } catch (e: any) {
-      if (e instanceof HereError) notify(e.body);
+      notify(e?.toString?.());
       throw e;
     }
   }
