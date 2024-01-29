@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
+import { notify } from "../core/toast";
 import { accounts } from "../core/Accounts";
 import { H1, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import { ClaimingLoading } from "../Home/HOT/modals";
 import { useNavigateBack } from "../useNavigateBack";
-import { sheets } from "../uikit/Popup";
 import HereInput from "../uikit/Input";
 import { Root } from "./styled";
 
@@ -16,6 +16,19 @@ const ImportAccountMobile = () => {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [isCreating, setCreating] = useState(false);
+
+  const importAccount = async () => {
+    try {
+      if (isCreating) return;
+      setCreating(true);
+      await accounts.importAccount(value);
+      setCreating(false);
+      navigate("/");
+    } catch (e: any) {
+      notify(e?.toString?.());
+      setCreating(false);
+    }
+  };
 
   if (isCreating) {
     return <ClaimingLoading time={20} text="Importing an account" />;
@@ -45,18 +58,7 @@ const ImportAccountMobile = () => {
       </div>
 
       <div style={{ paddingTop: 32, paddingBottom: 24, width: "100%" }}>
-        <ActionButton
-          style={{ width: "100%" }}
-          disabled={!value || isCreating}
-          onClick={() => {
-            if (isCreating) return;
-            setCreating(true);
-            accounts
-              .importAccount(value)
-              .then(() => navigate("/"))
-              .finally(() => setCreating(false));
-          }}
-        >
+        <ActionButton style={{ width: "100%" }} disabled={!value || isCreating} onClick={() => importAccount()}>
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
         </ActionButton>
       </div>
