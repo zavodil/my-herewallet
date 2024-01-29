@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import "./assets/cabinet-grotesk/index.css";
 import "./assets/manrope/index.css";
 
-import { isTgMobile } from "./Mobile";
+import { isTgBeta, isTgMobile } from "./Mobile";
 import { colors } from "./uikit/theme";
 import App from "./App";
 
@@ -28,6 +28,11 @@ if (isTgMobile()) {
       openTelegramLink: (url: string) => window.open(url, "_blank"),
     },
   };
+}
+
+if (isTgBeta()) {
+  // @ts-ignore
+  window.eruda.init();
 }
 
 if (process.env.NODE_ENV === "development") {
