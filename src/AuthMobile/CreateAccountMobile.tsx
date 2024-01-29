@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Receiver } from "../core/Receiver";
 import { accounts, useWallet } from "../core/Accounts";
 import { generateMnemonic } from "../core/near-chain/passphrase/bip39";
+import { notify } from "../core/toast";
 
 import { H1, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
@@ -23,12 +24,14 @@ const CreateAccountMobile = () => {
   const [isCreating, setCreating] = useState(false);
 
   const onCreate = async (nick?: string) => {
+    if (isCreating) return;
     try {
       setCreating(true);
       await accounts.connectWeb(generateMnemonic(), nick);
       setCreating(false);
       navigate("/");
-    } catch {
+    } catch (e: any) {
+      notify(e?.toString?.());
       setCreating(false);
     }
   };
@@ -68,14 +71,7 @@ const CreateAccountMobile = () => {
       </div>
 
       <div style={{ display: "flex", marginTop: 56, width: "100%", gap: 16 }}>
-        <ActionButton
-          style={{ flex: 1 }}
-          disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
-          onClick={() => {
-            if (isCreating) return;
-            onCreate(receiver.input);
-          }}
-        >
+        <ActionButton style={{ flex: 1 }} disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError} onClick={() => onCreate(receiver.input)}>
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
         </ActionButton>
       </div>
