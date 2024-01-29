@@ -18,7 +18,7 @@ const CreateAccountMobile = () => {
   useNavigateBack();
   const user = useWallet();
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState(window.Telegram.WebApp?.initDataUnsafe?.user?.username || "");
+  const [nickname, setNickname] = useState(window.Telegram.WebApp?.initDataUnsafe?.user?.username?.toLowerCase().replaceAll("-", "_") || "");
   const [receiver] = useState(() => new Receiver(user!));
   const [isCreating, setCreating] = useState(false);
 
@@ -34,12 +34,12 @@ const CreateAccountMobile = () => {
   };
 
   useEffect(() => {
-    receiver.setInput(nickname + ".near");
+    receiver.setInput(nickname + ".hot-user.near");
     receiver.load();
   }, [nickname]);
 
   if (isCreating) {
-    return <ClaimingLoading time={20} text="Creating an account" />;
+    return <ClaimingLoading time={10} text="Creating an account" />;
   }
 
   return (
@@ -57,7 +57,7 @@ const CreateAccountMobile = () => {
             autoCapitalize="off"
             autoCorrect="off"
             autoComplete="off"
-            postfix=".hot.near"
+            postfix=".hot-user.near"
             autoFocus
           />
 
@@ -68,9 +68,6 @@ const CreateAccountMobile = () => {
       </div>
 
       <div style={{ display: "flex", marginTop: 56, width: "100%", gap: 16 }}>
-        <ActionButton stroke style={{ flex: 1 }} onClick={() => onCreate("")} disabled={isCreating}>
-          Skip
-        </ActionButton>
         <ActionButton
           style={{ flex: 1 }}
           disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}

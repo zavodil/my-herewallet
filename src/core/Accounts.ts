@@ -15,7 +15,7 @@ import { parseSeedPhrase } from "./near-chain/passphrase";
 import { HereError } from "./network/types";
 import UserAccount from "./UserAccount";
 
-import { recaptchaToken } from "./helpers";
+import { recaptchaToken, wait } from "./helpers";
 import { ConnectType, UserCred } from "./types";
 import { generateFromString } from "generate-avatar";
 import { ReceiverFetcher } from "./Receiver";
@@ -209,15 +209,25 @@ class Accounts {
 
     if (!isTgMobile()) notify("Activating account...");
     const api = new HereApi();
-    const captcha = await recaptchaToken();
-    await api.allocateNickname({
-      device_id: "metamask",
-      public_key: publicKey,
-      near_account_id: accountId,
-      recapcha_response: captcha,
-      sign: "",
-    });
 
+    if (isTgMobile()) {
+      await api.allocateHotNickname({
+        telegram_data: window.Telegram?.WebApp?.initData,
+        near_account_id: accountId,
+        public_key: publicKey,
+      });
+    } else {
+      const captcha = await recaptchaToken();
+      await api.allocateNickname({ device_id: this.api.deviceId, public_key: publicKey, near_account_id: accountId, recapcha_response: captcha, sign: "" });
+    }
+
+    const checkAllocate = async () => {
+      await wait(2000);
+      const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: accountId, finality: "optimistic" }).catch(() => null);
+      if (data == null) await checkAllocate();
+    };
+
+    await checkAllocate();
     const keyPair = KeyPair.fromString(secretKey);
     const sign = await this.localSign(accountId, keyPair);
     const cred = {
