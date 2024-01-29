@@ -48,7 +48,6 @@ const HOT = () => {
   }, [user.hot.needRegister]);
 
   const claim = async (charge_gas_fee?: boolean) => {
-    if (user.hot.miningProgress !== 1) return;
     if (isClaiming) return;
     sheets.dismiss("NeedGas");
     window.Telegram.WebApp?.HapticFeedback?.impactOccurred?.("light");
@@ -152,7 +151,7 @@ const HOT = () => {
                     )}
                   </div>
 
-                  <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming || !isOverload}>
+                  <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming}>
                     {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
                   </HereButton>
                 </div>

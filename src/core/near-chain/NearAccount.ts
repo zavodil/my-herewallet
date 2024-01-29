@@ -89,19 +89,22 @@ export class NearAccount extends Account {
   }
 
   async processingTx(tx: string, signal?: AbortSignal) {
-    try {
-      const result = await this.api.processing(tx, this.accountId, signal);
-      if (!result.success) throw new TransactionError(result.error.readable_title, result.error.readable_body);
-      if (signal?.aborted) throw Error();
+    // Use fallback for processing tx, it backend down
+    return await waitTransactionResult(tx, this.accountId, this.connection.provider, 0, signal);
 
-      return await this.connection.provider.txStatus(tx, this.accountId);
-    } catch (e) {
-      if (signal?.aborted) throw e;
-      if (e instanceof NetworkError && e.status !== 404) throw e;
+    // try {
+    //   const result = await this.api.processing(tx, this.accountId, signal);
+    //   if (!result.success) throw new TransactionError(result.error.readable_title, result.error.readable_body);
+    //   if (signal?.aborted) throw Error();
 
-      // Use fallback for processing tx, it backend down
-      return await waitTransactionResult(tx, this.accountId, this.connection.provider, 0, signal);
-    }
+    //   return await this.connection.provider.txStatus(tx, this.accountId);
+    // } catch (e) {
+    //   if (signal?.aborted) throw e;
+    //   if (e instanceof NetworkError && e.status !== 404) throw e;
+
+    //   // Use fallback for processing tx, it backend down
+    //   return await waitTransactionResult(tx, this.accountId, this.connection.provider, 0, signal);
+    // }
   }
 
   async executeTransaction(actions: transactions.Action[], receiverId: string, nonce?: BN): Promise<FinalExecutionOutcome> {
