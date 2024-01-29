@@ -155,6 +155,8 @@ class Hot {
   };
 
   public needRegister = false;
+  public validAccountId = "";
+
   public village: { name: string; avatar: string; hot_balance: number } | null = null;
   public villages: HotVillage[] = [];
 
@@ -206,14 +208,13 @@ class Hot {
     this.village = cache.village;
 
     this.fetchLevels();
+    this.refreshOnchain();
     this.updateStatus().then(() => {
       this.getUserData().then(() => {
         this.fetchMissions();
         this.fetchReferrals();
       });
     });
-
-    this.refreshOnchain();
   }
 
   async refreshOnchain() {

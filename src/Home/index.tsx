@@ -117,8 +117,8 @@ const Home = () => {
             )}
           </Card>
 
-          {isTgMobile() && !account.hot.needRegister && <Widgets />}
-          {isTgMobile() && account.hot.needRegister && (
+          {isTgMobile() && account.telegramAccountId === account.near.accountId && !account.hot.needRegister && <Widgets />}
+          {isTgMobile() && account.telegramAccountId === account.near.accountId && account.hot.needRegister && (
             <div
               style={{
                 borderRadius: 20,
@@ -279,12 +279,8 @@ const Home = () => {
                   .sort((a, b) => account.tokens.fiat(b) - account.tokens.fiat(a))
                   .map((ft) => {
                     if (ft.symbol === "HOT") return null;
-                    // const cur = account.tokens.cur(ft);
-                    // const diff = Formatter.round(cur.usd_24h_change - 1);
-                    // const diffColor = diff === 0 ? colors.blackSecondary : diff > 0 ? colors.green : colors.red;
-
                     return (
-                      <TokenCard key={ft.symbol} style={{ height: 72, padding: "0 16px", display: "flex" }}>
+                      <TokenCard key={ft.symbol} style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => navigate(`/transfer?asset=${ft.symbol}`)}>
                         <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 12 }}>
                           <TokenIcon src={ft.icon} />
 

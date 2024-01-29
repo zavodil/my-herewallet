@@ -1,7 +1,6 @@
 import { action, makeObservable, observable } from "mobx";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { HereWallet, SignedMessageNEP0413, WidgetStrategy } from "@here-wallet/core";
 import { base_encode, serialize } from "near-api-js/lib/utils/serialize";
 import { KeyPair, KeyPairEd25519, PublicKey } from "near-api-js/lib/utils";
@@ -35,7 +34,6 @@ class Accounts {
   readonly selector = setupWalletSelector({
     network: "mainnet",
     modules: [
-      setupHereWallet(),
       setupWalletConnect({
         projectId: "621c3cc4e9a5da50c1ed23c0f338bf06",
         chainId: "near:mainnet",
@@ -155,8 +153,16 @@ class Accounts {
         return;
       }
 
-      storage.addAccount({ ...cred, jwt: token });
-      const account = new UserAccount({ ...cred, jwt: token });
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      let telegramAccountId;
+      if (telegramId) {
+        const res = await this.api.request(`/api/v1/user/hot/by_telegram_id?telegram_id=${telegramId}`);
+        const { near_account_id } = await res.json();
+        telegramAccountId = near_account_id;
+      }
+
+      storage.addAccount({ ...cred, jwt: token, telegramAccountId });
+      const account = new UserAccount({ ...cred, jwt: token, telegramAccountId });
 
       const addAccount = action(() => {
         this.accounts.push({ id: cred.accountId, type: cred.type });

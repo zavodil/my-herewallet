@@ -121,7 +121,7 @@ const HOT = () => {
               animationData={require("../../assets/hot/sparks.json")}
             />
 
-            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your earnings</LargeP>
+            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your balance</LargeP>
             <Balance />
 
             <div style={{ background: colors.orange, opacity: isOverload ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
@@ -164,13 +164,13 @@ const HOT = () => {
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
             <Button>
-              <BoldP style={{ color: "#0258F7" }}>How to mine HOT Coin</BoldP>
+              <BoldP style={{ color: "#0258F7" }}>How to mine HOT</BoldP>
             </Button>
 
             <Card style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "fit-content", padding: "0px 16px", gap: 8 }}>
               <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/gas")}>
                 <img src={require("../../assets/hot/gas.png")} style={{ width: 32, height: 32 }} />
-                <TinyText>Gas</TinyText>
+                <TinyText>{user.hot.userData.gas_free_transactions} Gas</TinyText>
               </div>
 
               <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
