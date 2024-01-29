@@ -17,6 +17,10 @@ const ImportAccountMobile = () => {
   const [value, setValue] = useState("");
   const [isCreating, setCreating] = useState(false);
 
+  if (isCreating) {
+    return <ClaimingLoading time={20} text="Importing an account" />;
+  }
+
   return (
     <Root style={{ justifyContent: "flex-start", alignItems: "flex-start" }}>
       <H1>
@@ -47,14 +51,10 @@ const ImportAccountMobile = () => {
           onClick={() => {
             if (isCreating) return;
             setCreating(true);
-            sheets.present({ id: "Loading", fullscreen: true, element: <ClaimingLoading text="Importing..." /> });
             accounts
               .importAccount(value)
               .then(() => navigate("/"))
-              .finally(() => {
-                sheets.dismiss("Loading");
-                setCreating(false);
-              });
+              .finally(() => setCreating(false));
           }}
         >
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}

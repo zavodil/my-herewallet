@@ -124,7 +124,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         </ActionButton>
       )}
 
-      {isLoading && <ClaimingLoading text="Upgrading..." style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
+      {isLoading && <ClaimingLoading text="Upgrading" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
     </div>
   );
 });
