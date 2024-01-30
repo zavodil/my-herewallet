@@ -5,6 +5,7 @@ import Lottie, { LottieRefCurrentProps } from "lottie-react";
 
 import Header from "../Header";
 import { Card, Container, Root, TokenIcon } from "../styled";
+import { formatAmount } from "../../core/helpers";
 import { useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
@@ -15,12 +16,11 @@ import { ActivityIndicator, Button } from "../../uikit";
 import { HereButton } from "../../uikit/button";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
+import Icon from "../../uikit/Icon";
 
 import { runParticles, stopParticles } from "./effects/flame";
 import { FirstClaimHOT } from "./modals";
-import { formatAmount } from "../../core/helpers";
 import Balance from "./Balance";
-import Icon from "../../uikit/Icon";
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;
@@ -73,7 +73,7 @@ const HOT = () => {
   };
 
   const isOverload = user.hot.miningProgress === 1;
-  const [left, right] = user.hot.balance.toFixed(6).split(".");
+  const [left, right] = (+user.hot.balance.toFixed(6)).toString().split(".");
 
   return (
     <Root style={{ overflow: "hidden", width: "100vw", height: "100%" }}>
@@ -112,16 +112,6 @@ const HOT = () => {
                 </Card>
               )}
             </div>
-
-            <div style={{ marginTop: 16, display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ color: colors.blackSecondary, marginTop: -2, marginRight: 8 }}>HOT Balance:</Text>
-              <img style={{ width: 24, flexShrink: 0, objectFit: "contain", marginTop: -4 }} src={require("../../assets/hot/hot.png")} />
-              <Text style={{ fontFamily: "'SF Mono', sans-serif" }}>
-                {left}
-                <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
-                {right}
-              </Text>
-            </div>
           </div>
 
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", position: "relative" }}>
@@ -132,40 +122,49 @@ const HOT = () => {
               animationData={require("../../assets/hot/sparks.json")}
             />
 
-            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Available to claim:</LargeP>
+            <LargeP style={{ top: 24, color: colors.blackSecondary }}>In storage:</LargeP>
             <Balance value={user.hot.earned} />
 
-            <div style={{ background: colors.orange, opacity: isOverload ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
-              <Text>+{user.hot.hotPerHour} per hour</Text>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Text style={{ color: colors.blackSecondary, marginTop: -2, marginRight: 8 }}>HOT Balance:</Text>
+              <img style={{ width: 18, flexShrink: 0, objectFit: "contain", marginTop: -2, marginRight: 2 }} src={require("../../assets/hot/hot.png")} />
+              <Text style={{ fontFamily: "SF Mono" }}>
+                {left}
+                <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
+                {+right}
+              </Text>
             </div>
+
+            {/* <div style={{ background: colors.orange, opacity: isOverload ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
+              <Text>+{user.hot.hotPerHour} per hour</Text>
+            </div> */}
 
             <div style={{ width: "100%", marginTop: 64, borderRadius: 24, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)" }}>
               <Card style={{ display: "flex", flexDirection: "column", overflow: "hidden", margin: isOverload ? 1 : 0, paddingTop: 0, padding: 0, border: isOverload ? "none" : undefined }}>
                 <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
-                  <div
-                    style={{
-                      width: `${user.hot.miningProgress * 100}%`,
-                      background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)",
-                      height: 8,
-                    }}
-                  />
+                  <div style={{ width: `${user.hot.miningProgress * 100}%`, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)", height: 8 }} />
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", flexDirection: "row", padding: "24px 16px", paddingRight: 20, paddingTop: 24, width: "100%", gap: 12 }}>
-                  <img style={{ width: 48, height: 48 }} src={user.hot.getBooster(user.hot.state?.storage || 0)?.icon} />
+                <div style={{ display: "flex", alignItems: "center", flexDirection: "row", padding: 16, width: "100%", gap: 8 }}>
+                  <img style={{ width: 56, height: 56, objectFit: "contain" }} src={user.hot.storageBooster?.icon} />
 
-                  <div style={{ textAlign: "left" }}>
-                    <BoldP>Storage</BoldP>
+                  <div style={{ textAlign: "left", flexShrink: 0 }}>
+                    <BoldP style={{ marginTop: -4 }}>Storage</BoldP>
+
                     {!isOverload ? (
-                      <Text style={{ color: colors.blackSecondary }}>≈{formatHours(+user.hot.remainingMiningHours)} to fill</Text>
+                      <SmallText style={{ fontWeight: "bold", color: colors.blackSecondary }}>{formatHours(+user.hot.remainingMiningHours)} to fill</SmallText>
                     ) : (
-                      <Text style={{ color: colors.blackSecondary }}>Filled</Text>
+                      <SmallText style={{ fontWeight: "bold", color: colors.blackSecondary }}>Filled</SmallText>
                     )}
+
+                    <TinyText style={{ fontWeight: "bold" }}>{user.hot.hotPerHour} HOT/hour</TinyText>
                   </div>
 
-                  <HereButton $id="claimHot" onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming}>
-                    {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
-                  </HereButton>
+                  <div style={{ marginLeft: "auto", marginTop: -4 }}>
+                    <HereButton $id="claimHot" onClick={() => claim()} disabled={isClaiming}>
+                      {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
+                    </HereButton>
+                  </div>
                 </div>
               </Card>
 

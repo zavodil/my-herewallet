@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 
-import { HotReferral } from "../../core/Hot";
+import { HotReferral } from "../../core/configs/hot";
 import { useWallet } from "../../core/Accounts";
 import { formatAmount } from "../../core/helpers";
 
