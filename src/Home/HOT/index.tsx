@@ -10,7 +10,7 @@ import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
 
 import { useNavigateBack } from "../../useNavigateBack";
-import { BoldP, H0, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
+import { BoldP, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
 import { ActivityIndicator, Button } from "../../uikit";
 import { HereButton } from "../../uikit/button";
 import { sheets } from "../../uikit/Popup";
@@ -114,7 +114,7 @@ const HOT = () => {
             </div>
 
             <div style={{ marginTop: 16, display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ color: colors.blackSecondary, marginTop: -4, marginRight: 8 }}>HOT Balance:</Text>
+              <Text style={{ color: colors.blackSecondary, marginTop: -2, marginRight: 8 }}>HOT Balance:</Text>
               <img style={{ width: 24, flexShrink: 0, objectFit: "contain", marginTop: -4 }} src={require("../../assets/hot/hot.png")} />
               <Text style={{ fontFamily: "'SF Mono', sans-serif" }}>
                 {left}
