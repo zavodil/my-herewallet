@@ -12,11 +12,11 @@ export const GAME_ID = "game.hot-token.near";
 export const GAME_TESTNET_ID = "game.hot-token.testnet";
 
 export interface HotReferral {
-  avatar: string;
-  account_id: string;
-  telegram_username: string;
   hot_balance: number;
-  earn_per_hour: number;
+  hot_mining_speed: number;
+  near_account_id: string;
+  tg_avatar: string;
+  tg_username: string;
 }
 
 export interface HotState {
@@ -304,9 +304,13 @@ class Hot {
       method: "POST",
     });
 
+    await wait(3000);
     await this.updateStatus();
+
     window.Telegram.WebApp.requestWriteAccess();
-    await Promise.all([this.fetchBalance(), this.getUserData(), this.fetchMissions()]);
+    this.fetchBalance();
+    this.getUserData();
+    this.fetchMissions();
   }
 
   action(type: "village", data: { hash: string; old_village_id?: number; new_village_id: number }): Promise<void>;
@@ -397,7 +401,7 @@ class Hot {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
     if (state == null) {
       runInAction(() => (this.needRegister = true));
-      throw Error();
+      throw Error("User is not registered, please try again");
     }
 
     this.updateCache();
@@ -548,7 +552,7 @@ class Hot {
   }
 
   get referralsEarnPerHour() {
-    return this.referrals.reduce((acc, r) => acc + formatAmount(r.earn_per_hour, 6) * 0.2, 0);
+    return this.referrals.reduce((acc, r) => acc + formatAmount(r.hot_mining_speed, 6) * 0.2, 0);
   }
 
   get referralLink() {

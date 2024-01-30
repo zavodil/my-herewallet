@@ -102,7 +102,7 @@ const HOT = () => {
             {user.hot.village == null && (
               <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
                 <TokenIcon src={require("../../assets/hot/fire/1.png")} />
-                <div>
+                <div style={{ marginTop: -2 }}>
                   <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>Explore villages</SmallText>
                   <TinyText>Join or create your own</TinyText>
                 </div>
