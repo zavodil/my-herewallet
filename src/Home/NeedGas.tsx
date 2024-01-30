@@ -38,7 +38,7 @@ export const NeedMoreGas = ({ onSelectHot }: { onSelectHot?: () => void }) => {
                 <BoldP style={{ color: "rgba(219, 133, 32, 1)", fontSize: 14 }}>-30% HOT</BoldP>
               </WarningBadge>
 
-              <Text>We can cover your transaction costs on the blockchain and charge fee in HOT tokens</Text>
+              <Text>We can cover your transaction costs on the blockchain and charge fee in HOT</Text>
               <ActionButton style={{ width: "100%", marginTop: 20 }} stroke onClick={() => onSelectHot()}>
                 Continue with HOT
               </ActionButton>
