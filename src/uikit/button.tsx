@@ -49,11 +49,7 @@ export const SActionButton = styled.button<{ big?: boolean; stroke?: boolean }>`
   display: flex;
   font-weight: bolder;
   border-radius: 24px;
-
   transition: 0.2s opacity, 0.2s background, 0.2s color;
-  &:hover {
-    opacity: 0.8;
-  }
 
   &:disabled {
     cursor: default;

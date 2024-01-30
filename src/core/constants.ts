@@ -1,5 +1,3 @@
-import { isTgMobile } from "../Mobile";
-
 export const HERE_STORAGE_DOCS = "https://docs.herewallet.app/technology-description/readme";
 export const GOOGLE_PLAY = "https://download.herewallet.app?android";
 export const APP_STORE = "https://download.herewallet.app?ios";
