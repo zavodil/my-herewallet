@@ -23,9 +23,7 @@ const CreateAccount = () => {
   const [seed, setSeed] = useState<string | null>(() => generateMnemonic());
 
   if (selectedSeed) {
-    return (
-      <CreateNickname onCreate={(nickname) => accounts.connectWeb(selectedSeed, nickname).then(() => navigate("/"))} />
-    );
+    return <CreateNickname onCreate={(nickname) => accounts.connectWeb(selectedSeed, nickname).then(() => navigate("/"))} />;
   }
 
   return (
@@ -46,11 +44,8 @@ const CreateAccount = () => {
               Secure Passphrase
             </H1>
             <Text style={{ marginTop: 8 }}>
-              Write down the following words in order and keep them somewhere safe.{" "}
-              <span style={{ fontWeight: "bold" }}>
-                Anyone with access to it will also have access to your account!
-              </span>{" "}
-              You can access this words later in the settings
+              Write down the following words in order and keep them somewhere safe. <span style={{ fontWeight: "bold" }}>Anyone with access to it will also have access to your account!</span> You can
+              access this words later in the settings
             </Text>
           </div>
 
@@ -64,6 +59,7 @@ const CreateAccount = () => {
 
             <div style={{ marginTop: 12, width: "100%", display: "flex", gap: 24, justifyContent: "space-between" }}>
               <HereButton
+                $id="CreateAccount.copySeed"
                 style={{ flex: 1, background: colors.yellow }}
                 onClick={async () => {
                   await navigator.clipboard.writeText(seed!);
@@ -74,13 +70,13 @@ const CreateAccount = () => {
                 Copy
               </HereButton>
 
-              <HereButton style={{ flex: 2, background: colors.pink }} onClick={() => setSeed(generateMnemonic())}>
+              <HereButton $id="CreateAccount.generateNewSeed" style={{ flex: 2, background: colors.pink }} onClick={() => setSeed(generateMnemonic())}>
                 <Icon name="refresh" />
                 Generate new
               </HereButton>
             </div>
 
-            <ActionButton style={{ flex: 1, marginTop: 22 }} onClick={() => selectSeed(seed)}>
+            <ActionButton $id="CreateAccount.continue" style={{ flex: 1, marginTop: 22 }} onClick={() => selectSeed(seed)}>
               Continue
             </ActionButton>
           </WordsWrap>

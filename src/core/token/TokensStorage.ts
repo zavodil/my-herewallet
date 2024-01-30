@@ -6,7 +6,7 @@ import { formatAmount } from "../helpers";
 import UserAccount from "../UserAccount";
 
 import { NETWORK } from "../constants";
-import { isTgMobile } from "../../Mobile";
+import { isTgMobile } from "../../env";
 
 import * as defaults from "./defaults";
 import { FtModel, Chain } from "./types";

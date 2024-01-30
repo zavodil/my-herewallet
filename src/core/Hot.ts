@@ -38,6 +38,98 @@ export interface HotVillage {
 
 const boosters = [
   {
+    id: 0,
+    title: "Fireplace",
+    text: "Better Fireplace boosts mining speed",
+    description: "Increase passive mining speed",
+    icon: require("../assets/hot/fire/1.png"),
+  },
+  {
+    id: 1,
+    title: "Stone Fireplace",
+    text: "Better Fireplace boosts mining speed",
+    description: "Increase passive mining speed",
+    icon: require("../assets/hot/fire/2.png"),
+  },
+  {
+    id: 2,
+    title: "Gas Fireplace",
+    text: "Better Fireplace boosts mining speed",
+    description: "Increase passive mining speed",
+    icon: require("../assets/hot/fire/3.png"),
+  },
+  {
+    id: 3,
+    title: "Neon Fireplace",
+    text: "Better Fireplace boosts mining speed",
+    description: "Increase passive mining speed",
+    icon: require("../assets/hot/fire/4.png"),
+  },
+  {
+    id: 4,
+    title: "Neon Multy-fireplace",
+    text: "Better Fireplace boosts mining speed",
+    description: "Increase passive mining speed",
+    icon: require("../assets/hot/fire/5.png"),
+  },
+  {
+    id: 5,
+    title: "Neon Multy-fireplace",
+    text: "Better Fireplace boosts mining speed",
+    description: "Increase passive mining speed",
+    icon: require("../assets/hot/fire/5.png"),
+  },
+
+  {
+    id: 10,
+    title: "Basic Wood",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
+    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
+    icon: require("../assets/hot/wood/1.png"),
+    mission_text: "",
+  },
+  {
+    id: 11,
+    title: "Neon Wood",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
+    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
+    icon: require("../assets/hot/wood/2.png"),
+    mission_text: "Join village",
+  },
+  {
+    id: 12,
+    title: "Titanium Wood",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
+    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
+    icon: require("../assets/hot/wood/3.png"),
+    mission_text: "Download the mobile app and import your account",
+  },
+  {
+    id: 13,
+    title: "Jedi Wood",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
+    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
+    icon: require("../assets/hot/wood/4.png"),
+    mission_text: "Deposit 1 NEAR on your account",
+  },
+  {
+    id: 14,
+    title: "Uranium Boxes",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
+    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
+    icon: require("../assets/hot/wood/5.png"),
+    mission_text: "Deposit 1 USDT on your account",
+  },
+  {
+    id: 15,
+    title: "Uranium Boxes",
+    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
+    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
+    icon: require("../assets/hot/wood/5.png"),
+    mission_text: "Deposit NFT on your account",
+  },
+
+  {
     id: 20,
     title: "Wooden Storage",
     text: "Better storage holds more HOT and you can claim it less often",
@@ -73,79 +165,11 @@ const boosters = [
     icon: require("../assets/hot/storage/5.png"),
   },
   {
-    id: 10,
-    title: "Basic Wood",
-    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
-    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
-    icon: require("../assets/hot/wood/1.png"),
-    mission_text: "Download the mobile app and import your account",
-  },
-  {
-    id: 11,
-    title: "Neon Wood",
-    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
-    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
-    icon: require("../assets/hot/wood/2.png"),
-    mission_text: "Deposit 1+ NEAR on your account",
-  },
-  {
-    id: 12,
-    title: "Titanium Wood",
-    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
-    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
-    icon: require("../assets/hot/wood/3.png"),
-    mission_text: "Deposit 1 USDT on your account",
-  },
-  {
-    id: 13,
-    title: "Jedi Wood",
-    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
-    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
-    icon: require("../assets/hot/wood/4.png"),
-    mission_text: "Buy any NFT on NEAR Protocol",
-  },
-  {
-    id: 14,
-    title: "Uranium Boxes",
-    text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
-    description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
-    icon: require("../assets/hot/wood/5.png"),
-    mission_text: "Earn 1000+ score in the mobile app",
-  },
-  {
-    id: 0,
-    title: "Fireplace",
-    text: "Better Fireplace boosts mining speed",
-    description: "Increase passive mining speed",
-    icon: require("../assets/hot/fire/1.png"),
-  },
-  {
-    id: 1,
-    title: "Stone Fireplace",
-    text: "Better Fireplace boosts mining speed",
-    description: "Increase passive mining speed",
-    icon: require("../assets/hot/fire/2.png"),
-  },
-  {
-    id: 2,
-    title: "Gas Fireplace",
-    text: "Better Fireplace boosts mining speed",
-    description: "Increase passive mining speed",
-    icon: require("../assets/hot/fire/3.png"),
-  },
-  {
-    id: 3,
-    title: "Neon Fireplace",
-    text: "Better Fireplace boosts mining speed",
-    description: "Increase passive mining speed",
-    icon: require("../assets/hot/fire/4.png"),
-  },
-  {
-    id: 4,
-    title: "Neon Multy-fireplace",
-    text: "Better Fireplace boosts mining speed",
-    description: "Increase passive mining speed",
-    icon: require("../assets/hot/fire/5.png"),
+    id: 25,
+    title: "Titanium Storage",
+    text: "Better storage holds more HOT and you can claim it less often",
+    description: "Increase the fill\ntime to claim less often",
+    icon: require("../assets/hot/storage/5.png"),
   },
 ];
 
@@ -237,7 +261,7 @@ class Hot {
 
   async refreshOnchain() {
     await wait(5000);
-    await Promise.allSettled([this.fetchLevels(), this.fetchBalance(), this.updateStatus()]);
+    await Promise.allSettled([this.fetchBalance(), this.updateStatus()]);
     this.refreshOnchain();
   }
 
@@ -288,12 +312,17 @@ class Hot {
     try {
       const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}&next_claim_in=${this.remainingMiningSeconds}`);
       const data = await resp.json();
-      runInAction(() => (this.userData = data));
-      this.updateCache();
       this.account.tokens.addContracts(this.userData.ft_contracts);
+      runInAction(() => {
+        this.userData = data;
+        this.needRegister = false;
+        this.updateCache();
+      });
     } catch (e) {
       if (!(e instanceof NetworkError)) throw e;
       if (e.status !== 404 && e.status !== 400) throw e;
+
+      runInAction(() => (this.needRegister = true));
       throw e;
     }
   }
@@ -393,6 +422,7 @@ class Hot {
   async fetchLevels() {
     const near = this.account.near;
     const state = await near.viewMethod(GAME_ID, "get_assets", { account_id: near.accountId });
+    console.log(state);
     runInAction(() => (this.levels = state));
     this.updateCache();
   }
@@ -406,13 +436,11 @@ class Hot {
 
     this.updateCache();
     this.updateMyVillage();
-    runInAction(() => {
-      this.state = state;
-      this.needRegister = false;
-    });
+    runInAction(() => (this.state = state));
   }
 
   async claim(charge_gas_fee?: boolean) {
+    const earned = parseAmount(this.earned, 6).toString();
     const tx = await this.account.near.functionCall({
       contractId: GAME_ID,
       methodName: "claim",
@@ -423,7 +451,7 @@ class Hot {
     this.updateStatus().then(() => this.getUserData());
     this.action("claim", {
       hash: tx.transaction_outcome.id,
-      amount: formatAmount(this.earned, 6).toString(),
+      amount: earned,
       charge_gas_fee,
     });
 
@@ -505,7 +533,7 @@ class Hot {
 
   get balance() {
     const tokens = this.account.tokens;
-    return Math.max(0, +(tokens.token(tokens.nearChain, "HOT")?.amountFloat || 0) + this.earned);
+    return Math.max(0, +(tokens.token(tokens.nearChain, "HOT")?.amountFloat || 0));
   }
 
   get intBalance() {

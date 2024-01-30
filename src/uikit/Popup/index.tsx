@@ -2,7 +2,9 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import Sheet from "react-modal-sheet";
 import React from "react";
+
 import { colors } from "../theme";
+import { AnalyticsTracker } from "../../core/analytics";
 
 interface PopupConfig {
   id: string;
@@ -32,6 +34,8 @@ class SheetsManager {
   present = ({ id, element, blocked, fullscreen, onClose }: PopupConfig) => {
     const popup = this.popups.find((t) => t.id === id);
     if (popup) return;
+
+    AnalyticsTracker.shared.track("popup:" + id);
     this.popups.push({
       id,
       element,

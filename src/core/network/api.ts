@@ -1,12 +1,12 @@
 import uuid4 from "uuid4";
 import { PublicKey } from "near-api-js/lib/utils";
 
-import { AnalyticEvent } from "../analytics";
+import { AnalyticEvent, AnalyticsTracker } from "../analytics";
 import { Storage } from "../Storage";
 import { FtAsset, FtGroup } from "../token/types";
 import { TransactionModel } from "../transactions/types";
 import { AllocateUsername, NFTModel, RecentlyApps, RequestAccessToken } from "./types";
-import { isTgBeta, isTgMobile } from "../../Mobile";
+import { isTgBeta, isTgMobile } from "../../env";
 import { NETWORK } from "../constants";
 
 export class HereError extends Error {
@@ -51,6 +51,7 @@ export class HereApi {
     if (res.ok === false) {
       console.log("error", res.url, init.body);
       const msg = await res.text().catch(() => "");
+      AnalyticsTracker.shared.track("network:error", { body: msg, request: res.url });
       let error;
 
       try {
@@ -131,6 +132,7 @@ export class HereApi {
       method: "POST",
       body: JSON.stringify({
         device_id: this.deviceId,
+        platform: isTgMobile() ? "telegram" : "web",
         events,
       }),
     });

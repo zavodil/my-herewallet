@@ -5,19 +5,19 @@ import { observer } from "mobx-react-lite";
 import Header from "../Home/Header";
 import { Card, Root } from "../Home/styled";
 import { ActionButton, Button, H2, Text } from "../uikit";
-import Icon from "../uikit/Icon";
-
-import { accounts, useWallet } from "../core/Accounts";
-import { Container, Menu, SensitiveCard } from "./styled";
 import { AvatarImage } from "../Home/Header/styled";
 import { H3, TinyText } from "../uikit/typographic";
 import { colors } from "../uikit/theme";
-import { storage } from "../core/Storage";
-import { ConnectType } from "../core/types";
-import { notify } from "../core/toast";
-import { isTgMobile } from "../Mobile";
+import Icon from "../uikit/Icon";
+
 import { useNavigateBack } from "../useNavigateBack";
+import { accounts, useWallet } from "../core/Accounts";
 import { ReceiverFetcher } from "../core/Receiver";
+import { storage } from "../core/Storage";
+import { notify } from "../core/toast";
+import { isTgMobile } from "../env";
+
+import { Container, Menu, SensitiveCard } from "./styled";
 
 const Settings = () => {
   useNavigateBack();
@@ -39,7 +39,7 @@ const Settings = () => {
         {!isTgMobile() && (
           <div style={{ gridArea: "navigation" }}>
             <Link to="/" replace style={{ textDecoration: "none", display: "inline-block" }}>
-              <Button style={{ gap: 8 }}>
+              <Button $id="Settings.back" style={{ gap: 8 }}>
                 <Icon name="arrow-left" />
                 <H2>Settings</H2>
               </Button>
@@ -49,20 +49,20 @@ const Settings = () => {
 
         <Menu>
           {!isTgMobile() && (
-            <Button $active={location.pathname === "/settings/general"} onClick={() => navigate("/settings/general")}>
+            <Button $id="Settings.general" $active={location.pathname === "/settings/general"} onClick={() => navigate("/settings/general")}>
               <Icon style={{ width: 24, height: 24 }} name="user" />
               <Text>General</Text>
             </Button>
           )}
 
           {!!storage.getAccount(user.id)?.privateKey && (
-            <Button $active={location.pathname === "/settings/passphrase"} onClick={() => navigate("/settings/passphrase")}>
+            <Button $id="Settings.seedphrase" $active={location.pathname === "/settings/passphrase"} onClick={() => navigate("/settings/passphrase")}>
               <Icon name="document" />
-              <Text>Seed phrase</Text>
+              <Text>Seedphrase</Text>
             </Button>
           )}
 
-          <Button $active={location.pathname === "/settings/support"} onClick={() => navigate("/settings/support")}>
+          <Button $id="Settings.support" $active={location.pathname === "/settings/support"} onClick={() => navigate("/settings/support")}>
             <Icon style={{ background: "#95A7E833", borderRadius: 8 }} name="support" />
             <Text>Contact support</Text>
           </Button>
@@ -156,6 +156,7 @@ const Settings = () => {
                   <div style={{ display: "flex", gap: 8 }}>
                     <H3>Private key</H3>
                     <Button
+                      $id="Settings.privateKeyCopy"
                       onClick={async () => {
                         await navigator.clipboard.writeText(storage.getAccount(user.id)?.privateKey || "");
                         notify("Private key has beed copied");
@@ -172,6 +173,7 @@ const Settings = () => {
                     <div style={{ display: "flex", gap: 8 }}>
                       <H3>Passphrase</H3>
                       <Button
+                        $id="Settings.passphraseCopy"
                         onClick={async () => {
                           await navigator.clipboard.writeText(storage.getAccount(user.id)?.seed || "");
                           notify("Passphrase has beed copied");
@@ -198,11 +200,8 @@ const Settings = () => {
                 </div>
 
                 <div style={{ display: "flex", gap: 16 }}>
-                  <ActionButton style={{ flex: 1 }} onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/heresupport")}>
+                  <ActionButton $id="Settings.support.tg" style={{ flex: 1 }} onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/heresupport")}>
                     Telegram
-                  </ActionButton>
-                  <ActionButton style={{ flex: 1 }} onClick={() => window.Telegram.WebApp.openLink("https://twitter.com/here_wallet")}>
-                    Twitter
                   </ActionButton>
                 </div>
               </Card>
@@ -213,6 +212,7 @@ const Settings = () => {
         {isTgMobile() && (
           <Menu>
             <Button
+              $id="Settings.logout"
               style={{ background: "rgba(214, 62, 62, 0.15)" }}
               $active={location.pathname === "/settings/support"}
               onClick={() => {

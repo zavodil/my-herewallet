@@ -1,7 +1,7 @@
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import { colors } from "../uikit/theme";
-import { isTgMobile } from "../Mobile";
+import { isTgMobile } from "../env";
 
 export const notify = (txt: string, ms = 2500) => {
   Toastify({

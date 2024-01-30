@@ -1,7 +1,7 @@
 import React from "react";
 import { Root } from "../styled";
 import { H2, H4 } from "../../uikit";
-import { isTgProd } from "../../Mobile";
+import { isTgProd } from "../../env";
 import { useNavigateBack } from "../../useNavigateBack";
 import { useWallet } from "../../core/Accounts";
 import { SmallText } from "../../uikit/typographic";

@@ -43,14 +43,7 @@ const CreateNickname = ({ onCreate }: { onCreate: (n: string) => Promise<void> }
           </div>
 
           <div style={{ position: "relative", margin: "42px 0 56px" }}>
-            <HereInput
-              label="Nickname"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              postfixStyle={{ marginLeft: 0 }}
-              postfix=".near"
-              autoFocus
-            />
+            <HereInput label="Nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} postfixStyle={{ marginLeft: 0 }} postfix=".near" autoFocus />
 
             {receiver.input !== ".near" && !receiver.isLoading && (
               <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>
@@ -60,14 +53,13 @@ const CreateNickname = ({ onCreate }: { onCreate: (n: string) => Promise<void> }
           </div>
 
           <div style={{ display: "flex", gap: 12 }}>
-            <ActionButton stroke style={{ flex: 1 }} onClick={() => onCreate("")} disabled={isCreating}>
+            <ActionButton $id="CreateAccount.skipNickname" stroke style={{ flex: 1 }} onClick={() => onCreate("")} disabled={isCreating}>
               Skip
             </ActionButton>
             <ActionButton
+              $id="CreateAccount.createNickname"
               style={{ flex: 1 }}
-              disabled={
-                isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError
-              }
+              disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
               onClick={() => {
                 if (isCreating) return;
                 setCreating(true);

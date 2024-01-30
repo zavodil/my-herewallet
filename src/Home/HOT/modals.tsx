@@ -35,6 +35,7 @@ export const InviteFriend = () => {
         Friends amplify your power! Earn <b>20% HOT</b> from all your friends' income - no limits, no boundaries. Let's go wild!
       </Text>
       <ActionButton
+        $id="InviteFriend.copyReferral"
         style={{ marginTop: 16 }}
         onClick={() => {
           navigator.clipboard.writeText(user.hot.referralLink);
@@ -82,7 +83,7 @@ export const FirstClaimHOT = () => {
       <Text style={{ color: colors.blackSecondary }}>
         HOT is an onchain token related to the launch of NEAR Wallet in Telegram. It's mined on the blockchain and can be trade or transfer via any crypto wallet. More coming after the mint is over!
       </Text>
-      <ActionButton disabled={isLoading} style={{ marginTop: 16 }} onClick={() => register()}>
+      <ActionButton $id="HotRegister.register" disabled={isLoading} style={{ marginTop: 16 }} onClick={() => register()}>
         Claim
       </ActionButton>
 

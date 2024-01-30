@@ -35,7 +35,7 @@ const Villages = () => {
             <br />
             Best villages receive daily USDT giveaways
           </Text>
-          <Button style={{ marginTop: 24 }} onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/hereawalletbot?start=v")}>
+          <Button $id="villages.createVillage" style={{ marginTop: 24 }} onClick={() => window.Telegram.WebApp.openTelegramLink("https://t.me/hereawalletbot?start=v")}>
             <SmallText style={{ fontWeight: "bold", color: "#0258F7" }}>Create a village</SmallText>
           </Button>
         </div>

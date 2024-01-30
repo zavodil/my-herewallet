@@ -103,7 +103,7 @@ const Auth = () => {
           padding: 56,
         }}
       >
-        <Button style={{ marginTop: "auto" }} onClick={() => window.open("https://t.me/herewalletchat")}>
+        <Button $id="Auth.support" style={{ marginTop: "auto" }} onClick={() => window.open("https://t.me/herewalletchat")}>
           <BoldP>Mint is over. Meta-NEAR NFT: 20000/20000</BoldP>
         </Button>
       </div>

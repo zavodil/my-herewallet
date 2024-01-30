@@ -11,6 +11,7 @@ import { ActionButton, ActivityIndicator, Button, H2 } from "../uikit";
 import HereInput from "../uikit/Input";
 import Icon from "../uikit/Icon";
 
+import { notify } from "../core/toast";
 import { Receiver } from "../core/Receiver";
 import { useWallet } from "../core/Accounts";
 import { AvatarImage } from "../Home/Header/styled";
@@ -21,9 +22,8 @@ import HereSelect from "../uikit/Selector";
 import { colors } from "../uikit/theme";
 
 import { Container, InputButton, TokenOption } from "./styled";
-import { notify } from "../core/toast";
-import { isTgMobile } from "../Mobile";
 import { useNavigateBack } from "../useNavigateBack";
+import { isTgMobile } from "../env";
 
 const Transfer = () => {
   useNavigateBack("/");
@@ -99,7 +99,7 @@ const Transfer = () => {
         {!isTgMobile() && (
           <div style={{ gridArea: "navigation" }}>
             <Link to="/" replace style={{ textDecoration: "none", display: "inline-block" }}>
-              <Button style={{ gap: 8 }}>
+              <Button $id="Transfer.back" style={{ gap: 8 }}>
                 <Icon name="arrow-left" />
                 <H2>Transfer</H2>
               </Button>
@@ -131,7 +131,7 @@ const Transfer = () => {
             options={tokens.filter((t) => t.amountFloat > 0)}
             value={tokens.find((ft) => ft.symbol === asset)}
             renderOption={(ft: FtModel) => (
-              <TokenOption key={ft.id} onClick={() => setAsset(ft.symbol)}>
+              <TokenOption $id="Transfer.selectAsset" key={ft.id} onClick={() => setAsset(ft.symbol)}>
                 <TokenIcon src={ft.icon} />
                 <div style={{ textAlign: "left" }}>
                   <BoldP style={{ lineHeight: "20px" }}>{ft.name}</BoldP>
@@ -194,12 +194,12 @@ const Transfer = () => {
               onChange={(e) => setAmount(formatNumber(e.target.value))}
             />
 
-            <InputButton style={{ position: "absolute", top: 10, right: 12 }} onClick={selectMax}>
+            <InputButton $id="Transfer.max" style={{ position: "absolute", top: 10, right: 12 }} onClick={selectMax}>
               <SmallText>MAX</SmallText>
             </InputButton>
 
             {user.tokens.fiat(token) > 0.01 && (
-              <InputButton $active={isFiat} style={{ position: "absolute", top: 10, right: 78 }} onClick={() => setFiat((t) => !t)}>
+              <InputButton $id="Transfer.switchUsd" $active={isFiat} style={{ position: "absolute", top: 10, right: 78 }} onClick={() => setFiat((t) => !t)}>
                 <SmallText>USD</SmallText>
               </InputButton>
             )}
@@ -217,7 +217,7 @@ const Transfer = () => {
             <Text style={{ color: "var(--Black-Secondary" }}>Recent recipients</Text>
 
             {user.contacts.map((item) => (
-              <Button style={{ gap: 12 }} key={item.account_id} onClick={() => setRecipient(item.account_id)}>
+              <Button $id="Transfer.selectContact" style={{ gap: 12 }} key={item.account_id} onClick={() => setRecipient(item.account_id)}>
                 <AvatarImage style={{ flexShrink: 0 }} src={item.avatar_url || `data:image/svg+xml;utf8,${generateFromString(item.account_id)}`} />
                 <Text>{truncateAddress(item.account_id)}</Text>
               </Button>
@@ -228,16 +228,16 @@ const Transfer = () => {
         )}
 
         {isTgMobile() ? (
-          <ActionButton big style={{ width: "100%" }} disabled={isDisabled || isLoading} onClick={makeTransfer}>
+          <ActionButton $id="Transfer.makeTransfer" big style={{ width: "100%" }} disabled={isDisabled || isLoading} onClick={makeTransfer}>
             {isLoading ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Transfer"}
           </ActionButton>
         ) : (
           <div style={{ marginTop: 20, display: "flex", gap: 80 }}>
-            <ActionButton style={{ width: 256 }} big disabled={isDisabled || isLoading} onClick={makeTransfer}>
+            <ActionButton $id="Transfer.makeTransfer" style={{ width: 256 }} big disabled={isDisabled || isLoading} onClick={makeTransfer}>
               {isLoading ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Transfer"}
             </ActionButton>
 
-            <Button onClick={() => navigate("/", { replace: true })}>
+            <Button $id="Transfer.back" onClick={() => navigate("/", { replace: true })}>
               <BoldP>Back</BoldP>
             </Button>
           </div>

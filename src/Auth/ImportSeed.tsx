@@ -44,18 +44,12 @@ const ImportAccount = () => {
         </div>
 
         <div style={{ position: "relative", width: 455 }}>
-          <HereInput
-            multiline
-            label="Seed or private key"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            autoFocus
-            style={{ height: 100, width: "100%" }}
-          />
+          <HereInput multiline label="Seed or private key" value={value} onChange={(e) => setValue(e.target.value)} autoFocus style={{ height: 100, width: "100%" }} />
         </div>
 
         <div style={{ display: "flex", width: "100%", gap: 12 }}>
           <ActionButton
+            $id="ImportSeed.continue"
             style={{ flex: 1 }}
             disabled={!value || isCreating}
             onClick={() => {

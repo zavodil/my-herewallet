@@ -26,6 +26,7 @@ const MyAddress = () => {
         </div>
 
         <HereButton
+          $id="MyAddressPopup.copyAddress"
           onClick={() => {
             navigator.clipboard.writeText(wallet.id);
             notify("Address has been copied");

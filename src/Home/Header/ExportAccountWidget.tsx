@@ -90,9 +90,10 @@ export const ExportAccountWidget = ({ onClose }: { onClose: () => void }) => {
                   <div style={{ display: "flex", gap: 8 }}>
                     <H3>Seedphrase</H3>
                     <Button
+                      $id="ExportWidget.seedphraseCopy"
                       onClick={async () => {
                         await navigator.clipboard.writeText(seed!);
-                        notify("Passphrase has beed copied");
+                        notify("Seedphrase has beed copied");
                       }}
                     >
                       <Icon name="copy" />
@@ -105,6 +106,7 @@ export const ExportAccountWidget = ({ onClose }: { onClose: () => void }) => {
                   <div style={{ display: "flex", gap: 8 }}>
                     <H3>Private key</H3>
                     <Button
+                      $id="ExportWidget.privateKeyCopy"
                       onClick={async () => {
                         await navigator.clipboard.writeText(pair?.toString()!);
                         notify("Private key has beed copied");
@@ -135,7 +137,7 @@ export const ExportAccountWidget = ({ onClose }: { onClose: () => void }) => {
           safe!
         </Text>
 
-        <ActionButton style={{ marginTop: 32, maxWidth: 300 }} onClick={() => extractKey()} disabled={isLoading}>
+        <ActionButton $id="ExportWidget.createKey" style={{ marginTop: 32, maxWidth: 300 }} onClick={() => extractKey()} disabled={isLoading}>
           {isLoading ? <ActivityIndicator style={{ transform: "scale(0.5)" }} width={5} /> : <>{pair ? "Export key" : "Create new key"}</>}
         </ActionButton>
       </S.ModalContent>

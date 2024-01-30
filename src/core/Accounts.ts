@@ -9,10 +9,10 @@ import { InMemoryKeyStore } from "near-api-js/lib/key_stores";
 import { InMemorySigner } from "near-api-js";
 import { NearSnap } from "@near-snap/sdk";
 
+import { isTgMobile } from "../env";
 import { SignPayload } from "./near-chain/signMessage";
 import { generateMnemonic } from "./near-chain/passphrase/bip39";
 import { parseSeedPhrase } from "./near-chain/passphrase";
-import { HereError } from "./network/types";
 import UserAccount from "./UserAccount";
 
 import { recaptchaToken, wait } from "./helpers";
@@ -22,7 +22,6 @@ import { ReceiverFetcher } from "./Receiver";
 import { HereApi } from "./network/api";
 import { storage } from "./Storage";
 import { notify } from "./toast";
-import { isTgMobile } from "../Mobile";
 
 class Accounts {
   static shared = new Accounts();
@@ -103,21 +102,23 @@ class Accounts {
       keyPair = KeyPair.fromString(key);
     } catch {}
 
-    const { publicKey, secretKey, seedPhrase } = keyPair
-      ? { publicKey: keyPair.getPublicKey().toString(), secretKey: keyPair.toString(), seedPhrase: undefined }
+    const { publicKey, secretKey, seedPhrase, defaultAddress } = keyPair
+      ? {
+          secretKey: keyPair.toString(),
+          publicKey: keyPair.getPublicKey().toString(),
+          defaultAddress: Buffer.from(keyPair.getPublicKey().toString()).toString("hex"),
+          seedPhrase: undefined,
+        }
       : parseSeedPhrase(key || generateMnemonic());
 
     const api = new HereApi();
-    const accounts = await api.findAccount(PublicKey.from(publicKey));
-    if (accounts[0] == null) {
-      notify("Account is not found");
-      throw Error("Account is not found");
-    }
+    const accounts = await api.findAccount(PublicKey.from(publicKey)).catch(() => []);
+    const accountId = accounts[0] || defaultAddress;
 
     keyPair = KeyPair.fromString(secretKey);
-    const sign = await this.localSign(accounts[0], keyPair);
+    const sign = await this.localSign(accountId, keyPair);
     const cred = {
-      accountId: accounts[0],
+      accountId: accountId,
       publicKey: publicKey,
       privateKey: secretKey,
       type: ConnectType.Web,

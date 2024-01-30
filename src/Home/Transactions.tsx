@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
+import { isTgMobile } from "../env";
 import { TransactionModel } from "../core/transactions/types";
 import { BoldP, SmallText, Text } from "../uikit/typographic";
 import { notify } from "../core/toast";
 import { Button } from "../uikit";
 import Icon from "../uikit/Icon";
-import { isTgMobile } from "../Mobile";
 
 export const Transaction = ({ trx }: { trx: TransactionModel }) => {
   return (
@@ -35,7 +35,8 @@ export const Transaction = ({ trx }: { trx: TransactionModel }) => {
                 Link
               </BoldP>
               <Button
-                onClick={async (e) => {
+                $id="Transaction.copyHash"
+                onClick={async () => {
                   await navigator.clipboard.writeText(trx.metadata.link!);
                   notify("Transaction address has beed copied");
                 }}

@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import hereWebLogo from "../../assets/here-web.svg?url";
-import { useAnalyticsTrack } from "../../core/analytics";
 import { accounts } from "../../core/Accounts";
 
 import { Button } from "../../uikit";
@@ -11,7 +10,7 @@ import { BoldP, H2 } from "../../uikit/typographic";
 import { sheets } from "../../uikit/Popup";
 import Icon from "../../uikit/Icon";
 
-import { isTgMobile } from "../../Mobile";
+import { isTgMobile } from "../../env";
 import MyAddress from "../MyAddress";
 
 import AccountManager from "./AccountsManager";
@@ -20,11 +19,6 @@ import * as S from "./styled";
 const Header = observer(() => {
   const location = useLocation();
   const navigate = useNavigate();
-  const track = useAnalyticsTrack("app");
-
-  useEffect(() => {
-    track("open", { from: document.referrer });
-  }, []);
 
   if (isTgMobile()) {
     return (
@@ -35,11 +29,11 @@ const Header = observer(() => {
         </div>
 
         <div style={{ marginLeft: "auto", display: "flex", gap: 16 }}>
-          <Button onClick={() => sheets.present({ id: "MyQR", element: <MyAddress /> })}>
+          <Button $id="Header.openMyAddress" onClick={() => sheets.present({ id: "MyQR", element: <MyAddress /> })}>
             <Icon name="qr" />
           </Button>
 
-          <Button onClick={() => navigate("/settings")}>
+          <Button $id="Header.openSettings" onClick={() => navigate("/settings")}>
             <Icon name="settings" />
           </Button>
         </div>

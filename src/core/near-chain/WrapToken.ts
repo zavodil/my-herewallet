@@ -69,7 +69,7 @@ class WrapToken {
       },
     });
 
-    return trx.transaction_outcome.id;
+    return trx;
   }
 
   async fetchBalance() {
@@ -101,7 +101,7 @@ class WrapToken {
       },
     });
 
-    return trx.transaction_outcome.id;
+    return trx;
   }
 }
 

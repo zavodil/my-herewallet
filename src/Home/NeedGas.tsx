@@ -24,7 +24,7 @@ export const NeedMoreGas = ({ onSelectHot }: { onSelectHot?: () => void }) => {
 
         <Card style={{ marginTop: 24, background: colors.elevation1, textAlign: "left" }}>
           <Text>Deposit NEAR to your account to cover gas price. Gas fee per claim ~0.002 NEAR</Text>
-          <ActionButton style={{ width: "100%", marginTop: 20 }} stroke onClick={() => openQr()}>
+          <ActionButton $id="NeedGasPopup.depositNear" style={{ width: "100%", marginTop: 20 }} stroke onClick={() => openQr()}>
             Deposit NEAR
           </ActionButton>
         </Card>
@@ -39,14 +39,14 @@ export const NeedMoreGas = ({ onSelectHot }: { onSelectHot?: () => void }) => {
               </WarningBadge>
 
               <Text>We can cover your transaction costs on the blockchain and charge fee in HOT</Text>
-              <ActionButton style={{ width: "100%", marginTop: 20 }} stroke onClick={() => onSelectHot()}>
+              <ActionButton $id="NeedGasPopup.continueWithHot" style={{ width: "100%", marginTop: 20 }} stroke onClick={() => onSelectHot()}>
                 Continue with HOT
               </ActionButton>
             </Card>
           </>
         )}
 
-        <Button style={{ margin: "auto", marginTop: 24 }}>
+        <Button $id="NeedGasPopup.moreAboutGasFree" style={{ margin: "auto", marginTop: 24 }}>
           <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>More about Gas Free</SmallText>
         </Button>
       </div>

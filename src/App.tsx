@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
+import { isTgMobile } from "./env";
 import { Staking } from "./Staking";
+import { GAME_ID } from "./core/Hot";
 import { accounts } from "./core/Accounts";
 import Inscription, { InscriptionTokens } from "./Inscription";
 import { CustomRequestResolver, ImportAccountsResolver, KeypomResolver } from "./Widget/resolvers";
@@ -13,7 +15,7 @@ import ImportSeed from "./Auth/ImportSeed";
 import OpenInApp from "./OpenInApp";
 import Transfer from "./Transfer";
 import Settings from "./Settings";
-import Mobile, { isTgMobile } from "./Mobile";
+import Mobile from "./Mobile";
 import Widget from "./Widget";
 import Auth from "./Auth";
 import Apps from "./Apps";
@@ -29,12 +31,10 @@ import HOT from "./Home/HOT";
 import Gas from "./Home/HOT/Gas";
 import { NeedMoreGas } from "./Home/NeedGas";
 import Onboard from "./Home/HOT/Onboard";
-import { GAME_ID } from "./core/Hot";
 import { useHOTVillage } from "./Home/HOT/useVillage";
 import Villages from "./Home/HOT/Villages";
-import { Root } from "./Home/styled";
-import { H2, H4 } from "./uikit";
 import HotGuard from "./Home/HOT/HotGuard";
+import { AnalyticsTracker } from "./core/analytics";
 
 function App() {
   // useEffect(() => {
@@ -47,6 +47,7 @@ function App() {
   useEffect(() => {
     if (!isTgMobile() || !accounts.account) return;
     accounts.account.near.events.on("transaction:error", ({ error, actions, receiverId }) => {
+      AnalyticsTracker.shared.track("transaction:error", { error: error?.toString?.() });
       if (!error?.toString()?.includes("does not have enough balance")) return;
       if (receiverId === GAME_ID && actions.length === 1 && actions[0].functionCall?.methodName === "claim") return;
       sheets.present({ id: "NeedGas", element: <NeedMoreGas /> });
