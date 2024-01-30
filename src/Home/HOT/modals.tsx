@@ -7,7 +7,6 @@ import { sheets } from "../../uikit/Popup";
 import { notify } from "../../core/toast";
 import { colors } from "../../uikit/theme";
 import { ActionButton, H2, H4, Text } from "../../uikit";
-import { NetworkError } from "../../core/network/api";
 import { SmallText } from "../../uikit/typographic";
 
 const tips = [
@@ -53,15 +52,15 @@ export const FirstClaimHOT = () => {
   const [isLoading, setLoading] = useState(false);
 
   const register = async () => {
+    if (isLoading) return;
     try {
       setLoading(true);
       await user.hot.register();
       sheets.dismiss("Register");
       setLoading(false);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
-      if (e instanceof NetworkError) notify(e.body);
-      else notify("Register failed");
+      notify(e?.toString?.());
       setLoading(false);
     }
   };

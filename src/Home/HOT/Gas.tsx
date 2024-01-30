@@ -18,7 +18,6 @@ import { observer } from "mobx-react-lite";
 const Gas = () => {
   useNavigateBack();
   const user = useWallet()!;
-  const navigate = useNavigate();
 
   useEffect(() => {
     user.hot.fetchMissions();
@@ -30,20 +29,23 @@ const Gas = () => {
     sheets.present({ id: "MyQR", element: <MyAddress /> });
   };
 
-  const send69Hot = () => {
-    navigate("/transfer?asset=HOT&amount=0.69");
-  };
-
-  const followTwitter = () => {
-    window.Telegram.WebApp.openLink("https://twitter.com/here_wallet");
-    user.hot.completeMission("follow_twitter");
+  const followHotTelegram = () => {
+    window.Telegram.WebApp.openLink("https://t.me/hotonnear");
+    setTimeout(() => {
+      user.hot.completeMission("follow_tg_hot");
+    }, 5000);
   };
 
   const followTelegram = () => {
     window.Telegram.WebApp.openTelegramLink("https://t.me/herewallet");
     setTimeout(() => {
-      user.hot.completeMission("telegram_follow");
+      user.hot.completeMission("follow_tg_here");
     }, 5000);
+  };
+
+  const followTwitter = () => {
+    window.Telegram.WebApp.openLink("https://twitter.com/here_wallet");
+    user.hot.completeMission("follow_tw_here");
   };
 
   return (
@@ -68,8 +70,8 @@ const Gas = () => {
           <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => followTwitter()}>
             <img src={require("../../assets/here.svg")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8 }} />
             <div>
-              <BoldP>Follow us on Twitter</BoldP>
-              {user.hot.missions.follow_twitter ? (
+              <BoldP>Follow us on HERE Twitter</BoldP>
+              {user.hot.missions.follow_tw_here ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                   <Icon color={colors.green} name="tick" />
                   <BoldP style={{ color: colors.green }}>Completed</BoldP>
@@ -85,7 +87,27 @@ const Gas = () => {
             <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />
           </div>
 
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => send69Hot()}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => followHotTelegram()}>
+            <img src={require("../../assets/hot/hot.png")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }} />
+            <div>
+              <BoldP>Follow us on Hot Telegram</BoldP>
+              {user.hot.missions.follow_tg_hot ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                  <Icon color={colors.green} name="tick" />
+                  <BoldP style={{ color: colors.green }}>Completed</BoldP>
+                </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                  <Icon name="gas" />
+                  <BoldP>1 Gas-Free Tx</BoldP>
+                </div>
+              )}
+            </div>
+
+            <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />
+          </div>
+
+          {/* <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => send69Hot()}>
             <img src={require("../../assets/hot/hot.png")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }} />
             <div>
               <BoldP>Send 0.69 $HOT to a friend</BoldP>
@@ -102,14 +124,14 @@ const Gas = () => {
               )}
             </div>
             <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />
-          </div>
+          </div> */}
 
           <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => followTelegram()}>
-            <img src={require("../../assets/hot/band.png")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8, paddingLeft: 12 }} />
+            <img src={require("../../assets/here.svg")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 8 }} />
             <div>
-              <BoldP>Follow us on Telegram</BoldP>
+              <BoldP>Follow us on HERE Telegram</BoldP>
 
-              {user.hot.missions.telegram_follow ? (
+              {user.hot.missions.follow_tw_here ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                   <Icon color={colors.green} name="tick" />
                   <BoldP style={{ color: colors.green }}>Completed</BoldP>

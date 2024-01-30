@@ -12,9 +12,9 @@ import { colors } from "../../uikit/theme";
 import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
+import BlurBackground from "./effects/BlurBackground";
 import { ClaimingLoading } from "./modals";
 import Balance from "./Balance";
-import BlurBackground from "./effects/BlurBackground";
 
 const BoostPopup = observer(({ id }: { id: number }) => {
   const user = useWallet()!;
@@ -43,6 +43,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
     if (!next.mission) return;
     try {
       setChecking(true);
+      // @ts-ignore
       await user.hot.completeMission(next.mission);
       setChecking(false);
     } catch (e) {
@@ -76,13 +77,13 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         <div
           style={{
             borderRadius: 12,
-            width: "100%",
             alignItems: "center",
-            gap: 12,
             overflow: "hidden",
             border: "1px solid var(--border-low, #C7BAB8)",
             background: "linear-gradient(45deg, #FDBF1C55, transparent)",
             display: "flex",
+            width: "100%",
+            gap: 12,
           }}
         >
           <img src={next.icon} style={{ padding: 8, width: 64, height: 64, background: "rgba(235, 222, 220, 0.60)" }} />
