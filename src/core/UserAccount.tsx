@@ -78,13 +78,17 @@ class UserAccount {
     this.localStorage = new Storage(creds.accountId);
 
     if (window.Telegram.WebApp.initDataUnsafe?.user) {
-      const key = `${window.Telegram.WebApp.initDataUnsafe.user.id}:${creds.accountId}`;
-      this.localStorage = new Storage(key);
+      const telegramKey = `${window.Telegram.WebApp.initDataUnsafe.user.id}:${creds.accountId}`;
+      const telegramStorage = new Storage(telegramKey);
+      const globalStorage = this.localStorage;
 
       // Migrate from global storage
-      if (window.localStorage.getItem(key) == null) {
-        this.localStorage.write(new Storage(creds.accountId).read());
+      if (window.localStorage.getItem(globalStorage.key) != null) {
+        telegramStorage.write(globalStorage.read());
+        window.localStorage.removeItem(globalStorage.key);
       }
+
+      this.localStorage = telegramStorage;
     }
 
     if (creds.type === ConnectType.Web) {

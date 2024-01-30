@@ -139,7 +139,7 @@ const Home = () => {
               <BoldP style={{ color: "#fff", fontSize: 20, lineHeight: "26px" }}>
                 Claim your
                 <br />
-                First Hot Token!
+                First Hot!
               </BoldP>
 
               <ActionButton onClick={() => navigate("/hot/onboard")} style={{ marginTop: "auto", background: "#fff", borderRadius: 16, color: colors.blackPrimary, width: 160, height: 40 }}>

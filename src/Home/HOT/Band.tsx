@@ -3,15 +3,16 @@ import { observer } from "mobx-react-lite";
 
 import { HotReferral } from "../../core/Hot";
 import { useWallet } from "../../core/Accounts";
-import { ActionButton, Button } from "../../uikit";
+import { formatAmount } from "../../core/helpers";
+
 import { BoldP, H2, H3, SmallText, Text } from "../../uikit/typographic";
-import { useNavigateBack } from "../../useNavigateBack";
+import { ActionButton, Button } from "../../uikit";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
 
 import { Container, Root } from "../styled";
+import { useNavigateBack } from "../../useNavigateBack";
 import BlurBackground from "./effects/BlurBackground";
-import { formatAmount } from "../../core/helpers";
 import { InviteFriend } from "./modals";
 
 const FriendItem = ({ item }: { item: HotReferral }) => {
