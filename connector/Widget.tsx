@@ -143,17 +143,12 @@ const Widget = () => {
 
               <div style={{ display: "flex", gap: 8, width: 300 }}>
                 <p style={{ lineBreak: "anywhere" }}>{isNeedActivate}</p>
-                <Button>
+                <Button $id="Connector.copyAddress">
                   <Icon style={{ marginTop: 6, width: 24, height: 24 }} name="copy" />
                 </Button>
               </div>
 
-              <S.ButtonSwitch
-                style={{ marginTop: 16 }}
-                onClick={() =>
-                  connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)
-                }
-              >
+              <S.ButtonSwitch style={{ marginTop: 16 }} onClick={() => connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)}>
                 I did, connect again
               </S.ButtonSwitch>
             </>
@@ -162,12 +157,7 @@ const Widget = () => {
               <h2>Connect to your Ledger device</h2>
               <p>Make sure your Ledger is connected securely, and that the NEAR app is open on your device.</p>
 
-              <S.ButtonSwitch
-                style={{ marginTop: 16 }}
-                onClick={() =>
-                  connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)
-                }
-              >
+              <S.ButtonSwitch style={{ marginTop: 16 }} onClick={() => connectLedger(account, id, request, setLedgerConnected, () => setApproving(true), setNeedActivate)}>
                 Click to connect
               </S.ButtonSwitch>
             </>
@@ -187,28 +177,14 @@ const Widget = () => {
 
         {account.type === ConnectType.Here && (
           <>
-            {isMobile() && (
-              <S.ApproveButton onClick={() => window.open(`herewallet://request/${id}`, "_top")}>
-                Tap to approve HERE
-              </S.ApproveButton>
-            )}
+            {isMobile() && <S.ApproveButton onClick={() => window.open(`herewallet://request/${id}`, "_top")}>Tap to approve HERE</S.ApproveButton>}
 
             <S.Links>
-              <a
-                target="_parent"
-                rel="noopener noreferrer"
-                className="here-connector-ios"
-                href="https://download.herewallet.app?ios"
-              >
+              <a target="_parent" rel="noopener noreferrer" className="here-connector-ios" href="https://download.herewallet.app?ios">
                 <img src={require("../src/assets/appstore.svg")} />
               </a>
 
-              <a
-                target="_parent"
-                rel="noopener noreferrer"
-                className="here-connector-android"
-                href="https://download.herewallet.app?android"
-              >
+              <a target="_parent" rel="noopener noreferrer" className="here-connector-android" href="https://download.herewallet.app?android">
                 <img src={require("../src/assets/googleplay.svg")} />
               </a>
             </S.Links>
@@ -255,13 +231,7 @@ const Widget = () => {
             bottom: 0,
           }}
         >
-          <Lottie
-            animationData={require("../src/assets/loading.json")}
-            style={{ width: 256, height: 256, marginTop: -56 }}
-            width={48}
-            height={48}
-            loop={true}
-          />
+          <Lottie animationData={require("../src/assets/loading.json")} style={{ width: 256, height: 256, marginTop: -56 }} width={48} height={48} loop={true} />
           <H4>Transaction is processing...</H4>
         </div>
       )}

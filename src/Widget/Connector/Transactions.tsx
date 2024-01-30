@@ -50,8 +50,7 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <H2>Sign message</H2>
         <Text style={{ marginTop: 16, textAlign: "center" }}>
-          The app{" "}
-          <span style={{ color: colors.pink }}>{"receiver" in request ? request.receiver : request.recipient}</span>
+          The app <span style={{ color: colors.pink }}>{"receiver" in request ? request.receiver : request.recipient}</span>
           {"\n"}asks to sign this message for authorization:
         </Text>
 
@@ -75,17 +74,13 @@ export const Connector = ({ request }: { request: HereProviderRequest }) => {
     return (
       <View>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-          <Button onClick={() => nextPage(-1)} disabled={selected === 1} style={{ opacity: selected === 1 ? 0.3 : 1 }}>
+          <Button $id="Connector.prevTransaction" onClick={() => nextPage(-1)} disabled={selected === 1} style={{ opacity: selected === 1 ? 0.3 : 1 }}>
             <Icon name="cursor-left" />
           </Button>
           <Text style={{ marginLeft: 8, marginRight: 8, marginTop: -4 }}>
             {selected}/{actionsCount}
           </Text>
-          <Button
-            onClick={() => nextPage(1)}
-            disabled={selected === actionsCount}
-            style={{ opacity: selected === actionsCount ? 0.3 : 1 }}
-          >
+          <Button $id="Connector.nextTransaction" onClick={() => nextPage(1)} disabled={selected === actionsCount} style={{ opacity: selected === actionsCount ? 0.3 : 1 }}>
             <Icon name="cursor-right" />
           </Button>
         </View>

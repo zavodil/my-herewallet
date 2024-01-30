@@ -61,7 +61,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         <H2 style={{ marginTop: 16 }}>{next.title}</H2>
         <Text style={{ color: colors.blackSecondary }}>{next.text}</Text>
 
-        <ActionButton style={{ marginTop: 24 }} onClick={() => sheets.dismiss("Boost")}>
+        <ActionButton $id="Booster.gotIt" style={{ marginTop: 24 }} onClick={() => sheets.dismiss("Boost")}>
           Got it
         </ActionButton>
       </div>
@@ -115,11 +115,11 @@ const BoostPopup = observer(({ id }: { id: number }) => {
       </div>
 
       {next.mission && !user.hot.canUpgrade(id + 1) ? (
-        <ActionButton disabled={isChecking} onClick={updateMissions}>
+        <ActionButton $id="Booster.checkMissionComplete" disabled={isChecking} onClick={updateMissions}>
           {isChecking ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "I completed the mission"}
         </ActionButton>
       ) : (
-        <ActionButton disabled={!user.hot.canUpgrade(id + 1) || isLoading} onClick={() => upgrade()}>
+        <ActionButton $id="Booster.upgrade" disabled={!user.hot.canUpgrade(id + 1) || isLoading} onClick={() => upgrade()}>
           Upgrade
         </ActionButton>
       )}
@@ -190,9 +190,9 @@ const Boosters = () => {
         <div>
           <div style={{ display: "flex", padding: "36px 0", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <Text style={{ color: colors.blackSecondary, marginBottom: -16 }}>Your balance</Text>
-            <Balance />
+            <Balance value={user.hot.balance} />
 
-            <Button style={{ marginTop: 4 }}>
+            <Button $id="Boosters.howCaveWorks" style={{ marginTop: 4 }}>
               <BoldP style={{ color: "#0258F7" }}>How cave works</BoldP>
             </Button>
           </div>

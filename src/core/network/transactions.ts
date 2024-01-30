@@ -1,6 +1,6 @@
 import { HereApi } from "./api";
 import { CashbackData, TransactionModel } from "../transactions/types";
-import { isTgMobile } from "../../Mobile";
+import { isTgMobile } from "../../env";
 
 export interface TransactionsQuery {
   currency?: string;
@@ -32,11 +32,7 @@ class TransactionsApi {
     return transactions;
   }
 
-  public async patchTransaction(data: {
-    transaction_hash: string;
-    data: Record<string, string | number>;
-    type?: string;
-  }) {
+  public async patchTransaction(data: { transaction_hash: string; data: Record<string, string | number>; type?: string }) {
     await this.api.request("/api/v1/transactions", {
       method: "PATCH",
       body: JSON.stringify(data),

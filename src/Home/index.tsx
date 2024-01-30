@@ -13,7 +13,7 @@ import { useWallet } from "../core/Accounts";
 import { Formatter, truncateAddress } from "../core/helpers";
 import { HereError } from "../core/network/types";
 import { notify } from "../core/toast";
-import { isTgMobile } from "../Mobile";
+import { isTgMobile } from "../env";
 
 import Widgets from "./HOT/Widgets";
 import ExportBanner from "./ExportBanner";
@@ -78,11 +78,11 @@ const Home = () => {
               </div>
 
               <div style={{ marginTop: isTgMobile() ? 16 : 0, width: isTgMobile() ? "100%" : 300, marginLeft: "auto", display: "flex", gap: 16 }}>
-                <HereButton onClick={() => window.Telegram.WebApp.openLink("https://onramp.money/experience/near/")} style={LinkButtonStyle}>
+                <HereButton $id="buyNear" onClick={() => window.Telegram.WebApp.openLink("https://onramp.money/experience/near/")} style={LinkButtonStyle}>
                   Buy NEAR
                 </HereButton>
 
-                <HereButton onClick={() => navigate("/transfer")} style={LinkButtonStyle}>
+                <HereButton $id="transfer" onClick={() => navigate("/transfer")} style={LinkButtonStyle}>
                   Transfer
                 </HereButton>
               </div>
@@ -96,12 +96,12 @@ const Home = () => {
                   {account.transactions.list.length > 2 && (
                     <>
                       {!showAll ? (
-                        <Button style={{ marginRight: -8 }} onClick={() => setShowAll(true)}>
+                        <Button $id="seeAllTransactions" style={{ marginRight: -8 }} onClick={() => setShowAll(true)}>
                           <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>See all</SmallText>
                           <Icon name="cursor-right" />
                         </Button>
                       ) : (
-                        <Button style={{ marginRight: -4 }} onClick={() => setShowAll(false)}>
+                        <Button $id="hideAllTransactions" style={{ marginRight: -4 }} onClick={() => setShowAll(false)}>
                           <SmallText style={{ fontWeight: "bold", color: "var(--Black-Primary)" }}>Hide all</SmallText>
                           <Icon name="cursor-down" />
                         </Button>
@@ -117,8 +117,8 @@ const Home = () => {
             )}
           </Card>
 
-          {isTgMobile() && account.telegramAccountId === account.near.accountId && !account.hot.needRegister && <Widgets />}
-          {isTgMobile() && account.telegramAccountId === account.near.accountId && account.hot.needRegister && (
+          {isTgMobile() && !account.hot.needRegister && <Widgets />}
+          {isTgMobile() && account.hot.needRegister && (
             <div
               style={{
                 borderRadius: 20,
@@ -142,7 +142,11 @@ const Home = () => {
                 First Hot!
               </BoldP>
 
-              <ActionButton onClick={() => navigate("/hot/onboard")} style={{ marginTop: "auto", background: "#fff", borderRadius: 16, color: colors.blackPrimary, width: 160, height: 40 }}>
+              <ActionButton
+                $id="openHot"
+                onClick={() => navigate("/hot/onboard")}
+                style={{ marginTop: "auto", background: "#fff", borderRadius: 16, color: colors.blackPrimary, width: 160, height: 40 }}
+              >
                 Claim
               </ActionButton>
 
@@ -224,7 +228,7 @@ const Home = () => {
                   {account.metamaskNftCanReserve && (
                     <div style={{ width: "100%", maxWidth: 400, border: "1px solid var(--Stroke)", marginBottom: 24, marginTop: 16, padding: 16, borderRadius: 16 }}>
                       <Text>Claim Meta-NFT if you didn't get it due to .near address allocation issues</Text>
-                      <ActionButton style={{ marginTop: 16, width: "100%" }} disabled={isReserving} onClick={claimMetaNft}>
+                      <ActionButton $id="claimMetaNft" style={{ marginTop: 16, width: "100%" }} disabled={isReserving} onClick={claimMetaNft}>
                         Claim Meta-NFT
                       </ActionButton>
                     </div>
@@ -320,7 +324,7 @@ const Home = () => {
             <Card style={{ width: "100%" }}>
               <div style={{ display: "flex", marginBottom: 12, width: "100%", justifyContent: "space-between", alignItems: "center" }}>
                 <H3>Recent Apps</H3>
-                <Button onClick={() => navigate("/apps")}>
+                <Button $id="openRecentApps" onClick={() => navigate("/apps")}>
                   <Text style={{ fontWeight: "bold", color: "var(--Black-Secondary)" }}>See all</Text>
                   <Icon name="cursor-right" />
                 </Button>

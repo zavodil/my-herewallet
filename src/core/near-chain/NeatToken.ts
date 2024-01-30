@@ -45,7 +45,7 @@ class NeatToken {
       ],
     });
 
-    return tx.transaction_outcome.id;
+    return tx;
   }
 }
 

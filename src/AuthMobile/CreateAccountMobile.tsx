@@ -71,7 +71,12 @@ const CreateAccountMobile = () => {
       </div>
 
       <div style={{ display: "flex", marginTop: 56, width: "100%", gap: 16 }}>
-        <ActionButton style={{ flex: 1 }} disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError} onClick={() => onCreate(receiver.input)}>
+        <ActionButton
+          $id="CreateAccount.createNickname"
+          style={{ flex: 1 }}
+          disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
+          onClick={() => onCreate(receiver.input)}
+        >
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
         </ActionButton>
       </div>

@@ -61,7 +61,7 @@ const Gas = () => {
             Each HOT claim is a transaction on the NEAR blockchain. We will cover your gas price as long as you have gas-free transactions
           </Text>
 
-          <Button>
+          <Button $id="GasFree.learnMore">
             <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>Learn more</SmallText>
           </Button>
         </div>

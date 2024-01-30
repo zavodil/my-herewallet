@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import path from "path";
 
 import { ActionButton, ActivityIndicator, Button, H2, H3, Text, Tooltip } from "../../uikit";
 import { SmallText } from "../../uikit/typographic";
@@ -10,7 +9,6 @@ import { Modal } from "../../uikit/Modal";
 
 import { useAmountInput } from "../useAmountInput";
 import { useWallet } from "../../core/Accounts";
-import { useAnalytics } from "../../core/analytics";
 import { DEFAULT_APY } from "../../core/constants";
 import { Formatter, parseAmount } from "../../core/helpers";
 import * as S from "../styled";
@@ -21,7 +19,6 @@ const FirstStaking = () => {
   const user = useWallet()!;
   const [isSuccess, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const track = useAnalytics("first_stake");
 
   const { inputRef, handleChange, value, numValue, fontSize } = useAmountInput({
     maxWidth: 150,
@@ -39,7 +36,6 @@ const FirstStaking = () => {
   }, []);
 
   const handleMax = () => {
-    track("select_max");
     handleChange(user.tokens.stakableNear, prefixer);
   };
 
@@ -49,14 +45,12 @@ const FirstStaking = () => {
 
   const handleApprove = async () => {
     try {
-      track("stake");
       setLoading(true);
       await user.near.hnear.stake(parseAmount(value));
       setLoading(false);
       setSuccess(true);
     } catch (e) {
       console.log(e);
-      track("stake_failed");
       setLoading(false);
     }
   };
@@ -66,19 +60,12 @@ const FirstStaking = () => {
       <InputCard onClick={() => inputRef.current?.focus()}>
         <Flex>
           <Text style={{ fontWeight: "bolder" }}>Stake</Text>
-          <EditButton style={{ marginLeft: "auto" }} onClick={handleMax}>
+          <EditButton $id="FirstStake.max" style={{ marginLeft: "auto" }} onClick={handleMax}>
             Select max
           </EditButton>
         </Flex>
         <Flex onClick={() => inputRef.current?.focus()}>
-          <AmountInput
-            min={0}
-            autoFocus
-            ref={inputRef}
-            value={value}
-            inputMode="decimal"
-            onChange={(e) => handleChange(e.target.value, prefixer)}
-          />
+          <AmountInput min={0} autoFocus ref={inputRef} value={value} inputMode="decimal" onChange={(e) => handleChange(e.target.value, prefixer)} />
           <H3 style={{ marginBottom: 5, marginLeft: 4, fontSize: fontSize * 0.8 }}>NEAR</H3>
           <SmallText style={{ marginLeft: "auto", marginBottom: 7 }}>{Formatter.usd(+value * 2.5)}</SmallText>
         </Flex>
@@ -87,9 +74,7 @@ const FirstStaking = () => {
       <InputCard style={{ background: "#359C2C", marginTop: 12, border: "none" }}>
         <Flex>
           <Text style={{ fontWeight: "bolder", color: "rgba(255, 255, 255, 0.7)" }}>Expected income</Text>
-          <SmallText style={{ color: "#fff", marginLeft: "auto" }}>
-            {Formatter.usd(+value * DEFAULT_APY * 2.5, 3)}
-          </SmallText>
+          <SmallText style={{ color: "#fff", marginLeft: "auto" }}>{Formatter.usd(+value * DEFAULT_APY * 2.5, 3)}</SmallText>
         </Flex>
 
         <Flex>
@@ -107,7 +92,7 @@ const FirstStaking = () => {
             offsetX={10}
             position={["left center", "bottom center"]}
             trigger={
-              <Button style={{ marginRight: 8, marginBottom: 1 }}>
+              <Button $id="FirstStake.howToGetMore" style={{ marginRight: 8, marginBottom: 1 }}>
                 <Text style={{ fontWeight: "bolder", color: colors.pink }}>How to get more?</Text>
               </Button>
             }
@@ -125,7 +110,7 @@ const FirstStaking = () => {
         <Text style={{ fontWeight: "bolder" }}>0%</Text>
       </S.Row>
 
-      <ActionButton disabled={isDisabled} style={{ marginTop: "auto" }} onClick={handleApprove}>
+      <ActionButton $id="FirstStake.approve" disabled={isDisabled} style={{ marginTop: "auto" }} onClick={handleApprove}>
         Stake
       </ActionButton>
     </>

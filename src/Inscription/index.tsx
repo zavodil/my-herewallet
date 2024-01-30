@@ -159,9 +159,7 @@ export const InscriptionTokens = () => {
         <Card style={{ maxWidth: 380, height: "fit-content" }}>
           <H4 style={{ marginBottom: 8 }}>Disclaimer</H4>
           <Text>Tokens aren't linked to HERE Wallet team. We offer minting only.</Text>
-          <BoldP>
-            HERE Wallet isn't liable for tokens changes. This platform allows NRC-20 tokens minting and cost estimation.
-          </BoldP>
+          <BoldP>HERE Wallet isn't liable for tokens changes. This platform allows NRC-20 tokens minting and cost estimation.</BoldP>
           <Text>HERE Wallet isn't responsible for tokens minted here.</Text>
         </Card>
       </Container>
@@ -276,12 +274,7 @@ const Inscription = () => {
 
       const nearBalance = (await account?.getAccountBalance()).available;
       if (new BN(nearBalance).lt(gasPrice)) {
-        notify(
-          `You don't have enough NEAR to pay for gas. The account must have at least ${formatNearAmount(
-            gasPrice.toString()
-          )} NEAR`,
-          10000
-        );
+        notify(`You don't have enough NEAR to pay for gas. The account must have at least ${formatNearAmount(gasPrice.toString())} NEAR`, 10000);
         throw Error();
       }
 
@@ -291,14 +284,7 @@ const Inscription = () => {
           publicKey,
           "inscription.near",
           nonce,
-          [
-            transactions.functionCall(
-              "inscribe",
-              { p: "nrc-20", op: "mint", tick: stats.ticker, amt: stats.limit || "1" },
-              new BN(TGAS * 10),
-              new BN(0)
-            ),
-          ],
+          [transactions.functionCall("inscribe", { p: "nrc-20", op: "mint", tick: stats.ticker, amt: stats.limit || "1" }, new BN(TGAS * 10), new BN(0))],
           base_decode(blockHash)
         ),
         account.connection.signer,
@@ -354,7 +340,7 @@ const Inscription = () => {
           marginBottom: -40,
         }}
       >
-        <Button onClick={() => navigate("/inscription/tokens")}>
+        <Button $id="Inscriptions.back" onClick={() => navigate("/inscription/tokens")}>
           <Icon name="arrow-left" />
         </Button>
 
@@ -391,12 +377,7 @@ const Inscription = () => {
             <H2>Mint is over</H2>
           ) : (
             <>
-              <HereInput
-                label="Transaction count"
-                value={count}
-                onChange={(e) => setCount(+formatNumber(e.target.value))}
-                postfix=" "
-              />
+              <HereInput label="Transaction count" value={count} onChange={(e) => setCount(+formatNumber(e.target.value))} postfix=" " />
               <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16 }}>
                 {fee != null && (
                   <S.Row>
@@ -417,7 +398,7 @@ const Inscription = () => {
 
           {account != null && (
             <S.Row style={{ alignItems: "center", marginTop: 24, gap: 16 }}>
-              <ActionButton disabled={loading || count < 1} style={{ flex: 1 }} onClick={startMint}>
+              <ActionButton $id="Inscriptions.startMint" disabled={loading || count < 1} style={{ flex: 1 }} onClick={startMint}>
                 {loading ? (
                   <>
                     <H4>Progress: {Formatter.round((successed / count) * 100, 2)}%</H4>
@@ -429,6 +410,7 @@ const Inscription = () => {
 
               <ActionButton
                 stroke
+                $id="Inscriptions.logout"
                 style={{ flex: 1 }}
                 onClick={async () => {
                   await here.signOut();
@@ -442,6 +424,7 @@ const Inscription = () => {
 
           {account == null && (
             <ActionButton
+              $id="Inscriptions.connectHere"
               style={{ marginTop: 24 }}
               onClick={async () => {
                 await here.signIn({ contractId: "inscription.near", allowance: parseAmount(10) });
@@ -497,10 +480,7 @@ const Inscription = () => {
           <H4>Disclaimer</H4>
           <Text>
             {stats.ticker.toUpperCase()} token isn't linked to HERE Wallet team. We offer minting only.{" "}
-            <BoldP>
-              HERE Wallet isn't liable for token changes. This platform allows NRC-20 token minting and cost estimation.
-            </BoldP>{" "}
-            HERE Wallet isn't responsible for tokens minted here.
+            <BoldP>HERE Wallet isn't liable for token changes. This platform allows NRC-20 token minting and cost estimation.</BoldP> HERE Wallet isn't responsible for tokens minted here.
           </Text>
         </Card>
       </Container>

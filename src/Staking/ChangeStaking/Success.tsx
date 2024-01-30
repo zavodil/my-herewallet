@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import rockImage from "../../assets/rock.png";
 import { ActionButton, ActivityIndicator, H0, Text, Tooltip } from "../../uikit";
-import { useAnalyticsTrack } from "../../core/analytics";
 import { useWallet } from "../../core/Accounts";
 import { formatAmount } from "../../core/helpers";
 import { Formatter } from "../../core/helpers";
 import { TipUnstake } from "../Tips";
 import * as S from "../styled";
 
-const SuccessStaking = ({
-  defaultState,
-  style,
-}: {
-  style?: any;
-  defaultState?: { isStake: boolean; amount: number };
-}) => {
+const SuccessStaking = ({ defaultState, style }: { style?: any; defaultState?: { isStake: boolean; amount: number } }) => {
   const account = useWallet()!;
   const navigate = useNavigate();
-  const track = useAnalyticsTrack("edit");
 
   const [state, setState] = useState({ isStake: false, amount: 0 });
   const [isLoading, setLoading] = useState(true);
@@ -40,14 +32,12 @@ const SuccessStaking = ({
       if (call == null) return;
 
       if (call.method_name === "deposit") {
-        track("stake_success");
         setState({ amount: formatAmount(call.deposit), isStake: true });
         setLoading(false);
         return;
       }
 
       if (call.method_name === "withdraw") {
-        track("unstake_success");
         const args = JSON.parse(Buffer.from(call.args, "base64").toString("utf8"));
         setState({ amount: formatAmount(args.amount), isStake: false });
         setLoading(false);
@@ -77,18 +67,10 @@ const SuccessStaking = ({
         closeOnEscape={false}
         lockScroll
         offsetX={10}
-        trigger={
-          <H0 style={{ textAlign: "center", marginTop: 24, width: "100%" }}>
-            {Formatter.usd(state.amount * account.tokens.usd(account.tokens.near))}
-          </H0>
-        }
+        trigger={<H0 style={{ textAlign: "center", marginTop: 24, width: "100%" }}>{Formatter.usd(state.amount * account.tokens.usd(account.tokens.near))}</H0>}
       />
 
-      {!state.isStake && (
-        <Text style={{ textAlign: "center", marginTop: 16 }}>
-          You have successfully transfered money to unstaked NEAR (0% APY)
-        </Text>
-      )}
+      {!state.isStake && <Text style={{ textAlign: "center", marginTop: 16 }}>You have successfully transfered money to unstaked NEAR (0% APY)</Text>}
 
       {state.isStake && (
         <Text style={{ textAlign: "center", marginTop: 16 }}>
@@ -98,7 +80,7 @@ const SuccessStaking = ({
         </Text>
       )}
 
-      <ActionButton style={{ marginTop: "auto" }} onClick={() => navigate("/stake", { replace: true })}>
+      <ActionButton $id="StakeUnstakeSuccess.back" style={{ marginTop: "auto" }} onClick={() => navigate("/stake", { replace: true })}>
         Open dashboard
       </ActionButton>
     </S.CardView>

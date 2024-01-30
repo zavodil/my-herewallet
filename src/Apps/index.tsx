@@ -36,7 +36,7 @@ const Apps = () => {
       <Container style={{ flexDirection: "column" }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 32 }}>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <Tab $active={!id} onClick={() => navigate("/apps")}>
+            <Tab $id="Apps.tab.all" $active={!id} onClick={() => navigate("/apps")}>
               <BoldP>All</BoldP>
             </Tab>
 
@@ -46,6 +46,7 @@ const Apps = () => {
               .map((type) => (
                 <Tab
                   key={type}
+                  $id={`Apps.tab.${type.replaceAll(" ", "_").toLowerCase()}`}
                   $active={type.replaceAll(" ", "_").toLowerCase() === id}
                   onClick={() => navigate("/apps/" + type.replaceAll(" ", "_").toLowerCase())}
                 >
@@ -68,18 +69,9 @@ const Apps = () => {
                 <H3>{group[0].type}</H3>
                 <AppsGrid>
                   {group.map((app) => (
-                    <Card
-                      style={{ minHeight: 300, position: "relative", marginTop: 48, textDecoration: "none" }}
-                      rel="noopener noreferrer"
-                      href={app.site}
-                      target="_blank"
-                      as="a"
-                    >
+                    <Card style={{ minHeight: 300, position: "relative", marginTop: 48, textDecoration: "none" }} rel="noopener noreferrer" href={app.site} target="_blank" as="a">
                       <div style={{ marginTop: -60, marginBottom: 24, position: "relative" }}>
-                        <img
-                          style={{ position: "absolute", top: 20, filter: "blur(20px)", opacity: 0.6 }}
-                          src={app.image}
-                        />
+                        <img style={{ position: "absolute", top: 20, filter: "blur(20px)", opacity: 0.6 }} src={app.image} />
                         <img style={{ zIndex: 10, position: "relative" }} src={app.image} />
                       </div>
 
@@ -102,7 +94,7 @@ const Apps = () => {
                         ].map(
                           (social) =>
                             social.url != null && (
-                              <Button rel="noopener noreferrer" href={social.url} target="_blank" as="a">
+                              <Button $id={`Apps.openSocial`} rel="noopener noreferrer" href={social.url} target="_blank" as="a">
                                 <img style={{ width: social.size || 24, height: social.size || 24 }} src={social.img} />
                               </Button>
                             )

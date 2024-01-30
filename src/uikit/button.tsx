@@ -1,7 +1,8 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import { AnalyticsTracker } from "../core/analytics";
 
-export const Button = styled.button<{ $active?: boolean }>`
+export const SButton = styled.button<{ $active?: boolean }>`
   border: none;
   background: transparent;
   padding: 0;
@@ -25,7 +26,7 @@ export const Button = styled.button<{ $active?: boolean }>`
   }
 `;
 
-export const ActionButton = styled.button<{ big?: boolean; stroke?: boolean }>`
+export const SActionButton = styled.button<{ big?: boolean; stroke?: boolean }>`
   color: #fff;
   border: none;
   text-decoration: none;
@@ -77,13 +78,13 @@ export const ActionButton = styled.button<{ big?: boolean; stroke?: boolean }>`
     `}
 `;
 
-export const StrokeButton = styled(ActionButton)`
+export const SStrokeButton = styled(SActionButton)`
   background: transparent;
   border: 2px solid #2c3034;
   color: #2c3034;
 `;
 
-export const LinkButton = styled.button`
+export const SLinkButton = styled.button`
   border: none;
   outline: none;
   background: transparent;
@@ -146,15 +147,69 @@ export const SHereButton = styled.button`
   }
 `;
 
-export const HereButton = (p: any) => {
+type ButtonProps = (React.HTMLProps<HTMLButtonElement> & { $id: string }) | (React.HTMLProps<HTMLAnchorElement> & { as: "a"; $id: string });
+
+export const Button = (p: ButtonProps & { $active?: boolean }) => {
+  return (
+    <SButton
+      {...(p as any)}
+      onClick={(e: any) => {
+        AnalyticsTracker.shared.track("button:" + p.$id);
+        p.onClick?.(e);
+      }}
+    />
+  );
+};
+
+export const ActionButton = (p: ButtonProps & { big?: boolean; stroke?: boolean }) => {
+  return (
+    <SActionButton
+      {...(p as any)}
+      onClick={(e: any) => {
+        AnalyticsTracker.shared.track("button:" + p.$id);
+        p.onClick?.(e);
+      }}
+    />
+  );
+};
+
+export const StrokeButton = (p: ButtonProps) => {
+  return (
+    <SStrokeButton
+      {...(p as any)}
+      onClick={(e: any) => {
+        AnalyticsTracker.shared.track("button:" + p.$id);
+        p.onClick?.(e);
+      }}
+    />
+  );
+};
+
+export const LinkButton = (p: ButtonProps) => {
+  return (
+    <SLinkButton
+      {...(p as any)}
+      onClick={(e: any) => {
+        AnalyticsTracker.shared.track("button:" + p.$id);
+        p.onClick?.(e);
+      }}
+    />
+  );
+};
+
+export const HereButton = (p: ButtonProps & { $id: string }) => {
   return (
     <SHereButton
-      {...p}
+      {...(p as any)}
       onPointerDown={(e) => e.currentTarget.classList.add("pressed")}
       onPointerOver={(e) => e.currentTarget.classList.remove("pressed")}
       onPointerUp={(e) => e.currentTarget.classList.remove("pressed")}
       onPointerCancel={(e) => e.currentTarget.classList.remove("pressed")}
       onPointerLeave={(e) => e.currentTarget.classList.remove("pressed")}
+      onClick={(e: any) => {
+        AnalyticsTracker.shared.track("button:" + p.$id);
+        p.onClick?.(e);
+      }}
     />
   );
 };

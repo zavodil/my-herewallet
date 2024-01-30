@@ -167,7 +167,7 @@ const Widget = () => {
 
               <div style={{ display: "flex", gap: 8, width: 300 }}>
                 <p style={{ lineBreak: "anywhere" }}>{isNeedActivate}</p>
-                <Button>
+                <Button $id="Connector.copyAddress">
                   <Icon style={{ marginTop: 6, width: 24, height: 24 }} name="copy" />
                 </Button>
               </div>
@@ -216,7 +216,7 @@ const Widget = () => {
                 <HereInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
 
-              <ActionButton style={{ width: 200 }} onClick={() => setInit(true)}>
+              <ActionButton $id="Connector.unlockHere" style={{ width: 200 }} onClick={() => setInit(true)}>
                 Unlock HERE
               </ActionButton>
             </div>
@@ -276,6 +276,7 @@ const Widget = () => {
 
         {isInit && account.type === ConnectType.Web && (
           <ActionButton
+            $id="Connector.approveAll"
             disabled={isApproving}
             style={{ width: 300, margin: "auto" }}
             onClick={() => {

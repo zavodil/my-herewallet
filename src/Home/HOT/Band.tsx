@@ -72,7 +72,7 @@ const Band = () => {
               Every time your friend claims HOT you get <b>20%</b> cashback. And <b>5%</b> every time his referrals claim it
             </Text>
 
-            <Button>
+            <Button $id="Band.fullGuide">
               <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>Full guide</SmallText>
             </Button>
           </div>
@@ -90,7 +90,11 @@ const Band = () => {
         </Container>
       </Root>
 
-      <ActionButton style={{ position: "absolute", bottom: 16, width: "calc(100% - 32px)", left: 16, zIndex: 1000 }} onClick={() => sheets.present({ id: "Invite", element: <InviteFriend /> })}>
+      <ActionButton
+        $id="Band.inviteFriend"
+        style={{ position: "absolute", bottom: 16, width: "calc(100% - 32px)", left: 16, zIndex: 1000 }}
+        onClick={() => sheets.present({ id: "Invite", element: <InviteFriend /> })}
+      >
         Invite a Friend
       </ActionButton>
     </>

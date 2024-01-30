@@ -1,17 +1,20 @@
 import React, { useEffect } from "react";
-import { CardSuccess, Container, ContainerSuccess } from "./styled";
-import Header from "../Home/Header";
-import { Card, Root } from "../Home/styled";
-import { ActionButton, Button, H0, H2, H3, Text } from "../uikit";
 import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { isTgMobile } from "../env";
+import Header from "../Home/Header";
+import { Root } from "../Home/styled";
+import fittext from "../Home/HOT/effects/fittext";
+
 import { Formatter } from "../core/helpers";
 import { useWallet } from "../core/Accounts";
 import { Chain } from "../core/token/types";
+
 import { colors } from "../uikit/theme";
 import { BoldP } from "../uikit/typographic";
-import { isTgMobile } from "../Mobile";
 import { useNavigateBack } from "../useNavigateBack";
-import fittext from "../Home/HOT/effects/fittext";
+import { ActionButton, Button, H0, H2, H3, Text } from "../uikit";
+import { CardSuccess, ContainerSuccess } from "./styled";
 
 const TransferSuccess = () => {
   useNavigateBack();
@@ -63,9 +66,7 @@ const TransferSuccess = () => {
                 </H0>
               </div>
 
-              <H3 style={{ color: colors.blackSecondary, marginTop: -8 }}>
-                {Formatter.usd(user.tokens.usd(token) * +params.get("amount")!)}
-              </H3>
+              <H3 style={{ color: colors.blackSecondary, marginTop: -8 }}>{Formatter.usd(user.tokens.usd(token) * +params.get("amount")!)}</H3>
             </div>
 
             <Text style={{ textAlign: "center", marginTop: 12 }}>
@@ -73,22 +74,13 @@ const TransferSuccess = () => {
               transfered money to {params.get("receiver")}
             </Text>
 
-            <Button
-              rel="noopener noreferrer"
-              href={`https://nearblocks.io/txns/${params.get("tx")}`}
-              target="_blank"
-              as="a"
-            >
+            <Button $id="TransferSuccess.openExplorer" rel="noopener noreferrer" href={`https://nearblocks.io/txns/${params.get("tx")}`} target="_blank" as="a">
               <BoldP>Transaction link</BoldP>
             </Button>
           </div>
         </CardSuccess>
 
-        <ActionButton
-          style={{ marginTop: 32, width: "100%", maxWidth: 386 }}
-          onClick={() => navigate("/", { replace: true })}
-          big
-        >
+        <ActionButton $id="TransferSuccess.back" style={{ marginTop: 32, width: "100%", maxWidth: 386 }} onClick={() => navigate("/", { replace: true })} big>
           Back to home page
         </ActionButton>
       </ContainerSuccess>

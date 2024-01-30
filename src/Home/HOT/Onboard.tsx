@@ -40,7 +40,15 @@ const Onboard = () => {
           <Dot $active={currentPage === 2} />
         </div>
 
-        {currentPage < 2 ? <HereButton onClick={() => setPage((t) => t + 1)}>Continue</HereButton> : <HereButton onClick={() => navigate("/hot", { replace: true })}>Start mining!</HereButton>}
+        {currentPage < 2 ? (
+          <HereButton $id="hotOnboard.continue" onClick={() => setPage((t) => t + 1)}>
+            Continue
+          </HereButton>
+        ) : (
+          <HereButton $id="hotOnboard.startMining" onClick={() => navigate("/hot", { replace: true })}>
+            Start mining!
+          </HereButton>
+        )}
       </div>
     </Root>
   );

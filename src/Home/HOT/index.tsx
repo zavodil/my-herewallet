@@ -73,6 +73,7 @@ const HOT = () => {
   };
 
   const isOverload = user.hot.miningProgress === 1;
+  const [left, right] = user.hot.balance.toFixed(6).split(".");
 
   return (
     <Root style={{ overflow: "hidden", width: "100vw", height: "100%" }}>
@@ -81,35 +82,46 @@ const HOT = () => {
       <div id="particles-js" style={{ position: "fixed", width: "100vw", height: "100vh" }} />
       <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <Header />
-
         <Container style={{ zIndex: 10, justifyContent: "space-between", height: "100%", paddingBottom: 32 }}>
-          <div style={{ overflowX: "auto", width: "100vw", display: "flex", marginLeft: -16, padding: "0 16px", gap: 8 }}>
-            {user.hot.village != null && (
-              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
-                <TokenIcon src={user.hot.village?.avatar} />
-                <div>
-                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
-                  <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
-                    <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
-                    <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
+          <div>
+            <div style={{ overflowX: "auto", width: "100vw", display: "flex", marginLeft: -16, padding: "0 16px", gap: 8 }}>
+              {user.hot.village != null && (
+                <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
+                  <TokenIcon src={user.hot.village?.avatar} />
+                  <div>
+                    <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
+                    <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
+                      <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
+                      <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
+                    </div>
                   </div>
-                </div>
 
-                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
-              </Card>
-            )}
+                  <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
+                </Card>
+              )}
 
-            {user.hot.village == null && (
-              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
-                <TokenIcon src={require("../../assets/hot/fire/1.png")} />
-                <div style={{ marginTop: -2 }}>
-                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>Explore villages</SmallText>
-                  <TinyText>Join or create your own</TinyText>
-                </div>
+              {user.hot.village == null && (
+                <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
+                  <TokenIcon src={require("../../assets/hot/fire/1.png")} />
+                  <div style={{ marginTop: -5 }}>
+                    <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>Explore villages</SmallText>
+                    <TinyText>Join or create your own</TinyText>
+                  </div>
 
-                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
-              </Card>
-            )}
+                  <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
+                </Card>
+              )}
+            </div>
+
+            <div style={{ marginTop: 16, display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Text style={{ color: colors.blackSecondary, marginTop: -4, marginRight: 8 }}>HOT Balance:</Text>
+              <img style={{ width: 24, flexShrink: 0, objectFit: "contain", marginTop: -4 }} src={require("../../assets/hot/hot.png")} />
+              <Text style={{ fontFamily: "'SF Mono', sans-serif" }}>
+                {left}
+                <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
+                {right}
+              </Text>
+            </div>
           </div>
 
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", position: "relative" }}>
@@ -120,8 +132,8 @@ const HOT = () => {
               animationData={require("../../assets/hot/sparks.json")}
             />
 
-            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Your balance</LargeP>
-            <Balance />
+            <LargeP style={{ top: 24, color: colors.blackSecondary }}>Available to claim:</LargeP>
+            <Balance value={user.hot.earned} />
 
             <div style={{ background: colors.orange, opacity: isOverload ? 0.5 : 1, border: "1px solid var(--Black-Primary)", padding: "4px 12px", borderRadius: 8 }}>
               <Text>+{user.hot.hotPerHour} per hour</Text>
@@ -151,7 +163,7 @@ const HOT = () => {
                     )}
                   </div>
 
-                  <HereButton onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming}>
+                  <HereButton $id="claimHot" onClick={() => claim()} style={{ marginLeft: "auto" }} disabled={isClaiming}>
                     {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
                   </HereButton>
                 </div>
@@ -162,7 +174,7 @@ const HOT = () => {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-            <Button>
+            <Button $id="howToMineHot">
               <BoldP style={{ color: "#0258F7" }}>How to mine HOT</BoldP>
             </Button>
 

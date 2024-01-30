@@ -3,6 +3,7 @@ import { AnalyticsConfig, AnalyticsEvents } from "./events";
 import { HereApi } from "../network/api";
 import { useWallet } from "../Accounts";
 import UserAccount from "../UserAccount";
+import { isTgMobile } from "../../env";
 
 export interface AnalyticEvent {
   timestamp: number;
@@ -25,6 +26,7 @@ export class AnalyticsTracker {
         "https://api.herewallet.app/api/v1/user/events",
         JSON.stringify({
           device_id: this.api.deviceId,
+          platform: isTgMobile() ? "telegram" : "web",
           events: this.events.concat([
             {
               timestamp: Math.floor(Date.now() / 1000),
@@ -70,34 +72,3 @@ export class AnalyticsTracker {
       });
   }
 }
-
-export const useAnalyticsTrack = <T extends keyof AnalyticsEvents, D extends AnalyticsConfig = AnalyticsEvents[T]>(
-  domain: T,
-  defaultUser?: UserAccount
-) => {
-  const account = useWallet() || defaultUser;
-  const track = useCallback(<E extends keyof D>(event: E, params: D[E] | {} = {}) => {
-    AnalyticsTracker.shared.track(`web:staking:${domain}:${event.toString()}`, params, account?.near.accountId);
-  }, []);
-
-  return track;
-};
-
-export const useAnalytics = <T extends keyof AnalyticsEvents, D extends AnalyticsConfig = AnalyticsEvents[T]>(
-  domain: T,
-  defaultUser?: UserAccount
-) => {
-  const track = useAnalyticsTrack<T, D>(domain, defaultUser);
-
-  useEffect(() => {
-    const date = Date.now();
-    track("open");
-
-    return () => {
-      const props = { time: Math.floor((Date.now() - date) / 1000) };
-      track("close", props);
-    };
-  }, []);
-
-  return track;
-};

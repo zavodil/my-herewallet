@@ -6,7 +6,7 @@ import { colors } from "../uikit/theme";
 import { ActionButton, Button, H1 } from "../uikit";
 import { useWallet } from "../core/Accounts";
 import { storage } from "../core/Storage";
-import { isTgMobile } from "../Mobile";
+import { isTgMobile } from "../env";
 
 import { ExportAccountWidget } from "./Header/ExportAccountWidget";
 
@@ -55,10 +55,12 @@ const ExportBanner = () => {
         </div>
 
         <div style={{ maxWidth: 175, width: "100%", margin: "24px 0" }} onClick={() => setOpen(true)}>
-          <ActionButton style={{ width: "100%", height: 48 }}>Export</ActionButton>
+          <ActionButton $id="exportBanner.export" style={{ width: "100%", height: 48 }}>
+            Export
+          </ActionButton>
         </div>
 
-        <Button style={{ position: "absolute", top: 8, right: 8 }} onClick={() => hideBanner()}>
+        <Button $id="exportBanner.close" style={{ position: "absolute", top: 8, right: 8 }} onClick={() => hideBanner()}>
           <Icon color={colors.blackSecondary} name="cross" />
         </Button>
       </div>

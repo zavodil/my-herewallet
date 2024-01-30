@@ -34,8 +34,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
           <View style={{ alignItems: "center" }}>
             <H2 style={{ marginBottom: 8 }}>Add full key</H2>
             <Text style={{ marginTop: 12, textAlign: "center" }}>
-              You give this key full access to your account. The third party app will have{" "}
-              <Text style={{ color: colors.red }}>full access to your account and your money.</Text>
+              You give this key full access to your account. The third party app will have <Text style={{ color: colors.red }}>full access to your account and your money.</Text>
             </Text>
           </View>
         );
@@ -103,7 +102,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
 
             <View style={styles.row}>
               <Text>Method</Text>
-              <Button onClick={() => setShowArgs((v) => !v)}>
+              <Button $id="Connector.toggleFunctionCallArgs" onClick={() => setShowArgs((v) => !v)}>
                 <Text style={{ color: colors.pink }}>
                   {action.params.methodName} ({isShowArgs ? "Hide" : "Show"} args)
                 </Text>
@@ -112,9 +111,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
 
             {isShowArgs && (
               <View style={styles.code}>
-                <SmallText style={{ color: "#fff", flex: 1 }}>
-                  {JSON.stringify(parseArgs(action.params.args), null, 4)}
-                </SmallText>
+                <SmallText style={{ color: "#fff", flex: 1 }}>{JSON.stringify(parseArgs(action.params.args), null, 4)}</SmallText>
               </View>
             )}
 
@@ -122,9 +119,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
               <Text>Deposit</Text>
               <View style={{ alignItems: "flex-end" }}>
                 <Text>{act.nearAmount} NEAR</Text>
-                <SmallText style={{ color: colors.blackSecondary }}>
-                  {Formatter.usd(+act.nearAmount * Currencies.shared.usd("NEAR"))}
-                </SmallText>
+                <SmallText style={{ color: colors.blackSecondary }}>{Formatter.usd(+act.nearAmount * Currencies.shared.usd("NEAR"))}</SmallText>
               </View>
             </View>
             <View style={styles.row}>
@@ -148,7 +143,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
 
           <View style={styles.row}>
             <Text>Method</Text>
-            <Button onClick={() => setShowArgs((v) => !v)}>
+            <Button $id="Connector.toggleFunctionCallArgs" onClick={() => setShowArgs((v) => !v)}>
               <Text style={{ color: colors.pink }}>
                 {action.params.methodName} ({isShowArgs ? "Hide" : "Show"} args)
               </Text>
@@ -157,9 +152,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
 
           {isShowArgs && (
             <View style={styles.code}>
-              <SmallText style={{ color: "#fff", flex: 1 }}>
-                {JSON.stringify(parseArgs(action.params.args), null, 4)}
-              </SmallText>
+              <SmallText style={{ color: "#fff", flex: 1 }}>{JSON.stringify(parseArgs(action.params.args), null, 4)}</SmallText>
             </View>
           )}
 
@@ -169,9 +162,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
                 <Text>Deposit</Text>
                 <View style={{ alignItems: "flex-end" }}>
                   <Text>{act.nearAmount} NEAR</Text>
-                  <SmallText style={{ color: colors.blackSecondary }}>
-                    ${+act.nearAmount * Currencies.shared.usd("NEAR")}
-                  </SmallText>
+                  <SmallText style={{ color: colors.blackSecondary }}>${+act.nearAmount * Currencies.shared.usd("NEAR")}</SmallText>
                 </View>
               </View>
 
@@ -223,17 +214,13 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
         <View style={{ alignItems: "center" }}>
           <H2 style={{ marginBottom: 8 }}>Stake</H2>
           <H3>{stake} NEAR</H3>
-          <SmallText style={{ color: colors.blackSecondary }}>
-            {Formatter.usd(stake * Currencies.shared.usd("NEAR"))}
-          </SmallText>
+          <SmallText style={{ color: colors.blackSecondary }}>{Formatter.usd(stake * Currencies.shared.usd("NEAR"))}</SmallText>
           <View style={styles.row}>
             <Text>From</Text>
             {nearToken.amount ? (
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
-                <SmallText style={{ color: colors.blackSecondary }}>
-                  {Formatter.usd(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR"))}
-                </SmallText>
+                <SmallText style={{ color: colors.blackSecondary }}>{Formatter.usd(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR"))}</SmallText>
               </View>
             ) : (
               <Text>Your wallet</Text>
@@ -250,9 +237,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
       return (
         <View style={{ alignItems: "center" }}>
           <H2>{deposit} NEAR</H2>
-          <SmallText style={{ color: colors.blackSecondary }}>
-            {Formatter.usd(deposit * Currencies.shared.usd("NEAR"))}
-          </SmallText>
+          <SmallText style={{ color: colors.blackSecondary }}>{Formatter.usd(deposit * Currencies.shared.usd("NEAR"))}</SmallText>
 
           <View style={styles.row}>
             <Text>From</Text>
@@ -260,8 +245,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
               <View style={{ alignItems: "flex-end" }}>
                 <Text>NEAR Balance</Text>
                 <SmallText style={{ color: colors.blackSecondary }}>
-                  {Formatter.round(nearToken.amountFloat, 4)} NEAR (
-                  {Formatter.usd(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR"))})
+                  {Formatter.round(nearToken.amountFloat, 4)} NEAR ({Formatter.usd(formatAmount(nearToken.amount) * Currencies.shared.usd("NEAR"))})
                 </SmallText>
               </View>
             ) : (

@@ -5,7 +5,7 @@ import { InMemorySigner, Signer } from "near-api-js";
 import { PublicKey } from "near-api-js/lib/utils";
 import { NearSnapStatus } from "@near-snap/sdk";
 
-import { isTgMobile } from "../Mobile";
+import { isTgMobile } from "../env";
 import { Storage, storage } from "./Storage";
 import { HereApi } from "./network/api";
 import { NearAccount } from "./near-chain/NearAccount";
@@ -78,17 +78,8 @@ class UserAccount {
     this.localStorage = new Storage(creds.accountId);
 
     if (window.Telegram.WebApp.initDataUnsafe?.user) {
-      const telegramKey = `${window.Telegram.WebApp.initDataUnsafe.user.id}:${creds.accountId}`;
-      const telegramStorage = new Storage(telegramKey);
-      const globalStorage = this.localStorage;
-
-      // Migrate from global storage
-      if (window.localStorage.getItem(globalStorage.key) != null) {
-        telegramStorage.write(globalStorage.read());
-        window.localStorage.removeItem(globalStorage.key);
-      }
-
-      this.localStorage = telegramStorage;
+      const telegramKey = `tg:${window.Telegram.WebApp.initDataUnsafe.user.id}:${creds.accountId}`;
+      this.localStorage = new Storage(telegramKey);
     }
 
     if (creds.type === ConnectType.Web) {

@@ -12,7 +12,7 @@ const Auth = () => {
 
   return (
     <Root style={{ padding: 24 }}>
-      <Button onClick={() => navigate("/auth/import")} style={{ position: "absolute", right: 24, top: 24 }}>
+      <Button $id="Auth.importAccount" onClick={() => navigate("/auth/import")} style={{ position: "absolute", right: 24, top: 24 }}>
         <BoldP>Log in</BoldP>
       </Button>
 
@@ -24,7 +24,7 @@ const Auth = () => {
       <H1 style={{ marginTop: 56 }}>NEAR Wallet</H1>
       <LargeP style={{ marginTop: 24, textAlign: "center" }}>Secure telegram wallet for NEAR Protocol</LargeP>
 
-      <ActionButton big style={{ marginTop: "auto" }} onClick={() => navigate("/auth/create")}>
+      <ActionButton $id="Auth.createAccount" big style={{ marginTop: "auto" }} onClick={() => navigate("/auth/create")}>
         Create new account
       </ActionButton>
     </Root>

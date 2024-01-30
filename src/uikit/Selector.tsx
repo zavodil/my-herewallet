@@ -27,11 +27,7 @@ const HereSelector = (props: Props) => {
           setOpen(true);
         }}
       >
-        {props.value ? (
-          props.renderOption(props.value)
-        ) : (
-          <Text style={{ color: "var(--Black-Secondary)", marginLeft: 8 }}>{props.label}</Text>
-        )}
+        {props.value ? props.renderOption(props.value) : <Text style={{ color: "var(--Black-Secondary)", marginLeft: 8 }}>{props.label}</Text>}
         <Icon name="cursor-down" />
       </Container>
 

@@ -10,7 +10,6 @@ import { colors } from "../uikit/theme";
 
 import UserAccount from "../core/UserAccount";
 import { useWallet } from "../core/Accounts";
-import { useAnalytics } from "../core/analytics";
 import { Formatter } from "../core/helpers";
 
 import { TipBuyNFT, TipClaim, TipInstallApp } from "./Tips";
@@ -24,21 +23,9 @@ export const DashboardStaking = observer(() => {
 });
 
 export const DashboardStakingScreen = observer(({ user, onStake }: { user: UserAccount; onStake: () => void }) => {
-  const track = useAnalytics("dashboard");
-
   const claimButton = (
     <div style={{ margin: "auto 0" }}>
-      <HereButton
-        style={{ width: 105 }}
-        disabled={!Formatter.round(user.near.hnear.accrued, 4)}
-        onClick={() => {
-          track("claim");
-          user.near.hnear
-            .claimDividents()
-            .then(() => track("claim_success"))
-            .catch(() => track("claim_failed"));
-        }}
-      >
+      <HereButton $id="Stake.claim" style={{ width: 105 }} disabled={!Formatter.round(user.near.hnear.accrued, 4)} onClick={() => user.near.hnear.claimDividents()}>
         Claim
         {/* {user?.isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim"} */}
       </HereButton>
@@ -65,15 +52,9 @@ export const DashboardStakingScreen = observer(({ user, onStake }: { user: UserA
               position={["right center", "bottom left"]}
               open={user.near.hnear.tips.tipNFT}
               lockScroll
-              trigger={
-                <Text style={{ cursor: "pointer", textDecoration: "underline" }}>
-                  APY: {Formatter.round(user.near.hnear.apy)}%
-                </Text>
-              }
+              trigger={<Text style={{ cursor: "pointer", textDecoration: "underline" }}>APY: {Formatter.round(user.near.hnear.apy)}%</Text>}
             />
-            <Text style={{ color: colors.blackSecondary }}>
-              {Formatter.round(user.near.hnear.totalDividends, 4)} NEAR
-            </Text>
+            <Text style={{ color: colors.blackSecondary }}>{Formatter.round(user.near.hnear.totalDividends, 4)} NEAR</Text>
           </Flex>
         </Row>
 
@@ -82,9 +63,7 @@ export const DashboardStakingScreen = observer(({ user, onStake }: { user: UserA
             <Text>Interest accrued</Text>
             <div style={{ display: "flex", gap: 8 }}>
               <H4>{Formatter.usd(user.near.hnear.accrued * user.tokens.usd(user.tokens.near))}</H4>
-              <Text style={{ color: colors.blackSecondary, marginTop: 1 }}>
-                {Formatter.round(user.near.hnear.accrued, 4)} NEAR
-              </Text>
+              <Text style={{ color: colors.blackSecondary, marginTop: 1 }}>{Formatter.round(user.near.hnear.accrued, 4)} NEAR</Text>
             </div>
           </Flex>
 
@@ -127,19 +106,14 @@ export const DashboardStakingScreen = observer(({ user, onStake }: { user: UserA
 
         {Formatter.round(user.tokens.near.amountFloat, 4) > 0 && (
           <Badge>
-            <Icon name="alarm" />
+            <Icon name="warning" />
             <Text style={{ color: "#DB8520" }}>You don’t get staking interest on unstaked near</Text>
           </Badge>
         )}
       </S.DashboardScroll>
 
       <Footer style={{ marginTop: "auto" }}>
-        <ActionButton
-          onClick={() => {
-            track("open_edit");
-            onStake();
-          }}
-        >
+        <ActionButton $id="Stake.openStakeUnstake" onClick={() => onStake()}>
           Stake/Unstake
         </ActionButton>
       </Footer>

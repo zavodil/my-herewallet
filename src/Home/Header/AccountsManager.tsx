@@ -65,6 +65,7 @@ const AccountManager = observer((props: Props) => {
     <div className={className} style={{ display: "flex", ...style }}>
       {!onlySwitch && (
         <Button
+          $id="Accounts.switchAccount"
           onClick={(e) => {
             e.stopPropagation();
             setOpenManager(true);
@@ -76,6 +77,7 @@ const AccountManager = observer((props: Props) => {
       )}
 
       <S.AccountButton
+        $id="Accounts.openAccountMenu"
         style={{ gap: 12, height: "auto", width: "auto", padding: 4 }}
         onClick={(e) => {
           e.stopPropagation();
@@ -95,6 +97,7 @@ const AccountManager = observer((props: Props) => {
               </TinyText>
             </div>
             <Button
+              $id="Accounts.copyAccountAddress"
               onClick={async (e) => {
                 e.stopPropagation();
                 await navigator.clipboard.writeText(account.id);
@@ -125,6 +128,7 @@ const AccountManager = observer((props: Props) => {
           }}
         >
           <S.AccountButton
+            $id="Accounts.openSettings"
             onClick={(e) => {
               e.stopPropagation();
               onSettings?.();
@@ -135,6 +139,7 @@ const AccountManager = observer((props: Props) => {
           </S.AccountButton>
 
           <S.AccountButton
+            $id="Accounts.openExport"
             onClick={(e) => {
               e.stopPropagation();
               setOpenMenu(false);
@@ -145,12 +150,13 @@ const AccountManager = observer((props: Props) => {
             <Text>Export wallet</Text>
           </S.AccountButton>
 
-          <S.AccountButton onClick={(e) => window.open("https://t.me/heresupport", "_blank")}>
+          <S.AccountButton $id="Accounts.openSupport" onClick={(e) => window.open("https://t.me/heresupport", "_blank")}>
             <Icon name="support" />
             <Text>Contact Support</Text>
           </S.AccountButton>
 
           <S.AccountButton
+            $id="Accounts.disconnect"
             onClick={(e) => {
               e.stopPropagation();
               setOpenMenu(false);
@@ -178,7 +184,7 @@ const AccountManager = observer((props: Props) => {
             .map((acc) => {
               if (acc.id)
                 return (
-                  <S.AccountButtonSelect key={acc.id} style={{ paddingLeft: 4, gap: 8, width: "100%" }} onClick={() => onSelect?.(toJS(acc))}>
+                  <S.AccountButtonSelect $id="Accounts.selectAccount" key={acc.id} style={{ paddingLeft: 4, gap: 8, width: "100%" }} onClick={() => onSelect?.(toJS(acc))}>
                     <div style={{ textAlign: "left", flex: 1 }}>
                       <Text style={{ fontWeight: "bold" }}>{acc.id.length > 16 ? acc.id.slice(0, 8) + ".." + acc.id.slice(-8) : acc.id}</Text>
 
@@ -188,6 +194,7 @@ const AccountManager = observer((props: Props) => {
                     </div>
 
                     <Button
+                      $id="Accounts.copyAccountAddress"
                       style={{ marginLeft: "auto", flexShrink: 0 }}
                       onClick={async (e) => {
                         e.stopPropagation();
@@ -202,7 +209,7 @@ const AccountManager = observer((props: Props) => {
 
               if (acc.type === ConnectType.Here)
                 return (
-                  <S.AccountButton key={acc.type + (acc.path || 0)} style={{ width: "100%" }} onClick={() => onSelect?.(acc)}>
+                  <S.AccountButton $id="Accounts.selectHere" key={acc.type + (acc.path || 0)} style={{ width: "100%" }} onClick={() => onSelect?.(acc)}>
                     <img width={32} height={32} style={{ objectFit: "contain" }} src={require("../../assets/here.svg")} />
                     <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
                       <Text>Use HERE Wallet</Text>
@@ -213,7 +220,7 @@ const AccountManager = observer((props: Props) => {
 
               if (acc.type === ConnectType.Ledger)
                 return (
-                  <S.AccountButton key={acc.type + (acc.path || 0)} style={{ width: "100%" }} onClick={() => onSelect?.(acc)}>
+                  <S.AccountButton $id="Accounts.selectLedger" key={acc.type + (acc.path || 0)} style={{ width: "100%" }} onClick={() => onSelect?.(acc)}>
                     <img width={32} height={32} style={{ objectFit: "contain" }} src={require("../../assets/ledger.png")} />
                     <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
                       <Text>Use Ledger {acc.path?.split("/").pop()}</Text>
@@ -224,7 +231,7 @@ const AccountManager = observer((props: Props) => {
 
               if (acc.type === ConnectType.Snap)
                 return (
-                  <S.AccountButton key={acc.type + (acc.path || 0)} style={{ width: "100%" }} onClick={() => onSelect?.(acc)}>
+                  <S.AccountButton $id="Accounts.selectMetamask" key={acc.type + (acc.path || 0)} style={{ width: "100%" }} onClick={() => onSelect?.(acc)}>
                     <img width={32} height={32} src={require("../../assets/metamask.svg")} />
                     <div style={{ marginLeft: 4, textAlign: "left", flex: 1 }}>
                       <Text>Use Metamask</Text>
@@ -238,6 +245,7 @@ const AccountManager = observer((props: Props) => {
 
           {!onlySwitch && (
             <S.AccountButton
+              $id="Accounts.addWallet"
               style={{ width: "100%" }}
               onClick={(e) => {
                 e.stopPropagation();

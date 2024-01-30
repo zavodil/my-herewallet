@@ -1,15 +1,9 @@
 import isMobile from "is-mobile";
 import React from "react";
-import { ActionButton, H3, Text } from "./uikit";
+
 import { Root } from "./Home/styled";
 import { colors } from "./uikit/theme";
-
-export const isTgMobile = () => isTgBeta() || isTgProd();
-export const isTgProd = () => location.origin === "https://tgapp.herewallet.app";
-export const isTgBeta = () => {
-  if (process.env.NODE_ENV === "development") return true;
-  return location.origin === "https://tgapp-dev.herewallet.app";
-};
+import { ActionButton, H3, Text } from "./uikit";
 
 const Mobile = ({ Comp }: { Comp: any }) => {
   if (isMobile()) {
@@ -27,7 +21,7 @@ const Mobile = ({ Comp }: { Comp: any }) => {
           HERE on your phone
         </Text>
 
-        <ActionButton as="a" href="https://download.herewallet.app" style={{ marginTop: "auto" }}>
+        <ActionButton $id="DesktopOnly.downloadApp" as="a" href="https://download.herewallet.app" style={{ marginTop: "auto" }}>
           Download app
         </ActionButton>
       </Root>
