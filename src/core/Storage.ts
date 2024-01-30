@@ -5,6 +5,7 @@ import pbkdf2 from "pbkdf2";
 import crypto from "crypto";
 import { ConnectType, UserCred } from "./types";
 import { getStorageJson } from "./helpers";
+import { isTgMobile } from "../env";
 
 export class Storage {
   static memoryData: Record<string, any> = {};
@@ -71,26 +72,6 @@ const decryptText = (cipherText: string, password: string) => {
   return decryptedText;
 };
 
-export const encryptedStorage = (pwd: string) => {
-  try {
-    const text = localStorage.getItem("storage") || "";
-    JSON.parse(decryptText(text, pwd));
-
-    return {
-      set: (data: object) => {
-        localStorage.setItem("storage", encryptText(JSON.stringify(data), pwd));
-      },
-
-      get: () => {
-        const text = localStorage.getItem("storage") || "";
-        return JSON.parse(decryptText(text, pwd));
-      },
-    };
-  } catch {
-    return null;
-  }
-};
-
 interface StorageData {
   accounts: { id: string; type: ConnectType }[];
   activeAccount: string | null;
@@ -101,9 +82,25 @@ const pwd = "dz_3!R$%2pdf~";
 class SecureStorage {
   storage = localStorage;
 
+  get key() {
+    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+    if (tgUser) return `storage:${tgUser.id}`;
+    return "storage";
+  }
+
+  constructor() {
+    if (isTgMobile()) {
+      const globalStorage = window.localStorage.getItem("storage");
+      if (globalStorage != null) {
+        window.localStorage.setItem(this.key, globalStorage);
+        window.localStorage.removeItem("storage");
+      }
+    }
+  }
+
   read(): StorageData {
     try {
-      const text = this.storage.getItem("storage")!;
+      const text = this.storage.getItem(this.key)!;
       return JSON.parse(decryptText(text, pwd));
     } catch {
       return { accounts: [], activeAccount: null };
@@ -111,7 +108,7 @@ class SecureStorage {
   }
 
   write(data: StorageData) {
-    this.storage.setItem("storage", encryptText(JSON.stringify(data), pwd));
+    this.storage.setItem(this.key, encryptText(JSON.stringify(data), pwd));
   }
 
   updateAccount(data: UserCred) {
