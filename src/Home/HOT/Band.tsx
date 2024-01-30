@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { HotReferral } from "../../core/Hot";
 import { useWallet } from "../../core/Accounts";
 import { ActionButton, Button } from "../../uikit";
-import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
+import { BoldP, H2, H3, SmallText, Text } from "../../uikit/typographic";
 import { useNavigateBack } from "../../useNavigateBack";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
@@ -19,6 +19,7 @@ const FriendItem = ({ item }: { item: HotReferral }) => {
     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
       <div
         style={{
+          flexShrink: 0,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -28,20 +29,15 @@ const FriendItem = ({ item }: { item: HotReferral }) => {
           height: 64,
         }}
       >
-        {item.tg_avatar ? <img src={item.tg_avatar} style={{ width: 64, height: 64, objectFit: "cover" }} /> : <H3>{item.tg_username?.charAt(0)?.toUpperCase()}</H3>}
+        {item.tg_avatar ? <img src={item.tg_avatar} style={{ width: 64, height: 64, objectFit: "cover" }} /> : <H2>{item.tg_username?.charAt(0)?.toUpperCase()}</H2>}
       </div>
 
-      <div>
-        <BoldP>{item.tg_username}</BoldP>
+      <div style={{ overflow: "hidden" }}>
+        <BoldP style={{ textOverflow: "ellipsis", overflow: "hidden" }}>{item.tg_username}</BoldP>
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, marginLeft: -4 }}>
           <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
-          <BoldP>{+formatAmount(item.hot_balance, 6).toFixed(6)}</BoldP>
+          <BoldP style={{ fontFamily: "SF Mono" }}>{+formatAmount(item.hot_balance, 6).toFixed(6)}</BoldP>
         </div>
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
-        <BoldP style={{ marginLeft: "auto" }}>+{+(formatAmount(item.hot_mining_speed, 6) * 0.2).toFixed(6)}</BoldP>
-        <img style={{ width: 24, height: 24 }} src={require("../../assets/hot/hot.png")} />
       </div>
     </div>
   );

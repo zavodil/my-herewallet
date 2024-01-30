@@ -1,6 +1,5 @@
 import { action, computed, makeObservable, observable, observe } from "mobx";
 import { NearAccount } from "./NearAccount";
-import { accounts } from "../Accounts";
 import { Storage } from "../Storage";
 
 class StakeTips {
@@ -32,7 +31,7 @@ class StakeTips {
       statistics: observable,
     });
 
-    this.localStorage = accounts.account?.localStorage || new Storage(this.near.accountId);
+    this.localStorage = new Storage(this.near.accountId);
     this.statistics.stakeCount = +(this.localStorage.get("stake_count") ?? 0);
     this.statistics.unstakeCount = +(this.localStorage.get("unstake_count") ?? 0);
     this.statistics.launchCount = +(this.localStorage.get("launch_count") ?? 0);
