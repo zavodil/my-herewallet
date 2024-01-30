@@ -153,12 +153,15 @@ class Hot {
   public currentTime = Date.now();
   public state: HotState | null = null;
   public referrals: HotReferral[] = [];
-  public missions: Record<string, boolean> = {
+  public missions = {
+    follow_tg_hot: false,
+    follow_tg_here: false,
+    follow_tw_here: false,
+    join_village: false,
+    download_app: false,
     deposit_1NEAR: false,
     deposit_1USDT: false,
-    download_app: false,
-    follow_twitter: false,
-    telegram_follow: false,
+    deposit_NFT: false,
     send_69_hot: false,
   };
 
@@ -283,7 +286,7 @@ class Hot {
 
   async getUserData() {
     try {
-      const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}`);
+      const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}&next_claim_in=${this.remainingMiningSeconds}`);
       const data = await resp.json();
       runInAction(() => (this.userData = data));
       this.updateCache();
@@ -320,7 +323,7 @@ class Hot {
     });
   }
 
-  async completeMission(mission: string) {
+  async completeMission(mission: keyof this["missions"]) {
     switch (mission) {
       case "deposit_1NEAR": {
         await this.account.tokens.updateNative();
@@ -334,16 +337,21 @@ class Hot {
         throw Error("Your USDT balance has not yet updated.");
       }
 
+      case "join_village": {
+        await this.updateStatus();
+        if (this.state?.village !== null) break;
+        throw Error("You haven't joined the village.");
+      }
+
+      case "follow_tg_hot":
+      case "follow_tg_here":
+      case "follow_tw_here":
+      case "download_app":
       case "deposit_NFT":
-      case "install_app":
-      case "earn_app_score":
-      case "send_69_hot":
-      case "telegram_follow":
-      case "follow_twitter":
         break;
 
       default:
-        throw Error(`Unknown mission: ${mission}`);
+        throw Error(`Unknown mission: ${mission.toString()}`);
     }
 
     await this.account.api.request(`/api/v1/user/hot/mission`, {
@@ -387,7 +395,6 @@ class Hot {
 
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
-    console.log(state);
     if (state == null) {
       runInAction(() => (this.needRegister = true));
       throw Error();
@@ -408,8 +415,8 @@ class Hot {
       args: { charge_gas_fee },
     });
 
-    this.updateStatus();
     this.fetchBalance();
+    this.updateStatus().then(() => this.getUserData());
     this.action("claim", {
       hash: tx.transaction_outcome.id,
       amount: formatAmount(this.earned, 6).toString(),
@@ -459,6 +466,7 @@ class Hot {
     if (!booster) return false;
 
     if (booster.mission) {
+      // @ts-ignore
       return this.missions[booster.mission] || false;
     }
 
@@ -514,10 +522,15 @@ class Hot {
     return Math.floor(+(this.storageBooster?.value || 0) / 1_000_000);
   }
 
-  get remainingMiningHours() {
+  get remainingMiningSeconds() {
     if (!this.state) return 0;
     const spend_ms = this.currentTime - Math.floor(this.state.last_claim / 1000_000);
-    return Math.max(0, (this.storageCapacityMs - spend_ms) / 3600_000).toFixed(2);
+    return Math.floor(Math.max(0, (this.storageCapacityMs - spend_ms) / 1000));
+  }
+
+  get remainingMiningHours() {
+    if (!this.state) return 0;
+    return (this.remainingMiningSeconds / 3600).toFixed(2);
   }
 
   get hotPerHourInt() {
