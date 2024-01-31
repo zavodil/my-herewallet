@@ -143,7 +143,7 @@ class Accounts {
   async addAccount(cred: UserCred, sign: SignedMessageNEP0413 & { nonce: number[] }) {
     try {
       if (!isTgMobile()) notify("Authorization...");
-      const captcha = await recaptchaToken();
+      const captcha = isTgMobile() ? "" : await recaptchaToken();
       const token = await this.api.auth({
         msg: "web_wallet",
         device_id: this.api.deviceId,
