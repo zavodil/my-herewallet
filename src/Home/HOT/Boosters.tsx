@@ -97,9 +97,14 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
       <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
         {!next.mission && <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />}
-
         <LargeP style={{ fontWeight: "bold" }}>{next.mission ? next.mission_text || next.mission : formatAmount(next.hot_price || 0, 6)}</LargeP>
       </div>
+
+      {next.mission === "download_app" && (
+        <ActionButton style={{ marginBottom: -12 }} stroke $id="Booster.downloadApp" onClick={() => window.Telegram.WebApp.openLink("https://download.herewallet.app")}>
+          Download HERE Wallet
+        </ActionButton>
+      )}
 
       <ActionButton $id="Booster.upgrade" disabled={isLoading} onClick={() => upgrade()}>
         Upgrade
