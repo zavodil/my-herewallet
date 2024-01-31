@@ -184,14 +184,14 @@ const HOT = () => {
 
               <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/cave")}>
                 <img src={user.hot.getBooster(user.hot.state?.boost || 0)?.icon} style={{ width: 32, height: 32 }} />
-                <TinyText>Cave</TinyText>
+                <TinyText>Boost</TinyText>
               </div>
 
               <div style={{ width: 1, height: 40, background: "#D9CDCB" }} />
 
               <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/band")}>
                 <img src={require("../../assets/hot/band.png")} style={{ width: 32, height: 32 }} />
-                <TinyText>Band</TinyText>
+                <TinyText>Friends</TinyText>
               </div>
             </Card>
           </div>

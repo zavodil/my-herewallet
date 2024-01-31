@@ -116,7 +116,7 @@ export const boosters = [
     text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
     icon: require("../../assets/hot/wood/5.png"),
-    mission_text: "Deposit 1 USDT on your account",
+    mission_text: "Deposit 1+ USDT on your account",
   },
   {
     id: 15,
@@ -175,7 +175,7 @@ export const gasFreeMissions: GasFreeMission[] = [
   {
     gasFree: 1,
     icon: require("../../assets/hot/hot.png"),
-    title: "Follow us on Hot Telegram",
+    title: "Follow HOT on Telegram",
     mission: "follow_tg_hot",
     onClick: (user: UserAccount) => {
       window.Telegram.WebApp.openTelegramLink("https://t.me/hotonnear");
@@ -185,7 +185,7 @@ export const gasFreeMissions: GasFreeMission[] = [
   {
     gasFree: 1,
     icon: require("../../assets/here.svg"),
-    title: "Follow us on HERE Telegram",
+    title: "Follow HERE on Telegram",
     mission: "follow_tg_here",
     onClick: (user: UserAccount) => {
       window.Telegram.WebApp.openTelegramLink("https://t.me/herewallet");
@@ -195,7 +195,7 @@ export const gasFreeMissions: GasFreeMission[] = [
   {
     gasFree: 1,
     icon: require("../../assets/here.svg"),
-    title: "Follow us on HERE Twitter",
+    title: "Follow HERE on Twitter",
     mission: "follow_tw_here",
     onClick: (user: UserAccount) => {
       window.Telegram.WebApp.openLink("https://twitter.com/here_wallet");
