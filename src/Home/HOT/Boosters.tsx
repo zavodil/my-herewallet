@@ -104,7 +104,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
       {next.mission === "download_app" && (
         <ActionButton style={{ marginBottom: -12 }} stroke $id="Booster.downloadApp" onClick={() => window.Telegram.WebApp.openLink("https://download.herewallet.app")}>
-          Download HERE Wallet
+          Download HERE Wallet and import wallet
         </ActionButton>
       )}
 
