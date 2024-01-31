@@ -108,7 +108,7 @@ export const boosters = [
     text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
     icon: require("../../assets/hot/wood/4.png"),
-    mission_text: "Deposit 1 NEAR on your account",
+    mission_text: "Send 0.5+ NEAR from .near account, created at HERE Wallet",
   },
   {
     id: 14,
