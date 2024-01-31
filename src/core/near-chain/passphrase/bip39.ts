@@ -107,7 +107,7 @@ export function generateMnemonic(strength = 128, rng = randomBytes, wordlist = D
   return entropyToMnemonic(rng(strength / 8), wordlist);
 }
 
-export function validateMnemonic(mnemonic, wordlist) {
+export function validateMnemonic(mnemonic, wordlist = DEFAULT_WORDLIST) {
   try {
     mnemonicToEntropy(mnemonic, wordlist);
   } catch (e) {

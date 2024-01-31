@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { ConnectType, UserCred } from "./types";
 import { getStorageJson } from "./helpers";
 import { isTgMobile } from "../env";
+import { notify } from "./toast";
 
 export class Storage {
   static memoryData: Record<string, any> = {};
@@ -152,9 +153,12 @@ class SecureStorage {
   getAccount(id: string): UserCred | null {
     try {
       const text = this.storage.getItem(id)!;
+      if (text == null) return null;
       const salt = crypto.createHash("sha256").update(id).digest().toString("hex");
       return JSON.parse(decryptText(text, pwd + salt));
-    } catch {
+    } catch (e: any) {
+      console.log(id, e);
+      notify(e?.toString?.());
       return null;
     }
   }
