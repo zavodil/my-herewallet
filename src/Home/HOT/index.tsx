@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 
 import Header from "../Header";
-import { Card, Container, Root, TokenIcon } from "../styled";
-import { formatAmount } from "../../core/helpers";
+import { Card, Container, Root } from "../styled";
 import { useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
@@ -16,7 +15,6 @@ import { ActivityIndicator, Button } from "../../uikit";
 import { HereButton } from "../../uikit/button";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
-import Icon from "../../uikit/Icon";
 
 import { runParticles, stopParticles } from "./effects/flame";
 import { FirstClaimHOT } from "./modals";
@@ -83,36 +81,35 @@ const HOT = () => {
       <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <Header />
         <Container style={{ zIndex: 10, justifyContent: "space-between", height: "100%", paddingBottom: 32 }}>
-          <div>
-            <div style={{ overflowX: "auto", width: "100vw", display: "flex", marginLeft: -16, padding: "0 16px", gap: 8 }}>
-              {user.hot.village != null && (
-                <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
-                  <TokenIcon src={user.hot.village?.avatar} />
-                  <div>
-                    <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
-                    <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
-                      <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
-                      <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
-                    </div>
+          {/* <div style={{ overflowX: "auto", width: "100vw", display: "flex", marginLeft: -16, padding: "0 16px", gap: 8 }}>
+            {user.hot.village != null && (
+              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
+                <TokenIcon src={user.hot.village?.avatar} />
+                <div>
+                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
+                  <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
+                    <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
+                    <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
                   </div>
+                </div>
 
-                  <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
-                </Card>
-              )}
+                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
+              </Card>
+            )}
 
-              {user.hot.village == null && (
-                <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
-                  <TokenIcon src={require("../../assets/hot/fire/1.png")} />
-                  <div style={{ marginTop: -5 }}>
-                    <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>Explore villages</SmallText>
-                    <TinyText>Join or create your own</TinyText>
-                  </div>
+            {user.hot.village == null && (
+              <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
+                <TokenIcon src={require("../../assets/hot/fire/1.png")} />
+                <div style={{ marginTop: -5 }}>
+                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>Explore villages</SmallText>
+                  <TinyText>Join or create your own</TinyText>
+                </div>
 
-                  <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
-                </Card>
-              )}
-            </div>
-          </div>
+                <Icon style={{ marginLeft: "auto" }} name="cursor-right" />
+              </Card>
+            )}
+          </div> */}
+          <div />
 
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", position: "relative" }}>
             <Lottie
@@ -173,7 +170,7 @@ const HOT = () => {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-            <Button $id="howToMineHot">
+            <Button $id="howToMineHot" onClick={() => window.Telegram.WebApp.openLink("https://www.herewallet.app/blog/how-to-mine-HOT")}>
               <BoldP style={{ color: "#0258F7" }}>How to mine HOT</BoldP>
             </Button>
 

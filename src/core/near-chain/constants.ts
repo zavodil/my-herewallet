@@ -12,6 +12,8 @@ export const ONE_NEAR = new BN(1).pow(new BN(24));
 export const MaxGasPerTransaction = TGAS * 300;
 export const StorageCostPerByte = new BN(10).pow(new BN(19));
 
+export const NEAR_DOMAINS = [".near", ".sweat", ".usn", ".tg"];
+
 export const getNodeUrl = (network: string) => {
   switch (network) {
     case TESTNET:

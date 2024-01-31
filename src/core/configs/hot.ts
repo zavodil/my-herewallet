@@ -92,7 +92,7 @@ export const boosters = [
     text: "Better wood give you a multiplier to HOT mining. Mining speed is Wood × Fireplace",
     description: "Boost mining speed by\n1.5x.. 2x.. 3x times!",
     icon: require("../../assets/hot/wood/2.png"),
-    mission_text: "Join village",
+    mission_text: "Invite a referral",
   },
   {
     id: 12,

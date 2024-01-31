@@ -42,7 +42,7 @@ const CreateAccountMobile = () => {
   }, [nickname]);
 
   if (isCreating) {
-    return <ClaimingLoading time={10} text="Creating an account" />;
+    return <ClaimingLoading time={30} text="Creating an account" />;
   }
 
   return (

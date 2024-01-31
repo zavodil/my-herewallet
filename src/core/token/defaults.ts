@@ -1,5 +1,6 @@
 import { AssetSymbol, ft } from "./utils";
 import { Chain } from "./types";
+import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
 
 export const ethAurora = {
   amount: "0",
@@ -77,7 +78,7 @@ export const testnetHot = {
   coingecko_id: "???",
   symbol: "HOT",
   chain: Chain.NEAR,
-  contract_address: "game.hot-token.testnet",
+  contract_address: GAME_TESTNET_ID,
   id: ft(Chain.NEAR, "HOT"),
 };
 
@@ -93,7 +94,7 @@ export const hot = {
   coingecko_id: "???",
   symbol: "HOT",
   chain: Chain.NEAR,
-  contract_address: "game.hot-token.near",
+  contract_address: GAME_ID,
   id: ft(Chain.NEAR, "HOT"),
 };
 

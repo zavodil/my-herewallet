@@ -72,7 +72,7 @@ const Band = () => {
               Every time your friend claims HOT you get <b>20%</b> cashback. And <b>5%</b> every time his referrals claim it
             </Text>
 
-            <Button $id="Band.fullGuide">
+            <Button $id="Band.fullGuide" onClick={() => window.Telegram.WebApp.openLink("https://www.herewallet.app/blog/how-to-mine-HOT")}>
               <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>Full guide</SmallText>
             </Button>
           </div>
