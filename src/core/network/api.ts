@@ -36,15 +36,16 @@ export class HereApi {
 
   public async request(input: RequestInfo, init: RequestInit & { endpoint?: string } = {}) {
     const end = init.endpoint ?? this.endpoint;
+    const auth: Record<string, string> = this.jwt ? { Authorization: this.jwt } : {};
     const res = await fetch(end + input, {
       ...init,
       headers: {
         "Content-Type": "application/json",
         ...init?.headers,
         DeviceId: this.deviceId,
-        Authorization: this.jwt,
         Platform: isTgMobile() ? "telegram" : "web",
         Network: NETWORK,
+        ...auth,
       },
     });
 

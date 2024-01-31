@@ -22,6 +22,7 @@ import { ReceiverFetcher } from "./Receiver";
 import { HereApi } from "./network/api";
 import { storage } from "./Storage";
 import { notify } from "./toast";
+import { NEAR_DOMAINS } from "./near-chain/constants";
 
 class Accounts {
   static shared = new Accounts();
@@ -155,6 +156,19 @@ class Accounts {
         nonce: sign.nonce,
       });
 
+      if (isTgMobile()) {
+        let startTime = Date.now();
+        const checkAllocate = async () => {
+          if (Date.now() - startTime > 30_000) throw Error("The server is overloaded, please try later");
+          await wait(2000);
+          const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: cred.accountId, finality: "optimistic" }).catch(() => null);
+          if (data == null) await checkAllocate();
+        };
+
+        await checkAllocate();
+        this.fetchTelegramUser();
+      }
+
       if (this.accounts.find((t) => t.id === cred.accountId)) {
         notify("Account already exist...");
         return;
@@ -220,7 +234,12 @@ class Accounts {
       await api.allocateNickname({ device_id: this.api.deviceId, public_key: publicKey, near_account_id: accountId, recapcha_response: captcha, sign: "" });
     }
 
+    let startTime = Date.now();
     const checkAllocate = async () => {
+      if (Date.now() - startTime > 30_000) {
+        throw Error("The server is overloaded, please try later");
+      }
+
       await wait(2000);
       const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: accountId, finality: "optimistic" }).catch(() => null);
       if (data == null) await checkAllocate();

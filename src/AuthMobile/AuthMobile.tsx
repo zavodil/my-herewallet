@@ -10,10 +10,14 @@ import { BoldP, H1, LargeP, SmallText } from "../uikit/typographic";
 import { ActionButton, Button } from "../uikit";
 import { IntroImage, Root } from "./styled";
 import { colors } from "../uikit/theme";
+import { storage } from "../core/Storage";
+import { notify } from "../core/toast";
+import { ClaimingLoading } from "../Home/HOT/modals";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [refAccount, setRefAccount] = useState<string>();
+  const [isCreating, setCreating] = useState(false);
 
   useEffect(() => {
     const refId = window.Telegram.WebApp?.initDataUnsafe?.start_param;
@@ -25,6 +29,28 @@ const Auth = () => {
         setRefAccount(near_account_id);
       });
   }, []);
+
+  useEffect(() => {
+    const creds = storage.getAccount(accounts.telegramAccountId!);
+    if (creds == null) return;
+
+    const switchAcc = async () => {
+      try {
+        setCreating(true);
+        await accounts.importAccount(creds?.seed!);
+        setCreating(false);
+      } catch (e: any) {
+        setCreating(false);
+        notify(e?.toString?.());
+      }
+    };
+
+    switchAcc();
+  }, [accounts.telegramAccountId]);
+
+  if (isCreating) {
+    return <ClaimingLoading time={30} text="Creating an account" />;
+  }
 
   return (
     <Root style={{ padding: 24 }}>

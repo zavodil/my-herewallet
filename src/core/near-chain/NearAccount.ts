@@ -64,17 +64,20 @@ export class NearAccount extends Account {
     const tx = await this.callTransaction({ receiverId, actions: actionsToHereCall(actions) });
     return await this.connection.provider.txStatus(tx, this.accountId);
   }
+
   async getActualNonce() {
     const publicKey = await this.connection.signer.getPublicKey(this.accountId, this.connection.networkId);
-    const rawAccessKey = await this.connection.provider.query<AccessKeyViewRaw>({
-      request_type: "view_access_key",
-      account_id: this.accountId,
-      public_key: publicKey.toString(),
-      finality: "optimistic",
-    });
+    const rawAccessKey = await this.connection.provider
+      .query<AccessKeyViewRaw>({
+        request_type: "view_access_key",
+        account_id: this.accountId,
+        public_key: publicKey.toString(),
+        finality: "optimistic",
+      })
+      .catch(() => ({ nonce: "0" }));
 
-    const accessKey = { ...rawAccessKey, nonce: new BN(rawAccessKey.nonce) };
-    return accessKey.nonce.add(new BN(10));
+    const nonce = new BN(rawAccessKey.nonce);
+    return nonce.add(new BN(10));
   }
 
   protected async signTransaction(receiverId: string, actions: transactions.Action[], nonce?: BN): Promise<[Uint8Array, transactions.SignedTransaction]> {
