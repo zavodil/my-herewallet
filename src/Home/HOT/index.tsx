@@ -165,7 +165,7 @@ const HOT = () => {
                 </div>
               </Card>
 
-              {isOverload && <SmallText style={{ color: colors.blackPrimary, fontWeight: "bold", margin: "8px 0" }}>Claim hot from storage to keep minig</SmallText>}
+              {isOverload && <SmallText style={{ color: colors.blackPrimary, fontWeight: "bold", margin: "8px 0" }}>Claim hot from storage to keep mining</SmallText>}
             </div>
           </div>
 
