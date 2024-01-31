@@ -59,7 +59,7 @@ const Home = () => {
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
           {isTgMobile() && (
             <div style={{ marginTop: 4, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-              <BoldP>{truncateAddress(account.near.accountId.replace(".hot-user.near", ""))}</BoldP>
+              <BoldP>{truncateAddress(account.near.accountId)}</BoldP>
               <Icon
                 name="copy"
                 onClick={async () => {
