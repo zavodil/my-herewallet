@@ -3,8 +3,8 @@ import { observer } from "mobx-react-lite";
 
 import { notify } from "../../core/toast";
 import { useWallet } from "../../core/Accounts";
-import { formatAmount } from "../../core/helpers";
-import { ActionButton, ActivityIndicator, Button } from "../../uikit";
+import { formatAmount, wait } from "../../core/helpers";
+import { ActionButton, Button } from "../../uikit";
 import { BoldP, H2, LargeP, SmallText, Text } from "../../uikit/typographic";
 import { useNavigateBack } from "../../useNavigateBack";
 import { sheets } from "../../uikit/Popup";
@@ -21,7 +21,6 @@ const BoostPopup = observer(({ id }: { id: number }) => {
   const current = user.hot.getBooster(id);
   const next = user.hot.getBooster(id + 1);
   const [isLoading, setLoading] = useState(false);
-  const [isChecking, setChecking] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
   if (!next || !current) return null;
 
@@ -30,26 +29,14 @@ const BoostPopup = observer(({ id }: { id: number }) => {
       setLoading(true);
       sheets.blocked("Boost", true);
       await user.hot.upgradeBooster(id + 1);
+      sheets.blocked("Boost", false);
       setLoading(false);
       setSuccess(true);
     } catch (e: any) {
+      await wait(2000);
       sheets.blocked("Boost", false);
       notify(e?.message || e?.toString?.());
       setLoading(false);
-    }
-  };
-
-  const updateMissions = async () => {
-    if (!next.mission) return;
-    try {
-      setChecking(true);
-      // @ts-ignore
-      await user.hot.completeMission(next.mission);
-      setChecking(false);
-    } catch (e) {
-      if (e instanceof Error) notify(e.message);
-      else notify("Mission not complete, try later");
-      setChecking(false);
     }
   };
 
@@ -114,15 +101,9 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         <LargeP style={{ fontWeight: "bold" }}>{next.mission ? next.mission_text || next.mission : formatAmount(next.hot_price || 0, 6)}</LargeP>
       </div>
 
-      {next.mission && !user.hot.canUpgrade(id + 1) ? (
-        <ActionButton $id="Booster.checkMissionComplete" disabled={isChecking} onClick={updateMissions}>
-          {isChecking ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "I completed the mission"}
-        </ActionButton>
-      ) : (
-        <ActionButton $id="Booster.upgrade" disabled={!user.hot.canUpgrade(id + 1) || isLoading} onClick={() => upgrade()}>
-          Upgrade
-        </ActionButton>
-      )}
+      <ActionButton $id="Booster.upgrade" disabled={isLoading} onClick={() => upgrade()}>
+        Upgrade
+      </ActionButton>
 
       {isLoading && <ClaimingLoading time={15} text="Upgrading" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
     </div>

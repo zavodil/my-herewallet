@@ -21,7 +21,7 @@ export interface HotState {
   village?: string;
   last_claim: number;
   boost_ts_left: number;
-  has_refferals: boolean;
+  refferals: number;
   firespace: number;
   storage: number;
   boost: number;

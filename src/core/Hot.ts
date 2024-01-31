@@ -17,6 +17,7 @@ class Hot {
   public state: HotState | null = null;
   public referrals: HotReferral[] = [];
   public missions = {
+    invite_friend: false,
     follow_tg_hot: false,
     follow_tg_here: false,
     follow_tw_here: false,
@@ -140,7 +141,7 @@ class Hot {
     const tx = await this.account.near.functionCall({
       contractId: GAME_ID,
       methodName: "join_village",
-      args: { village: `${Math.abs(id)}.village.hot-token.near` },
+      args: { village: `${Math.abs(id)}.village.hot.tg` },
     });
 
     this.updateStatus();
@@ -214,20 +215,25 @@ class Hot {
       case "deposit_1NEAR": {
         await this.account.tokens.updateNative();
         if (this.account.tokens.near.amountFloat >= 1) break;
-        throw Error("Your NEAR balance has not yet updated.");
+        throw Error("Your NEAR balance has not yet updated");
       }
 
       case "deposit_1USDT": {
         await this.account.tokens.updateBalance(ft(Chain.NEAR, "USDT"));
         if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 0.95) break;
-        throw Error("Your USDT balance has not yet updated.");
+        throw Error("Your USDT balance has not yet updated");
       }
 
       case "join_village": {
         await this.updateStatus();
         if (this.state?.village !== null) break;
-        throw Error("You haven't joined the village.");
+        throw Error("You haven't joined the village");
       }
+
+      case "invite_friend":
+        await this.updateStatus();
+        if ((this.state?.refferals || 0) > 0) break;
+        throw Error("You haven't invited referral");
 
       case "follow_tg_hot":
       case "follow_tg_here":
@@ -360,11 +366,10 @@ class Hot {
 
   async upgradeBooster(id: number) {
     const booster = this.getBooster(id);
-    if (!booster || !this.canUpgrade(id)) return;
+    if (!booster) throw Error("Booster is not defined");
 
     if (booster.mission) {
-      const body = JSON.stringify({ asset_id: id });
-      await this.account.api.request("/api/v1/user/hot/mission", { body, method: "POST" });
+      await this.completeMission(booster.mission as any);
 
       let startTime = Date.now();
       const checkStatus = async () => {
@@ -379,6 +384,7 @@ class Hot {
       return;
     }
 
+    if (!this.canUpgrade(id)) throw Error("Not enough HOT");
     await this.account.near.functionCall({
       contractId: GAME_ID,
       methodName: "buy_asset",
