@@ -258,7 +258,7 @@ const Home = () => {
             <>
               <BoldP style={{ color: colors.blackSecondary }}>Portfolio</BoldP>
               <Card style={{ marginTop: -8, padding: "0" }}>
-                <TokenCard style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => (account.hot.needRegister ? navigate("/hot/onboard") : navigate("/hot"))}>
+                <TokenCard style={{ height: 72, padding: "0 16px", display: "flex" }} onClick={() => (!account.hot.userData.claim_active ? navigate("/hot/onboard") : navigate("/hot"))}>
                   <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 12 }}>
                     <TokenIcon src={require("../assets/hot/hot-icon.png")} />
 
@@ -267,7 +267,7 @@ const Home = () => {
                       <SmallText>{Math.max(0, account.hot.balance).toFixed(2)}</SmallText>
                     </div>
 
-                    {account.hot.needRegister ? (
+                    {account.hot.userData.claim_active === false ? (
                       <>
                         <BoldP>Claim 0.01 (free)</BoldP>
                         <Icon name="arrow-right" />

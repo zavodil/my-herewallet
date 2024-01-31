@@ -4,7 +4,6 @@ import { BN } from "bn.js";
 import UserAccount from "./UserAccount";
 import { HotReferral, HotState, HotVillage, boosters } from "./configs/hot";
 import { formatAmount, parseAmount, wait } from "./helpers";
-import { NetworkError } from "./network/api";
 import { Chain } from "./token/types";
 import { ft } from "./token/utils";
 import { TGAS } from "./constants";
@@ -33,12 +32,12 @@ class Hot {
     gas_free_transactions: 0,
     near_rpc: "rpc.mainnet.near.org",
     ft_contracts: [],
+    claim_active: false,
     user_id: 0,
   };
 
   public village: { name: string; avatar: string; hot_balance: number } | null = null;
   public villages: HotVillage[] = [];
-  public needRegister = false;
 
   public levels = [
     { id: 0, hot_price: 0, value: "0" },
@@ -70,7 +69,6 @@ class Hot {
       userData: observable,
       village: observable,
       villages: observable,
-      needRegister: observable,
       levels: observable,
 
       balance: computed,
@@ -95,7 +93,7 @@ class Hot {
 
     this.fetchLevels();
     this.refreshOnchain();
-    this.updateStatus().then(() => {
+    this.updateStatus().finally(() => {
       this.getUserData().then(() => {
         this.fetchMissions();
         this.fetchReferrals();
@@ -153,22 +151,14 @@ class Hot {
   }
 
   async getUserData() {
-    try {
-      const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}&next_claim_in=${this.remainingMiningSeconds}`);
-      const data = await resp.json();
-      this.account.tokens.addContracts(this.userData.ft_contracts);
-      runInAction(() => {
-        this.userData = data;
-        this.needRegister = false;
-        this.updateCache();
-      });
-    } catch (e) {
-      if (!(e instanceof NetworkError)) throw e;
-      if (e.status !== 404 && e.status !== 400) throw e;
+    const resp = await this.account.api.request(`/api/v1/user/hot?hot_mining_speed=${this.hotPerHourInt}&next_claim_in=${this.remainingMiningSeconds}`);
+    const data = await resp.json();
 
-      runInAction(() => (this.needRegister = true));
-      throw e;
-    }
+    this.account.tokens.addContracts(this.userData.ft_contracts);
+    runInAction(() => {
+      this.userData = data;
+      this.updateCache();
+    });
   }
 
   async register() {
@@ -288,7 +278,7 @@ class Hot {
   async updateStatus() {
     const state = await this.account.near.viewMethod(GAME_ID, "get_user", { account_id: this.account.near.accountId });
     if (state == null) {
-      runInAction(() => (this.needRegister = true));
+      runInAction(() => (this.userData.claim_active = false));
       throw Error("User is not registered, please try again");
     }
 

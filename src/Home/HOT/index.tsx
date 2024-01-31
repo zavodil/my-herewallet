@@ -41,9 +41,9 @@ const HOT = () => {
   }, []);
 
   useEffect(() => {
-    if (!user.hot.needRegister) return;
+    if (user.hot.userData.claim_active !== false) return;
     sheets.present({ id: "Register", element: <FirstClaimHOT />, blocked: true });
-  }, [user.hot.needRegister]);
+  }, [user.hot.userData.claim_active]);
 
   const claim = async (charge_gas_fee?: boolean) => {
     if (isClaiming) return;
