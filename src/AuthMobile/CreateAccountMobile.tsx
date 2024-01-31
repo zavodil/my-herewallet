@@ -27,7 +27,7 @@ const CreateAccountMobile = () => {
 
   useEffect(() => {
     const user = window.Telegram.WebApp?.initDataUnsafe?.user;
-    const nickname = (user?.username?.toLowerCase() || `i${user.id.toLowerCase()}`) + ".tg";
+    const nickname = (user?.username?.toLowerCase() || `i${user.id.toString().toLowerCase()}`) + ".tg";
 
     receiver.setInput(nickname);
     receiver.load().then(() => {
