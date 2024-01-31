@@ -86,6 +86,7 @@ export class TokensStorage {
   async addContracts(ids: string[]) {
     const list = Object.values(this.tokens);
     ids.forEach(async (id) => {
+      if (id === "") return;
       const token = list.find((t) => t.contract === id);
       if (token) return await this.updateBalance(token);
       const meta = await this.user.near.viewMethod(id, "ft_metadata");
