@@ -139,7 +139,7 @@ export const ClaimingLoading = ({ style, text, time = 10 }: { style?: any; text:
         <Lottie animationData={require("../../assets/hot/ring-sparks.json")} style={{ opacity: 0.5, marginTop: -40, width: 1200, height: 1200, position: "absolute" }} loop={true} />
 
         <H4 style={{ marginLeft: 16, fontFamily: "SF Mono" }}>
-          {Math.floor(((currentTime - startTime) / 1000 / time) * 100)}
+          {Math.min(99, Math.floor(((currentTime - startTime) / 1000 / 60) * 100))}
           <span>%</span>
         </H4>
         <SmallText style={{ marginLeft: 16 }}>{text}</SmallText>
