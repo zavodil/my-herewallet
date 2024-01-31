@@ -5,13 +5,13 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: var(--tg-viewport-height);
+  height: var(--tg-viewport-stable-height);
   overflow: hidden;
 }
 
 html {
   background: var(--Elevation-1);
-  height: var(--tg-viewport-height);
+  height: var(--tg-viewport-stable-height);
 }
 
 #root {
@@ -19,7 +19,7 @@ html {
   position: fixed;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  height: var(--tg-viewport-height);
+  height: var(--tg-viewport-stable-height);
   background: var(--Elevation-1);
 }
 
