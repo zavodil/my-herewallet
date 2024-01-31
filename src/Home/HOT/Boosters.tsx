@@ -13,7 +13,7 @@ import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
 import BlurBackground from "./effects/BlurBackground";
-import { ClaimingLoading } from "./modals";
+import { ClaimingLoading, InviteFriend } from "./modals";
 import Balance from "./Balance";
 
 const BoostPopup = observer(({ id }: { id: number }) => {
@@ -103,6 +103,12 @@ const BoostPopup = observer(({ id }: { id: number }) => {
       {next.mission === "download_app" && (
         <ActionButton style={{ marginBottom: -12 }} stroke $id="Booster.downloadApp" onClick={() => window.Telegram.WebApp.openLink("https://download.herewallet.app")}>
           Download HERE Wallet
+        </ActionButton>
+      )}
+
+      {next.mission === "invite_friend" && (
+        <ActionButton style={{ marginBottom: -12 }} stroke $id="Booster.inviteFriend" onClick={() => sheets.present({ id: "Invite", element: <InviteFriend /> })}>
+          Invite referral
         </ActionButton>
       )}
 
