@@ -62,8 +62,8 @@ const Auth = () => {
         <img src={introImage} />
       </IntroImage>
 
-      <H1 style={{ marginTop: 56 }}>NEAR Wallet</H1>
-      <LargeP style={{ marginTop: 24, textAlign: "center" }}>Next generation Telegram wallet. Secure, Fast and over the NEAR Blockchain.</LargeP>
+      <H1 style={{ marginTop: 28 }}>NEAR Wallet</H1>
+      <LargeP style={{ textAlign: "center" }}>Next generation Telegram wallet. Secure, Fast and over the NEAR Blockchain</LargeP>
 
       {accounts.telegramAccountId ? (
         <div style={{ textAlign: "center", marginTop: "auto", width: "100%" }}>
