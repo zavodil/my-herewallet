@@ -21,30 +21,32 @@ const CreateAccountMobile = () => {
   useNavigateBack();
   const user = useWallet();
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState(() => {
-    const user = window.Telegram.WebApp?.initDataUnsafe?.user;
-    const nickname = (user?.username?.toLowerCase() || `i${user.id.toLowerCase()}`) + ".tg";
-    return nickname;
-  });
 
   const [receiver] = useState(() => new Receiver(user!));
   const [isCreating, setCreating] = useState(false);
 
   useEffect(() => {
+    const user = window.Telegram.WebApp?.initDataUnsafe?.user;
+    const nickname = (user?.username?.toLowerCase() || `i${user.id.toLowerCase()}`) + ".tg";
+
     receiver.setInput(nickname);
-    receiver.load();
+    receiver.load().then(() => {
+      if (!receiver.isExist) return;
+      receiver.setInput(nickname.replace(".tg", "-hot.tg"));
+      receiver.load();
+    });
   }, []);
 
   const createAccount = async () => {
     if (isCreating) return;
     setCreating(true);
 
-    const exist = storage.getAccount(nickname);
+    const exist = storage.getAccount(receiver.input);
     let currentSeed = "";
 
     if (!exist?.seed) {
       const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
-      storage.addSafeData({ accountId: nickname, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
+      storage.addSafeData({ accountId: receiver.input, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
       currentSeed = seedPhrase;
     } else {
       currentSeed = exist.seed;
@@ -52,7 +54,7 @@ const CreateAccountMobile = () => {
 
     try {
       setCreating(true);
-      await accounts.connectWeb(currentSeed, nickname);
+      await accounts.connectWeb(currentSeed, receiver.input);
       setCreating(false);
       navigate("/");
     } catch (e: any) {
@@ -72,19 +74,8 @@ const CreateAccountMobile = () => {
         <Text style={{ marginTop: 8 }}>Fill in the info to create a wallet</Text>
 
         <div style={{ marginTop: 42, position: "relative" }}>
-          <HereInput
-            disabled
-            label="Nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            postfixStyle={{ marginLeft: 0 }}
-            autoCapitalize="off"
-            autoCorrect="off"
-            autoComplete="off"
-            autoFocus
-          />
-
-          {receiver.input !== ".near" && !receiver.isLoading && (
+          <HereInput disabled label="Nickname" value={receiver.input} postfixStyle={{ marginLeft: 0 }} autoCapitalize="off" autoCorrect="off" autoComplete="off" autoFocus />
+          {!receiver.isLoading && (
             <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>{receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}</SmallText>
           )}
         </div>

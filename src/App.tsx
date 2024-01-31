@@ -21,6 +21,7 @@ import Auth from "./Auth";
 import Apps from "./Apps";
 import Home from "./Home";
 
+import { AnalyticsTracker } from "./core/analytics";
 import CreateAccountMobile from "./AuthMobile/CreateAccountMobile";
 import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
 import AuthMobile from "./AuthMobile/AuthMobile";
@@ -34,7 +35,6 @@ import Onboard from "./Home/HOT/Onboard";
 import { useHOTVillage } from "./Home/HOT/useVillage";
 import Villages from "./Home/HOT/Villages";
 import HotGuard from "./Home/HOT/HotGuard";
-import { AnalyticsTracker } from "./core/analytics";
 
 function App() {
   // useEffect(() => {
