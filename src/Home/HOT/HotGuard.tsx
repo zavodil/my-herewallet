@@ -1,14 +1,37 @@
-import React from "react";
-import { Root } from "../styled";
-import { H2, H4 } from "../../uikit";
+import React, { useState } from "react";
+
+import { Button, H2, H4 } from "../../uikit";
 import { useNavigateBack } from "../../useNavigateBack";
 import { accounts, useWallet } from "../../core/Accounts";
-import { SmallText } from "../../uikit/typographic";
+import { BoldP, SmallText } from "../../uikit/typographic";
 import { truncateAddress } from "../../core/helpers";
+import { storage } from "../../core/Storage";
+import { notify } from "../../core/toast";
+
+import { Root } from "../styled";
+import { ClaimingLoading } from "./modals";
 
 const HotGuard = ({ Comp }: { Comp: any }) => {
   const user = useWallet()!;
+  const [isCreating, setCreating] = useState(false);
   useNavigateBack();
+
+  const creds = storage.getAccount(accounts.telegramAccountId!);
+  const switchAcc = async () => {
+    if (isCreating) return;
+    try {
+      setCreating(true);
+      await accounts.importAccount(creds?.seed!);
+      setCreating(false);
+    } catch (e: any) {
+      setCreating(false);
+      notify(e?.toString?.());
+    }
+  };
+
+  if (isCreating) {
+    return <ClaimingLoading time={20} text="Importing an account" />;
+  }
 
   // if (isTgProd()) {
   //   return (
@@ -29,6 +52,12 @@ const HotGuard = ({ Comp }: { Comp: any }) => {
         <SmallText>
           Switch from <b>{truncateAddress(user.near.accountId)}</b> to <b>{truncateAddress(accounts.telegramAccountId)}</b>
         </SmallText>
+
+        {creds?.seed != null && (
+          <Button style={{ marginTop: 48 }} $id="switchAccount" onClick={() => switchAcc()}>
+            <BoldP>Switch account</BoldP>
+          </Button>
+        )}
       </Root>
     );
   }

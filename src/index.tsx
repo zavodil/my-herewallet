@@ -4,10 +4,10 @@ import ReactDOM from "react-dom/client";
 import "./assets/cabinet-grotesk/index.css";
 import "./assets/manrope/index.css";
 
-import { isTgMobile, isTgBeta } from "./env";
 import { colors } from "./uikit/theme";
-import App from "./App";
+import { isTgMobile, isTgBeta } from "./env";
 import { AnalyticsTracker } from "./core/analytics";
+import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(<App />);
