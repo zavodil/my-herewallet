@@ -24,7 +24,7 @@ export const JoinVillage = ({ id }: { id: number }) => {
         </div>
       )}
 
-      <Text style={{ marginTop: 8, marginBottom: 32 }}>Village members can earn +5% HOT. Best villages receive daily USDT giveaways</Text>
+      <Text style={{ marginTop: 8, marginBottom: 32 }}>Village members can earn +5% HOT. Best villages receive daily giveaways</Text>
 
       <ActionButton
         $id="JoinVillage.join"
