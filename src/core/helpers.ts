@@ -114,10 +114,7 @@ export class Formatter {
 export const isAndroid = () => navigator.userAgent.toLowerCase().indexOf("android") > -1;
 
 export const isIOS = () => {
-  return (
-    ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) ||
-    (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-  );
+  return ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 };
 
 export const getStorageJson = (key: string, def: any) => {
@@ -133,6 +130,7 @@ export const recaptchaToken = async (): Promise<string> => {
   if (process.env.NODE_ENV === "development") return undefined;
   return new Promise((resolve, reject) => {
     const repatcha = (window as any).grecaptcha;
+    if (repatcha == null) return reject("repatcha is invalid");
     repatcha.ready(() => {
       repatcha.execute("6LezLUUpAAAAAB52b8j8t-wSZHifwVFT3Qe_MzSE", { action: "submit" }).then(resolve).catch(reject);
     });

@@ -77,8 +77,8 @@ function App() {
               </>
             )}
 
-            <Route path="/auth/create" element={<CreateAccountMobile />} />
             <Route path="/auth/import" element={<ImportAccountMobile />} />
+            <Route path="/auth/create" element={<CreateAccountMobile />} />
             <Route path="*" element={<AuthMobile />} />
           </Routes>
         </BrowserRouter>

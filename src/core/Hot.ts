@@ -203,13 +203,13 @@ class Hot {
     switch (mission) {
       case "deposit_1NEAR": {
         await this.account.tokens.updateNative();
-        if (this.account.tokens.near.amountFloat >= 1) break;
+        if (this.account.tokens.near.amountFloat >= 0.95) break;
         throw Error("Your NEAR balance has not yet updated");
       }
 
       case "deposit_1USDT": {
         await this.account.tokens.updateBalance("usdt.tether-token.near");
-        if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 0.95) break;
+        if ((this.account.tokens.token(Chain.NEAR, "USDt")?.amountFloat || 0) >= 0.95) break;
         throw Error("Your USDT balance has not yet updated");
       }
 

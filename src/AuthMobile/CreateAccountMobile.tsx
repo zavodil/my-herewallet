@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 
 import { Receiver } from "../core/Receiver";
 import { accounts, useWallet } from "../core/Accounts";
-import { generateMnemonic } from "../core/near-chain/passphrase/bip39";
 import { notify } from "../core/toast";
 
 import { H1, SmallText, Text } from "../uikit/typographic";
@@ -14,32 +13,53 @@ import { useNavigateBack } from "../useNavigateBack";
 import { colors } from "../uikit/theme";
 import HereInput from "../uikit/Input";
 import { Root } from "./styled";
+import { generateSeedPhrase } from "../core/near-chain/passphrase";
+import { storage } from "../core/Storage";
+import { ConnectType } from "../core/types";
 
 const CreateAccountMobile = () => {
   useNavigateBack();
   const user = useWallet();
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState(window.Telegram.WebApp?.initDataUnsafe?.user?.username?.toLowerCase().replaceAll("-", "_") || "");
+  const [nickname, setNickname] = useState(() => {
+    const user = window.Telegram.WebApp?.initDataUnsafe?.user;
+    const nickname = (user?.username?.toLowerCase() || `i${user.id.toLowerCase()}`) + ".tg";
+    return nickname;
+  });
+
   const [receiver] = useState(() => new Receiver(user!));
   const [isCreating, setCreating] = useState(false);
 
-  const onCreate = async (nick?: string) => {
+  useEffect(() => {
+    receiver.setInput(nickname);
+    receiver.load();
+  }, []);
+
+  const createAccount = async () => {
     if (isCreating) return;
+    setCreating(true);
+
+    const exist = storage.getAccount(nickname);
+    let currentSeed = "";
+
+    if (!exist?.seed) {
+      const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
+      storage.addSafeData({ accountId: nickname, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
+      currentSeed = seedPhrase;
+    } else {
+      currentSeed = exist.seed;
+    }
+
     try {
       setCreating(true);
-      await accounts.connectWeb(generateMnemonic(), nick);
+      await accounts.connectWeb(currentSeed, nickname);
       setCreating(false);
       navigate("/");
     } catch (e: any) {
-      notify(e?.toString?.());
+      notify(e?.toString?.(), 5000);
       setCreating(false);
     }
   };
-
-  useEffect(() => {
-    receiver.setInput(nickname + ".hot-user.near");
-    receiver.load();
-  }, [nickname]);
 
   if (isCreating) {
     return <ClaimingLoading time={30} text="Creating an account" />;
@@ -53,6 +73,7 @@ const CreateAccountMobile = () => {
 
         <div style={{ marginTop: 42, position: "relative" }}>
           <HereInput
+            disabled
             label="Nickname"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
@@ -60,7 +81,6 @@ const CreateAccountMobile = () => {
             autoCapitalize="off"
             autoCorrect="off"
             autoComplete="off"
-            postfix=".hot-user.near"
             autoFocus
           />
 
@@ -75,7 +95,7 @@ const CreateAccountMobile = () => {
           $id="CreateAccount.createNickname"
           style={{ flex: 1 }}
           disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
-          onClick={() => onCreate(receiver.input)}
+          onClick={() => createAccount()}
         >
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
         </ActionButton>
