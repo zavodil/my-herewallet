@@ -79,8 +79,7 @@ export const FirstClaimHOT = () => {
     >
       <img src={require("../../assets/hot/hot-icon.png")} style={{ width: 140, height: 140, borderRadius: 12 }} />
       <H2>+0.01 HOT</H2>
-      <Text style={{ color: colors.blackSecondary }}>
-        HOT is the centerpiece of the new ecosystem. It is distributed to early adopters and mined passively.</Text>
+      <Text style={{ color: colors.blackSecondary }}>HOT is the centerpiece of the new ecosystem. It is distributed to early adopters and mined passively.</Text>
       <ActionButton $id="HotRegister.register" disabled={isLoading} style={{ marginTop: 16 }} onClick={() => register()}>
         Claim
       </ActionButton>

@@ -65,7 +65,7 @@ const HOT = () => {
         return;
       }
 
-      notify("Claim failed");
+      notify(e?.toString?.());
       setClaiming(false);
     }
   };

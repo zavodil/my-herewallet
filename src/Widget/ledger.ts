@@ -6,11 +6,7 @@ import { PublicKey } from "near-api-js/lib/utils";
 import { Signer } from "near-api-js";
 
 class LedgerSigner implements Signer {
-  constructor(
-    readonly path = "44'/397'/0'/0'/1'",
-    readonly toggleConnect: (v: boolean) => void,
-    readonly onSigned: () => void
-  ) {}
+  constructor(readonly path = "44'/397'/0'/0'/1'", readonly toggleConnect: (v: boolean) => void, readonly onSigned: () => void) {}
 
   createKey(): Promise<PublicKey> {
     throw new Error("Method not implemented.");
