@@ -74,14 +74,14 @@ export class NearAccount extends Account {
     });
 
     const accessKey = { ...rawAccessKey, nonce: new BN(rawAccessKey.nonce) };
-    return accessKey.nonce.add(new BN(1));
+    return accessKey.nonce.add(new BN(10));
   }
 
   protected async signTransaction(receiverId: string, actions: transactions.Action[], nonce?: BN): Promise<[Uint8Array, transactions.SignedTransaction]> {
-    if (nonce == null) nonce = await this.getActualNonce();
     const block = await this.connection.provider.block({ finality: "final" });
     const blockHash = block.header.hash;
 
+    if (nonce == null) nonce = await this.getActualNonce();
     const trx = await transactions.signTransaction(receiverId, nonce, actions, base_decode(blockHash), this.connection.signer, this.accountId, this.connection.networkId);
 
     return trx;
