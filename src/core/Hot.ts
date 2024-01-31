@@ -35,11 +35,9 @@ class Hot {
     user_id: 0,
   };
 
-  public needRegister = false;
-  public validAccountId = "";
-
   public village: { name: string; avatar: string; hot_balance: number } | null = null;
   public villages: HotVillage[] = [];
+  public needRegister = false;
 
   public levels = [
     { id: 0, hot_price: 0, value: "0" },
@@ -64,13 +62,16 @@ class Hot {
 
   constructor(readonly account: UserAccount) {
     makeObservable(this, {
-      state: observable,
       currentTime: observable,
+      state: observable,
       referrals: observable,
       missions: observable,
-      levels: observable,
+      userData: observable,
       village: observable,
       villages: observable,
+      needRegister: observable,
+      levels: observable,
+
       balance: computed,
       miningProgress: computed,
       remainingMiningHours: computed,
@@ -245,6 +246,7 @@ class Hot {
     });
 
     await this.fetchMissions();
+    await this.getUserData();
   }
 
   async fetchVillages() {
@@ -305,11 +307,6 @@ class Hot {
       hash: tx.transaction_outcome.id,
       amount: earned,
       charge_gas_fee,
-    });
-
-    runInAction(() => {
-      if (!this.userData.gas_free_transactions) return;
-      this.userData.gas_free_transactions -= 1;
     });
   }
 
@@ -391,12 +388,7 @@ class Hot {
       args: { asset_id: id },
     });
 
-    runInAction(() => {
-      if (!this.userData.gas_free_transactions) return;
-      this.userData.gas_free_transactions -= 1;
-    });
-
-    await this.updateStatus();
+    await this.updateStatus().then(() => this.getUserData());
   }
 
   get balance() {
@@ -440,11 +432,11 @@ class Hot {
 
   get hotPerHour() {
     if (!this.state) return 0;
-    return +formatAmount(this.hotPerHourInt.toString(), 6).toFixed(6);
+    return +Math.max(0, formatAmount(this.hotPerHourInt.toString(), 6)).toFixed(6);
   }
 
   get earned() {
-    return +((this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(6);
+    return +Math.max(0, (this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(6);
   }
 
   get referralsEarnPerHour() {
