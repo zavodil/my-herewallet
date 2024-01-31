@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { ErrorBoundary } from "react-error-boundary";
 
 import "./assets/cabinet-grotesk/index.css";
 import "./assets/manrope/index.css";
@@ -7,10 +8,25 @@ import "./assets/manrope/index.css";
 import { colors } from "./uikit/theme";
 import { isTgMobile, isTgBeta } from "./env";
 import { AnalyticsTracker } from "./core/analytics";
+import { H4, Text } from "./uikit/typographic";
+import { Root } from "./Home/styled";
 import App from "./App";
 
+function Fallback({ error }: any) {
+  return (
+    <Root style={{ display: "flex", padding: 24, justifyContent: "center", alignItems: "center" }}>
+      <H4>Something went wrong:</H4>
+      <Text>{error.message}</Text>
+    </Root>
+  );
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-root.render(<App />);
+root.render(
+  <ErrorBoundary FallbackComponent={Fallback}>
+    <App />
+  </ErrorBoundary>
+);
 
 declare global {
   interface Window {
