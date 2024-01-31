@@ -49,7 +49,7 @@ const Auth = () => {
       </IntroImage>
 
       <H1 style={{ marginTop: 56 }}>NEAR Wallet</H1>
-      <LargeP style={{ marginTop: 24, textAlign: "center" }}>Secure telegram wallet for NEAR Protocol</LargeP>
+      <LargeP style={{ marginTop: 24, textAlign: "center" }}>Next generation Telegram wallet. Secure, Fast and over the NEAR Blockchain.</LargeP>
 
       {accounts.telegramAccountId ? (
         <ActionButton $id="Auth.createAccount" big style={{ marginTop: "auto" }} onClick={() => navigate("/auth/import")}>

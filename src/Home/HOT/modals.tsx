@@ -10,19 +10,18 @@ import { ActionButton, H2, H4, Text } from "../../uikit";
 import { SmallText } from "../../uikit/typographic";
 
 const tips = [
-  "HOT will be the main currency for Telegram games and apps on NEAR. Just like the balance in a Steam account ",
   "You get a 20% HOT cashback from all your referrals income",
-  "HOT is a native token on the NEAR Protocol blockchain. Same as Doge or USDT ",
+  "HOT is minted on the NEAR Protocol blockchain. Same as USDT or wBTC",
   "All account data is stored locally and encrypted. Save the recovery key to log in on another device",
   "You can not only mine HOT here, but also store and transfer other tokens and NFTs",
   "Keep up with HOT news on Telegram channel. Big announcements are coming soon!",
-  "Join the village to earn and share USDT awards",
-  "Create your own village, grow it and get USDT awards",
+  "Join the village to earn and share awards",
+  "Create your own village, grow it and get awards",
   "Transfer HOT to your friends by telegram username",
   "Not only admins but regular chat members can create a village",
   "A black dragon could be hiding somewhere in the fire",
   "The supply of HOT is limited, once it is all distributed mining will stop",
-  "Soon you'll be able to turn the cave into the NFT",
+  "Soon you'll be able to turn your game stuff into the NFT",
 ];
 
 export const InviteFriend = () => {
@@ -81,8 +80,7 @@ export const FirstClaimHOT = () => {
       <img src={require("../../assets/hot/hot-icon.png")} style={{ width: 140, height: 140, borderRadius: 12 }} />
       <H2>+0.01 HOT</H2>
       <Text style={{ color: colors.blackSecondary }}>
-        HOT is an onchain token related to the launch of NEAR Wallet in Telegram. It's mined on the blockchain and can be trade or transfer via any crypto wallet. More coming after the mint is over!
-      </Text>
+        HOT is the centerpiece of the new ecosystem. It is distributed to early adopters and mined passively.</Text>
       <ActionButton $id="HotRegister.register" disabled={isLoading} style={{ marginTop: 16 }} onClick={() => register()}>
         Claim
       </ActionButton>
