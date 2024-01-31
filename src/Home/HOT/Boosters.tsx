@@ -112,7 +112,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         </ActionButton>
       )}
 
-      <ActionButton $id="Booster.upgrade" disabled={isLoading} onClick={() => upgrade()}>
+      <ActionButton $id="Booster.upgrade" disabled={isLoading || next.mission === "deposit_NFT"} onClick={() => upgrade()}>
         Upgrade
       </ActionButton>
 
