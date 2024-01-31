@@ -42,7 +42,7 @@ const Gas = () => {
             Each HOT claim is a transaction on the NEAR blockchain. We will cover your gas price as long as you have gas-free transactions
           </Text>
 
-          <Button $id="GasFree.learnMore">
+          <Button $id="GasFree.learnMore" onClick={() => window.Telegram.WebApp.openLink("https://www.herewallet.app/blog/how-to-mine-HOT")}>
             <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>Learn more</SmallText>
           </Button>
         </div>

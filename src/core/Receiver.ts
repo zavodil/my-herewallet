@@ -6,18 +6,14 @@ import UserAccount from "./UserAccount";
 import { Chain } from "./token/types";
 import { ConnectType } from "./types";
 import { HereApi } from "./network/api";
+import { NEAR_DOMAINS } from "./near-chain/constants";
 
 export const MinAccountIdLen = 2;
 export const MaxAccountIdLen = 64;
 export const ValidAccountRe = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
 
 export function isValidAccountId(accountId: string) {
-  return (
-    accountId &&
-    accountId.length >= MinAccountIdLen &&
-    accountId.length <= MaxAccountIdLen &&
-    accountId.match(ValidAccountRe)
-  );
+  return accountId && accountId.length >= MinAccountIdLen && accountId.length <= MaxAccountIdLen && accountId.match(ValidAccountRe);
 }
 
 export class ReceiverFetcher {
@@ -108,9 +104,7 @@ export class Receiver {
   }
 
   contains(input: string) {
-    return (
-      this.input?.toLowerCase().includes(input.toLowerCase()) || this.name?.toLowerCase().includes(input.toLowerCase())
-    );
+    return this.input?.toLowerCase().includes(input.toLowerCase()) || this.name?.toLowerCase().includes(input.toLowerCase());
   }
 
   async getAddress() {
@@ -140,7 +134,7 @@ export class Receiver {
       console.log(e);
       if (this.input !== address) return;
       return runInAction(() => {
-        this.isExist = address.endsWith(".near") || address.endsWith(".testnet") ? false : true;
+        this.isExist = NEAR_DOMAINS.some((t) => address.endsWith(t)) ? false : true;
         this.isLoading = false;
         this.isHere = false;
       });
@@ -157,7 +151,7 @@ export class Receiver {
     this.isExist = false;
 
     if (isValidAccountId(this.input)) {
-      if (this.input.length === 64 || this.input.endsWith(".near") || this.input.endsWith(".testnet")) {
+      if (this.input.length === 64 || NEAR_DOMAINS.some((t) => this.input.endsWith(t))) {
         this.address = this.input;
         this.validateError = null;
         this.isExist = true;

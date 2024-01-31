@@ -46,7 +46,7 @@ export const NeedMoreGas = ({ onSelectHot }: { onSelectHot?: () => void }) => {
           </>
         )}
 
-        <Button $id="NeedGasPopup.moreAboutGasFree" style={{ margin: "auto", marginTop: 24 }}>
+        <Button $id="NeedGasPopup.moreAboutGasFree" style={{ margin: "auto", marginTop: 24 }} onClick={() => window.Telegram.WebApp.openLink("https://www.herewallet.app/blog/how-to-mine-HOT")}>
           <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>More about Gas Free</SmallText>
         </Button>
       </div>

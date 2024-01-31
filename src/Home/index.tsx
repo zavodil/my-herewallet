@@ -117,8 +117,8 @@ const Home = () => {
             )}
           </Card>
 
-          {isTgMobile() && account.hot.balance === 0 && <Widgets />}
-          {isTgMobile() && account.hot.balance > 0 && (
+          {isTgMobile() && account.hot.balance > 0 && <Widgets />}
+          {isTgMobile() && account.hot.balance === 0 && (
             <div
               style={{
                 borderRadius: 20,

@@ -39,7 +39,10 @@ const Transfer = () => {
 
   const [receiver, setReceiver] = useState(() => new Receiver(user));
 
-  const tokens = Object.values(user.tokens.tokens).sort((a, b) => user.tokens.fiat(b) - user.tokens.fiat(a));
+  const tokens = Object.values(user.tokens.tokens)
+    .sort((a, b) => user.tokens.fiat(b) - user.tokens.fiat(a))
+    .filter((t) => t.symbol !== "HOT");
+
   const token = user.tokens.token(Chain.NEAR, asset);
   const cur = user.tokens.cur(token!);
 
@@ -49,7 +52,7 @@ const Transfer = () => {
   const isDisabled = isTooMuch || !!receiver.validateError || !receiver.isExist || !token || tokenAmount <= 0;
 
   useEffect(() => {
-    setParams({ recipient, asset, amount, comment, fiat: isFiat ? "true" : "false" });
+    setParams({ recipient, asset, amount, comment, fiat: isFiat ? "true" : "false" }, { replace: true });
   }, [recipient, asset, amount, isFiat, comment]);
 
   useEffect(() => {
@@ -128,7 +131,7 @@ const Transfer = () => {
 
           <HereSelect
             label="Select asset"
-            options={tokens.filter((t) => t.amountFloat > 0)}
+            options={tokens.filter((t) => t.amountFloat > 0 || t.symbol === "NEAR")}
             value={tokens.find((ft) => ft.symbol === asset)}
             renderOption={(ft: FtModel) => (
               <TokenOption $id="Transfer.selectAsset" key={ft.id} onClick={() => setAsset(ft.symbol)}>

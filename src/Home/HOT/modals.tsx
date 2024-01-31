@@ -87,7 +87,7 @@ export const FirstClaimHOT = () => {
         Claim
       </ActionButton>
 
-      {isLoading && <ClaimingLoading text="Claiming" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
+      {isLoading && <ClaimingLoading time={15} text="Claiming" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
     </div>
   );
 };

@@ -124,7 +124,7 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         </ActionButton>
       )}
 
-      {isLoading && <ClaimingLoading text="Upgrading" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
+      {isLoading && <ClaimingLoading time={15} text="Upgrading" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
     </div>
   );
 });
@@ -192,7 +192,7 @@ const Boosters = () => {
             <Text style={{ color: colors.blackSecondary, marginBottom: -16 }}>Your balance</Text>
             <Balance value={user.hot.balance} />
 
-            <Button $id="Boosters.howCaveWorks" style={{ marginTop: 4 }}>
+            <Button $id="Boosters.howCaveWorks" style={{ marginTop: 4 }} onClick={() => window.Telegram.WebApp.openLink("https://www.herewallet.app/blog/how-to-mine-HOT")}>
               <BoldP style={{ color: "#0258F7" }}>How cave works</BoldP>
             </Button>
           </div>

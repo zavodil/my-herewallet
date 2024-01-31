@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { HereWallet, SignedMessageNEP0413, WidgetStrategy } from "@here-wallet/core";
@@ -54,8 +54,11 @@ class Accounts {
       }),
   });
 
+  public telegramAccountId: string | null = null;
+
   constructor() {
     makeObservable(this, {
+      telegramAccountId: observable,
       account: observable,
       accounts: observable,
       disconnect: action,
@@ -67,6 +70,15 @@ class Accounts {
     });
 
     this.init();
+    this.fetchTelegramUser();
+  }
+
+  async fetchTelegramUser() {
+    const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    if (!telegramId) return;
+    const res = await this.api.request(`/api/v1/user/hot/by_telegram_id?telegram_id=${telegramId}`);
+    const { near_account_id } = await res.json();
+    runInAction(() => (this.telegramAccountId = near_account_id));
   }
 
   init() {
@@ -148,16 +160,8 @@ class Accounts {
         return;
       }
 
-      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-      let telegramAccountId;
-      if (telegramId) {
-        const res = await this.api.request(`/api/v1/user/hot/by_telegram_id?telegram_id=${telegramId}`);
-        const { near_account_id } = await res.json();
-        telegramAccountId = near_account_id;
-      }
-
-      storage.addAccount({ ...cred, jwt: token, telegramAccountId });
-      const account = new UserAccount({ ...cred, jwt: token, telegramAccountId });
+      storage.addAccount({ ...cred, jwt: token });
+      const account = new UserAccount({ ...cred, jwt: token });
 
       const addAccount = action(() => {
         this.accounts.push({ id: cred.accountId, type: cred.type });
@@ -223,6 +227,8 @@ class Accounts {
     };
 
     await checkAllocate();
+    this.fetchTelegramUser();
+
     const keyPair = KeyPair.fromString(secretKey);
     const sign = await this.localSign(accountId, keyPair);
     const cred = {

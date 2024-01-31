@@ -9,7 +9,7 @@ import { Chain } from "./token/types";
 import { ft } from "./token/utils";
 import { TGAS } from "./constants";
 
-export const GAME_ID = "game.hot-token.near";
+export const GAME_ID = "game.hot.tg";
 export const GAME_TESTNET_ID = "game.hot-token.testnet";
 
 class Hot {
@@ -234,10 +234,8 @@ class Hot {
       case "follow_tw_here":
       case "download_app":
       case "deposit_NFT":
-        break;
-
       default:
-        throw Error(`Unknown mission: ${mission.toString()}`);
+        break;
     }
 
     await this.account.api.request(`/api/v1/user/hot/mission`, {

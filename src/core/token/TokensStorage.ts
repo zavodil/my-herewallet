@@ -13,6 +13,7 @@ import { FtModel, Chain } from "./types";
 import { createToken, ft } from "./utils";
 import Currencies from "./Currencies";
 import tokens from "./tokens";
+import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
 
 export class TokensStorage {
   public tokens: Record<string, FtModel> = {};
@@ -25,13 +26,13 @@ export class TokensStorage {
 
     this.tokens = user.localStorage.get("tokens:cache2", user.isProduction ? { [defaults.near.id]: createToken(defaults.near) } : { [defaults.testnetNear.id]: createToken(defaults.testnetNear) });
 
-    const defaultsTokens = ["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", "game.hot-token.near"];
+    const defaultsTokens = ["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", GAME_ID];
     this.updateNative();
 
     if (user.isProduction) {
-      this.addContracts(["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", "game.hot-token.near"]);
+      this.addContracts(["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", GAME_ID]);
     } else {
-      this.addContracts(["wrap.testnet", "game.hot-token.testnet"]);
+      this.addContracts(["wrap.testnet", GAME_TESTNET_ID]);
     }
 
     if (!isTgMobile()) {
