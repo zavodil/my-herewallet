@@ -191,7 +191,7 @@ const HOT = () => {
 
               <div style={{ padding: "8px 12px", width: 65, textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/hot/band")}>
                 <img src={require("../../assets/hot/band.png")} style={{ width: 32, height: 32 }} />
-                <TinyText>Village</TinyText>
+                <TinyText>Friends</TinyText>
               </div>
             </Card>
           </div>
