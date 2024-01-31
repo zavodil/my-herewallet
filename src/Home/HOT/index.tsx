@@ -131,7 +131,7 @@ const HOT = () => {
               <Text style={{ fontFamily: "SF Mono" }}>
                 {left}
                 <span style={{ fontFamily: "CabinetGrotesk", fontWeight: "900" }}>.</span>
-                {+right}
+                {right}
               </Text>
             </div>
 
