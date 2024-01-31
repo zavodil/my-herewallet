@@ -6,16 +6,20 @@ import { Receiver } from "../core/Receiver";
 import { accounts, useWallet } from "../core/Accounts";
 import { notify } from "../core/toast";
 
-import { H1, SmallText, Text } from "../uikit/typographic";
+import { H1, H3, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import { ClaimingLoading } from "../Home/HOT/modals";
 import { useNavigateBack } from "../useNavigateBack";
 import { colors } from "../uikit/theme";
 import HereInput from "../uikit/Input";
-import { Root } from "./styled";
+import { Root, WordsWrap } from "./styled";
 import { generateSeedPhrase } from "../core/near-chain/passphrase";
 import { storage } from "../core/Storage";
 import { ConnectType } from "../core/types";
+import { Button } from "../uikit/button";
+import Icon from "../uikit/Icon";
+import { SensitiveCard } from "../Settings/styled";
+import { wait } from "../core/helpers";
 
 const CreateAccountMobile = () => {
   useNavigateBack();
@@ -24,16 +28,33 @@ const CreateAccountMobile = () => {
 
   const [receiver] = useState(() => new Receiver(user!));
   const [isCreating, setCreating] = useState(false);
+  const [seed, setSeed] = useState<string>();
 
   useEffect(() => {
+    const setupSeed = () => {
+      const exist = storage.getAccount(receiver.input);
+      if (!exist?.seed) {
+        const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
+        storage.addSafeData({ accountId: receiver.input, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
+        setSeed(seedPhrase);
+      } else {
+        setSeed(exist.seed!);
+      }
+    };
+
     const user = window.Telegram.WebApp?.initDataUnsafe?.user;
     const nickname = (user?.username?.toLowerCase() || `i${user.id.toString().toLowerCase()}`) + ".tg";
 
     receiver.setInput(nickname);
     receiver.load().then(() => {
-      if (!receiver.isExist) return;
+      if (!receiver.isExist) return setupSeed();
       receiver.setInput(nickname.replace(".tg", "-hot.tg"));
-      receiver.load();
+      receiver.load().then(() => {
+        if (!receiver.isExist) return setupSeed();
+        receiver.setInput(nickname.replace(".tg", "-hot1.tg"));
+        receiver.load();
+        setupSeed();
+      });
     });
   }, []);
 
@@ -41,23 +62,13 @@ const CreateAccountMobile = () => {
     if (isCreating) return;
     setCreating(true);
 
-    const exist = storage.getAccount(receiver.input);
-    let currentSeed = "";
-
-    if (!exist?.seed) {
-      const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
-      storage.addSafeData({ accountId: receiver.input, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
-      currentSeed = seedPhrase;
-    } else {
-      currentSeed = exist.seed;
-    }
-
     try {
       setCreating(true);
-      await accounts.connectWeb(currentSeed, receiver.input);
+      await accounts.connectWeb(seed!, receiver.input);
       setCreating(false);
       navigate("/");
     } catch (e: any) {
+      await wait(1000);
       notify(e?.toString?.(), 5000);
       setCreating(false);
     }
@@ -69,26 +80,42 @@ const CreateAccountMobile = () => {
 
   return (
     <Root>
-      <div style={{ flex: 1, width: "100%" }}>
-        <H1>Create nickname</H1>
-        <Text style={{ marginTop: 8 }}>Fill in the info to create a wallet</Text>
-
-        <div style={{ marginTop: 42, position: "relative" }}>
-          <HereInput disabled label="Nickname" value={receiver.input} postfixStyle={{ marginLeft: 0 }} autoCapitalize="off" autoCorrect="off" autoComplete="off" autoFocus />
-          {!receiver.isLoading && (
-            <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>{receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}</SmallText>
-          )}
-        </div>
+      <div style={{ width: "100%", textAlign: "left" }}>
+        <H1>Create account</H1>
       </div>
 
-      <div style={{ display: "flex", marginTop: 56, width: "100%", gap: 16 }}>
-        <ActionButton
-          $id="CreateAccount.createNickname"
-          style={{ flex: 1 }}
-          disabled={isCreating || receiver.isLoading || receiver.isExist || receiver.isLoading || !!receiver.validateError}
-          onClick={() => createAccount()}
-        >
-          {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
+      <div style={{ marginTop: 42, position: "relative" }}>
+        <H3>Address</H3>
+        <Text style={{ marginBottom: 8 }}>We have created a unique NEAR address for you, which is similar to your telegram nickname.</Text>
+
+        <HereInput disabled label="Nickname" value={receiver.input} postfixStyle={{ marginLeft: 0 }} autoCapitalize="off" autoCorrect="off" autoComplete="off" autoFocus />
+        {!receiver.isLoading && (
+          <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>{receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}</SmallText>
+        )}
+      </div>
+
+      <WordsWrap style={{ width: "100%", marginTop: 40 }}>
+        <div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <H3>Passphrase</H3>
+            <Button
+              $id="Settings.passphraseCopy"
+              onClick={async () => {
+                await navigator.clipboard.writeText(seed || "");
+                notify("Passphrase has beed copied");
+              }}
+            >
+              <Icon name="copy" />
+            </Button>
+          </div>
+          <Text style={{ marginBottom: 8 }}>Copy your seed phrase right now to avoid losing your account!</Text>
+          <SensitiveCard>{seed}</SensitiveCard>
+        </div>
+      </WordsWrap>
+
+      <div style={{ marginTop: "auto", width: "100%" }}>
+        <ActionButton $id="CreateAccount.createNickname" style={{ flex: 1 }} disabled={isCreating} onClick={() => createAccount()}>
+          {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Create"}
         </ActionButton>
       </div>
     </Root>

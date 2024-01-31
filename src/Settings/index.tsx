@@ -209,7 +209,7 @@ const Settings = () => {
           />
         </Routes>
 
-        {/* {isTgMobile() && (
+        {isTgMobile() && (
           <Menu>
             <Button
               $id="Settings.logout"
@@ -226,7 +226,7 @@ const Settings = () => {
               <Text style={{ color: "rgba(214, 62, 62, 1)" }}>Logout</Text>
             </Button>
           </Menu>
-        )} */}
+        )}
       </Container>
     </Root>
   );

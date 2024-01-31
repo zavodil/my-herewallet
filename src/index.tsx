@@ -68,7 +68,7 @@ window.addEventListener("popstate", () => {
 if (isTgMobile()) {
   window.Telegram.WebApp.setBackgroundColor?.(colors.elevation1);
   window.Telegram.WebApp.setHeaderColor?.(colors.elevation0);
-  window.Telegram.WebApp.expend?.();
+  window.Telegram.WebApp.expand?.();
 } else {
   window.Telegram = {
     WebApp: {
