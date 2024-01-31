@@ -5,7 +5,6 @@ import UserAccount from "./UserAccount";
 import { HotReferral, HotState, HotVillage, boosters } from "./configs/hot";
 import { formatAmount, parseAmount, wait } from "./helpers";
 import { Chain } from "./token/types";
-import { ft } from "./token/utils";
 import { TGAS } from "./constants";
 
 export const GAME_ID = "game.hot.tg";
@@ -209,7 +208,7 @@ class Hot {
       }
 
       case "deposit_1USDT": {
-        await this.account.tokens.updateBalance(ft(Chain.NEAR, "USDT"));
+        await this.account.tokens.updateBalance("usdt.tether-token.near");
         if ((this.account.tokens.token(Chain.NEAR, "USDT")?.amountFloat || 0) >= 0.95) break;
         throw Error("Your USDT balance has not yet updated");
       }

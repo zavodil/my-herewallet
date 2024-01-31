@@ -26,7 +26,9 @@ const HotGuard = ({ Comp }: { Comp: any }) => {
         <img style={{ width: 80 }} src={require("../../assets/hot/hot.png")} />
         <H2 style={{ marginTop: 16 }}>HOT</H2>
         <H4 style={{ marginTop: -4 }}>You're already mining 🤨</H4>
-        <SmallText>{truncateAddress(accounts.telegramAccountId)}</SmallText>
+        <SmallText>
+          Switch from <b>{truncateAddress(user.near.accountId)}</b> to <b>{truncateAddress(accounts.telegramAccountId)}</b>
+        </SmallText>
       </Root>
     );
   }
