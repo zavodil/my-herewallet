@@ -19,9 +19,8 @@ import { NETWORK, TGAS } from "../constants";
 
 import { ConnectType } from "../types";
 import NearApi, { DelegateNotAllowed, NearAccessKey } from "../network/near";
-import { TransactionError } from "../network/types";
-import { HereApi, NetworkError } from "../network/api";
 import { GAME_ID, GAME_TESTNET_ID } from "../Hot";
+import { HereApi } from "../network/api";
 import { accounts } from "../Accounts";
 
 import { NOT_STAKABLE_NEAR, getHereStorage, getNodeUrl, getWrapNear } from "./constants";
