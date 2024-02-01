@@ -55,7 +55,7 @@ export const useHOTVillage = () => {
     const id = +window.Telegram.WebApp.initDataUnsafe.start_param;
     if (isNumber(id) && id < 0) {
       user?.hot.updateStatus().then(() => {
-        if (user?.hot.state?.village === `${Math.abs(id)}.village.hot-token.near`) return;
+        if (user?.hot.state?.village === `${Math.abs(id)}.village.hot.tg`) return;
         sheets.present({ id: "JoinVillage", element: <JoinVillage id={id} /> });
       });
     }
