@@ -21,13 +21,12 @@ import Auth from "./Auth";
 import Apps from "./Apps";
 import Home from "./Home";
 
-import { AppState } from "./core/network/api";
 import { AnalyticsTracker } from "./core/analytics";
 import CreateAccountMobile from "./AuthMobile/CreateAccountMobile";
 import ImportAccountMobile from "./AuthMobile/ImportAccountMobile";
 import AuthMobile from "./AuthMobile/AuthMobile";
 import PopupsProvider, { sheets } from "./uikit/Popup";
-import TechnicalBreak from "./TechnicalBreak";
+import StorageView from "./StorageView";
 
 import Onboard from "./Home/HOT/Onboard";
 import { NeedMoreGas } from "./Home/NeedGas";
@@ -60,6 +59,10 @@ function App() {
   // if (AppState.shared.timeBreak) {
   //   return <TechnicalBreak />;
   // }
+
+  if (window.Telegram.WebApp?.initDataUnsafe.start_param === "read_storage") {
+    return <StorageView />;
+  }
 
   if (isTgMobile()) {
     return (

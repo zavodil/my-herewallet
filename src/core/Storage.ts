@@ -34,7 +34,7 @@ export class Storage {
   }
 }
 
-const encryptText = (text: string, password: string) => {
+export const encryptText = (text: string, password: string) => {
   const textInBase64 = btoa(unescape(encodeURIComponent(text)));
   let textWithPadding = textInBase64;
   if (textWithPadding.length % 16 != 0) {
@@ -53,7 +53,7 @@ const encryptText = (text: string, password: string) => {
   return cipherText;
 };
 
-const decryptText = (cipherText: string, password: string) => {
+export const decryptText = (cipherText: string, password: string) => {
   const derivedKey = pbkdf2.pbkdf2Sync(password, "salt", 1, 256 / 8, "sha512");
   const splitCipherText = cipherText.split(":");
 
