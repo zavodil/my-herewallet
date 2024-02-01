@@ -52,7 +52,7 @@ export const useHOTVillage = () => {
   const user = useWallet();
   useEffect(() => {
     if (!user?.hot) return;
-    const id = +window.Telegram.WebApp.initDataUnsafe.start_param;
+    const id = +window.Telegram.WebApp?.initDataUnsafe?.start_param;
     if (isNumber(id) && id < 0) {
       user?.hot.updateStatus().then(() => {
         if (user?.hot.state?.village === `${Math.abs(id)}.village.hot.tg`) return;

@@ -1,12 +1,12 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { Transaction } from "@near-wallet-selector/core";
 import BN from "bn.js";
 
 import { formatAmount } from "../helpers";
 import { NOT_STAKABLE_NEAR, TGAS, getHereStorage } from "./constants";
 import { NearAccount } from "./NearAccount";
 import StakeTips from "./StakeTips";
-import { HereCall } from "@here-wallet/core";
-import { Transaction } from "@near-wallet-selector/core";
+import { accounts } from "../Accounts";
 
 class HereToken {
   readonly contract = "storage.herewallet.near";
@@ -149,6 +149,8 @@ class HereToken {
       disableUnstake: true,
     });
 
+    accounts.account?.tokens.updateBalance(this.contract);
+    accounts.account?.tokens.updateNative();
     return trx.transaction_outcome.id;
   }
 
@@ -166,6 +168,8 @@ class HereToken {
       args: {},
     });
 
+    accounts.account?.tokens.updateBalance(this.contract);
+    accounts.account?.tokens.updateNative();
     return trx.transaction_outcome.id;
   }
 

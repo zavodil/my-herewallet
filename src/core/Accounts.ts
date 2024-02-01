@@ -77,6 +77,7 @@ class Accounts {
   async fetchTelegramUser() {
     const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     if (!telegramId) return;
+
     const res = await this.api.request(`/api/v1/user/hot/by_telegram_id?telegram_id=${telegramId}`);
     const { near_account_id } = await res.json();
     runInAction(() => (this.telegramAccountId = near_account_id));
