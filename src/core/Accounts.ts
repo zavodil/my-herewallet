@@ -223,32 +223,30 @@ class Accounts {
     if (!isTgMobile()) notify("Activating account...");
     const api = new HereApi();
 
+    const checkAllocate = async (startTime: number) => {
+      if (Date.now() - startTime > 10_000) throw Error("The server is overloaded, please try later");
+      await wait(2000);
+      const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: accountId, finality: "optimistic" }).catch(() => null);
+      if (data == null) await checkAllocate(startTime);
+    };
+
     if (isTgMobile()) {
-      await api
-        .allocateHotNickname({
-          telegram_data: window.Telegram?.WebApp?.initData,
-          near_account_id: accountId,
-          public_key: publicKey,
-        })
-        .catch(() => {});
-    } else {
+      await api.allocateHotNickname({ telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey }).catch(() => {});
+      await checkAllocate(Date.now()).catch(() => {});
+      await api.allocateHotNickname({ telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey }).catch(() => {});
+      await checkAllocate(Date.now()).catch(() => {});
+      await api.allocateHotNickname({ telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey }).catch(() => {});
+      await checkAllocate(Date.now()).catch(() => {
+        throw Error("The server is overloaded, please try later");
+      });
+
+      this.fetchTelegramUser();
+    }
+
+    if (!isTgMobile()) {
       const captcha = await recaptchaToken();
       await api.allocateNickname({ device_id: this.api.deviceId, public_key: publicKey, near_account_id: accountId, recapcha_response: captcha, sign: "" });
     }
-
-    let startTime = Date.now();
-    const checkAllocate = async () => {
-      if (Date.now() - startTime > 30_000) {
-        throw Error("The server is overloaded, please try later");
-      }
-
-      await wait(2000);
-      const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: accountId, finality: "optimistic" }).catch(() => null);
-      if (data == null) await checkAllocate();
-    };
-
-    await checkAllocate();
-    this.fetchTelegramUser();
 
     const keyPair = KeyPair.fromString(secretKey);
     const sign = await this.localSign(accountId, keyPair);
