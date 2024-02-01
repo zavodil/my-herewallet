@@ -17,9 +17,9 @@ import { generateSeedPhrase } from "../core/near-chain/passphrase";
 import { storage } from "../core/Storage";
 import { ConnectType } from "../core/types";
 import { Button } from "../uikit/button";
-import Icon from "../uikit/Icon";
 import { SensitiveCard } from "../Settings/styled";
 import { wait } from "../core/helpers";
+import Icon from "../uikit/Icon";
 
 const CreateAccountMobile = () => {
   useNavigateBack();
@@ -31,29 +31,28 @@ const CreateAccountMobile = () => {
   const [seed, setSeed] = useState<string>();
 
   useEffect(() => {
-    const setupSeed = () => {
-      const exist = storage.getAccount(receiver.input);
-      if (!exist?.seed) {
-        const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
-        storage.addSafeData({ accountId: receiver.input, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
-        setSeed(seedPhrase);
-      } else {
-        setSeed(exist.seed!);
-      }
-    };
+    if (!receiver.input) return;
 
+    const exist = storage.getAccount(receiver.input);
+    if (exist?.seed) return setSeed(exist.seed!);
+
+    const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
+    storage.addSafeData({ accountId: receiver.input, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
+    setSeed(seedPhrase);
+  }, [receiver.input]);
+
+  useEffect(() => {
     const user = window.Telegram.WebApp?.initDataUnsafe?.user;
     const nickname = (user?.username?.toLowerCase() || `i${user.id.toString().toLowerCase()}`) + ".tg";
 
     receiver.setInput(nickname);
     receiver.load().then(() => {
-      if (!receiver.isExist) return setupSeed();
+      if (!receiver.isExist) return;
       receiver.setInput(nickname.replace(".tg", "-hot.tg"));
       receiver.load().then(() => {
-        if (!receiver.isExist) return setupSeed();
+        if (!receiver.isExist) return;
         receiver.setInput(nickname.replace(".tg", "-hot1.tg"));
         receiver.load();
-        setupSeed();
       });
     });
   }, []);
@@ -88,10 +87,12 @@ const CreateAccountMobile = () => {
         <H3>Address</H3>
         <Text style={{ marginBottom: 8 }}>We have created a unique NEAR address for you, which is similar to your telegram nickname.</Text>
 
-        <HereInput disabled label="Nickname" value={receiver.input} postfixStyle={{ marginLeft: 0 }} autoCapitalize="off" autoCorrect="off" autoComplete="off" autoFocus />
-        {!receiver.isLoading && (
-          <SmallText style={{ position: "absolute", color: colors.red, top: 64 }}>{receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}</SmallText>
-        )}
+        <div style={{ position: "relative" }}>
+          <HereInput disabled label="Nickname" value={receiver.input} postfixStyle={{ marginLeft: 0 }} autoCapitalize="off" autoCorrect="off" autoComplete="off" autoFocus />
+          {!receiver.isLoading && (
+            <SmallText style={{ position: "absolute", color: colors.red, top: 60 }}>{receiver.validateError ? receiver.validateError : receiver.isExist ? "Nickname is already taken" : ""}</SmallText>
+          )}
+        </div>
       </div>
 
       <WordsWrap style={{ width: "100%", marginTop: 40 }}>
@@ -114,7 +115,7 @@ const CreateAccountMobile = () => {
       </WordsWrap>
 
       <div style={{ marginTop: "auto", width: "100%" }}>
-        <ActionButton $id="CreateAccount.createNickname" style={{ flex: 1 }} disabled={isCreating} onClick={() => createAccount()}>
+        <ActionButton $id="CreateAccount.createNickname" style={{ flex: 1, width: "100%" }} disabled={isCreating} onClick={() => createAccount()}>
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Create"}
         </ActionButton>
       </div>

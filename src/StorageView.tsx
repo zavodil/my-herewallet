@@ -1,7 +1,7 @@
 import React from "react";
 import crypto from "crypto";
 import { Root } from "./Home/styled";
-import { BoldP, SmallText } from "./uikit/typographic";
+import { BoldP, H2, SmallText } from "./uikit/typographic";
 import { SensitiveCard } from "./Settings/styled";
 import { decryptText } from "./core/Storage";
 import Icon from "./uikit/Icon";
@@ -16,6 +16,13 @@ const StorageView = () => {
 
   return (
     <Root style={{ padding: 16 }}>
+      <div>
+        <H2>Private storage</H2>
+        <SmallText>
+          The wallet stores your private data only inside your device, from this screen you can access your entire storage and save the seed phrase of your accounts. Do not show this data to anyone!
+        </SmallText>
+      </div>
+
       {Object.entries(storage).map(([key, value]) => {
         if (hidden.includes(key) || key.endsWith(":cache")) return null;
 
@@ -30,7 +37,7 @@ const StorageView = () => {
         }
 
         return (
-          <div key={key} style={{ marginBottom: 24 }}>
+          <div key={key} style={{ marginTop: 24 }}>
             <BoldP style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{key}</BoldP>
             <SensitiveCard style={{ width: "100%", maxHeight: 300, overflowX: "hidden", overflowY: "auto" }}>
               {data != null &&
@@ -44,7 +51,7 @@ const StorageView = () => {
                           $id="copyStorage"
                           onClick={async () => {
                             await navigator.clipboard.writeText(typeof val === "string" ? val : JSON.stringify(val));
-                            notify("Seedphrase has beed copied");
+                            notify("Value has beed copied");
                           }}
                         >
                           <Icon viewBox="0 0 24 24" width={16} height={16} name="copy" />
