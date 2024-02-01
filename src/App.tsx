@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
@@ -35,6 +35,13 @@ import Onboard from "./Home/HOT/Onboard";
 import { useHOTVillage } from "./Home/HOT/useVillage";
 import Villages from "./Home/HOT/Villages";
 import HotGuard from "./Home/HOT/HotGuard";
+import { AppState } from "./core/network/api";
+import { Root } from "./Home/styled";
+import { Button, H1, H3, H4, Text } from "./uikit";
+import { notify } from "./core/toast";
+import { storage } from "./core/Storage";
+import Icon from "./uikit/Icon";
+import { SensitiveCard } from "./Settings/styled";
 
 function App() {
   // useEffect(() => {
@@ -53,6 +60,48 @@ function App() {
       sheets.present({ id: "NeedGas", element: <NeedMoreGas /> });
     });
   }, [accounts.account]);
+
+  const [openSeed, setSeed] = useState(false);
+
+  if (AppState.shared.timeBreak) {
+    const seed = storage.getAccount(storage.read()?.activeAccount!)?.seed;
+
+    return (
+      <Root style={{ textAlign: "center", justifyContent: "center", padding: 24, alignItems: "center" }}>
+        <img src={require("./assets/hot/hot-blur.png")} style={{ position: "fixed", width: "100vw", top: -100, height: "100vh", objectFit: "contain" }} />
+
+        <div style={{ marginTop: "auto", zIndex: 1000 }}>
+          <img style={{ width: 164 }} src={require("./assets/error.png")} />
+          <H4 style={{ marginTop: 24 }}>Technical break</H4>
+          <Text>We're scaling the wallet infrastructure.</Text>
+          <Text>The app will be available in 10 min.</Text>
+        </div>
+
+        <div style={{ marginTop: "auto", width: "100%", zIndex: 1000 }}>
+          {seed != null && (
+            <>
+              <div style={{ display: "flex", gap: 8 }}>
+                <H3>Passphrase</H3>
+                <Button
+                  $id="Settings.passphraseCopy"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(seed!);
+                    notify("Passphrase has beed copied");
+                  }}
+                >
+                  <Icon name="copy" />
+                </Button>
+              </div>
+
+              <SensitiveCard onClick={() => setSeed(true)}>
+                <div style={{ textAlign: "left", filter: !openSeed ? "blur(12px)" : "" }}>{seed}</div>
+              </SensitiveCard>
+            </>
+          )}
+        </div>
+      </Root>
+    );
+  }
 
   if (isTgMobile()) {
     return (
