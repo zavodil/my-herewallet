@@ -60,7 +60,7 @@ function App() {
   //   return <TechnicalBreak />;
   // }
 
-  if (window.Telegram.WebApp?.initDataUnsafe.start_param === "read_storage") {
+  if (window.Telegram.WebApp?.initDataUnsafe?.start_param === "read_storage") {
     return <StorageView />;
   }
 

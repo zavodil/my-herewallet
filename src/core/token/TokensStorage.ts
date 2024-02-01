@@ -24,11 +24,16 @@ export class TokensStorage {
       stats: computed,
     });
 
-    this.tokens = user.localStorage.get("tokens:cache2", user.isProduction ? { [defaults.near.id]: createToken(defaults.near) } : { [defaults.testnetNear.id]: createToken(defaults.testnetNear) });
+    this.tokens = user.localStorage.get("tokens:cache2", {});
+    if (!this.tokens[ft(this.nearChain, "NEAR")]) {
+      this.tokens[ft(this.nearChain, "NEAR")] = createToken(defaults.near);
+    }
 
-    const defaultsTokens = ["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", GAME_ID];
+    if (!this.tokens[ft(this.nearChain, "hNEAR")]) {
+      this.tokens[ft(this.nearChain, "hNEAR")] = createToken(defaults.hnear);
+    }
+
     this.updateNative();
-
     if (user.isProduction) {
       this.addContracts(["wrap.near", "storage.herewallet.near", "usdt.tether-token.near", GAME_ID]);
     } else {
@@ -45,34 +50,27 @@ export class TokensStorage {
             keys.add(id);
 
             this.tokens[ft(t.chain, t.symbol)] = {
-              amount: t.amount || "0",
-              amountFloat: formatAmount(t.amount || "0", t.decimal),
-              asset: t.asset,
-              chain: t.chain,
-              coingeckoId: t.coingecko_id,
-              contract: t.contract_address,
-              decimal: t.decimal,
-              freeze: t.freeze || "0",
-              gasFree: t.gas_free || false,
-              icon: t.image_url,
-              isStable: t.is_stable,
-              name: t.name,
-              pending: t.pending || "0",
-              safe: safe.toString(),
               safeFloat: formatAmount(safe.toString(), t.decimal),
               viewBalance: formatAmount(safe.toString(), t.decimal),
+              amountFloat: formatAmount(t.amount || "0", t.decimal),
+              safe: safe.toString(),
+              coingeckoId: t.coingecko_id,
+              contract: t.contract_address,
+              gasFree: t.gas_free || false,
+              pending: t.pending || "0",
+              freeze: t.freeze || "0",
+              isStable: t.is_stable,
+              amount: t.amount || "0",
+              decimal: t.decimal,
+              icon: t.image_url,
               symbol: t.symbol,
+              asset: t.asset,
+              chain: t.chain,
+              name: t.name,
               id,
             };
           });
 
-          for (let id in this.tokens) {
-            if (!keys.has(id) && !defaultsTokens.includes(this.tokens[id].contract)) {
-              delete this.tokens[id];
-            }
-          }
-
-          delete this.tokens[ft(Chain.NEAR, "USDt")];
           this.cacheTokens();
         })
       );
@@ -91,30 +89,31 @@ export class TokensStorage {
       if (token) return await this.updateBalance(token);
       const meta = await this.user.near.viewMethod(id, "ft_metadata");
       runInAction(() => {
-        this.tokens[ft(this.nearChain, meta.symbol)] = {
+        const symbol = meta.symbol.toUpperCase();
+        this.tokens[ft(this.nearChain, symbol)] = {
           amount: "0",
           amountFloat: 0,
-          asset: meta.symbol,
+          asset: symbol,
           chain: this.nearChain,
           // @ts-ignore
-          icon: tokens[meta.symbol]?.icon || meta.icon,
+          icon: tokens[symbol]?.icon || meta.icon,
           coingeckoId: "",
           contract: id,
           decimal: meta.decimals,
           freeze: "0",
           gasFree: false,
-          id: ft(this.nearChain, meta.symbol),
+          id: ft(this.nearChain, symbol),
           isStable: false,
-          name: meta.symbol,
+          name: symbol,
           pending: "0",
           safe: "0",
           safeFloat: 0,
-          symbol: meta.symbol,
+          symbol: symbol,
           viewBalance: 0,
         };
 
         this.cacheTokens();
-        this.updateBalance(this.tokens[ft(this.nearChain, meta.symbol)]);
+        this.updateBalance(this.tokens[ft(this.nearChain, symbol)]);
       });
     });
   }
