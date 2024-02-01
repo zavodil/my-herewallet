@@ -7,6 +7,7 @@ import { decryptText } from "./core/Storage";
 import Icon from "./uikit/Icon";
 import { Button } from "./uikit";
 import { colors } from "./uikit/theme";
+import { notify } from "./core/toast";
 
 const hidden = ["eruda-sources", "prices", ":cache", "eruda-resources", "near-wallet-selector:recentlySignedInWallets", "eruda-console", "eruda-elements", "eruda-entry-button", "eruda-dev-tools"];
 
@@ -39,7 +40,13 @@ const StorageView = () => {
                     <div key={k} style={{ marginBottom: 8 }}>
                       <div style={{ display: "flex" }}>
                         <SmallText>{k}:</SmallText>
-                        <Button $id="copyStorage" onClick={() => {}}>
+                        <Button
+                          $id="copyStorage"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(typeof val === "string" ? val : JSON.stringify(val));
+                            notify("Seedphrase has beed copied");
+                          }}
+                        >
                           <Icon viewBox="0 0 24 24" width={16} height={16} name="copy" />
                         </Button>
                       </div>
