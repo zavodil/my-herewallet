@@ -13,7 +13,10 @@ export const GAME_TESTNET_ID = "game.hot-token.testnet";
 class Hot {
   public currentTime = Date.now();
   public state: HotState | null = null;
+
+  public referralsTotal = 0;
   public referrals: HotReferral[] = [];
+
   public missions = {
     follow_youtube: false,
     invite_friend: false,
@@ -70,6 +73,7 @@ class Hot {
       village: observable,
       villages: observable,
       levels: observable,
+      referralsTotal: observable,
 
       balance: computed,
       miningProgress: computed,
@@ -112,6 +116,7 @@ class Hot {
       levels: this.levels,
       userData: this.userData,
       missions: this.missions,
+      referralsTotal: this.referralsTotal,
       referrals: this.referrals,
       village: this.village,
       state: this.state,
@@ -254,7 +259,11 @@ class Hot {
   async fetchReferrals() {
     const resp = await this.account.api.request("/api/v1/user/hot/referrals");
     const data = await resp.json();
-    runInAction(() => (this.referrals = data.referrals));
+    runInAction(() => {
+      this.referralsTotal = data.total_referrals;
+      this.referrals = data.referrals;
+    });
+
     this.updateCache();
   }
 

@@ -3,14 +3,8 @@ import { HereProviderRequest } from "@here-wallet/core";
 import Lottie from "lottie-react";
 import isMobile from "is-mobile";
 
-import AccountsManager from "../src/Home/Header/AccountsManager";
-import { getStorageJson } from "../src/core/helpers";
-import { ConnectType } from "../src/core/types";
-
-import { Button, H4 } from "../src/uikit";
-import Icon from "../src/uikit/Icon";
-
-import { connectMetamask, connectLedger } from "./utils";
+import AccountsManager from "./Header/AccountsManager";
+import { ConnectType, connectMetamask, getStorageJson } from "./utils";
 import HereQrcode from "./here";
 import * as S from "./styled";
 
@@ -56,7 +50,7 @@ const Widget = () => {
 
   const desktop = [
     { id: "", type: ConnectType.Snap },
-    { id: "", type: ConnectType.Ledger },
+    // { id: "", type: ConnectType.Ledger },
   ];
 
   const accountsList = [{ id: "", type: ConnectType.Here }].concat(isMobile() ? [] : desktop).filter((t) => {
@@ -116,7 +110,7 @@ const Widget = () => {
 
       {account.type === ConnectType.Here && <HereQrcode requestId={id} />}
 
-      {account.type === ConnectType.Ledger && (
+      {/* {account.type === ConnectType.Ledger && (
         <S.LedgerWrap>
           <div style={{ position: "relative" }}>
             <S.LedgerBlur1 $green={isLedger} />
@@ -163,7 +157,7 @@ const Widget = () => {
             </>
           )}
         </S.LedgerWrap>
-      )}
+      )} */}
 
       <S.CloseButton onClick={rejectButton}>
         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="rgb(44 48 52)">
@@ -232,7 +226,7 @@ const Widget = () => {
           }}
         >
           <Lottie animationData={require("../src/assets/loading.json")} style={{ width: 256, height: 256, marginTop: -56 }} width={48} height={48} loop={true} />
-          <H4>Transaction is processing...</H4>
+          <S.H4>Transaction is processing...</S.H4>
         </div>
       )}
     </S.HereModal>

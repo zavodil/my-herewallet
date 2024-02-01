@@ -1,5 +1,65 @@
 import styled from "styled-components";
 
+export const Button = styled.button<{ $active?: boolean }>`
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: ${(p) => (p.$active ? "#E7DFDE" : "")};
+
+  transition: 0.2s opacity;
+  &:hover {
+    opacity: 0.6;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+`;
+
+export const SmallText = styled.p`
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: #6b6661;
+  margin: 0;
+`;
+
+export const TinyText = styled(SmallText)`
+  font-size: 12px;
+  line-height: 12px;
+`;
+
+export const H4 = styled.h4`
+  font-family: "CabinetGrotesk";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 25px;
+  color: #2c3034;
+  margin: 0;
+`;
+
+export const Text = styled.p`
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #2c3034;
+  margin: 0;
+  text-decoration: none;
+`;
+
 export const LedgerWrap = styled.div`
   position: relative;
   display: flex;
@@ -46,8 +106,7 @@ export const LedgerBlur1 = styled.div<{ $green?: boolean }>`
   position: absolute;
   width: 108px;
   height: 108px;
-  background: ${(p) =>
-    p.$green ? "#43D16B" : "linear-gradient(0deg, #fdd65f 0%, #fca857 37.33%, #fc668b 70.66%, #c74ad5 100%)"};
+  background: ${(p) => (p.$green ? "#43D16B" : "linear-gradient(0deg, #fdd65f 0%, #fca857 37.33%, #fc668b 70.66%, #c74ad5 100%)")};
   filter: blur(23px);
   opacity: 0.3;
   left: 0;
@@ -58,8 +117,7 @@ export const LedgerBlur2 = styled.div<{ $green?: boolean }>`
   position: absolute;
   width: 108px;
   height: 108px;
-  background: ${(p) =>
-    p.$green ? "#43D16B" : "linear-gradient(0deg, #c74ad5 0%, #fc668b 32.29%, #fca857 65.1%, #fdd65f 100%)"};
+  background: ${(p) => (p.$green ? "#43D16B" : "linear-gradient(0deg, #c74ad5 0%, #fc668b 32.29%, #fca857 65.1%, #fdd65f 100%)")};
   opacity: 0.3;
   filter: blur(23px);
   top: 0;

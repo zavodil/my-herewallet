@@ -8,6 +8,7 @@ import { notify } from "../../core/toast";
 import { colors } from "../../uikit/theme";
 import { ActionButton, H2, H4, Text } from "../../uikit";
 import { SmallText } from "../../uikit/typographic";
+import copyTextToClipboard from "./copyTextToClipboard";
 
 const tips = [
   "You get a 20% HOT cashback from all your referrals income",
@@ -36,8 +37,8 @@ export const InviteFriend = () => {
       <ActionButton
         $id="InviteFriend.copyReferral"
         style={{ marginTop: 16 }}
-        onClick={() => {
-          navigator.clipboard.writeText(user.hot.referralLink);
+        onClick={async () => {
+          copyTextToClipboard(user.hot.referralLink);
           notify("Referral link has been copied");
         }}
       >

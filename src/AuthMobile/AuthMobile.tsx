@@ -1,46 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { JsonRpcProvider } from "near-api-js/lib/providers";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import crypto from "crypto";
 
 import introImage from "../assets/intro.png";
 import { accounts } from "../core/Accounts";
-import { truncateAddress } from "../core/helpers";
+import { ClaimingLoading } from "../Home/HOT/modals";
+import { truncateAddress, wait } from "../core/helpers";
 import { BoldP, H1, LargeP, SmallText } from "../uikit/typographic";
 import { ActionButton, Button } from "../uikit";
 import { IntroImage, Root } from "./styled";
 import { colors } from "../uikit/theme";
-import { decryptText } from "../core/Storage";
-import { UserCred } from "../core/types";
-
-const rpc = new JsonRpcProvider({ url: "https://rpc.mainnet.near.org" });
+import { notify } from "../core/toast";
+import extractAccounts from "./extractAccounts";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [isCreating, setCreating] = useState(false);
   const [refAccount, setRefAccount] = useState<string>();
 
+  const createAccount = async () => {
+    const cred = await extractAccounts();
+    if (!cred) return;
+
+    try {
+      setCreating(true);
+      await accounts.importAccount(cred.seed || cred.secretKey, cred.accountId);
+      setCreating(false);
+      navigate("/");
+    } catch (e: any) {
+      await wait(1000);
+      notify(e?.toString?.(), 5000);
+      setCreating(false);
+    }
+  };
+
   useEffect(() => {
-    // const list: UserCred[] = [];
-    // Object.entries({ ...localStorage }).forEach(([key, value]) => {
-    //   try {
-    //     const salt = crypto.createHash("sha256").update(key).digest().toString("hex");
-    //     list.push(JSON.parse(decryptText(value, "dz_3!R$%2pdf~" + salt)));
-    //   } catch {}
-    // });
-
-    // list.map(async (cred) => {
-    //   const { result } = await rpc.query({
-    //     finality: "final",
-    //     request_type: "call_function",
-    //     args_base64: Buffer.from(JSON.stringify({ account_id: cred.accountId }), "utf8").toString("base64"),
-    //     account_id: "game.hot.tg",
-    //     method_name: "ft_balance_of",
-    //   });
-
-    //   console.log(cred.accountId, JSON.parse(Buffer.from(result).toString("utf8")));
-    // });
-
+    createAccount();
     const refId = window.Telegram.WebApp?.initDataUnsafe?.start_param;
     if (isNaN(+refId)) return;
     accounts.api
@@ -50,6 +45,10 @@ const Auth = () => {
         setRefAccount(near_account_id);
       });
   }, []);
+
+  if (isCreating) {
+    return <ClaimingLoading time={30} text="Creating an account" />;
+  }
 
   return (
     <Root style={{ padding: 24 }}>

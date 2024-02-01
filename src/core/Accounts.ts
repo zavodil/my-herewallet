@@ -109,7 +109,7 @@ class Accounts {
     notify("Wallet has been disconnected");
   };
 
-  importAccount = async (key: string) => {
+  importAccount = async (key: string, nickname?: string) => {
     let keyPair: KeyPair | null = null;
     try {
       keyPair = KeyPair.fromString(key);
@@ -126,7 +126,7 @@ class Accounts {
 
     const api = new HereApi();
     const accounts = await api.findAccount(PublicKey.from(publicKey)).catch(() => []);
-    const accountId = accounts[0] || defaultAddress;
+    const accountId = accounts[0] || nickname || defaultAddress;
 
     keyPair = KeyPair.fromString(secretKey);
     const sign = await this.localSign(accountId, keyPair);
@@ -156,29 +156,12 @@ class Accounts {
         nonce: sign.nonce,
       });
 
-      if (isTgMobile()) {
-        let startTime = Date.now();
-        const checkAllocate = async () => {
-          if (Date.now() - startTime > 30_000) throw Error("The server is overloaded, please try later");
-          await wait(2000);
-          const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: cred.accountId, finality: "optimistic" }).catch(() => null);
-          if (data == null) await checkAllocate();
-        };
-
-        await checkAllocate();
-        this.fetchTelegramUser();
-      }
-
-      if (this.accounts.find((t) => t.id === cred.accountId)) {
-        notify("Account already exist...");
-        return;
-      }
-
+      this.fetchTelegramUser();
       storage.addAccount({ ...cred, jwt: token });
-      const account = new UserAccount({ ...cred, jwt: token });
 
+      const account = new UserAccount({ ...cred, jwt: token });
       const addAccount = action(() => {
-        this.accounts.push({ id: cred.accountId, type: cred.type });
+        this.accounts = storage.read()?.accounts || [];
         this.account = account;
       });
 
