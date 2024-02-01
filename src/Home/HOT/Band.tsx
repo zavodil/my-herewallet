@@ -62,7 +62,7 @@ const Band = () => {
 
         <Container style={{ zIndex: 10 }}>
           <div style={{ display: "flex", padding: "36px", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 12 }}>
-            <H3>{user.hot.referrals?.length} Friend</H3>
+            <H3>{user.hot.referralsTotal} Friend</H3>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <img style={{ width: 24, height: 24, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />
               <BoldP>≈{+user.hot.referralsEarnPerHour.toFixed(6)} per hour</BoldP>

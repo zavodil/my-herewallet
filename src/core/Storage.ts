@@ -123,7 +123,10 @@ class SecureStorage {
 
     const storage = this.read();
     storage.activeAccount = data.accountId;
-    storage.accounts.push({ id: data.accountId, type: data.type });
+
+    const index = storage.accounts.findIndex((t) => t.id === data.accountId);
+    if (index >= 0) storage.accounts[index] = { id: data.accountId, type: data.type };
+    else storage.accounts.push({ id: data.accountId, type: data.type });
     this.write(storage);
   }
 

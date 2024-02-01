@@ -1,11 +1,24 @@
 import { HereProviderRequest, HereProviderResult, HereProviderStatus } from "@here-wallet/core";
 import { NearSnap, NearSnapAccount, TransactionSignRejected } from "@near-snap/sdk";
 
-import { NearAccount } from "../src/core/near-chain/NearAccount";
-import { ConnectType } from "../src/core/types";
-import LedgerSigner from "./ledger";
-
 const snap = new NearSnap();
+
+export enum ConnectType {
+  Web = "web",
+  Ledger = "ledger",
+  Here = "here",
+  Snap = "snap",
+  Local = "local",
+  WalletConnect = "wallet-connect",
+}
+
+export const getStorageJson = (key: string, def: any) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)!) ?? def;
+  } catch {
+    return def;
+  }
+};
 
 const sendResponse = async (id: string, data: HereProviderResult) => {
   const res = await fetch(`https://h4n.app/${id}/response`, {
@@ -17,56 +30,56 @@ const sendResponse = async (id: string, data: HereProviderResult) => {
   if (!res.ok) throw Error();
 };
 
-export const connectLedger = async (
-  account: { id: string; type: ConnectType; path?: string },
-  requestId: string,
-  request: HereProviderRequest,
-  onConnected: (is: boolean) => void,
-  onSigned: () => void,
-  onNeedActivate: (v: string) => void
-) => {
-  try {
-    const path = account.path;
-    const ledger = new LedgerSigner(path, onConnected, onSigned);
+// export const connectLedger = async (
+//   account: { id: string; type: ConnectType; path?: string },
+//   requestId: string,
+//   request: HereProviderRequest,
+//   onConnected: (is: boolean) => void,
+//   onSigned: () => void,
+//   onNeedActivate: (v: string) => void
+// ) => {
+//   try {
+//     const path = account.path;
+//     const ledger = new LedgerSigner(path, onConnected, onSigned);
 
-    if (request.type === "sign") {
-      const { address, publicKey } = await ledger.getAddress();
-      await sendResponse(requestId, {
-        type: ConnectType.Ledger,
-        status: HereProviderStatus.FAILED,
-        public_key: publicKey.toString(),
-        payload: publicKey.toString(),
-        account_id: address,
-      });
-      window.close();
-      return;
-    }
+//     if (request.type === "sign") {
+//       const { address, publicKey } = await ledger.getAddress();
+//       await sendResponse(requestId, {
+//         type: ConnectType.Ledger,
+//         status: HereProviderStatus.FAILED,
+//         public_key: publicKey.toString(),
+//         payload: publicKey.toString(),
+//         account_id: address,
+//       });
+//       window.close();
+//       return;
+//     }
 
-    if (request.type === "call") {
-      const { address, publicKey } = await ledger.getAddress();
-      const account = new NearAccount(address, ConnectType.Ledger, ledger);
-      const isAccess = await account.getAccessKeyInfo(address, publicKey).catch(() => null);
+//     if (request.type === "call") {
+//       const { address, publicKey } = await ledger.getAddress();
+//       const account = new NearAccount(address, ConnectType.Ledger, ledger);
+//       const isAccess = await account.getAccessKeyInfo(address, publicKey).catch(() => null);
 
-      if (!isAccess) {
-        onNeedActivate(address);
-        return;
-      }
+//       if (!isAccess) {
+//         onNeedActivate(address);
+//         return;
+//       }
 
-      const result = await account.sendLocalTransactions(request.transactions, true);
-      await sendResponse(requestId, {
-        type: ConnectType.Ledger,
-        status: HereProviderStatus.SUCCESS,
-        public_key: publicKey.toString(),
-        payload: result.map((t) => t).join(","),
-        account_id: address,
-        path: path,
-      });
-    }
-  } catch (e) {
-    onConnected(false);
-    throw e;
-  }
-};
+//       const result = await account.sendLocalTransactions(request.transactions, true);
+//       await sendResponse(requestId, {
+//         type: ConnectType.Ledger,
+//         status: HereProviderStatus.SUCCESS,
+//         public_key: publicKey.toString(),
+//         payload: result.map((t) => t).join(","),
+//         account_id: address,
+//         path: path,
+//       });
+//     }
+//   } catch (e) {
+//     onConnected(false);
+//     throw e;
+//   }
+// };
 
 export const connectMetamask = async (accountId: string, requestId: string, request: HereProviderRequest) => {
   try {
