@@ -7,6 +7,7 @@ import { Chain } from "./token/types";
 import { ConnectType } from "./types";
 import { HereApi } from "./network/api";
 import { NEAR_DOMAINS } from "./near-chain/constants";
+import { isTgMobile } from "../env";
 
 export const MinAccountIdLen = 2;
 export const MaxAccountIdLen = 64;
@@ -59,9 +60,14 @@ export class ReceiverFetcher {
     }
 
     await this.provider.query({ request_type: "view_account", finality: "optimistic", account_id: address });
-    const user = await this.api.isExist(address).catch(() => null);
 
-    this.cached[address] = { avatar: user?.avatar_url, isHere: user?.exist, time: Date.now() };
+    if (!isTgMobile()) {
+      const user = await this.api.isExist(address).catch(() => null);
+      this.cached[address] = { avatar: user?.avatar_url, isHere: user?.exist, time: Date.now() };
+    } else {
+      const user = await this.provider.query({ request_type: "view_account", account_id: address }).catch(() => null);
+      this.cached[address] = { isHere: user != null, time: Date.now() };
+    }
     // this.setCache(this.cached);
     return this.cached[address];
   }
