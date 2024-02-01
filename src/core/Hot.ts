@@ -15,6 +15,7 @@ class Hot {
   public state: HotState | null = null;
   public referrals: HotReferral[] = [];
   public missions = {
+    follow_youtube: false,
     invite_friend: false,
     follow_tg_hot: false,
     follow_tg_here: false,
@@ -224,11 +225,6 @@ class Hot {
         if ((this.state?.refferals || 0) > 0) break;
         throw Error("You haven't invited referral");
 
-      case "follow_tg_hot":
-      case "follow_tg_here":
-      case "follow_tw_here":
-      case "download_app":
-      case "deposit_NFT":
       default:
         break;
     }

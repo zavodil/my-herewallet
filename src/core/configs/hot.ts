@@ -194,7 +194,17 @@ export const gasFreeMissions: GasFreeMission[] = [
   },
   {
     gasFree: 1,
-    icon: require("../../assets/here.svg"),
+    icon: require("../../assets/youtube.svg"),
+    title: "Follow HERE on Youtube",
+    mission: "follow_youtube",
+    onClick: (user: UserAccount) => {
+      window.Telegram.WebApp.openLink("https://www.youtube.com/@herewallet");
+      user.hot.completeMission("follow_youtube");
+    },
+  },
+  {
+    gasFree: 1,
+    icon: require("../../assets/twitter-blue.svg"),
     title: "Follow HERE on Twitter",
     mission: "follow_tw_here",
     onClick: (user: UserAccount) => {

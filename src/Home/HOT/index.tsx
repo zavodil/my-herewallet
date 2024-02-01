@@ -139,7 +139,8 @@ const HOT = () => {
             <div style={{ width: "100%", marginTop: 64, borderRadius: 24, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)" }}>
               <Card style={{ display: "flex", flexDirection: "column", overflow: "hidden", margin: isOverload ? 1 : 0, paddingTop: 0, padding: 0, border: isOverload ? "none" : undefined }}>
                 <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
-                  <div style={{ width: `${user.hot.miningProgress * 100}%`, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)", height: 8 }} />
+                  <div style={{ width: 4, background: "rgb(107 102 97 / 40%)", height: 8, left: `20%`, position: "absolute" }} />
+                  <div style={{ position: "relative", width: `${user.hot.miningProgress * 100}%`, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)", height: 8 }} />
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", flexDirection: "row", padding: 16, width: "100%", gap: 8 }}>
@@ -158,7 +159,7 @@ const HOT = () => {
                   </div>
 
                   <div style={{ marginLeft: "auto", marginTop: -4 }}>
-                    <HereButton $id="claimHot" onClick={() => claim()} disabled={isClaiming}>
+                    <HereButton $id="claimHot" onClick={() => claim()} disabled={isClaiming || user.hot.miningProgress < 0.2}>
                       {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
                     </HereButton>
                   </div>
