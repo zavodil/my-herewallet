@@ -65,8 +65,7 @@ export class ReceiverFetcher {
       const user = await this.api.isExist(address).catch(() => null);
       this.cached[address] = { avatar: user?.avatar_url, isHere: user?.exist, time: Date.now() };
     } else {
-      const user = await this.provider.query({ request_type: "view_account", account_id: address }).catch(() => null);
-      this.cached[address] = { isHere: user != null, time: Date.now() };
+      this.cached[address] = { isHere: true, time: Date.now() };
     }
     // this.setCache(this.cached);
     return this.cached[address];
