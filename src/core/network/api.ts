@@ -1,5 +1,6 @@
 import uuid4 from "uuid4";
 import { PublicKey } from "near-api-js/lib/utils";
+import { makeObservable, observable } from "mobx";
 
 import { AnalyticEvent, AnalyticsTracker } from "../analytics";
 import { Storage } from "../Storage";
@@ -20,6 +21,16 @@ export class NetworkError extends Error {
   name = "NetworkError";
   constructor(readonly status: number, readonly title: string, readonly body: string) {
     super(body);
+  }
+}
+
+export class AppState {
+  public timeBreak = false;
+  static shared = new AppState();
+  constructor() {
+    makeObservable(this, {
+      timeBreak: observable,
+    });
   }
 }
 
@@ -47,6 +58,10 @@ export class HereApi {
         Network: NETWORK,
         ...auth,
       },
+    }).catch((e) => {
+      if (!window.navigator.onLine) throw e;
+      AppState.shared.timeBreak = true;
+      throw e;
     });
 
     if (res.ok === false) {
