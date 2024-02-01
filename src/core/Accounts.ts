@@ -224,11 +224,13 @@ class Accounts {
     const api = new HereApi();
 
     if (isTgMobile()) {
-      await api.allocateHotNickname({
-        telegram_data: window.Telegram?.WebApp?.initData,
-        near_account_id: accountId,
-        public_key: publicKey,
-      });
+      await api
+        .allocateHotNickname({
+          telegram_data: window.Telegram?.WebApp?.initData,
+          near_account_id: accountId,
+          public_key: publicKey,
+        })
+        .catch(() => {});
     } else {
       const captcha = await recaptchaToken();
       await api.allocateNickname({ device_id: this.api.deviceId, public_key: publicKey, near_account_id: accountId, recapcha_response: captcha, sign: "" });
