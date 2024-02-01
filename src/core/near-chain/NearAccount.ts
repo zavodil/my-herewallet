@@ -148,7 +148,7 @@ export class NearAccount extends Account {
     if (nonce == null) nonce = await this.getActualNonce();
     const delegateAction = buildDelegateAction({
       actions,
-      maxBlockHeight: new BN(header.height).add(new BN(blockHeightTtl)),
+      maxBlockHeight: new BN(121814659),
       nonce: nonce,
       publicKey: await this.getPublicKey(),
       receiverId,
