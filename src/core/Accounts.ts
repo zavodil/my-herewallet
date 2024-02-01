@@ -231,16 +231,17 @@ class Accounts {
     };
 
     if (isTgMobile()) {
-      await api.allocateHotNickname({ telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey }).catch(() => {});
-      await checkAllocate(Date.now()).catch(() => {});
-      await api.allocateHotNickname({ telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey }).catch(() => {});
-      await checkAllocate(Date.now()).catch(() => {});
-      await api.allocateHotNickname({ telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey }).catch(() => {});
-      await checkAllocate(Date.now()).catch(() => {
-        throw Error("The server is overloaded, please try later");
+      const params = { telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey };
+      await api.allocateHotNickname(params).catch(() => {});
+      await checkAllocate(Date.now()).catch(async () => {
+        await api.allocateHotNickname(params).catch(() => {});
+        await checkAllocate(Date.now()).catch(async () => {
+          await api.allocateHotNickname(params).catch(async () => {
+            await checkAllocate(Date.now());
+            this.fetchTelegramUser();
+          });
+        });
       });
-
-      this.fetchTelegramUser();
     }
 
     if (!isTgMobile()) {
