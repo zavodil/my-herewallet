@@ -208,7 +208,7 @@ class Accounts {
     const api = new HereApi();
 
     const checkAllocate = async (startTime: number) => {
-      if (Date.now() - startTime > 10_000) throw Error("The server is overloaded, please try later");
+      if (Date.now() - startTime > 30_000) throw Error("The server is overloaded, please try later");
       await wait(2000);
       const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: accountId, finality: "optimistic" }).catch(() => null);
       if (data == null) await checkAllocate(startTime);
