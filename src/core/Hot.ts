@@ -214,6 +214,7 @@ class Hot {
       }
 
       case "deposit_1USDT": {
+        break;
       }
 
       case "join_village": {
