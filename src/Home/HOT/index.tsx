@@ -71,7 +71,7 @@ const HOT = () => {
         if (cred?.seed) {
           try {
             setCreating(true);
-            await accounts.connectWeb(cred.seed, user.near.accountId);
+            await accounts.allocateHotNickname(cred.publicKey, user.near.accountId);
             notify("Account activated, try claim again please");
             setCreating(false);
             setClaiming(false);

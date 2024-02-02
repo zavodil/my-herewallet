@@ -160,6 +160,13 @@ class Accounts {
       const referal = +window.Telegram?.WebApp?.initDataUnsafe?.start_param;
       storage.addAccount({ ...cred, jwt: token, referalId: +referal > 0 ? referal : undefined });
       this.fetchTelegramUser();
+      // if (window.localStorage.get(cred.accountId)) {
+      //   storage.addToAccountsList(cred);
+      //   notify("Already saved");
+      // } else {
+      //   const referal = +window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+      //   storage.addAccount({ ...cred, jwt: token, referalId: +referal > 0 ? referal : undefined });
+      // }
 
       const account = new UserAccount({ ...cred, jwt: token });
       const addAccount = action(() => {
@@ -199,6 +206,28 @@ class Accounts {
 
     const base64 = Buffer.from(signature.signature).toString("base64");
     return { accountId, signature: base64, publicKey: publicKey.toString(), nonce };
+  }
+
+  async allocateHotNickname(publicKey: string, accountId: string) {
+    const api = new HereApi();
+    const checkAllocate = async (startTime: number) => {
+      if (Date.now() - startTime > 30_000) throw Error("The server is overloaded, please try later");
+      await wait(2000);
+      const data = await this.wallet.rpc.query({ request_type: "view_account", account_id: accountId, finality: "optimistic" }).catch(() => null);
+      if (data == null) await checkAllocate(startTime);
+    };
+
+    const params = { telegram_data: window.Telegram?.WebApp?.initData, near_account_id: accountId, public_key: publicKey };
+    await api.allocateHotNickname(params).catch(() => {});
+    await checkAllocate(Date.now()).catch(async () => {
+      await api.allocateHotNickname(params).catch(() => {});
+      await checkAllocate(Date.now()).catch(async () => {
+        await api.allocateHotNickname(params).catch(async () => {
+          await checkAllocate(Date.now());
+          this.fetchTelegramUser();
+        });
+      });
+    });
   }
 
   async connectWeb(seed: string, nickname?: string) {
