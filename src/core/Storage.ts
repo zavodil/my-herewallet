@@ -121,6 +121,12 @@ class SecureStorage {
     const salt = crypto.createHash("sha256").update(data.accountId).digest().toString("hex");
     this.storage.setItem(data.accountId, encryptText(JSON.stringify(data), pwd + salt));
 
+    if (data.seed) {
+      const seeds = this.storage.getItem("seeds") || "";
+      const text = (seeds ? decryptText(seeds, pwd) : "") + `${data.accountId}:${data.seed};`;
+      this.storage.setItem("seeds", encryptText(text, pwd));
+    }
+
     const storage = this.read();
     storage.activeAccount = data.accountId;
 
