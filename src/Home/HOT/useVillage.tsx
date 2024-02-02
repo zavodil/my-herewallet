@@ -5,8 +5,9 @@ import { ActionButton, ActivityIndicator, H2, Text } from "../../uikit";
 import { useWallet } from "../../core/Accounts";
 import { sheets } from "../../uikit/Popup";
 import { notify } from "../../core/toast";
+import { getStartParam } from "../../core/Hot";
 
-export const JoinVillage = ({ id }: { id: number }) => {
+export const JoinVillage = ({ id }: { id: string }) => {
   const user = useWallet()!;
   const [isLoading, setLoading] = useState(false);
   const [village, setVillage] = useState<any>();
@@ -52,12 +53,12 @@ export const useHOTVillage = () => {
   const user = useWallet();
   useEffect(() => {
     if (!user?.hot) return;
-    const id = +window.Telegram.WebApp?.initDataUnsafe?.start_param;
-    if (isNumber(id) && id < 0) {
-      user?.hot.updateStatus().then(() => {
-        if (user?.hot.state?.village === `${Math.abs(id)}.village.hot.tg`) return;
-        sheets.present({ id: "JoinVillage", element: <JoinVillage id={id} /> });
-      });
-    }
+    const id = getStartParam().village;
+    if (!id) return;
+
+    user?.hot.updateStatus().then(() => {
+      if (user?.hot.state?.village === `${id}.village.hot.tg`) return;
+      sheets.present({ id: "JoinVillage", element: <JoinVillage id={id} /> });
+    });
   }, []);
 };

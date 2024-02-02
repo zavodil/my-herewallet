@@ -14,7 +14,7 @@ export const getStartParam = () => {
   if (!value) return {};
 
   if (value.startsWith("village:")) return { village: value.replace("village:", "") };
-  if (+value < 0) return { village: value };
+  if (+value < 0) return { village: Math.abs(+value).toString() };
 
   if (value === "get_storage") return { other: "get_storage" };
   return { ref: value };
@@ -143,28 +143,28 @@ class Hot {
   async updateMyVillage() {
     const villageid = this.state?.village?.split(".")[0];
     if (!villageid) return runInAction(() => (this.village = null));
-    const data = await this.getVillage(+villageid);
+    const data = await this.getVillage(villageid);
     runInAction(() => (this.village = data));
     this.updateCache();
   }
 
-  async getVillage(id: number) {
-    const resp = await this.account.api.request(`/api/v1/user/hot/village?village_id=${Math.abs(id)}`);
+  async getVillage(id: string) {
+    const resp = await this.account.api.request(`/api/v1/user/hot/village?village_id=${id}`);
     return await resp.json();
   }
 
-  async joinVillage(id: number) {
+  async joinVillage(id: string) {
     const tx = await this.account.near.functionCall({
       contractId: GAME_ID,
       methodName: "join_village",
-      args: { village: `${Math.abs(id)}.village.hot.tg` },
+      args: { village: `${id}.village.hot.tg` },
     });
 
     this.updateStatus();
     this.fetchBalance();
     this.action("village", {
       hash: tx.transaction_outcome.id,
-      new_village_id: Math.abs(id),
+      new_village_id: id,
     });
   }
 
@@ -204,7 +204,7 @@ class Hot {
     this.fetchMissions();
   }
 
-  action(type: "village", data: { hash: string; old_village_id?: number; new_village_id: number }): Promise<void>;
+  action(type: "village", data: { hash: string; old_village_id?: string; new_village_id: string }): Promise<void>;
   action(type: "transfer", data: { hash: string; amount: string; receiver: string }): Promise<void>;
   action(type: "claim", data: { hash: string; amount: string; charge_gas_fee?: boolean }): Promise<void>;
   async action(type: string, data: Record<string, any>) {
