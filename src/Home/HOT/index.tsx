@@ -5,7 +5,7 @@ import Lottie, { LottieRefCurrentProps } from "lottie-react";
 
 import Header from "../Header";
 import { formatAmount } from "../../core/helpers";
-import { useWallet } from "../../core/Accounts";
+import { accounts, useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
 
@@ -20,8 +20,9 @@ import Icon from "../../uikit/Icon";
 
 import { useRecoveryInviter } from "./BindReferral";
 import { runParticles, stopParticles } from "./effects/flame";
-import { FirstClaimHOT } from "./modals";
+import { ClaimingLoading, FirstClaimHOT } from "./modals";
 import Balance from "./Balance";
+import { storage } from "../../core/Storage";
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;
@@ -34,6 +35,7 @@ const HOT = () => {
   const navigate = useNavigate();
   const sparksRef = useRef<LottieRefCurrentProps>();
   const [isClaiming, setClaiming] = useState(false);
+  const [isCreating, setCreating] = useState(false);
 
   useRecoveryInviter();
   useEffect(() => {
@@ -63,6 +65,26 @@ const HOT = () => {
       setClaiming(false);
     } catch (e: any) {
       window.Telegram.WebApp?.HapticFeedback?.notificationOccurred?.("error");
+
+      if (e?.toString()?.includes("does not exist while viewing")) {
+        const cred = storage.getAccount(user.near.accountId);
+        if (cred?.seed) {
+          try {
+            setCreating(true);
+            await accounts.allocateHotNickname(cred.publicKey, user.near.accountId);
+            notify("Account activated, try claim again please");
+            setCreating(false);
+            setClaiming(false);
+            return;
+          } catch (e: any) {
+            notify(e?.toString?.());
+            setCreating(false);
+            setClaiming(false);
+            return;
+          }
+        }
+      }
+
       if (!charge_gas_fee && e?.toString()?.includes("does not have enough balance")) {
         sheets.present({ id: "NeedGas", element: <NeedMoreGas onSelectHot={() => claim(true)} /> });
         setClaiming(false);
@@ -73,6 +95,10 @@ const HOT = () => {
       setClaiming(false);
     }
   };
+
+  if (isCreating) {
+    return <ClaimingLoading time={30} text="Creating an account" />;
+  }
 
   const isOverload = user.hot.miningProgress === 1;
   const [left, right] = (+user.hot.balance.toFixed(6)).toString().split(".");
