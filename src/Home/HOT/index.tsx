@@ -70,7 +70,7 @@ const HOT = () => {
         notify(`Account ${user.near.accountId} is not activated`);
         const cred = storage.getAccount(user.near.accountId);
 
-        if (cred?.seed) {
+        if (cred?.publicKey) {
           try {
             notify(`Trying activate...`);
             setCreating(true);
@@ -86,7 +86,7 @@ const HOT = () => {
             return;
           }
         } else {
-          notify(`Seed not found`);
+          notify(`Public key not found`);
         }
       }
 
