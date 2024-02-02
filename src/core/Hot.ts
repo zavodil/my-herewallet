@@ -213,10 +213,6 @@ class Hot {
         throw Error("Your NEAR balance has not yet updated");
       }
 
-      case "deposit_1USDT": {
-        break;
-      }
-
       case "join_village": {
         await this.updateStatus();
         if (this.state?.village !== null) break;

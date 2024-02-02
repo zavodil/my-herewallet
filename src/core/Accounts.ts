@@ -157,7 +157,8 @@ class Accounts {
         nonce: sign.nonce,
       });
 
-      storage.addAccount({ ...cred, jwt: token });
+      const referal = +window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+      storage.addAccount({ ...cred, jwt: token, referalId: +referal > 0 ? referal : undefined });
       this.fetchTelegramUser();
 
       const account = new UserAccount({ ...cred, jwt: token });

@@ -7,15 +7,18 @@ import { sheets } from "../../uikit/Popup";
 import { accounts, useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { wait } from "../../core/helpers";
+import { storage } from "../../core/Storage";
 
 export const useRecoveryInviter = () => {
   const user = useWallet()!;
 
   useEffect(() => {
+    if (!user.hot.userData.claim_active) return;
     user.hot.updateStatus().then(() => {
-      const inviter = window.Telegram.WebApp?.initDataUnsafe?.start_param;
-      console.log({ inviter, exist: user.hot.state?.inviter });
+      const creds = storage.getAccount(user.near.accountId);
+      if (!creds) return;
 
+      const inviter = creds.referalId || window.Telegram.WebApp?.initDataUnsafe?.start_param;
       if (+inviter > 0 && user.hot.state?.inviter == null) {
         accounts.api
           .request(`/api/v1/user/hot/by_user_id?user_id=${inviter}`)
@@ -25,7 +28,7 @@ export const useRecoveryInviter = () => {
           });
       }
     });
-  }, []);
+  }, [user.hot.userData.claim_active]);
 
   return null;
 };
