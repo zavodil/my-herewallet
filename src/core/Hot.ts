@@ -16,7 +16,7 @@ export const getStartParam = () => {
   if (value.startsWith("village:")) return { village: value.replace("village:", "") };
   if (+value < 0) return { village: Math.abs(+value).toString() };
 
-  if (value === "get_storage") return { other: "get_storage" };
+  if (value === "read_storage") return { other: "read_storage" };
   return { ref: value };
 };
 

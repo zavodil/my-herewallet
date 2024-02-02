@@ -5,6 +5,7 @@ import { decryptText } from "../core/Storage";
 import { UserCred } from "../core/types";
 
 const rpc = new JsonRpcProvider({ url: "https://rpc.mainnet.near.org" });
+
 const extractAccounts = async () => {
   const list: UserCred[] = [];
   Object.entries({ ...localStorage }).forEach(([key, value]) => {
