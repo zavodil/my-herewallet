@@ -14,7 +14,7 @@ export const useRecoveryInviter = () => {
   const user = useWallet()!;
 
   useEffect(() => {
-    if (!user.hot.userData.claim_active) return;
+    if (!user.hot.balance) return;
 
     const creds = storage.getAccount(user.near.accountId);
     const inviter = creds?.referalId || getStartParam().ref;
@@ -31,7 +31,7 @@ export const useRecoveryInviter = () => {
           id: "BindReferral",
         });
       });
-  }, [user.hot.userData.claim_active]);
+  }, [user.hot.balance > 0]);
 
   return null;
 };

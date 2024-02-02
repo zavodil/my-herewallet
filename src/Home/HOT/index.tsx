@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 
 import Header from "../Header";
+import { storage } from "../../core/Storage";
 import { formatAmount } from "../../core/helpers";
 import { accounts, useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
@@ -22,7 +23,6 @@ import { useRecoveryInviter } from "./BindReferral";
 import { runParticles, stopParticles } from "./effects/flame";
 import { ClaimingLoading, FirstClaimHOT } from "./modals";
 import Balance from "./Balance";
-import { storage } from "../../core/Storage";
 
 const formatHours = (hh: number) => {
   const mm = `${Math.round((hh * 60) % 60)}m`;
