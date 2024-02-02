@@ -25,6 +25,7 @@ import Header from "./Header";
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
 
 const Home = () => {
+  useRecoveryInviter();
   const navigate = useNavigate();
   const account = useWallet()!;
 
@@ -32,7 +33,6 @@ const Home = () => {
   const [showTokens, toggleTokens] = useState(true);
   const [isNftsLoading, setNftsLoading] = useState(false);
   const [isReserving, setReserving] = useState(false);
-  useRecoveryInviter();
 
   const selectNfts = async () => {
     toggleTokens(false);
