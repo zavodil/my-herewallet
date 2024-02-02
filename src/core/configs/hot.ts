@@ -19,6 +19,7 @@ export interface HotReferral {
 
 export interface HotState {
   village?: string;
+  inviter?: string;
   last_claim: number;
   boost_ts_left: number;
   refferals: number;
@@ -29,6 +30,7 @@ export interface HotState {
 
 export interface HotVillage {
   name: string;
+  username: string;
   avatar: string;
   hot_balance: number;
   total_members: number;

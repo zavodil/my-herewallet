@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Card } from "../Home/styled";
 
@@ -50,11 +51,28 @@ export const Menu = styled(Card)`
   }
 `;
 
-export const SensitiveCard = styled(Card)`
+export const SSensitiveCard = styled(Card)`
   margin-top: 12px;
   padding: 14px 16px;
   background: var(--Elevation-1);
-  font-family: monospace;
-  font-weight: bold;
+  overflow: hidden;
+  cursor: pointer;
   width: 280px;
+
+  * {
+    text-align: left;
+    font-family: monospace;
+    transition: 0.2s filter;
+    font-weight: bold;
+  }
 `;
+
+export const SensitiveCard = ({ children, style }: any) => {
+  const [openSeed, setOpen] = useState(false);
+
+  return (
+    <SSensitiveCard style={style} onClick={() => setOpen(true)}>
+      <div style={{ textAlign: "left", filter: !openSeed ? "blur(8px)" : "" }}>{children}</div>
+    </SSensitiveCard>
+  );
+};

@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
+import { KeyPair } from "near-api-js";
 
 import { notify } from "../core/toast";
+import { storage } from "../core/Storage";
 import { accounts } from "../core/Accounts";
 import { validateMnemonic } from "../core/near-chain/passphrase/bip39";
-import { storage } from "../core/Storage";
 
 import { H1, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
@@ -27,12 +28,33 @@ const ImportAccountMobile = () => {
     setValue(creds?.seed || creds?.privateKey || "");
   }, [accounts.telegramAccountId]);
 
-  const isValid = useMemo(() => validateMnemonic(value), [value]);
+  const isValid = useMemo(() => {
+    try {
+      KeyPair.fromString(value);
+      return true;
+    } catch {
+      return validateMnemonic(value);
+    }
+  }, [value]);
+
   const importAccount = async () => {
     try {
       if (isCreating) return;
       setCreating(true);
-      await accounts.importAccount(value);
+
+      // Bind nickname to created seedphrase
+      const creds = storage.getAccount(accounts.telegramAccountId || "");
+      const telegramAccSeed = creds?.seed || creds?.privateKey || "";
+      const nickname = telegramAccSeed === value ? creds?.accountId : undefined;
+
+      if (nickname) {
+        const key: any = await accounts.wallet.rpc.query({ finality: "optimistic", request_type: "view_account", account_id: nickname });
+        if (key.permission === "FullAccess") await accounts.importAccount(value, nickname);
+        else await accounts.connectWeb(value, nickname);
+      } else {
+        await accounts.importAccount(value, nickname);
+      }
+
       setCreating(false);
       navigate("/");
     } catch (e: any) {
@@ -67,7 +89,7 @@ const ImportAccountMobile = () => {
           autoFocus
         />
 
-        {!isValid && value !== "" && <SmallText style={{ marginTop: 8, fontWeight: "bold", color: colors.red }}>Seedphrase is invalid</SmallText>}
+        {!isValid && value !== "" && <SmallText style={{ marginTop: 8, fontWeight: "bold", color: colors.red }}>Seedphrase or private key is invalid</SmallText>}
       </div>
 
       <div style={{ paddingTop: 32, paddingBottom: 24, width: "100%" }}>

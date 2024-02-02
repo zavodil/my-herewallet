@@ -157,8 +157,8 @@ class Accounts {
         nonce: sign.nonce,
       });
 
-      this.fetchTelegramUser();
       storage.addAccount({ ...cred, jwt: token });
+      this.fetchTelegramUser();
 
       const account = new UserAccount({ ...cred, jwt: token });
       const addAccount = action(() => {

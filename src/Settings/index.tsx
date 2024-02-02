@@ -81,15 +81,7 @@ const Settings = () => {
                     <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
                       <AvatarImage as={avatar ? "img" : "div"} src={avatar} style={{ flexShrink: 0, width: 80, height: 80, borderRadius: 16 }} />
 
-                      <div
-                        style={{
-                          maxWidth: 360,
-                          height: "100%",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                        }}
-                      >
+                      <div style={{ maxWidth: 360, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                         <Text style={{ lineBreak: "anywhere" }}>{user.id}</Text>
                         <TinyText style={{ marginTop: 4, lineHeight: "16px" }}>
                           You can change your avatar in the app.{" "}

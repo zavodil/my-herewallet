@@ -29,7 +29,7 @@ const extractAccounts = async () => {
   if (exists.every((t: any) => t.balance === "0")) {
     const user = window.Telegram.WebApp?.initDataUnsafe?.user;
     const nickname = user?.username?.toLowerCase() || `i${user.id.toString().toLowerCase()}`;
-    const names = [`${nickname}.tg`, `${nickname}-hot.tg`, `${nickname}-hot1.tg`];
+    const names = [`${nickname}.tg`, `${nickname}-hot.tg`, `${nickname}-hot1.tg`, `${nickname}-hot2.tg`];
 
     for (const name of names) {
       const user = exists.find((t: any) => t.cred.accountId === name);

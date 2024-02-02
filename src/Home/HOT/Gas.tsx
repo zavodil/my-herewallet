@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { observer } from "mobx-react-lite";
 
-import { gasFreeMissions } from "../../core/configs/hot";
 import { useWallet } from "../../core/Accounts";
+import { gasFreeMissions } from "../../core/configs/hot";
 import { useNavigateBack } from "../../useNavigateBack";
 import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
@@ -18,6 +18,7 @@ import MyAddress from "../MyAddress";
 const Gas = () => {
   useNavigateBack();
   const user = useWallet()!;
+  const [completed, setCompleted] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     user.hot.fetchMissions();
@@ -49,7 +50,15 @@ const Gas = () => {
 
         <Options>
           {gasFreeMissions.map((item) => (
-            <div key={item.mission} style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => item.onClick(user)}>
+            <div
+              key={item.mission}
+              style={{ display: "flex", gap: 12, alignItems: "center" }}
+              onClick={() => {
+                if (user.hot.missions[item.mission] || completed[item.mission]) return;
+                setCompleted((t) => ({ ...t, [item.mission]: true }));
+                item.onClick(user);
+              }}
+            >
               <img src={item.icon} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }} />
               <div>
                 <BoldP>{item.title}</BoldP>
