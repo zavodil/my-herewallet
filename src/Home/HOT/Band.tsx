@@ -65,7 +65,7 @@ const Band = () => {
             <H3>{user.hot.referralsTotal} Friend</H3>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <img style={{ width: 24, height: 24, marginLeft: -16 }} src={require("../../assets/hot/hot.png")} />
-              <BoldP>≈{+user.hot.referralsEarnPerHour.toFixed(6)} per hour</BoldP>
+              <BoldP>≈{user.hot.referralsEarn} per hour</BoldP>
             </div>
 
             <Text style={{ color: colors.blackSecondary }}>

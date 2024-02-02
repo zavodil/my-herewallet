@@ -15,7 +15,7 @@ export interface UserCred {
   publicKey: string;
   path?: string;
   privateKey?: string;
-  referalId?: number;
+  referalId?: string;
   seed?: string;
   jwt?: string;
 }

@@ -4,30 +4,33 @@ import { ActionButton, ActivityIndicator, H2, Text } from "../../uikit";
 import { colors } from "../../uikit/theme";
 import { sheets } from "../../uikit/Popup";
 
-import { accounts, useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { wait } from "../../core/helpers";
 import { storage } from "../../core/Storage";
+import { getStartParam } from "../../core/Hot";
+import { accounts, useWallet } from "../../core/Accounts";
 
 export const useRecoveryInviter = () => {
   const user = useWallet()!;
 
   useEffect(() => {
     if (!user.hot.userData.claim_active) return;
-    user.hot.updateStatus().then(() => {
-      const creds = storage.getAccount(user.near.accountId);
-      if (!creds) return;
 
-      const inviter = creds.referalId || window.Telegram.WebApp?.initDataUnsafe?.start_param;
-      if (+inviter > 0 && user.hot.state?.inviter == null) {
-        accounts.api
-          .request(`/api/v1/user/hot/by_user_id?user_id=${inviter}`)
-          .then((res) => res.json())
-          .then(({ near_account_id }: any) => {
-            sheets.present({ id: "BindReferral", element: <BindReferral refAccount={near_account_id} inviter={inviter} /> });
-          });
-      }
-    });
+    const creds = storage.getAccount(user.near.accountId);
+    const inviter = creds?.referalId || getStartParam().ref;
+
+    if (user.hot.state?.inviter != null) return;
+    if (inviter == null) return;
+
+    accounts.api
+      .request(`/api/v1/user/hot/by_user_id?user_id=${inviter}`)
+      .then((res) => res.json())
+      .then(({ near_account_id }: any) => {
+        sheets.present({
+          element: <BindReferral refAccount={near_account_id} inviter={inviter} />,
+          id: "BindReferral",
+        });
+      });
   }, [user.hot.userData.claim_active]);
 
   return null;
@@ -43,7 +46,7 @@ export const BindReferral = ({ inviter, refAccount }: { inviter: string; refAcco
       setLoading(true);
 
       await user.api.request(`/api/v1/user/hot/recover_inviter`, {
-        body: JSON.stringify({ inviter_id: inviter?.toString?.() }),
+        body: JSON.stringify({ inviter_id: inviter }),
         method: "POST",
       });
 

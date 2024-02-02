@@ -12,6 +12,7 @@ import { IntroImage, Root } from "./styled";
 import { colors } from "../uikit/theme";
 import { notify } from "../core/toast";
 import extractAccounts from "./extractAccounts";
+import { getStartParam } from "../core/Hot";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -36,8 +37,9 @@ const Auth = () => {
 
   useEffect(() => {
     createAccount();
-    const refId = window.Telegram.WebApp?.initDataUnsafe?.start_param;
-    if (isNaN(+refId)) return;
+    const refId = getStartParam().ref;
+    if (!refId) return;
+
     accounts.api
       .request(`/api/v1/user/hot/by_user_id?user_id=${refId}`)
       .then((res) => res.json())

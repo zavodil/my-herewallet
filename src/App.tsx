@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
 import { isTgMobile } from "./env";
 import { Staking } from "./Staking";
-import { GAME_ID } from "./core/Hot";
+import { GAME_ID, getStartParam } from "./core/Hot";
 import { accounts } from "./core/Accounts";
 import Inscription, { InscriptionTokens } from "./Inscription";
 import { CustomRequestResolver, ImportAccountsResolver, KeypomResolver } from "./Widget/resolvers";
@@ -60,7 +60,7 @@ function App() {
   //   return <TechnicalBreak />;
   // }
 
-  if (window.Telegram.WebApp?.initDataUnsafe?.start_param === "read_storage") {
+  if (getStartParam().other === "read_storage") {
     return <StorageView />;
   }
 
