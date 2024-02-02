@@ -67,9 +67,12 @@ const HOT = () => {
       window.Telegram.WebApp?.HapticFeedback?.notificationOccurred?.("error");
 
       if (e?.toString()?.includes("does not exist while viewing")) {
+        notify(`Account ${user.near.accountId} is not activated`);
         const cred = storage.getAccount(user.near.accountId);
+
         if (cred?.seed) {
           try {
+            notify(`Trying activate...`);
             setCreating(true);
             await accounts.allocateHotNickname(cred.publicKey, user.near.accountId);
             notify("Account activated, try claim again please");
@@ -82,6 +85,8 @@ const HOT = () => {
             setClaiming(false);
             return;
           }
+        } else {
+          notify(`Seed not found`);
         }
       }
 
