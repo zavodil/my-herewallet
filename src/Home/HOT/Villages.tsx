@@ -44,11 +44,11 @@ const Villages = () => {
         {user.hot.villages.length > 0 && (
           <Options style={{ marginTop: -12 }}>
             {user.hot.villages.map((item) => (
-              <div key={item.name} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <div key={item.username} style={{ display: "flex", gap: 12, alignItems: "center" }}>
                 <img src={item.avatar} style={{ width: 64, height: 64, borderRadius: 12 }} />
 
                 <div style={{ overflow: "hidden" }}>
-                  <BoldP style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</BoldP>
+                  <BoldP style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name || item.username || "Unnamed vilalge"}</BoldP>
                   <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", marginTop: 8, marginLeft: -2 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 2, marginRight: 8 }}>
                       <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 24, height: 24 }} />

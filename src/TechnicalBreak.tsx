@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { storage } from "./core/Storage";
-import { Root } from "./Home/styled";
-import { Button, H3, H4, Text } from "./uikit";
-import { notify } from "./core/toast";
-import Icon from "./uikit/Icon";
-import { SensitiveCard } from "./Settings/styled";
+import React from "react";
 import { observer } from "mobx-react-lite";
 
+import { notify } from "./core/toast";
+import { storage } from "./core/Storage";
+import { Button, H3, H4, Text } from "./uikit";
+import Icon from "./uikit/Icon";
+
+import { SensitiveCard } from "./Settings/styled";
+import { Root } from "./Home/styled";
+
 const TechnicalBreak = () => {
-  const [openSeed, setSeed] = useState(false);
   const seed = storage.getAccount(storage.read()?.activeAccount!)?.seed;
 
   return (
@@ -38,9 +39,7 @@ const TechnicalBreak = () => {
               </Button>
             </div>
 
-            <SensitiveCard onClick={() => setSeed(true)}>
-              <div style={{ textAlign: "left", filter: !openSeed ? "blur(12px)" : "" }}>{seed}</div>
-            </SensitiveCard>
+            <SensitiveCard>{seed}</SensitiveCard>
           </>
         )}
       </div>

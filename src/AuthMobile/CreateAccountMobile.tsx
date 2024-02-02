@@ -3,23 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import { Receiver } from "../core/Receiver";
+import { generateSeedPhrase } from "../core/near-chain/passphrase";
 import { accounts, useWallet } from "../core/Accounts";
+import { ConnectType } from "../core/types";
+import { storage } from "../core/Storage";
+import { wait } from "../core/helpers";
 import { notify } from "../core/toast";
 
+import { SensitiveCard } from "../Settings/styled";
 import { H1, H3, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
 import { ClaimingLoading } from "../Home/HOT/modals";
 import { useNavigateBack } from "../useNavigateBack";
 import { colors } from "../uikit/theme";
 import HereInput from "../uikit/Input";
-import { Root, WordsWrap } from "./styled";
-import { generateSeedPhrase } from "../core/near-chain/passphrase";
-import { storage } from "../core/Storage";
-import { ConnectType } from "../core/types";
 import { Button } from "../uikit/button";
-import { SensitiveCard } from "../Settings/styled";
-import { wait } from "../core/helpers";
 import Icon from "../uikit/Icon";
+
+import { Root, WordsWrap } from "./styled";
 
 const CreateAccountMobile = () => {
   useNavigateBack();
@@ -37,7 +38,7 @@ const CreateAccountMobile = () => {
     if (exist?.seed) return setSeed(exist.seed!);
 
     const { seedPhrase, publicKey, secretKey } = generateSeedPhrase();
-    storage.addSafeData({ accountId: receiver.input, type: ConnectType.Web, privateKey: secretKey, seed: seedPhrase, publicKey });
+    storage.addSafeData({ type: ConnectType.Web, accountId: receiver.input, privateKey: secretKey, seed: seedPhrase, publicKey });
     setSeed(seedPhrase);
   }, [receiver.input]);
 
@@ -52,7 +53,11 @@ const CreateAccountMobile = () => {
       receiver.load().then(() => {
         if (!receiver.isExist) return;
         receiver.setInput(nickname.replace(".tg", "-hot1.tg"));
-        receiver.load();
+        receiver.load().then(() => {
+          if (!receiver.isExist) return;
+          receiver.setInput(nickname.replace(".tg", "-hot2.tg"));
+          receiver.load();
+        });
       });
     });
   }, []);

@@ -39,7 +39,7 @@ class Hot {
     user_id: 0,
   };
 
-  public village: { name: string; avatar: string; hot_balance: number } | null = null;
+  public village: { name: string; avatar: string; hot_balance: number; username: string } | null = null;
   public villages: HotVillage[] = [];
 
   public levels = [

@@ -4,18 +4,21 @@ import { useNavigate } from "react-router-dom";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 
 import Header from "../Header";
-import { Card, Container, Root } from "../styled";
+import { formatAmount } from "../../core/helpers";
 import { useWallet } from "../../core/Accounts";
 import { notify } from "../../core/toast";
 import { NeedMoreGas } from "../NeedGas";
 
 import { useNavigateBack } from "../../useNavigateBack";
+import { Card, Container, Root, TokenIcon } from "../styled";
 import { BoldP, LargeP, SmallText, Text, TinyText } from "../../uikit/typographic";
 import { ActivityIndicator, Button } from "../../uikit";
 import { HereButton } from "../../uikit/button";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
+import Icon from "../../uikit/Icon";
 
+import { useRecoveryInviter } from "./BindReferral";
 import { runParticles, stopParticles } from "./effects/flame";
 import { FirstClaimHOT } from "./modals";
 import Balance from "./Balance";
@@ -32,6 +35,7 @@ const HOT = () => {
   const sparksRef = useRef<LottieRefCurrentProps>();
   const [isClaiming, setClaiming] = useState(false);
 
+  useRecoveryInviter();
   useEffect(() => {
     runParticles();
     sparksRef.current?.stop();
@@ -86,7 +90,7 @@ const HOT = () => {
               <Card style={{ width: "calc(100vw - 32px)", flexShrink: 0, padding: 12, alignItems: "center", flexDirection: "row", gap: 8 }} onClick={() => navigate("/hot/villages")}>
                 <TokenIcon src={user.hot.village?.avatar} />
                 <div>
-                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name}</SmallText>
+                  <SmallText style={{ fontWeight: "bold", color: colors.blackPrimary }}>{user.hot.village?.name || user.hot.village?.username || "Unnamed vilalge"}</SmallText>
                   <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: -2, marginLeft: -2 }}>
                     <img src={require("../../assets/hot/hot.png")} style={{ marginTop: -2, width: 16, height: 16 }} />
                     <Text style={{ color: colors.blackPrimary, fontFamily: "SF Mono" }}>{formatAmount(user.hot.village.hot_balance, 6)}</Text>
@@ -139,7 +143,7 @@ const HOT = () => {
             <div style={{ width: "100%", marginTop: 64, borderRadius: 24, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)" }}>
               <Card style={{ display: "flex", flexDirection: "column", overflow: "hidden", margin: isOverload ? 1 : 0, paddingTop: 0, padding: 0, border: isOverload ? "none" : undefined }}>
                 <div style={{ background: "#D9CDCB", height: 8, width: "100%" }}>
-                  <div style={{ width: 4, background: "rgb(107 102 97 / 40%)", height: 8, left: `20%`, position: "absolute" }} />
+                  <div style={{ width: 4, background: "rgb(107 102 97 / 40%)", height: 8, left: `45%`, position: "absolute" }} />
                   <div style={{ position: "relative", width: `${user.hot.miningProgress * 100}%`, background: "linear-gradient(90deg, #FBC56A 0%, #FE910F 100%)", height: 8 }} />
                 </div>
 
@@ -159,7 +163,7 @@ const HOT = () => {
                   </div>
 
                   <div style={{ marginLeft: "auto", marginTop: -4 }}>
-                    <HereButton $id="claimHot" onClick={() => claim()} disabled={isClaiming || user.hot.miningProgress < 0.2}>
+                    <HereButton $id="claimHot" onClick={() => claim()} disabled={isClaiming || user.hot.miningProgress < 0.45}>
                       {isClaiming ? <ActivityIndicator width={6} style={{ transform: "scale(0.3)" }} /> : "Claim HOT"}
                     </HereButton>
                   </div>
