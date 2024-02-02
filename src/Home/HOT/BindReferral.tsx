@@ -13,6 +13,7 @@ export const useRecoveryInviter = () => {
   const user = useWallet()!;
 
   useEffect(() => {
+    if (!user.hot.userData.claim_active) return;
     user.hot.updateStatus().then(() => {
       const creds = storage.getAccount(user.near.accountId);
       if (!creds) return;
@@ -27,7 +28,7 @@ export const useRecoveryInviter = () => {
           });
       }
     });
-  }, []);
+  }, [user.hot.userData.claim_active]);
 
   return null;
 };
