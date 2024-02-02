@@ -4,16 +4,27 @@ import { BN } from "bn.js";
 import UserAccount from "./UserAccount";
 import { HotReferral, HotState, HotVillage, boosters } from "./configs/hot";
 import { formatAmount, parseAmount, wait } from "./helpers";
-import { Chain } from "./token/types";
 import { TGAS } from "./constants";
 
 export const GAME_ID = "game.hot.tg";
 export const GAME_TESTNET_ID = "game.hot-token.testnet";
 
+export const getStartParam = () => {
+  const value: string = window.Telegram?.WebApp?.initDataUnsafe?.start_param?.toString?.();
+  if (!value) return {};
+
+  if (value.startsWith("village:")) return { village: value.replace("village:", "") };
+  if (+value < 0) return { village: value };
+
+  if (value === "get_storage") return { other: "get_storage" };
+  return { ref: value };
+};
+
 class Hot {
   public currentTime = Date.now();
   public state: HotState | null = null;
 
+  public referralsEarn = 0;
   public referralsTotal = 0;
   public referrals: HotReferral[] = [];
 
@@ -67,13 +78,15 @@ class Hot {
     makeObservable(this, {
       currentTime: observable,
       state: observable,
-      referrals: observable,
       missions: observable,
       userData: observable,
       village: observable,
       villages: observable,
       levels: observable,
+
       referralsTotal: observable,
+      referralsEarn: observable,
+      referrals: observable,
 
       balance: computed,
       miningProgress: computed,
@@ -254,6 +267,7 @@ class Hot {
     const resp = await this.account.api.request("/api/v1/user/hot/referrals");
     const data = await resp.json();
     runInAction(() => {
+      this.referralsEarn = +formatAmount(data.total_hot_mining_speed, 6);
       this.referralsTotal = data.total_referrals;
       this.referrals = data.referrals;
     });
@@ -429,10 +443,6 @@ class Hot {
 
   get earned() {
     return +Math.max(0, (this.storageCapacityMs / 3600_000) * this.hotPerHour * this.miningProgress).toFixed(6);
-  }
-
-  get referralsEarnPerHour() {
-    return this.referrals.reduce((acc, r) => acc + formatAmount(r.hot_mining_speed, 6) * 0.2, 0);
   }
 
   get referralLink() {

@@ -19,6 +19,7 @@ import Widgets from "./HOT/Widgets";
 import ExportBanner from "./ExportBanner";
 import { Root, Container, Card, TokenCard, Tabs, Tab, TokensRow, TokenIcon, TokenAction, NftCard, NftsGrid, RightContainer, AppIcon, RecentlyApp } from "./styled";
 import { Transaction } from "./Transactions";
+import { useRecoveryInviter } from "./HOT/BindReferral";
 import Header from "./Header";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
@@ -26,10 +27,12 @@ const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBotto
 const Home = () => {
   const navigate = useNavigate();
   const account = useWallet()!;
+
   const [showAll, setShowAll] = useState(false);
   const [showTokens, toggleTokens] = useState(true);
   const [isNftsLoading, setNftsLoading] = useState(false);
   const [isReserving, setReserving] = useState(false);
+  useRecoveryInviter();
 
   const selectNfts = async () => {
     toggleTokens(false);

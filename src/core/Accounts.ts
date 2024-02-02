@@ -15,6 +15,7 @@ import { generateMnemonic } from "./near-chain/passphrase/bip39";
 import { parseSeedPhrase } from "./near-chain/passphrase";
 import UserAccount from "./UserAccount";
 
+import { getStartParam } from "./Hot";
 import { recaptchaToken, wait } from "./helpers";
 import { ConnectType, UserCred } from "./types";
 import { generateFromString } from "generate-avatar";
@@ -22,7 +23,6 @@ import { ReceiverFetcher } from "./Receiver";
 import { HereApi } from "./network/api";
 import { storage } from "./Storage";
 import { notify } from "./toast";
-import { NEAR_DOMAINS } from "./near-chain/constants";
 
 class Accounts {
   static shared = new Accounts();
@@ -157,9 +157,9 @@ class Accounts {
         nonce: sign.nonce,
       });
 
-      const referal = +window.Telegram?.WebApp?.initDataUnsafe?.start_param;
-      storage.addAccount({ ...cred, jwt: token, referalId: +referal > 0 ? referal : undefined });
+      storage.addAccount({ ...cred, jwt: token, referalId: getStartParam().ref });
       this.fetchTelegramUser();
+
       // if (window.localStorage.get(cred.accountId)) {
       //   storage.addToAccountsList(cred);
       //   notify("Already saved");
