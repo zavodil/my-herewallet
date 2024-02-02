@@ -48,8 +48,15 @@ const ImportAccountMobile = () => {
       const nickname = telegramAccSeed === value ? creds?.accountId : undefined;
 
       if (nickname) {
-        const key: any = await accounts.wallet.rpc.query({ finality: "optimistic", request_type: "view_account", account_id: nickname });
-        if (key.permission === "FullAccess") await accounts.importAccount(value, nickname);
+        const key: any = await accounts.wallet.rpc
+          .query({
+            finality: "optimistic",
+            request_type: "view_account",
+            account_id: nickname,
+          })
+          .catch(() => null);
+
+        if (key?.permission === "FullAccess") await accounts.importAccount(value, nickname);
         else await accounts.connectWeb(value, nickname);
       } else {
         await accounts.importAccount(value, nickname);
