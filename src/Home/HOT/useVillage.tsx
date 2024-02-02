@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { isNumber } from "lodash";
 
 import { ActionButton, ActivityIndicator, H2, Text } from "../../uikit";
 import { useWallet } from "../../core/Accounts";
