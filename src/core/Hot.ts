@@ -213,11 +213,11 @@ class Hot {
         throw Error("Your NEAR balance has not yet updated");
       }
 
-      case "deposit_1USDT": {
-        await this.account.tokens.updateBalance("usdt.tether-token.near");
-        if ((this.account.tokens.token(Chain.NEAR, "USDt")?.amountFloat || 0) >= 0.4) break;
-        throw Error("Your USDT balance has not yet updated");
-      }
+      // case "deposit_1USDT": {
+      //   await this.account.tokens.updateBalance("usdt.tether-token.near");
+      //   if ((this.account.tokens.token(Chain.NEAR, "USDt")?.amountFloat || 0) >= 0.4) break;
+      //   throw Error("Your USDT balance has not yet updated");
+      // }
 
       case "join_village": {
         await this.updateStatus();

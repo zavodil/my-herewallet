@@ -15,7 +15,7 @@ export interface UserCred {
   publicKey: string;
   path?: string;
   privateKey?: string;
-  telegramAccountId?: string;
+  referalId?: number;
   seed?: string;
   jwt?: string;
 }
