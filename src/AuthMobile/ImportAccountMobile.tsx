@@ -6,7 +6,6 @@ import { KeyPair } from "near-api-js";
 import { notify } from "../core/toast";
 import { storage } from "../core/Storage";
 import { accounts } from "../core/Accounts";
-import { validateMnemonic } from "../core/near-chain/passphrase/bip39";
 
 import { H1, SmallText, Text } from "../uikit/typographic";
 import { ActionButton, ActivityIndicator } from "../uikit";
@@ -32,8 +31,8 @@ const ImportAccountMobile = () => {
     try {
       KeyPair.fromString(value);
       return true;
-    } catch {
-      return validateMnemonic(value);
+    } catch (e: any) {
+      return value.split(" ").length === 12;
     }
   }, [value]);
 

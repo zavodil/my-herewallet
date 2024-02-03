@@ -103,12 +103,12 @@ const CreateAccountMobile = () => {
       <WordsWrap style={{ width: "100%", marginTop: 40 }}>
         <div>
           <div style={{ display: "flex", gap: 8 }}>
-            <H3>Passphrase</H3>
+            <H3>Seedphrase</H3>
             <Button
               $id="Settings.passphraseCopy"
               onClick={async () => {
                 await navigator.clipboard.writeText(seed || "");
-                notify("Passphrase has beed copied");
+                notify("Seedphrase has beed copied");
               }}
             >
               <Icon name="copy" />

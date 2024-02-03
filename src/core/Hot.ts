@@ -32,6 +32,7 @@ class Hot {
   public referrals: HotReferral[] = [];
 
   public missions = {
+    follow_instagram: false,
     follow_youtube: false,
     invite_friend: false,
     follow_tg_hot: false,
@@ -361,35 +362,36 @@ class Hot {
     const booster = this.getBooster(id);
     if (!booster) return false;
 
-    if (booster.mission) {
-      // @ts-ignore
-      return this.missions[booster.mission] || false;
-    }
-
     return this.intBalance.gte(new BN(booster.hot_price || 0));
+  }
+
+  async upgradeWood(mission: keyof this["missions"]) {
+    await this.completeMission(mission);
+    let lastWood = this.state?.boost || 10;
+    let startTime = Date.now();
+
+    const checkStatus = async () => {
+      if (Date.now() - startTime > 30_000) {
+        throw Error("The server is overloaded, please try later");
+      }
+
+      await wait(2000);
+      await this.updateStatus();
+      if (this.state == null || this.state.boost <= lastWood) await checkStatus();
+    };
+
+    await checkStatus();
+    await this.fetchMissions();
   }
 
   async upgradeBooster(id: number) {
     const booster = this.getBooster(id);
     if (!booster) throw Error("Booster is not defined");
 
-    if (booster.mission) {
-      await this.completeMission(booster.mission as any);
-
-      let startTime = Date.now();
-      const checkStatus = async () => {
-        if (Date.now() - startTime > 30_000) throw Error("The server is overloaded, please try later");
-        await wait(2000);
-        await this.updateStatus();
-        const onchainLevel = this.state?.[this.getBoosterName(id)];
-        if (onchainLevel == null || onchainLevel < id) await checkStatus();
-      };
-
-      await checkStatus();
-      return;
+    if (!this.intBalance.gte(new BN(booster.hot_price || 0))) {
+      throw Error("Not enough HOT");
     }
 
-    if (!this.canUpgrade(id)) throw Error("Not enough HOT");
     await this.account.near.functionCall({
       contractId: GAME_ID,
       methodName: "buy_asset",

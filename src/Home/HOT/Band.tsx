@@ -5,15 +5,16 @@ import { HotReferral } from "../../core/configs/hot";
 import { useWallet } from "../../core/Accounts";
 import { formatAmount } from "../../core/helpers";
 
-import { BoldP, H2, H3, SmallText, Text } from "../../uikit/typographic";
+import { BoldP, H2, H3, SmallText, Text, TinyText } from "../../uikit/typographic";
 import { ActionButton, Button } from "../../uikit";
 import { sheets } from "../../uikit/Popup";
 import { colors } from "../../uikit/theme";
 
-import { Container, Root } from "../styled";
+import { Container, Root, WarningBadge } from "../styled";
 import { useNavigateBack } from "../../useNavigateBack";
 import BlurBackground from "./effects/BlurBackground";
 import { InviteFriend } from "./modals";
+import Icon from "../../uikit/Icon";
 
 const FriendItem = ({ item }: { item: HotReferral }) => {
   return (
@@ -75,6 +76,17 @@ const Band = () => {
             <Button $id="Band.fullGuide" onClick={() => window.Telegram.WebApp.openLink("https://www.herewallet.app/blog/how-to-mine-HOT")}>
               <SmallText style={{ color: "#0258F7", fontWeight: "bold" }}>Full guide</SmallText>
             </Button>
+
+            {user.hot.referrals.length > 10 && (
+              <WarningBadge style={{ flexShrink: 0, height: "fit-content", padding: "8px", gap: 12, background: "#db852017", width: "120%" }}>
+                <Icon style={{ flexShrink: 0 }} name="warning" />
+                <TinyText style={{ fontWeight: "bold", color: "#db8520", lineHeight: "16px", textAlign: "left" }}>
+                  Recovery mode has been added:
+                  <br />
+                  If your friend is not there, he should click on the referral link again.
+                </TinyText>
+              </WarningBadge>
+            )}
           </div>
 
           {user.hot.referrals?.length > 0 && (

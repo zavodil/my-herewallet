@@ -140,7 +140,7 @@ export class Receiver {
       if (this.input !== address) return;
       return runInAction(() => {
         this.isExist = NEAR_DOMAINS.some((t) => address.endsWith(t)) ? false : true;
-        this.validateError = this.isExist ? null : "Account is not exist";
+        this.validateError = this.isExist ? null : "Account does not exist";
         this.isLoading = false;
         this.isHere = false;
       });

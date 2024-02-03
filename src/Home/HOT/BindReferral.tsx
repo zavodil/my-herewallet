@@ -34,7 +34,7 @@ export const useRecoveryInviter = () => {
           id: "BindReferral",
         });
       });
-  }, [user.hot.balance > 0]);
+  }, [user.hot?.balance > 0]);
 
   return null;
 };

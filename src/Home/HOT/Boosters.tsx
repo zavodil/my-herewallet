@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import { notify } from "../../core/toast";
@@ -13,10 +14,10 @@ import Icon from "../../uikit/Icon";
 
 import { Container, Root } from "../styled";
 import BlurBackground from "./effects/BlurBackground";
-import { ClaimingLoading, InviteFriend } from "./modals";
+import { ClaimingLoading } from "./modals";
 import Balance from "./Balance";
 
-const BoostPopup = observer(({ id }: { id: number }) => {
+const BoostPopup = observer(({ id, openMissions }: { id: number; openMissions: () => void }) => {
   const user = useWallet()!;
   const current = user.hot.getBooster(id);
   const next = user.hot.getBooster(id + 1);
@@ -95,28 +96,24 @@ const BoostPopup = observer(({ id }: { id: number }) => {
         </div>
       </div>
 
-      {next.mission !== "invite_friend" && next.mission !== "download_app" && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
-          {!next.mission && <img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />}
-          <LargeP style={{ fontWeight: "bold" }}>{next.mission ? next.mission_text || next.mission : formatAmount(next.hot_price || 0, 6)}</LargeP>
-        </div>
+      {!next.mission ? (
+        <>
+          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+            {<img style={{ width: 32, height: 32, marginLeft: -12 }} src={require("../../assets/hot/hot.png")} />}
+            <LargeP style={{ fontWeight: "bold" }}>{formatAmount(next.hot_price || 0, 6)}</LargeP>
+          </div>
+          <ActionButton $id="Booster.upgrade" disabled={isLoading} onClick={() => upgrade()}>
+            Upgrade
+          </ActionButton>
+        </>
+      ) : (
+        <>
+          <SmallText style={{ fontWeight: "bold", marginBottom: -18 }}>Complete 1 mission to upgrade</SmallText>
+          <ActionButton $id="Booster.openMissions" onClick={() => openMissions()}>
+            Open missions
+          </ActionButton>
+        </>
       )}
-
-      {next.mission === "download_app" && (
-        <ActionButton style={{ marginBottom: -12 }} stroke $id="Booster.downloadApp" onClick={() => window.Telegram.WebApp.openLink("https://download.herewallet.app")}>
-          Download HERE Wallet and import wallet
-        </ActionButton>
-      )}
-
-      {next.mission === "invite_friend" && (
-        <ActionButton style={{ marginBottom: -12 }} stroke $id="Booster.inviteFriend" onClick={() => sheets.present({ id: "Invite", element: <InviteFriend /> })}>
-          Invite referral
-        </ActionButton>
-      )}
-
-      <ActionButton $id="Booster.upgrade" disabled={isLoading || next.mission === "deposit_NFT"} onClick={() => upgrade()}>
-        Upgrade
-      </ActionButton>
 
       {isLoading && <ClaimingLoading time={15} text="Upgrading" style={{ position: "absolute", left: 0, right: 0, background: colors.elevation0 }} />}
     </div>
@@ -125,10 +122,29 @@ const BoostPopup = observer(({ id }: { id: number }) => {
 
 const BoostItem = ({ boost }: { boost: any }) => {
   const user = useWallet()!;
+  const navigate = useNavigate();
   const nextBoost = user.hot.getBooster(boost.id + 1);
 
   return (
-    <div key={boost.id} style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={() => nextBoost && sheets.present({ id: "Boost", element: <BoostPopup id={boost.id} /> })}>
+    <div
+      key={boost.id}
+      style={{ display: "flex", gap: 12, alignItems: "center" }}
+      onClick={() =>
+        nextBoost &&
+        sheets.present({
+          id: "Boost",
+          element: (
+            <BoostPopup
+              id={boost.id}
+              openMissions={() => {
+                navigate("/hot/missions");
+                sheets.dismiss("Boost");
+              }}
+            />
+          ),
+        })
+      }
+    >
       <img
         src={boost.icon}
         style={{
