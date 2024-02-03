@@ -49,6 +49,10 @@ window.history.pushState = new Proxy(window.history.pushState, {
 let replaceUrl = "";
 window.history.replaceState = new Proxy(window.history.replaceState, {
   apply: (target, thisArg, argArray: any) => {
+    if (typeof argArray[2] !== "string") {
+      return target.apply(thisArg, argArray);
+    }
+
     const url = argArray[2].split("?")[0];
     if (replaceUrl !== url) {
       AnalyticsTracker.shared.track("history:replace", { route: url });
