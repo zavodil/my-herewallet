@@ -18,6 +18,62 @@ import { notify } from "../core/toast";
 import { isTgMobile } from "../env";
 
 import { Container, Menu, SensitiveCard } from "./styled";
+import HereInput from "../uikit/Input";
+import { sheets } from "../uikit/Popup";
+
+const ConfigLogoutWithSeed = ({ id, seed }: { id: string; seed: string[] }) => {
+  const [word, setWord] = useState("");
+  const [number] = useState(Math.floor(Math.random() * seed.length));
+
+  return (
+    <div style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 24 }}>
+      <H2>Config logout</H2>
+      <Text style={{ color: colors.blackSecondary }}>Are you sure you want to log out of your account? Make sure you save the seed phrase, otherwise you will lose access to your account!</Text>
+
+      <div style={{ width: "100%" }}>
+        <HereInput style={{ width: "100%" }} label={`Enter word #${number + 1} from your seed phrase`} value={word} onChange={(e) => setWord(e.target.value)} />
+      </div>
+
+      <ActionButton
+        disabled={word !== seed[number]}
+        $id="InviteFriend.copyReferral"
+        style={{ marginTop: 16 }}
+        onClick={() => {
+          sheets.dismiss("ConfirmLogout");
+          accounts.disconnect(id);
+        }}
+      >
+        Logout
+      </ActionButton>
+    </div>
+  );
+};
+
+const ConfigLogoutWithPrivateKey = ({ id, privateKey }: { id: string; privateKey: string }) => {
+  const [word, setWord] = useState("");
+
+  return (
+    <div style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 24 }}>
+      <H2>Config logout</H2>
+      <Text style={{ color: colors.blackSecondary }}>Are you sure you want to log out of your account? Make sure you save the private key, otherwise you will lose access to your account!</Text>
+
+      <div style={{ width: "100%" }}>
+        <HereInput style={{ width: "100%" }} label={`Enter last 5 symbols from your private key`} value={word} onChange={(e) => setWord(e.target.value)} />
+      </div>
+
+      <ActionButton
+        disabled={word !== privateKey.slice(-5)}
+        $id="InviteFriend.copyReferral"
+        style={{ marginTop: 16 }}
+        onClick={async () => {
+          sheets.dismiss("");
+        }}
+      >
+        Logout
+      </ActionButton>
+    </div>
+  );
+};
 
 const Settings = () => {
   useNavigateBack();
@@ -163,12 +219,12 @@ const Settings = () => {
                 {!!storage.getAccount(user.id)?.seed && (
                   <div>
                     <div style={{ display: "flex", gap: 8 }}>
-                      <H3>Passphrase</H3>
+                      <H3>Seedphrase</H3>
                       <Button
                         $id="Settings.passphraseCopy"
                         onClick={async () => {
                           await navigator.clipboard.writeText(storage.getAccount(user.id)?.seed || "");
-                          notify("Passphrase has beed copied");
+                          notify("Seedphrase has beed copied");
                         }}
                       >
                         <Icon name="copy" />
@@ -208,10 +264,19 @@ const Settings = () => {
               style={{ background: "rgba(214, 62, 62, 0.15)" }}
               $active={location.pathname === "/settings/support"}
               onClick={() => {
-                window.Telegram.WebApp.showConfirm(
-                  "Are you sure you want to log out of your account? Make sure you save the seed phrase, otherwise you will lose access to your account!",
-                  (is: boolean) => is && accounts.disconnect(user.id)
-                );
+                const creds = storage.getAccount(user.id);
+
+                if (creds?.seed) {
+                  sheets.present({ id: "ConfirmLogout", element: <ConfigLogoutWithSeed id={user.id} seed={creds.seed.split(" ")} /> });
+                  return;
+                }
+
+                if (creds?.privateKey) {
+                  sheets.present({ id: "ConfirmLogout", element: <ConfigLogoutWithPrivateKey id={user.id} privateKey={creds.privateKey} /> });
+                  return;
+                }
+
+                accounts.disconnect(user.id);
               }}
             >
               <Icon style={{ background: "rgba(214, 62, 62, 0.15)" }} name="logout" />

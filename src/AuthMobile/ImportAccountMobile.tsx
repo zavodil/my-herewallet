@@ -100,7 +100,7 @@ const ImportAccountMobile = () => {
       </div>
 
       <div style={{ paddingTop: 32, paddingBottom: 24, width: "100%" }}>
-        <ActionButton $id="ImportAccount.continue" style={{ width: "100%" }} disabled={!value || isCreating} onClick={() => importAccount()}>
+        <ActionButton $id="ImportAccount.continue" style={{ width: "100%" }} disabled={!value || isCreating || !isValid} onClick={() => importAccount()}>
           {isCreating ? <ActivityIndicator width={6} style={{ transform: "scale(0.5)" }} /> : "Continue"}
         </ActionButton>
       </div>
