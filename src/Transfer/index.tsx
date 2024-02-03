@@ -121,9 +121,7 @@ const Transfer = () => {
             {receiver.avatar && <AvatarImage style={{ position: "absolute", top: 8, right: 12 }} src={receiver.avatar} />}
           </div>
 
-          {!receiver.isLoading && receiver.input.length > 0 && (
-            <TinyText style={{ marginTop: -4, color: colors.red, fontWeight: "bold" }}>{!receiver.isExist ? "This account is not exist" : receiver.validateError}</TinyText>
-          )}
+          {!receiver.isLoading && receiver.input.length > 0 && <TinyText style={{ marginTop: -4, color: colors.red, fontWeight: "bold" }}>{receiver.validateError}</TinyText>}
         </Card>
 
         <Card style={{ gridArea: "asset", gap: 12 }}>

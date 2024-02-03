@@ -10,13 +10,16 @@ export const GAME_ID = "game.hot.tg";
 export const GAME_TESTNET_ID = "game.hot-token.testnet";
 
 export const getStartParam = () => {
-  const value: string = window.Telegram?.WebApp?.initDataUnsafe?.start_param?.toString?.();
+  const data = window.Telegram?.WebApp?.initDataUnsafe || {};
+  const value: string = data.start_param?.toString?.();
   if (!value) return {};
 
   if (value.startsWith("village:")) return { village: value.replace("village:", "") };
   if (+value < 0) return { village: Math.abs(+value).toString() };
 
   if (value === "read_storage") return { other: "read_storage" };
+
+  if (data.user?.id?.toString() === value) return {};
   return { ref: value };
 };
 

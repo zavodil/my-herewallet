@@ -9,12 +9,14 @@ import { wait } from "../../core/helpers";
 import { storage } from "../../core/Storage";
 import { getStartParam } from "../../core/Hot";
 import { accounts, useWallet } from "../../core/Accounts";
+import { isTgMobile } from "../../env";
 
 export const useRecoveryInviter = () => {
   const user = useWallet()!;
 
   useEffect(() => {
-    if (!user.hot.balance) return;
+    if (!isTgMobile()) return;
+    if (!user.hot?.balance) return;
 
     const creds = storage.getAccount(user.near.accountId);
     const inviter = creds?.referalId || getStartParam().ref;
@@ -26,6 +28,7 @@ export const useRecoveryInviter = () => {
       .request(`/api/v1/user/hot/by_user_id?user_id=${inviter}`)
       .then((res) => res.json())
       .then(({ near_account_id }: any) => {
+        if (user.near.accountId === near_account_id) return;
         sheets.present({
           element: <BindReferral refAccount={near_account_id} inviter={inviter} />,
           id: "BindReferral",
