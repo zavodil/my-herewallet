@@ -11,6 +11,7 @@ import { colors } from "../uikit/theme";
 import Icon from "../uikit/Icon";
 
 import { useNavigateBack } from "../useNavigateBack";
+import { validateMnemonic } from "../core/near-chain/passphrase/bip39";
 import { accounts, useWallet } from "../core/Accounts";
 import { ReceiverFetcher } from "../core/Receiver";
 import { storage } from "../core/Storage";
@@ -19,14 +20,14 @@ import { isTgMobile } from "../env";
 
 import { Container, Menu, SensitiveCard } from "./styled";
 import HereInput from "../uikit/Input";
-import { sheets } from "../uikit/Popup";
 
 const ConfigLogoutWithSeed = ({ id, seed }: { id: string; seed: string[] }) => {
+  const navigate = useNavigate();
   const [word, setWord] = useState("");
   const [number] = useState(Math.floor(Math.random() * seed.length));
 
   return (
-    <div style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 24 }}>
+    <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 24 }}>
       <H2>Config logout</H2>
       <Text style={{ color: colors.blackSecondary }}>Are you sure you want to log out of your account? Make sure you save the seed phrase, otherwise you will lose access to your account!</Text>
 
@@ -39,8 +40,8 @@ const ConfigLogoutWithSeed = ({ id, seed }: { id: string; seed: string[] }) => {
         $id="InviteFriend.copyReferral"
         style={{ marginTop: 16 }}
         onClick={() => {
-          sheets.dismiss("ConfirmLogout");
           accounts.disconnect(id);
+          navigate("/", { replace: true });
         }}
       >
         Logout
@@ -51,9 +52,10 @@ const ConfigLogoutWithSeed = ({ id, seed }: { id: string; seed: string[] }) => {
 
 const ConfigLogoutWithPrivateKey = ({ id, privateKey }: { id: string; privateKey: string }) => {
   const [word, setWord] = useState("");
+  const navigate = useNavigate();
 
   return (
-    <div style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 24 }}>
+    <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 24 }}>
       <H2>Config logout</H2>
       <Text style={{ color: colors.blackSecondary }}>Are you sure you want to log out of your account? Make sure you save the private key, otherwise you will lose access to your account!</Text>
 
@@ -65,8 +67,9 @@ const ConfigLogoutWithPrivateKey = ({ id, privateKey }: { id: string; privateKey
         disabled={word !== privateKey.slice(-5)}
         $id="InviteFriend.copyReferral"
         style={{ marginTop: 16 }}
-        onClick={async () => {
-          sheets.dismiss("");
+        onClick={() => {
+          accounts.disconnect(id);
+          navigate("/", { replace: true });
         }}
       >
         Logout
@@ -80,12 +83,22 @@ const Settings = () => {
   const user = useWallet()!;
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState("");
-  const [name, setName] = useState("");
-  const [about, setAbout] = useState("");
+  const [isLogout, setLogout] = useState(false);
+  const creds = storage.getAccount(user.id);
 
   useEffect(() => {
     ReceiverFetcher.shared.getAvatar(user.id, user.type).then(setAvatar);
   }, [user.id]);
+
+  if (isLogout) {
+    if (creds?.seed && validateMnemonic(creds.seed)) {
+      return <ConfigLogoutWithSeed id={user.id} seed={creds.seed.split(" ")} />;
+    }
+
+    if (creds?.privateKey) {
+      return <ConfigLogoutWithPrivateKey id={user.id} privateKey={creds.privateKey} />;
+    }
+  }
 
   return (
     <Root>
@@ -206,31 +219,31 @@ const Settings = () => {
                     <Button
                       $id="Settings.privateKeyCopy"
                       onClick={async () => {
-                        await navigator.clipboard.writeText(storage.getAccount(user.id)?.privateKey || "");
+                        await navigator.clipboard.writeText(creds?.privateKey || "");
                         notify("Private key has beed copied");
                       }}
                     >
                       <Icon name="copy" />
                     </Button>
                   </div>
-                  <SensitiveCard style={{ maxWidth: 460, width: "100%", lineBreak: "anywhere" }}>{storage.getAccount(user.id)?.privateKey}</SensitiveCard>
+                  <SensitiveCard style={{ maxWidth: 460, width: "100%", lineBreak: "anywhere" }}>{creds?.privateKey}</SensitiveCard>
                 </div>
 
-                {!!storage.getAccount(user.id)?.seed && (
+                {!!creds?.seed && validateMnemonic(creds.seed) && (
                   <div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <H3>Seedphrase</H3>
                       <Button
                         $id="Settings.passphraseCopy"
                         onClick={async () => {
-                          await navigator.clipboard.writeText(storage.getAccount(user.id)?.seed || "");
+                          await navigator.clipboard.writeText(creds?.seed || "");
                           notify("Seedphrase has beed copied");
                         }}
                       >
                         <Icon name="copy" />
                       </Button>
                     </div>
-                    <SensitiveCard>{storage.getAccount(user.id)?.seed}</SensitiveCard>
+                    <SensitiveCard>{creds?.seed}</SensitiveCard>
                   </div>
                 )}
               </Card>
@@ -264,16 +277,12 @@ const Settings = () => {
               style={{ background: "rgba(214, 62, 62, 0.15)" }}
               $active={location.pathname === "/settings/support"}
               onClick={() => {
-                const creds = storage.getAccount(user.id);
-
-                if (creds?.seed) {
-                  sheets.present({ id: "ConfirmLogout", element: <ConfigLogoutWithSeed id={user.id} seed={creds.seed.split(" ")} /> });
-                  return;
+                if (creds?.seed && validateMnemonic(creds.seed)) {
+                  return setLogout(true);
                 }
 
                 if (creds?.privateKey) {
-                  sheets.present({ id: "ConfirmLogout", element: <ConfigLogoutWithPrivateKey id={user.id} privateKey={creds.privateKey} /> });
-                  return;
+                  return setLogout(true);
                 }
 
                 accounts.disconnect(user.id);
