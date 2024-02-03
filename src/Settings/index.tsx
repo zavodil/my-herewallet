@@ -11,7 +11,6 @@ import { colors } from "../uikit/theme";
 import Icon from "../uikit/Icon";
 
 import { useNavigateBack } from "../useNavigateBack";
-import { validateMnemonic } from "../core/near-chain/passphrase/bip39";
 import { accounts, useWallet } from "../core/Accounts";
 import { ReceiverFetcher } from "../core/Receiver";
 import { storage } from "../core/Storage";
@@ -36,7 +35,7 @@ const ConfigLogoutWithSeed = ({ id, seed }: { id: string; seed: string[] }) => {
       </div>
 
       <ActionButton
-        disabled={word !== seed[number]}
+        disabled={word.toLowerCase() !== seed[number]}
         $id="InviteFriend.copyReferral"
         style={{ marginTop: 16 }}
         onClick={() => {
@@ -64,7 +63,7 @@ const ConfigLogoutWithPrivateKey = ({ id, privateKey }: { id: string; privateKey
       </div>
 
       <ActionButton
-        disabled={word !== privateKey.slice(-5)}
+        disabled={word.toLowerCase() !== privateKey.slice(-5)}
         $id="InviteFriend.copyReferral"
         style={{ marginTop: 16 }}
         onClick={() => {
@@ -91,7 +90,7 @@ const Settings = () => {
   }, [user.id]);
 
   if (isLogout) {
-    if (creds?.seed && validateMnemonic(creds.seed)) {
+    if (creds?.seed && creds?.seed.split(" ").length === 12) {
       return <ConfigLogoutWithSeed id={user.id} seed={creds.seed.split(" ")} />;
     }
 
@@ -229,7 +228,7 @@ const Settings = () => {
                   <SensitiveCard style={{ maxWidth: 460, width: "100%", lineBreak: "anywhere" }}>{creds?.privateKey}</SensitiveCard>
                 </div>
 
-                {!!creds?.seed && validateMnemonic(creds.seed) && (
+                {!!creds?.seed && creds?.seed.split(" ").length === 12 && (
                   <div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <H3>Seedphrase</H3>
@@ -277,7 +276,7 @@ const Settings = () => {
               style={{ background: "rgba(214, 62, 62, 0.15)" }}
               $active={location.pathname === "/settings/support"}
               onClick={() => {
-                if (creds?.seed && validateMnemonic(creds.seed)) {
+                if (creds?.seed && creds?.seed.split(" ").length === 12) {
                   return setLogout(true);
                 }
 

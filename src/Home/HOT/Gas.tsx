@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { observer } from "mobx-react-lite";
 
 import { useWallet } from "../../core/Accounts";
-import { gasFreeMissions } from "../../core/configs/hot";
+import { GasFreeMission, gasFreeMissions } from "../../core/configs/hot";
 import { useNavigateBack } from "../../useNavigateBack";
 import { BoldP, H3, SmallText, Text } from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
@@ -11,9 +11,33 @@ import { sheets } from "../../uikit/Popup";
 import { Button } from "../../uikit";
 import Icon from "../../uikit/Icon";
 
+import MyAddress from "../MyAddress";
 import { Container, Root } from "../styled";
 import BlurBackground from "./effects/BlurBackground";
-import MyAddress from "../MyAddress";
+
+const MissionItem = ({ item, isComplete, onClick }: { item: GasFreeMission; isComplete: boolean; onClick?: () => void }) => {
+  return (
+    <div key={item.mission} style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={onClick}>
+      <img src={item.icon} style={Object.assign({ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }, item.style)} />
+      <div>
+        <BoldP>{item.title}</BoldP>
+        {isComplete ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+            <Icon color={colors.green} name="tick" />
+            <BoldP style={{ color: colors.green }}>Completed</BoldP>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+            <Icon name="gas" />
+            <BoldP>{item.gasFree} Gas-Free Tx</BoldP>
+          </div>
+        )}
+      </div>
+
+      {!isComplete && <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />}
+    </div>
+  );
+};
 
 const Gas = () => {
   useNavigateBack();
@@ -29,6 +53,33 @@ const Gas = () => {
   const depositNear = () => {
     sheets.present({ id: "MyQR", element: <MyAddress /> });
   };
+
+  const completedList = gasFreeMissions.filter((t) => user.hot.missions[t.mission] || completed[t.mission]);
+  const uncompletedList = gasFreeMissions.filter((t) => !(user.hot.missions[t.mission] || completed[t.mission]));
+
+  const nearMissionCompleted = user.tokens.near.amountFloat > 0.2;
+  const nearMission = (
+    <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={depositNear}>
+      <img src={require("../../assets/near.svg")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff" }} />
+
+      <div>
+        <BoldP>Deposit NEAR</BoldP>
+        {nearMissionCompleted ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+            <Icon color={colors.green} name="tick" />
+            <BoldP style={{ color: colors.green }}>Completed</BoldP>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+            <Icon name="gas" />
+            <Text>Unlimited</Text>
+          </div>
+        )}
+      </div>
+
+      <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />
+    </div>
+  );
 
   return (
     <Root>
@@ -48,53 +99,33 @@ const Gas = () => {
           </Button>
         </div>
 
-        <Options>
-          {gasFreeMissions.map((item) => (
-            <div
-              key={item.mission}
-              style={{ display: "flex", gap: 12, alignItems: "center" }}
-              onClick={() => {
-                if (user.hot.missions[item.mission] || completed[item.mission]) return;
-                setCompleted((t) => ({ ...t, [item.mission]: true }));
-                item.onClick(user);
-              }}
-            >
-              <img src={item.icon} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff", padding: 12 }} />
-              <div>
-                <BoldP>{item.title}</BoldP>
-                {user.hot.missions[item.mission] ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-                    <Icon color={colors.green} name="tick" />
-                    <BoldP style={{ color: colors.green }}>Completed</BoldP>
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-                    <Icon name="gas" />
-                    <BoldP>{item.gasFree} Gas-Free Tx</BoldP>
-                  </div>
-                )}
-              </div>
+        {uncompletedList.length > 0 && (
+          <Options>
+            {uncompletedList.map((item) => (
+              <MissionItem
+                item={item}
+                key={item.mission}
+                isComplete={user.hot.missions[item.mission] || completed[item.mission]}
+                onClick={() => {
+                  if (user.hot.missions[item.mission] || completed[item.mission]) return;
+                  setCompleted((t) => ({ ...t, [item.mission]: true }));
+                  item.onClick(user);
+                }}
+              />
+            ))}
 
-              <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />
-            </div>
-          ))}
-        </Options>
+            {!nearMissionCompleted && nearMission}
+          </Options>
+        )}
 
-        <Options>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }} onClick={depositNear}>
-            <img src={require("../../assets/near.svg")} style={{ width: 64, height: 64, borderRadius: 12, background: "#fff" }} />
-
-            <div>
-              <BoldP>Deposit NEAR</BoldP>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-                <Icon name="gas" />
-                <Text>Unlimited</Text>
-              </div>
-            </div>
-
-            <Icon style={{ marginLeft: "auto", opacity: 0.6 }} name="cursor-right" />
-          </div>
-        </Options>
+        {completedList.length > 0 && (
+          <Options>
+            {completedList.map((item) => (
+              <MissionItem isComplete item={item} key={item.mission} />
+            ))}
+            {nearMissionCompleted && nearMission}
+          </Options>
+        )}
       </Container>
     </Root>
   );

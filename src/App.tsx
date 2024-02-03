@@ -31,6 +31,7 @@ import StorageView from "./StorageView";
 import Onboard from "./Home/HOT/Onboard";
 import { NeedMoreGas } from "./Home/NeedGas";
 import { useHOTVillage } from "./Home/HOT/useVillage";
+import Missions from "./Home/HOT/Missions";
 import Villages from "./Home/HOT/Villages";
 import HotGuard from "./Home/HOT/HotGuard";
 import Boosters from "./Home/HOT/Boosters";
@@ -81,6 +82,7 @@ function App() {
                 <Route path="/hot/cave" element={<HotGuard Comp={Boosters} />} />
                 <Route path="/hot/band" element={<HotGuard Comp={Band} />} />
                 <Route path="/hot/gas" element={<HotGuard Comp={Gas} />} />
+                <Route path="/hot/missions" element={<HotGuard Comp={Missions} />} />
                 <Route path="/hot/onboard" element={<HotGuard Comp={Onboard} />} />
                 <Route path="/hot/villages" element={<HotGuard Comp={Villages} />} />
                 <Route path="/hot/*" element={<HotGuard Comp={HOT} />} />

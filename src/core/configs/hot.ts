@@ -1,5 +1,7 @@
+import copyTextToClipboard from "../../Home/HOT/copyTextToClipboard";
 import Hot from "../Hot";
 import UserAccount from "../UserAccount";
+import { notify } from "../toast";
 
 export interface GasFreeMission {
   gasFree: number;
@@ -7,6 +9,17 @@ export interface GasFreeMission {
   title: string;
   mission: keyof (typeof Hot.prototype)["missions"];
   onClick: (user: UserAccount) => void;
+  style?: Object;
+}
+
+export interface BoosterMission {
+  icon: string;
+  title: string;
+  buttonText: string;
+  subtitle: string;
+  onClick: (user: UserAccount) => void;
+  mission: keyof (typeof Hot.prototype)["missions"];
+  text: string;
 }
 
 export interface HotReferral {
@@ -195,7 +208,7 @@ export const gasFreeMissions: GasFreeMission[] = [
     },
   },
   {
-    gasFree: 1,
+    gasFree: 2,
     icon: require("../../assets/youtube.svg"),
     title: "Follow HERE on Youtube",
     mission: "follow_youtube",
@@ -214,4 +227,77 @@ export const gasFreeMissions: GasFreeMission[] = [
       user.hot.completeMission("follow_tw_here");
     },
   },
+  {
+    gasFree: 1,
+    icon: require("../../assets/hot/instagram.svg"),
+    title: "Follow HERE on Instagram",
+    mission: "follow_instagram",
+    style: { padding: 8 },
+    onClick: (user: UserAccount) => {
+      window.Telegram.WebApp.openLink("https://www.instagram.com/here_wallet");
+      user.hot.completeMission("follow_instagram");
+    },
+  },
+];
+
+export const boosterMissions: BoosterMission[] = [
+  {
+    icon: require("../../assets/here.svg"),
+    title: "Download mobile App",
+    mission: "download_app",
+    subtitle: "And import account",
+    text: "Install HERE Mobile app and import your wallet from telegram using seed phrase. You can find seed phrase in settings.<br/><br/><b>Important:</b> Make sure you have the same account in app and in telegram wallet.",
+    buttonText: "Download mobile app",
+    onClick: (user: UserAccount) => {
+      copyTextToClipboard(user.hot.referralLink);
+      notify("Account address has been copied");
+    },
+  },
+  {
+    icon: require("../../assets/near.svg"),
+    title: "Add 0.5 NEAR",
+    mission: "deposit_1NEAR",
+    subtitle: "To your account",
+    text: "Deposit 0.5+ NEAR on your account.<br/><br/><b>Tips:</b> wallet.tg accounts for now supported by Binance, OKX, Gate.io, Kucoin",
+    buttonText: "Copy account address",
+    onClick: (user: UserAccount) => {
+      copyTextToClipboard(user.near.accountId);
+      notify("Account address has been copied");
+    },
+  },
+  {
+    icon: require("../../assets/hot/usdt.png"),
+    title: "Add 1+ USDT ",
+    mission: "deposit_1USDT",
+    subtitle: "To your account",
+    text: "Deposit 1+ USDT on your account.<br/><br/><b>Tips:</b> wallet.tg accounts for now supported by Binance, OKX, Gate.io, Kucoin",
+    buttonText: "Copy account address",
+    onClick: (user: UserAccount) => {
+      copyTextToClipboard(user.near.accountId);
+      notify("Account address has been copied");
+    },
+  },
+  {
+    icon: require("../../assets/hot/band.png"),
+    title: "Refer a friend",
+    mission: "invite_friend",
+    subtitle: "Invite your first referral",
+    text: "Make sure that your referral claimed at least once. Then wait a little bit until you get a telegram notification in the bot that referral appeared.",
+    buttonText: "Copy referral link",
+    onClick: (user: UserAccount) => {
+      copyTextToClipboard(user.hot.referralLink);
+      notify("Referral link has been copied");
+    },
+  },
+  // {
+  //   icon: require("../../assets/hot/hot.png"),
+  //   title: "Add 1+ NFT to your account",
+  //   mission: "deposit_NFT",
+  //   text: "Transfer 1+ NFT on your account.<br/><br/><b>Tips:</b> You can claim free nft on Paras via HERE Wallet app",
+  //   buttonText: "Copy account address",
+  //   onClick: (user: UserAccount) => {
+  //     copyTextToClipboard(user.hot.referralLink);
+  //     notify("Account address has been copied");
+  //   },
+  // },
 ];
