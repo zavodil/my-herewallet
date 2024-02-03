@@ -73,7 +73,7 @@ const PopupsProvider = observer(() => {
   return (
     <>
       {sheets.popups.map(({ element, isOpen, fullscreen, onClose, blocked }) => (
-        <Sheet isOpen={isOpen} disableDrag={blocked} onClose={() => onClose?.()} detent={fullscreen ? "full-height" : "content-height"}>
+        <Sheet isOpen={isOpen} disableDrag={blocked} onClose={() => onClose?.()} disableScrollLocking={true} detent={fullscreen ? "full-height" : "content-height"}>
           <Sheet.Container style={{ background: colors.elevation0, borderRadius: "16px 16px 0 0", boxShadow: "none" }}>
             <Sheet.Header style={{ marginTop: -32 }} disableDrag={blocked} />
             <Sheet.Content disableDrag={blocked}>{element}</Sheet.Content>
