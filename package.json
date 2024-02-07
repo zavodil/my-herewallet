@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@here-wallet/core": "^1.6.1",
+    "@kloktunov/react-telegram-webapp": "^1.1.3",
     "@ledgerhq/devices": "^8.2.0",
     "@ledgerhq/hw-app-near": "^6.28.1",
     "@ledgerhq/hw-transport-u2f": "^5.36.0-deprecated",

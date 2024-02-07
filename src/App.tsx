@@ -38,105 +38,156 @@ import Boosters from "./Home/HOT/Boosters";
 import Band from "./Home/HOT/Band";
 import Gas from "./Home/HOT/Gas";
 import HOT from "./Home/HOT";
+import { Action, ActionType } from "@here-wallet/core";
+import {ActionView} from "./Widget/Connector/Action";
+import styled from "styled-components";
+import {AddKeyAction, AddKeyPermission} from "@near-wallet-selector/core/src/lib/wallet/transactions.types";
+import Header from "./Home/Header";
+import {OtterSecText} from "./Staking/styled";
+import OtterSecLogo from "*.svg?url";
+import { Root } from "./Home/styled";
+import { Card, Container, OtterSecText } from "./Staking/styled";
+import SignIn from "./SignIn";
+import SignInSuccess from "./SignIn/Success"
+import {useTelegramWebApp, TelegramWebApp} from "@kloktunov/react-telegram-webapp";
 
 function App() {
+  const telegram11 = useTelegramWebApp();
+  console.log("te11", telegram11)
+
   // useEffect(() => {
   //   if (!isTgMobile()) return;
   //   const targetElement = document.querySelector("#root");
   //   bodyScrollLock.disableBodyScroll(targetElement);
   // }, []);
 
-  useHOTVillage();
+  //useHOTVillage();
   useEffect(() => {
-    if (!isTgMobile() || !accounts.account) return;
-    accounts.account.near.events.on("transaction:error", ({ error, actions, receiverId }) => {
-      AnalyticsTracker.shared.track("transaction:error", { error: error?.toString?.() });
+    /*if (!isTgMobile() || !accounts.account) return;
+    accounts.account.near.events.on("transaction:error", ({error, actions, receiverId}) => {
+      AnalyticsTracker.shared.track("transaction:error", {error: error?.toString?.()});
       if (!error?.toString()?.includes("does not have enough balance")) return;
       if (receiverId === GAME_ID && actions.length === 1 && actions[0].functionCall?.methodName === "claim") return;
-      sheets.present({ id: "NeedGas", element: <NeedMoreGas /> });
-    });
+      sheets.present({id: "NeedGas", element: <NeedMoreGas/>});
+    });*/
   }, [accounts.account]);
 
   // if (AppState.shared.timeBreak) {
   //   return <TechnicalBreak />;
   // }
 
+  let receiverId = "tipbot.near";
+  let allowance = "";
+  let methodNames = [];
+
+  const query = new URLSearchParams(window.location.search);
+
+  let addKeyAction: Action = {
+    params: {publicKey: query.get("publicKey"), accessKey: {permission: {receiverId, allowance, methodNames}}},
+    type: "AddKey"
+  };
+
+  console.log("addKeyAction", addKeyAction);
+
+
+
   if (getStartParam().other === "read_storage") {
-    return <StorageView />;
+    return <StorageView/>;
   }
+
 
   if (isTgMobile()) {
     return (
-      <>
-        <PopupsProvider />
-        <BrowserRouter>
-          <Routes>
-            {accounts.account && (
-              <>
-                <Route path="/" element={<Home />} />
-                <Route path="/stake/*" element={<Staking />} />
-                <Route path="/transfer/success" element={<TransferSuccess />} />
-                <Route path="/transfer/*" element={<Transfer />} />
-                <Route path="/apps/:id?" element={<Apps />} />
-                <Route path="/settings/*" element={<Settings />} />
-                <Route path="/hot/cave" element={<HotGuard Comp={Boosters} />} />
-                <Route path="/hot/band" element={<HotGuard Comp={Band} />} />
-                <Route path="/hot/gas" element={<HotGuard Comp={Gas} />} />
-                <Route path="/hot/missions" element={<HotGuard Comp={Missions} />} />
-                <Route path="/hot/onboard" element={<HotGuard Comp={Onboard} />} />
-                <Route path="/hot/villages" element={<HotGuard Comp={Villages} />} />
-                <Route path="/hot/*" element={<HotGuard Comp={HOT} />} />
-              </>
-            )}
+        <TelegramWebApp>
+          <PopupsProvider/>
+          <BrowserRouter>
+            <Routes>
+              {accounts.account && (
+                  <>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/stake/*" element={<Staking/>}/>
+                    <Route path="/transfer/success" element={<TransferSuccess/>}/>
+                    <Route path="/transfer/*" element={<Transfer/>}/>
+                    <Route path="/apps/:id?" element={<Apps/>}/>
+                    <Route path="/settings/*" element={<Settings/>}/>
+                    <Route path="/hot/cave" element={<HotGuard Comp={Boosters}/>}/>
+                    <Route path="/hot/band" element={<HotGuard Comp={Band}/>}/>
+                    <Route path="/hot/gas" element={<HotGuard Comp={Gas}/>}/>
+                    <Route path="/hot/missions" element={<HotGuard Comp={Missions}/>}/>
+                    <Route path="/hot/onboard" element={<HotGuard Comp={Onboard}/>}/>
+                    <Route path="/hot/villages" element={<HotGuard Comp={Villages}/>}/>
+                    <Route path="/hot/*" element={<HotGuard Comp={HOT}/>}/>
+                    <Route path="/addKey/*" element={<SignIn/>}/>
+                    <Route path="/addKey/success" element={<SignInSuccess/>}/>
+                  </>
+              )}
 
-            <Route path="/auth/import" element={<ImportAccountMobile />} />
-            <Route path="/auth/create" element={<CreateAccountMobile />} />
-            <Route path="*" element={<AuthMobile />} />
-          </Routes>
-        </BrowserRouter>
-      </>
+
+
+              <Route path="/auth/import" element={<ImportAccountMobile/>}/>
+              <Route path="/auth/create" element={<CreateAccountMobile/>}/>
+              <Route path="*" element={<AuthMobile/>}/>
+            </Routes>
+          </BrowserRouter>
+        </TelegramWebApp>
     );
   }
 
+
+
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {accounts.account ? (
-          <>
-            <Route path="/" element={<Mobile Comp={Home} />} />
-            <Route path="/stake/*" element={<Mobile Comp={Staking} />} />
-            <Route path="/transfer/success" element={<Mobile Comp={TransferSuccess} />} />
-            <Route path="/transfer/*" element={<Mobile Comp={Transfer} />} />
-            <Route path="/apps/:id?" element={<Mobile Comp={Apps} />} />
-            <Route path="/settings/*" element={<Mobile Comp={Settings} />} />
-          </>
-        ) : (
-          <>
-            <Route path="/" element={<Navigate to="/auth" replace />} />
-            <Route path="/stake/*" element={<Mobile Comp={Auth} />} />
-            <Route path="/transfer/success" element={<Mobile Comp={Auth} />} />
-            <Route path="/transfer/*" element={<Mobile Comp={Auth} />} />
-            <Route path="/apps/:id?" element={<Mobile Comp={Apps} />} />
-          </>
-        )}
+      <BrowserRouter>
+        <Routes>
+          {accounts.account ? (
+              <>
+                <Route path="/" element={<Mobile Comp={Home}/>}/>
+                <Route path="/stake/*" element={<Mobile Comp={Staking}/>}/>
+                <Route path="/transfer/success" element={<Mobile Comp={TransferSuccess}/>}/>
+                <Route path="/transfer/*" element={<Mobile Comp={Transfer}/>}/>
+                <Route path="/apps/:id?" element={<Mobile Comp={Apps}/>}/>
+                <Route path="/settings/*" element={<Mobile Comp={Settings}/>}/>
+              </>
+          ) : (
+              <>
+                <Route path="/" element={<Navigate to="/auth" replace/>}/>
+                <Route path="/stake/*" element={<Mobile Comp={Auth}/>}/>
+                <Route path="/transfer/success" element={<Mobile Comp={Auth}/>}/>
+                <Route path="/transfer/*" element={<Mobile Comp={Auth}/>}/>
+                <Route path="/apps/:id?" element={<Mobile Comp={Apps}/>}/>
+              </>
+          )}
 
-        <Route path="/auth" element={<Mobile Comp={Auth} />} />
-        <Route path="/auth/create" element={<Mobile Comp={CreateAccount} />} />
-        <Route path="/auth/import" element={<Mobile Comp={ImportAccount} />} />
-        <Route path="/auth/import/backup" element={<Mobile Comp={ImportSeed} />} />
+          <Route path="/action/addKey/*" element={<SignIn/>}/>
 
-        <Route path="/connector/*" element={<Widget />} />
-        <Route path="/inscription/tokens" element={<InscriptionTokens />} />
-        <Route path="/inscription/:id?" element={<Inscription />} />
+          <Route path="/auth" element={<Mobile Comp={Auth}/>}/>
+          <Route path="/auth/create" element={<Mobile Comp={CreateAccount}/>}/>
+          <Route path="/auth/import" element={<Mobile Comp={ImportAccount}/>}/>
+          <Route path="/auth/import/backup" element={<Mobile Comp={ImportSeed}/>}/>
 
-        <Route path="/g/:id?" element={<CustomRequestResolver />} />
-        <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver />} />
-        <Route path="/import/*" element={<ImportAccountsResolver />} />
-        <Route path="/request/:id?" element={<Widget />} />
-        <Route path="*" element={<OpenInApp />} />
-      </Routes>
-    </BrowserRouter>
+
+
+          <Route path="/connector/*" element={<Widget/>}/>
+          <Route path="/inscription/tokens" element={<InscriptionTokens/>}/>
+          <Route path="/inscription/:id?" element={<Inscription/>}/>
+
+          <Route path="/g/:id?" element={<CustomRequestResolver/>}/>
+          <Route path="/linkdrop/:id/:secret?" element={<KeypomResolver/>}/>
+          <Route path="/import/*" element={<ImportAccountsResolver/>}/>
+          <Route path="/request/:id?" element={<Widget/>}/>
+          <Route path="*" element={<OpenInApp/>}/>
+        </Routes>
+      </BrowserRouter>
   );
 }
+
+const View = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  flex: 1;
+`;
+
 
 export default observer(App);

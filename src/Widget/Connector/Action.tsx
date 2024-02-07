@@ -8,7 +8,7 @@ import { near } from "../../core/token/defaults";
 import { Formatter, formatAmount } from "../../core/helpers";
 import Currencies from "../../core/token/Currencies";
 
-import { H2, H3, Text, SmallText } from "../../uikit/typographic";
+import {H2, H3, Text, SmallText, Caption} from "../../uikit/typographic";
 import { colors } from "../../uikit/theme";
 import { Button } from "../../uikit";
 
@@ -19,11 +19,13 @@ import Icon from "../../uikit/Icon";
 interface Props {
   action: Action;
   receiver: string;
-  tokens: FtModel[];
+  tokens: FtModel[] | null;
 }
 
 export const ActionView = observer(({ action, receiver, tokens }: Props) => {
   const [isShowArgs, setShowArgs] = useState(false);
+
+  console.log("action", action)
 
   switch (action.type) {
     case "AddKey":
@@ -45,7 +47,7 @@ export const ActionView = observer(({ action, receiver, tokens }: Props) => {
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <H2 style={{ marginBottom: 8 }}>Add access key</H2>
           <Text style={{ textAlign: "center", marginBottom: 8 }}>
-            <Text style={{ color: colors.pink }}>{permission.receiverId}</Text> will have limited permissions
+            <Caption style={{ color: colors.green }}>{permission.receiverId}</Caption>  will have limited permissions
           </Text>
 
           <View

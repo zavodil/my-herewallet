@@ -1,4 +1,5 @@
 import BN from "bn.js";
+import {PublicKey} from "@near-js/crypto";
 
 export enum ConnectType {
   Web = "web",
@@ -26,4 +27,11 @@ export interface TransferParams {
   type: "address";
   token: string;
   comment?: string;
+}
+
+export interface AddKeyParams {
+  publicKey: string | PublicKey;
+  contractId?: string;
+  methodNames?: string | string[];
+  amount?: BN
 }

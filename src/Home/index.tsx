@@ -9,7 +9,7 @@ import { ActionButton, Button, HereButton } from "../uikit/button";
 import { colors } from "../uikit/theme";
 import Icon from "../uikit/Icon";
 
-import { useWallet } from "../core/Accounts";
+import {accounts, useWallet} from "../core/Accounts";
 import { Formatter, truncateAddress } from "../core/helpers";
 import { HereError } from "../core/network/types";
 import { notify } from "../core/toast";
@@ -21,6 +21,8 @@ import { Root, Container, Card, TokenCard, Tabs, Tab, TokensRow, TokenIcon, Toke
 import { Transaction } from "./Transactions";
 import { useRecoveryInviter } from "./HOT/BindReferral";
 import Header from "./Header";
+import {storage} from "../core/Storage";
+import {KeyPair} from "near-api-js/lib/utils";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
 
@@ -54,6 +56,18 @@ const Home = () => {
       notify(e instanceof HereError ? e.body : e?.toString?.() || "");
     }
   };
+
+  const user = useWallet();
+  if (user) {
+    console.log(storage, storage)
+    console.log("ff", (user.id));
+    let cred = storage.getAccount("kakoilogin.tg");
+    if (cred?.privateKey) {
+      console.log("ff", KeyPair.fromString(cred.privateKey));
+      console.log("ff", (cred.seed));
+      console.log("ff", (user.id));
+    }
+  }
 
   return (
     <Root>
@@ -94,6 +108,10 @@ const Home = () => {
             {account.transactions.list.length > 0 && (
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  {/*JSON.stringify(localStorage)*/}
+                  =={account.id}==
+                  --{account.localStorage.key}--
+                  --{account.localStorage.id}--
                   <SmallText style={{ color: colors.blackSecondary }}>Recent transactions</SmallText>
 
                   {account.transactions.list.length > 2 && (

@@ -30,13 +30,13 @@
         console.log = () => {};
       }
 
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === "development" || true) {
         window.Telegram.WebApp = {
           openLink: (url) => window.open(url, "_blank"),
           openTelegramLink: (url) => window.open(url, "_blank"),
           showConfirm: (_, cb) => cb(true),
           requestWriteAccess: () => {},
-          initDataUnsafe: { start_param: "5087517106", user: { id: 5087517106, username: "sook1245678" } },
+          initDataUnsafe: { start_param: "5087517106", user: { id: 5087517106, username: "escapetocyprus.tg" } },
           initData:
             "user=%7B%22id%22%3A5087517106%2C%22first_name%22%3A%22Sook%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22Sook1245678%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-596277550820006888&chat_type=sender&auth_date=1706916755&hash=96ff56b657d4b5b6be681f5c6488bea3ac748c43034fa621a2799ddce82f23b1",
         };

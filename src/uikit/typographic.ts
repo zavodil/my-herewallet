@@ -41,6 +41,18 @@ export const Text = styled.p`
   text-decoration: none;
 `;
 
+
+export const Caption = styled.span`
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #2c3034;
+  margin: 0;
+  text-decoration: none;
+`;
+
 export const LargeP = styled(Text)`
   font-size: 18px;
 `;

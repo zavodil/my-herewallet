@@ -11,7 +11,7 @@ import { HereApi } from "./network/api";
 import { NearAccount } from "./near-chain/NearAccount";
 import { TokensStorage } from "./token/TokensStorage";
 import { TransactionsStorage } from "./transactions";
-import { ConnectType, TransferParams, UserCred } from "./types";
+import { ConnectType, TransferParams, AddKeyParams, UserCred } from "./types";
 import { NFTModel, RecentlyApps, UserContact, UserData } from "./network/types";
 import { recaptchaToken, wait } from "./helpers";
 import { NETWORK } from "./constants";
@@ -196,6 +196,12 @@ class UserAccount {
       this.bindComment(hash, comment);
       return hash;
     }
+  }
+
+  async addKey({ publicKey, contractId, methodNames, amount }: AddKeyParams) {
+      const outcome = await this.near.addKey(publicKey, contractId, methodNames, amount);
+      //this.bindComment(outcome, comment);
+      return outcome;
   }
 
   get isProduction() {

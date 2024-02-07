@@ -52,6 +52,8 @@ const Auth = () => {
     return <ClaimingLoading time={30} text="Creating an account" />;
   }
 
+  const query = new URLSearchParams(window.location.search);
+
   return (
     <Root style={{ padding: 24 }}>
       <Button $id="Auth.importAccount" onClick={() => navigate("/auth/import")} style={{ position: "absolute", right: 24, top: 24 }}>
@@ -66,10 +68,13 @@ const Auth = () => {
       <H1 style={{ marginTop: 28 }}>NEAR Wallet</H1>
       <LargeP style={{ textAlign: "center" }}>Next generation Telegram wallet. Secure, Fast and over the NEAR Blockchain</LargeP>
 
+      location foo: { query.get("foo") };
+
       {accounts.telegramAccountId ? (
         <div style={{ textAlign: "center", marginTop: "auto", width: "100%" }}>
           <SmallText style={{ marginBottom: 8 }}>
             You have already created an account <b style={{ color: colors.blackPrimary }}>{truncateAddress(accounts.telegramAccountId || "")}</b>
+            {JSON.stringify(accounts)}
           </SmallText>
 
           <ActionButton $id="Auth.createAccount" big onClick={() => navigate("/auth/import")}>
