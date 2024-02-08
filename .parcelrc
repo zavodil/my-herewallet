@@ -6,6 +6,7 @@
     ],
     "jsx:*": [
       "..."
-    ]
-  }
+    ],
+    "*.glb": ["@parcel/transformer-raw"]
+  },
 }

@@ -21,6 +21,9 @@ import { Root, Container, Card, TokenCard, Tabs, Tab, TokensRow, TokenIcon, Toke
 import { Transaction } from "./Transactions";
 import { useRecoveryInviter } from "./HOT/BindReferral";
 import Header from "./Header";
+import Interface from "../interface/Interface";
+import {Canvas} from "@react-three/fiber";
+import Game from "../Game";
 
 const LinkButtonStyle = { textDecoration: "none", marginTop: "auto", marginBottom: 4, flex: 1 };
 
@@ -55,6 +58,18 @@ const Home = () => {
     }
   };
 
+  const [windowWidth] = useState(window.innerWidth);
+  const cameraPositionZ = windowWidth > 500 ? 30 : 40;
+/*
+  return (
+      <>
+        <Interface />
+        <Canvas camera={{ fov: 75, position: [0, 0, cameraPositionZ] }}>
+          <Game />
+        </Canvas>
+      </>
+  );*/
+
   return (
     <Root>
       <Header />
@@ -62,6 +77,8 @@ const Home = () => {
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
           {isTgMobile() && (
             <div style={{ marginTop: 4, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+
+
               <BoldP>{truncateAddress(account.near.accountId)}</BoldP>
               <Icon
                 name="copy"
@@ -72,6 +89,15 @@ const Home = () => {
               />
             </div>
           )}
+
+          <Card style={{ gap: 16 }}>
+            <div style={{ display: "flex", height: "400px", width: "100%", justifyContent: "space-between", alignItems: isTgMobile() ? "flex-start" : "flex-end", flexDirection: isTgMobile() ? "column" : "row" }}>
+          <Interface />
+          <Canvas camera={{ fov:48, position: [0, 0, cameraPositionZ] }}>
+            <Game />
+          </Canvas>
+            </div>
+          </Card>
 
           <Card style={{ gap: 16 }}>
             <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: isTgMobile() ? "flex-start" : "flex-end", flexDirection: isTgMobile() ? "column" : "row" }}>

@@ -39,6 +39,25 @@ import Band from "./Home/HOT/Band";
 import Gas from "./Home/HOT/Gas";
 import HOT from "./Home/HOT";
 
+import { useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import Interface from "./interface/Interface";
+import Game from "./Game";
+
+const App0 = () => {
+  const [windowWidth] = useState(window.innerWidth);
+  const cameraPositionZ = windowWidth > 500 ? 30 : 40;
+
+  return (
+      <>
+        <Interface />
+        <Canvas camera={{ fov: 75, position: [0, 0, cameraPositionZ] }}>
+          <Game />
+        </Canvas>
+      </>
+  );
+};
+
 function App() {
   // useEffect(() => {
   //   if (!isTgMobile()) return;
